@@ -57,7 +57,6 @@ class axsbe_snap(axsbe_base.axsbe_base):
         'MsgType',
         'SecurityID',
         'ChannelNo',
-        'ApplSeqNum',
         'TransactTime',
 
         'TradingPhaseCode',
@@ -114,7 +113,6 @@ class axsbe_snap(axsbe_base.axsbe_base):
         self.SecurityIDSource = dict['SecurityIDSource']
         self.SecurityID = dict['SecurityID']
         self.ChannelNo = dict['ChannelNo']
-        self.ApplSeqNum = dict['ApplSeqNum']
 
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             self.TradingPhaseCode = dict['TradingPhase']
@@ -434,10 +432,13 @@ class axsbe_snap(axsbe_base.axsbe_base):
         return bin
 
 
-    def unpack_stream_body(self, bytes_body:bytes):
-        '''将消息体字节流解包成字段值，重载'''
+    def unpack_stream(self, bytes_i:bytes):
+        '''将消息字节流解包成字段值，重载'''
+        #公共头
+        self.SecurityIDSource, _, _, self.SecurityID, self.ChannelNo, _, self.TradingPhaseCode = struct.unpack("<BBH9sHQB", bytes_i[:24])
+        self.SecurityID = int(self.SecurityID[:6])
+        #消息体
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
-            self.TradingPhaseCode = self.TransactTime #头部TransactTime字段放的是TradingPhaseCode
             unpack_token = "<qqqiiiiiiqiqii"
             for i in range(10):
                 unpack_token += "iq"
@@ -500,7 +501,7 @@ class axsbe_snap(axsbe_base.axsbe_base):
             self.ask[8].Qty, \
             self.ask[9].Price, \
             self.ask[9].Qty, \
-            self.TransactTime, _ =  struct.unpack(unpack_token, bytes_body)
+            self.TransactTime, _ =  struct.unpack(unpack_token, bytes_i[24:])
         else:
             '''TODO:SSE'''
 

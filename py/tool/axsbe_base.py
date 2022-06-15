@@ -88,10 +88,10 @@ class axsbe_base(abc.ABC):
         if self._tick is None:
             t = self.HHMMSSms
             ms = t % 1000
-            ss = int((t % (100000))   / 1000)
-            mm = int((t % (10000000)) / 100000)
-            hh = int((t )             / 10000000)
-            self._tick = f"{hh}:{mm}:{ss}.{ms}"
+            ss = (t % (100000))   // 1000
+            mm = (t % (10000000)) // 100000
+            hh = (t )             // 10000000
+            self._tick = f"{hh:02d}:{mm:02d}:{ss:02d}.{ms:03d}"
             self._ms = ms + ss * 1000 + mm * 60 * 1000 + hh * 3600 * 1000
         return self._tick
         
@@ -155,20 +155,8 @@ class axsbe_base(abc.ABC):
         return np_array
 
     @abc.abstractmethod
-    def unpack_stream_body(self, bytes_body:bytes):
-        '''
-        将消息体字节流解包成字段值，派生类需重载。
-        bytes_body为原始字节流[24:]
-        '''
-        return NotImplemented
-
-    def unpack_stream_header(self, bytes_header:bytes):
-        self.SecurityIDSource, _, _, self.SecurityID, self.ChannelNo, self.ApplSeqNum, self.TransactTime = struct.unpack("<BBH9sHQB", bytes_header)
-        self.SecurityID = int(self.SecurityID[:6])
-
     def unpack_stream(self, bytes_i:bytes):
-        self.unpack_stream_header(bytes_i[:24])
-        self.unpack_stream_body(bytes_i[24:])
+        return NotImplemented
 
     def unpack_np(self, np_i:np.ndarray):
         '''将numpy字节流解包成字段值'''

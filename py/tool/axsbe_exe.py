@@ -123,15 +123,20 @@ class axsbe_exe(axsbe_base.axsbe_base):
             '''TODO:SSE'''
         return bin
 
-    def unpack_stream_body(self, bytes_body:bytes):
-        '''将消息体字节流解包成字段值，重载'''
+    def unpack_stream(self, bytes_i:bytes):
+        '''将消息字节流解包成字段值，重载'''
+        #公共头
+        self.SecurityIDSource, _, _, self.SecurityID, self.ChannelNo, self.ApplSeqNum = struct.unpack("<BBH9sHQ", bytes_i[:23])
+        self.SecurityID = int(self.SecurityID[:6])
+
+        #消息体
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             self.BidApplSeqNum, \
             self.OfferApplSeqNum, \
             self.LastPx, \
             self.LastQty, \
             self.ExecType, \
-            self.TransactTime, _, _, _, = struct.unpack("<QQiqBQ3B", bytes_body)
+            self.TransactTime, _, _, _, = struct.unpack("<QQiqBQ3B", bytes_i[24:])
         else:
             '''TODO:SSE'''
 
