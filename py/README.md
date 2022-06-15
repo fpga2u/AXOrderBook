@@ -20,7 +20,25 @@
 
 ## 公共工具 ([tool](tool))
 
-* 行情数据类，可读取本项目使用的L2历史文件
+* msg_util: 行情数据类，可读取本项目使用的L2历史文件
 
-* 日志工具
+* log_util: 日志工具
 
+## 执行
+
+python部分不是一个库，因此没有提供安装。
+
+可执行脚本都在```AXOrderBook/py```目录中，都需在```AXOrderBook```目录下运行，如:
+
+```s
+cd AXOrderBook
+python py/run_test.py
+```
+
+或使用vscode：
+
+```t
+先使用vscode打开整个AXOrderBook目录，再通过选择菜单"Run"->"Run Without Debugging"进行。
+```
+
+执行生成的log文件都在```AXOrderBook/log```中。
