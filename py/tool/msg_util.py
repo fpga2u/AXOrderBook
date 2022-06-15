@@ -1,38 +1,46 @@
 
+from cv2 import split
 import axsbe_base
 from axsbe_exe import axsbe_exe
 from axsbe_order import axsbe_order
 from axsbe_snap import axsbe_snap
 
+from functools import wraps
+from time import time
+
+def timeit(f):
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        print('func:%r args:[%r, %r] took: %2.4f sec' % \
+          (f.__name__, args, kw, te-ts))
+        return result
+    return wrap
+
 def str_to_dict(s:str):
     if s[:2] != "//":
         return None
-    s = s[2:].split(" ")
-    md = {}
-    for i in s:
-        if len(i) == 0:
-            continue
-        i = i.split("=")
-        if len(i)==2 and len(i[1]) > 0:
-            md[i[0]] = int(i[1])
+    s = s[2:].split()
+    s = [x.split("=") for x in s if x[-1]!='=']
+    md = dict((x[0], int(x[1])) for x in s)
     return md
 
 
-'''
-TODO:
 def dict_to_axsbe(s:dict):
-    if s['MsgType']==111:   #snap
-        snap = axsbe_snap()
-        snap.load_dict(s)
-        return snap
-    elif s['MsgType']==192:   #order
+    if s['MsgType']==axsbe_base.MsgType_order:   #order
         order = axsbe_order()
         order.load_dict(s)
         return order
-    elif s['MsgType']==191:   #execute
+    elif s['MsgType']==axsbe_base.MsgType_exe:   #execute
         execute = axsbe_exe()
         execute.load_dict(s)
         return execute
+    elif s['MsgType']==axsbe_base.MsgType_snap:   #snap
+        snap = axsbe_snap()
+        snap.load_dict(s)
+        return snap
     else:
         return None
 
@@ -53,12 +61,15 @@ def axsbe_file(fileName):
 
 
 def TEST_msg_ms():
+    TEST_NB = 100
+
     forder = open("order.log", "w")
     fsnap = open("snap.log", "w")
     fexec = open("exec.log", "w")
     # f = open("ms.log", "w")
+
     n = 0
-    for msg in axsbe_file("ssz_filt_security_000997_sbe.log"):
+    for msg in axsbe_file("data/AX_sbe_szse_000001.log"):
         # print(msg.ms)
         if isinstance(msg, axsbe_order):
             forder.write(f"order\t{n}\t{msg.ms}\t\n")
@@ -67,6 +78,8 @@ def TEST_msg_ms():
         else:
             fsnap.write(f"snap\t{n}\t{msg.ms}\t\n")
         n += 1
+        if n>=TEST_NB:
+            break
         
     # msg_test_list = [
     # "//sequence_in=53139 sequence_out=52137 MsgType=192 SecurityIDSource=102 MDStreamID=11 SecurityID=300175           ChannelNo=2011 ApplSeqNum=88795         Price=91000              OrderQty=30000           Side=49 OrdType=50 TransactTime=20190311091502950 ",
@@ -82,28 +95,52 @@ def TEST_msg_ms():
     #     msg = dict_to_axsbe(str_to_dict(s))
     #     l_logger.info(msg)
 
+    print("TEST_msg_ms done")
+    return
 
-def TEST_serial():
-    for msg in axsbe_file("ssz_filt_security_000997_sbe.log"):
-        # print(msg.ms)
-        # fbin.write(" ".join(msg.bytes_str))
-        # fbin.write("\n")
+@timeit
+def TEST_serial(TEST_NB = 100):
+    '''
+    测试numpy字节流的打包/解包
+
+    5950x + 860evo:
+        sz000001:tested_exe=106434 tested_order=122359 tested_snap=5082; sum=233875; used=5.0s
+    '''
+    tested_order = 0
+    tested_exe = 0
+    tested_snap = 0
+
+    SE = axsbe_base.SecurityIDSource_SZSE
+    for msg in axsbe_file("data/AX_sbe_szse_000001.log"):
         if isinstance(msg, axsbe_order):
             bytes_np = msg.bytes_np
             unpack_axsbe_order = axsbe_order()
             unpack_axsbe_order.unpack_np(bytes_np)
-            assert(str(msg) == str(unpack_axsbe_order))
+            if str(msg) != str(unpack_axsbe_order):
+                raise RuntimeError("TEST_serial tested_order NG")
+            tested_order += 1
         elif isinstance(msg, axsbe_exe):
             bytes_np = msg.bytes_np
             unpack_axsbe_execute = axsbe_exe()
             unpack_axsbe_execute.unpack_np(bytes_np)
-            assert(str(msg) == str(unpack_axsbe_execute))
+            if str(msg) != str(unpack_axsbe_execute):
+                raise RuntimeError("TEST_serial tested_exe NG")
+            tested_exe += 1
         else:
             bytes_np = msg.bytes_np
             unpack_axsbe_snap = axsbe_snap()
             unpack_axsbe_snap.unpack_np(bytes_np)
-            assert(str(msg) == str(unpack_axsbe_snap))
-'''
+            if str(msg) != str(unpack_axsbe_snap):
+                raise RuntimeError("TEST_serial tested_snap NG")
+            tested_snap += 1
+
+        if tested_exe>=TEST_NB and tested_order>=TEST_NB and tested_snap>=TEST_NB:
+            break
+    print(f"TEST_serial done"
+          f" tested_exe={tested_exe} tested_order={tested_order} tested_snap={tested_snap};"
+          f" sum={tested_exe+tested_order+tested_snap}")
+    return
+
 if __name__== '__main__':
     '''
     import os
@@ -111,37 +148,41 @@ if __name__== '__main__':
     l_logger = makeLocalLogger(os.path.basename(__file__))  # local logger with file name
     '''
 
+    ## test: byte_stream
     print(len(axsbe_order(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
     print(len(axsbe_exe(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
     print(len(axsbe_snap(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
-    # print(len(axsbe_snap().make_dmy().bytes))
 
+    ## test: save/load
     data = axsbe_order(axsbe_base.SecurityIDSource_SZSE).save()
     print(data)
     data['OrdType'] = ord('U')
     data['Side'] = ord('F')
-    order = axsbe_order(axsbe_base.SecurityIDSource_SZSE)
+    order = axsbe_order()
     order.load(data)
     print(order)
 
     data = axsbe_exe(axsbe_base.SecurityIDSource_SZSE).save()
     print(data)
     data['ExecType'] = ord('F')
-    exe = axsbe_exe(axsbe_base.SecurityIDSource_SZSE)
+    exe = axsbe_exe()
     exe.load(data)
     print(exe)
 
     data = axsbe_snap(axsbe_base.SecurityIDSource_SZSE).save()
     print(data)
-    snap = axsbe_snap(axsbe_base.SecurityIDSource_SZSE)
+    snap = axsbe_snap()
     data['ask'][0]['Price'] = 22200
     data['ask'][0]['Qty'] = 10000
     data['bid'][1]['Price'] = 111
     data['bid'][1]['Qty'] = 20000
     snap.load(data)
     print(snap)
-    # TEST_serial()
-    # TEST_msg_ms()
+
+    ##    
+    TEST_msg_ms()
+    ##
+    TEST_serial(10000)
 
 
 

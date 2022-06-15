@@ -18,7 +18,7 @@ class axsbe_order(axsbe_base.axsbe_base):
         'OrdType',
     ]
     
-    def __init__(self, SecurityIDSource):
+    def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL):
         super(axsbe_order, self).__init__(axsbe_base.MsgType_order, SecurityIDSource)
         self.Price = 0
         self.OrderQty = 0
@@ -104,7 +104,7 @@ class axsbe_order(axsbe_base.axsbe_base):
 
 
     def __str__(self):
-        '''打印log'''
+        '''打印log，只有合法的SecurityIDSource才能被打印'''
         return f'{"%06d"%self.SecurityID} T={self.Type_str + self.Side_str}, Px={self.Price}, Qty={self.OrderQty}, Seq={self.ApplSeqNum}, @{self.TransactTime}'
         # return str((self.ApplSeqNum, self.Price, self.OrderQty, self.Side, self.OrdType, self.TransactTime))
 
@@ -142,17 +142,16 @@ class axsbe_order(axsbe_base.axsbe_base):
             '''TODO:SSE'''
         return bin
 
-    def unpack_stream(self, bytes_i:bytes):
-        '''将字节流解包成字段值，重载'''
+    def unpack_stream_body(self, bytes_body:bytes):
+        '''将消息体字节流解包成字段值，重载'''
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
-            _, _, _, self.SecurityID, self.ChannelNo, self.ApplSeqNum, _, self.Price,\
+            self.Price,\
             self.OrderQty,\
             self.Side,\
             self.OrdType,\
-            self.TransactTime, _, _ = struct.unpack("<BBH9sHQBiqBBQ2B", bytes_i)
+            self.TransactTime, _, _ = struct.unpack("<iqBBQ2B", bytes_body)
         else:
             '''TODO:SSE'''
-        self.SecurityID = int(self.SecurityID[:6])
         
     @property
     def ccode(self):

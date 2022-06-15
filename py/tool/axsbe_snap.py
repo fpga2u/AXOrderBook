@@ -84,7 +84,7 @@ class axsbe_snap(axsbe_base.axsbe_base):
 
     ]
 
-    def __init__(self, SecurityIDSource, source="AXOB"):
+    def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL, source="AXOB"):
         super(axsbe_snap, self).__init__(axsbe_base.MsgType_snap, SecurityIDSource)
         self.TradingPhaseCode = 0
         self.NumTrades = 0
@@ -293,7 +293,7 @@ class axsbe_snap(axsbe_base.axsbe_base):
         return axsbe_base.TradingPhaseMarket_str[self.TradingPhaseMarket] + ";" + axsbe_base.TradingPhaseSecurity_str[self.TradingPhaseSecurity]
 
     def __str__(self):
-        '''打印log'''
+        '''打印log，只有合法的SecurityIDSource才能被打印'''
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             s = f'''{self._source}
     {"%06d"%self.SecurityID}
@@ -434,10 +434,11 @@ class axsbe_snap(axsbe_base.axsbe_base):
         return bin
 
 
-    def unpack_stream(self, bytes_i:bytes):
-        '''将字节流解包成字段值，重载'''
+    def unpack_stream_body(self, bytes_body:bytes):
+        '''将消息体字节流解包成字段值，重载'''
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
-            unpack_token = "<BBH9sHQBqqqiiiiiiqiqii"
+            self.TradingPhaseCode = self.TransactTime #头部TransactTime字段放的是TradingPhaseCode
+            unpack_token = "<qqqiiiiiiqiqii"
             for i in range(10):
                 unpack_token += "iq"
                 self.ask[i] = price_level(0,0)
@@ -445,7 +446,6 @@ class axsbe_snap(axsbe_base.axsbe_base):
                 unpack_token += "iq"
                 self.bid[i] = price_level(0,0)
             unpack_token += "Qi"
-            _, _, _, self.SecurityID, self.ChannelNo, _, self.TradingPhaseCode, \
             self.NumTrades, \
             self.TotalVolumeTrade, \
             self.TotalValueTrade, \
@@ -500,10 +500,9 @@ class axsbe_snap(axsbe_base.axsbe_base):
             self.ask[8].Qty, \
             self.ask[9].Price, \
             self.ask[9].Qty, \
-            self.TransactTime, _ =  struct.unpack(unpack_token, bytes_i)
+            self.TransactTime, _ =  struct.unpack(unpack_token, bytes_body)
         else:
             '''TODO:SSE'''
-        self.SecurityID = int(self.SecurityID[:6])
 
     @property
     def ccode(self):

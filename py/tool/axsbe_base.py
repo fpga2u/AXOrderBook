@@ -1,7 +1,9 @@
 import abc
 import numpy as np
+import struct
 
 ## 交易所代码
+SecurityIDSource_NULL = 0
 SecurityIDSource_SSE = 101
 SecurityIDSource_SZSE = 102
 
@@ -153,9 +155,20 @@ class axsbe_base(abc.ABC):
         return np_array
 
     @abc.abstractmethod
-    def unpack_stream(self, bytes_i:bytes):
-        '''将字节流解包成字段值，派生类需重载'''
+    def unpack_stream_body(self, bytes_body:bytes):
+        '''
+        将消息体字节流解包成字段值，派生类需重载。
+        bytes_body为原始字节流[24:]
+        '''
         return NotImplemented
+
+    def unpack_stream_header(self, bytes_header:bytes):
+        self.SecurityIDSource, _, _, self.SecurityID, self.ChannelNo, self.ApplSeqNum, self.TransactTime = struct.unpack("<BBH9sHQB", bytes_header)
+        self.SecurityID = int(self.SecurityID[:6])
+
+    def unpack_stream(self, bytes_i:bytes):
+        self.unpack_stream_header(bytes_i[:24])
+        self.unpack_stream_body(bytes_i[24:])
 
     def unpack_np(self, np_i:np.ndarray):
         '''将numpy字节流解包成字段值'''

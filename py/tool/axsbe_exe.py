@@ -18,7 +18,7 @@ class axsbe_exe(axsbe_base.axsbe_base):
         'ExecType',
     ]
     
-    def __init__(self, SecurityIDSource):
+    def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL):
         super(axsbe_exe, self).__init__(axsbe_base.MsgType_exe, SecurityIDSource)
         self.BidApplSeqNum = 0xffffffffffffffff
         self.OfferApplSeqNum = 0xffffffffffffffff
@@ -81,7 +81,7 @@ class axsbe_exe(axsbe_base.axsbe_base):
             '''TODO:SSE'''
 
     def __str__(self):
-        '''打印log'''
+        '''打印log，只有合法的SecurityIDSource才能被打印'''
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             return f'{"%06d"%self.SecurityID} T={self.ExecType_str}, Px={self.LastPx}, Qty={self.LastQty}, Seq={self.ApplSeqNum}, BidSeq={self.BidApplSeqNum}, AskSeq={self.OfferApplSeqNum}, @{self.TransactTime}'
         else:
@@ -123,19 +123,17 @@ class axsbe_exe(axsbe_base.axsbe_base):
             '''TODO:SSE'''
         return bin
 
-    def unpack_stream(self, bytes_i:bytes):
-        '''将字节流解包成字段值，重载'''
+    def unpack_stream_body(self, bytes_body:bytes):
+        '''将消息体字节流解包成字段值，重载'''
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
-            _, _, _, self.SecurityID, self.ChannelNo, self.ApplSeqNum, _, \
             self.BidApplSeqNum, \
             self.OfferApplSeqNum, \
             self.LastPx, \
             self.LastQty, \
             self.ExecType, \
-            self.TransactTime, _, _, _, = struct.unpack("<BBH9sHQBQQiqBQ3B", bytes_i)
+            self.TransactTime, _, _, _, = struct.unpack("<QQiqBQ3B", bytes_body)
         else:
             '''TODO:SSE'''
-        self.SecurityID = int(self.SecurityID[:6])
 
 
     @property
