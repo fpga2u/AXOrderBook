@@ -3,6 +3,10 @@ import struct
 
 
 class axsbe_order(axsbe_base.axsbe_base):
+    '''
+    深交所:新增委托
+    上交所:新增委托或撤单
+    '''
     
     __slots__ = [
         'SecurityIDSource',

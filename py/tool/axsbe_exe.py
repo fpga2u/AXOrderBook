@@ -2,7 +2,10 @@ import tool.axsbe_base as axsbe_base
 import  struct
 
 class axsbe_exe(axsbe_base.axsbe_base):
-    
+    '''
+    深交所:成交或撤单
+    上交所:成交
+    '''
     __slots__ = [
         'SecurityIDSource',
         'MsgType',
