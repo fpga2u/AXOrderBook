@@ -44,12 +44,12 @@ TransactTime|生成时间
 字段|说明
 --|--
 SecurityID|证券代码
-ChannelNo|通道号
-ApplSeqNum|委托序列号，同一通道内的序号按顺序递增
-Price|委托价格（非限价委托时无意义）
+ChannelNo|通道号，一个通道内有数千个股，某日某只个股始的通道号是固定的，不同日是不固定的
+ApplSeqNum|委托序列号，同一通道内的序号```从1开始```按顺序递增，同一个通道的逐笔成交和逐笔委托的序号是连着的
+Price|委托价格（非限价委托时无意义，可能为0、n个9或负数）
 OrderQty|委托数量
 Side|委托方向（卖/卖/借入/借出）
-OrdType|委托类型（市价/限价/本方最优）
+OrdType|委托类型（深圳：市价/限价/本方最优；上海：新增/删除）
 TransactTime|生成时间
 
 ---
@@ -62,13 +62,13 @@ TransactTime|生成时间
 字段|说明
 --|--
 SecurityID|证券代码
-ChannelNo|通道号
-ApplSeqNum|成交序列号，同一通道内的序号按顺序递增
-BidApplSeqNum|买方序列号，与逐笔委托的序列号相同
+ChannelNo|通道号，一个通道内有数千个股，某日某只个股始的通道号是固定的，不同日是不固定的
+ApplSeqNum|成交序列号，同一通道内的序号```从1开始```按顺序递增，同一个通道的逐笔成交和逐笔委托的序号是连着的
+BidApplSeqNum|买方序列号，与逐笔委托的序列号相同（撤单时只有买方或卖方有意义，另一方为0表示不存在）
 OfferApplSeqNum|卖方序列号，与逐笔委托的序列号相同
-LastPx|成交价格（撤单时无意义）
+LastPx|成交价格（深圳：撤单时无意义）
 LastQty|成交数量
-ExecType|执行类型（已成交/已撤销）
+ExecType|执行类型（深圳：已成交/已撤销；上海：主买/主卖）
 
 ---
 
@@ -268,7 +268,7 @@ struct SBE_SSH_ord_t
     int64_t         OrderNo;
     int32_t         Price;
     int64_t         OrderQty;
-    int8_t          OrdType;
+    int8_t          OrdType;            //A – 新增委托订单；D – 删除委托订单
     int8_t          Side;
     uint32_t        OrderTime;
     uint8_t         Resv[6];
