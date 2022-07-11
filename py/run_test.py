@@ -7,7 +7,7 @@ if __name__== '__main__':
     msg.TEST_msg_SL()
 
     # ##    
-    msg.TEST_msg_ms()
+    msg.TEST_msg_ms(35000)
 
     # ##
     msg.TEST_serial(10000)

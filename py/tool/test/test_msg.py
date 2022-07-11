@@ -66,6 +66,7 @@ def TEST_serial(TEST_NB = 100):
 
     5950x + 860evo:
         sz000001:tested_exe=106434 tested_order=122359 tested_snap=5082; sum=233875; used~4.6s
+                 peak order(bid+ask)=56047; peak pxlv(bid+ask)=338
     '''
     tested_order = 0
     tested_exe = 0
