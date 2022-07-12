@@ -114,7 +114,7 @@ L2行情数据量很大，而且我们在python和FPGA HLS中都需要读入数�
 所有sbe消息都按消息头+消息体的格式定义，其中消息头是统一的结构体：
 
 ```c
-struct SBE_header_t
+struct SBE_header_t //24B
 {
     uint8_t     SecurityIDSource;   //交易所代码:102=深交所;101=上交所.
     uint8_t     MsgType;            //消息类型:111=快照行情;191=逐笔成交;192=逐笔委托.
@@ -131,7 +131,7 @@ struct SBE_header_t
 用于表示价格档位
 
 ```c
-struct price_level_t
+struct price_level_t //12B
 {
     int32_t    Price;  //价格（深交所和上交所精度不同，股票和债券精度也不同）
     int64_t    Qty;    //数量（深交所和上交所精度不同，股票和债券精度也不同）
@@ -185,7 +185,7 @@ struct SBE_SSZ_header_t
 对每个价格档位，仅保留其价格和成交量，未保留其50笔排队订单，这样减小数据量并且不影响我们用来校验重建的订单簿。
 
 ```c
-struct SBE_SSZ_instrument_snap_t
+struct SBE_SSZ_instrument_snap_t //352B
 {
     struct SBE_SSZ_header_t  Header;
 
@@ -215,7 +215,7 @@ struct SBE_SSZ_instrument_snap_t
 > #### 深交所逐笔委托
 
 ```c
-struct SBE_SSZ_ord_t
+struct SBE_SSZ_ord_t //48B
 {
     struct SBE_SSZ_header_t  Header;
 
@@ -231,7 +231,7 @@ struct SBE_SSZ_ord_t
 > #### 深交所逐笔成交
 
 ```c
-struct SBE_SSZ_exe_t
+struct SBE_SSZ_exe_t //64B
 {
     struct SBE_SSZ_header_t  Header;
 
@@ -267,7 +267,7 @@ typedef union TradingPhaseCodePack_t
     } unpack;
 }TradingPhaseCodePack_t;
 
-struct SBE_SSH_instrument_snap_t
+struct SBE_SSH_instrument_snap_t  // 336B
 {
     struct SBE_SSH_header_t  Header;    //msgType=111
 
@@ -294,7 +294,7 @@ struct SBE_SSH_instrument_snap_t
 > #### 上交所逐笔委托
 
 ```c
-struct SBE_SSH_ord_t
+struct SBE_SSH_ord_t  //56B
 {
     struct SBE_SSH_header_t  Header;    //msgType=192
 
@@ -311,7 +311,7 @@ struct SBE_SSH_ord_t
 > #### 上交所逐笔成交
 
 ```c
-struct SBE_SSH_exe_t
+struct SBE_SSH_exe_t  //64B
 {
     struct SBE_SSH_header_t  Header;    //msgType=191
 
