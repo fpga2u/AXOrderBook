@@ -109,6 +109,10 @@ ExecType|执行类型（深圳：已成交/已撤销；上海：主买/主卖）
 
 L2行情数据量很大，而且我们在python和FPGA HLS中都需要读入数据，为便于开发，我们将所需的三种消息重新进行编码：将消息映射成C语言结构体，并按x86小端模式存储字段值。这种编码模式我们称为简单二进制编码（AX-simple-binary-encoding）。
 
+以下以C代码说明AX-SBE的结构和字段意义。
+
+注释中的Nx(y)表示相应的类型实际为浮点数类型，其中 x 表示整数与小数总计位数，不包括小数点， y 表示小数位数，比如对于 Price,N13(4) 类型， Int64 值 186400 表示的价格为 18.6400。
+
 > sbe-header
 
 所有sbe消息都按消息头+消息体的格式定义，其中消息头是统一的结构体：
@@ -189,27 +193,29 @@ struct SBE_SSZ_instrument_snap_t //352B
 {
     struct SBE_SSZ_header_t  Header;
 
-    int64_t         NumTrades;
-    int64_t         TotalVolumeTrade;
-    int64_t         TotalValueTrade;
-    int32_t         PrevClosePx;
+    int64_t         NumTrades;          //成交笔数
+    int64_t         TotalVolumeTrade;   //成交总量, Qty,N15(2)
+    int64_t         TotalValueTrade;    //成交总金额, Amt,N18(4)
+    int32_t         PrevClosePx;        //昨收价, Price,N13(4)
 
-    int32_t         LastPx;
-    int32_t         OpenPx;
-    int32_t         HighPx;
-    int32_t         LowPx;
+    int32_t         LastPx;             //最近价, MDEntryPx,N18(6)
+    int32_t         OpenPx;             //开盘价, MDEntryPx,N18(6)
+    int32_t         HighPx;             //最高价, MDEntryPx,N18(6)
+    int32_t         LowPx;              //最低价, MDEntryPx,N18(6)
 
-    int32_t         BidWeightPx;
-    int64_t         BidWeightSize;
-    int32_t         AskWeightPx;
-    int64_t         AskWeightSize;
-    int32_t         UpLimitPx;
-    int32_t         DnLimitPx;
-    struct price_level_t   BidLevel[10];
-    struct price_level_t   AskLevel[10];
-    uint64_t         TransactTime;
+    int32_t         BidWeightPx;        //买方委托数量加权平均价, MDEntryPx,N18(6)
+    int64_t         BidWeightSize;      //买方委托总数量, Qty,N15(2)
+    int32_t         AskWeightPx;        //卖方委托数量加权平均价, MDEntryPx,N18(6)
+    int64_t         AskWeightSize;      //卖方委托总数量, Qty,N15(2)
+    int32_t         UpLimitPx;          //涨停价, MDEntryPx,N18(6) *
+    int32_t         DnLimitPx;          //跌停价, MDEntryPx,N18(6) **
+    struct price_level_t   BidLevel[10];//十档买盘，价格 MDEntryPx,N18(6)，数量 Qty,N15(2)
+    struct price_level_t   AskLevel[10];//十档卖盘，价格 MDEntryPx,N18(6)，数量 Qty,N15(2)
+    uint64_t         TransactTime;      //YYYYMMDDHHMMSSsss(毫秒)
     uint8_t          Resv[4];
 };
+// *  涨停价取值为 999999999.9999 表示无涨停价格限制。
+// ** 跌停价对于价格可以为负数的证券，取值为-999999999.9999 表示无跌停价格限制；对于价格不可以为负数的证券，值为证券的价格档位表示无跌停价格限制，比如对于股票填写 0.01。
 ```
 
 > #### 深交所逐笔委托
@@ -219,11 +225,11 @@ struct SBE_SSZ_ord_t //48B
 {
     struct SBE_SSZ_header_t  Header;
 
-    int32_t         Price;
-    int64_t         OrderQty;
-    int8_t          Side;
-    int8_t          OrdType;
-    uint64_t        TransactTime;
+    int32_t         Price;          //委托价格, Price,N13(4)
+    int64_t         OrderQty;       //委托数量, Qty,N15(2)
+    int8_t          Side;           //买卖方向: '1'=买, '2'=卖, 'G'=借入, 'F'=出借
+    int8_t          OrdType;        //订单类别: '1'=市价, '2'=限价, 'U'=本方最优
+    uint64_t        TransactTime;   //YYYYMMDDHHMMSSsss(毫秒)
     uint8_t         Resv[2];
 };
 ```
@@ -235,14 +241,15 @@ struct SBE_SSZ_exe_t //64B
 {
     struct SBE_SSZ_header_t  Header;
 
-    int64_t         BidApplSeqNum;
-    int64_t         OfferApplSeqNum;
-    int32_t         LastPx;
-    int64_t         LastQty;
-    int8_t          ExecType;
-    uint64_t        TransactTime;
+    int64_t         BidApplSeqNum;  //买方委托索引 *
+    int64_t         OfferApplSeqNum;//卖方委托索引 *
+    int32_t         LastPx;         //成交价格, Price,N13(4)
+    int64_t         LastQty;        //成交数量, Qty,N15(2)
+    int8_t          ExecType;       //成交类别: '4'=撤销, 'F'=成交
+    uint64_t        TransactTime;   //YYYYMMDDHHMMSSsss(毫秒)
     uint8_t         Resv[3];
 };
+// * 委托索引从 1 开始计数， 0 表示无对应委托
 ```
 
 ---
