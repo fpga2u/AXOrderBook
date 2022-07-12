@@ -189,9 +189,10 @@ struct SBE_SSZ_header_t
 对每个价格档位，仅保留其价格和成交量，未保留其50笔排队订单，这样减小数据量并且不影响我们用来校验重建的订单簿。
 
 ```c
+//对应深交所协议频道代码为股票的消息类型300111
 struct SBE_SSZ_instrument_snap_t //352B
 {
-    struct SBE_SSZ_header_t  Header;
+    struct SBE_SSZ_header_t  Header;    //msgType=111
 
     int64_t         NumTrades;          //成交笔数
     int64_t         TotalVolumeTrade;   //成交总量, Qty,N15(2)
@@ -221,9 +222,10 @@ struct SBE_SSZ_instrument_snap_t //352B
 > #### 深交所逐笔委托
 
 ```c
+//对应深交所协议消息类型300192
 struct SBE_SSZ_ord_t //48B
 {
-    struct SBE_SSZ_header_t  Header;
+    struct SBE_SSZ_header_t  Header;    //msgType=192
 
     int32_t         Price;          //委托价格, Price,N13(4)
     int64_t         OrderQty;       //委托数量, Qty,N15(2)
@@ -237,9 +239,10 @@ struct SBE_SSZ_ord_t //48B
 > #### 深交所逐笔成交
 
 ```c
+//对应深交所协议消息类型300191
 struct SBE_SSZ_exe_t //64B
 {
-    struct SBE_SSZ_header_t  Header;
+    struct SBE_SSZ_header_t  Header;    //msgType=191
 
     int64_t         BidApplSeqNum;  //买方委托索引 *
     int64_t         OfferApplSeqNum;//卖方委托索引 *
@@ -274,25 +277,26 @@ typedef union TradingPhaseCodePack_t
     } unpack;
 }TradingPhaseCodePack_t;
 
+//对应上交所消息类型UA3202
 struct SBE_SSH_instrument_snap_t  // 336B
 {
     struct SBE_SSH_header_t  Header;    //msgType=111
 
-    int32_t         NumTrades;
-    int64_t         TotalVolumeTrade;
-    int64_t         TotalValueTrade;
-    int32_t         PrevClosePx;
-    int32_t         LastPx;
-    int32_t         OpenPx;
-    int32_t         HighPx;
-    int32_t         LowPx;
-    int32_t         BidWeightPx;
-    int64_t         BidWeightSize;
-    int32_t         AskWeightPx;
-    int64_t         AskWeightSize;
-    uint32_t        DataTimeStamp;
-    struct price_level_t   BidLevel[10];
-    struct price_level_t   AskLevel[10];
+    int32_t         NumTrades;          //成交笔数
+    int64_t         TotalVolumeTrade;   //成交总量, 3位小数
+    int64_t         TotalValueTrade;    //成交总金额, 5位小数
+    int32_t         PrevClosePx;        //昨收盘价格, 3位小数
+    int32_t         LastPx;             //现价格, 3位小数
+    int32_t         OpenPx;             //开盘价格, 3位小数
+    int32_t         HighPx;             //最高价格, 3位小数
+    int32_t         LowPx;              //最低价格, 3位小数
+    int32_t         BidWeightPx;        //加权平均委买价格, 3位小数
+    int64_t         BidWeightSize;      //委托买入总量, 3位小数
+    int32_t         AskWeightPx;        //加权平均委卖价格, 3位小数
+    int64_t         AskWeightSize;      //委托卖出总量, 3位小数
+    uint32_t        DataTimeStamp;      //最新订单时间(秒), 143025表示14:30:25
+    struct price_level_t   BidLevel[10];//价格3位小数; 申买量3位小数
+    struct price_level_t   AskLevel[10];//价格3位小数; 申卖量3位小数
     TradingPhaseCodePack_t TradingPhaseCodePack;
     uint8_t          Resv[3];
 };
@@ -301,35 +305,40 @@ struct SBE_SSH_instrument_snap_t  // 336B
 > #### 上交所逐笔委托
 
 ```c
+//对应上交所消息类型UA5801
 struct SBE_SSH_ord_t  //56B
 {
     struct SBE_SSH_header_t  Header;    //msgType=192
 
-    int64_t         OrderNo;
-    int32_t         Price;
-    int64_t         OrderQty;
-    int8_t          OrdType;            //A – 新增委托订单；D – 删除委托订单
-    int8_t          Side;
-    uint32_t        OrderTime;
+    int64_t         OrderNo;            //原始订单号 *
+    int32_t         Price;              //委托价格（元）, 3位小数
+    int64_t         OrderQty;           //委托数量, 3位小数
+    int8_t          OrdType;            //订单类型: 'A'=新增委托订单, 'D'=删除委托订单
+    int8_t          Side;               //买卖单标志: 'B'=买单, 'S'=卖单
+    uint32_t        OrderTime;          //委托时间(百分之一秒), 14302506表示14:30:25.06
     uint8_t         Resv[6];
 };
+// * 竞价逐笔委托消息中的原始订单号(OrderNo)与竞价逐笔成交消息中买方订单号(TradeBuyNo)或卖方订单号(TradeSellNo)相对应。
 ```
 
 > #### 上交所逐笔成交
 
 ```c
+//对应上交所消息类型UA3201
 struct SBE_SSH_exe_t  //64B
 {
     struct SBE_SSH_header_t  Header;    //msgType=191
 
-    int64_t         TradeBuyNo;
-    int64_t         TradeSellNo;
-    int32_t         LastPx;
-    int64_t         LastQty;
-    int8_t          TradeBSFlag;
-    uint32_t        TradeTime;
+    int64_t         TradeBuyNo;         //买方订单号
+    int64_t         TradeSellNo;        //卖方订单号
+    int32_t         LastPx;             //成交价格（元）, 3位小数
+    int64_t         LastQty;            //成交数量, 3位小数 *
+    int8_t          TradeBSFlag;        //内外盘标志: 'B'=外盘，主动买; 'S'=内盘，主动卖; 'N'=未知 **
+    uint32_t        TradeTime;          //委托时间(百分之一秒), 14302506表示14:30:25.06
     uint8_t         Resv[7];
 };
+// *  股票单位：股; 债券分销单位：千元面额; 基金单位：份
+// ** 目前看集合竞价结束时的成交标志为'N'
 ```
 
 ## 上交所、深交所主要差异
