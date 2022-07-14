@@ -91,7 +91,7 @@ class axsbe_base(abc.ABC):
             ss = (t % (100000))   // 1000
             mm = (t % (10000000)) // 100000
             hh = (t )             // 10000000
-            self._tick = f"{hh:02d}:{mm:02d}:{ss:02d}.{ms:09d}"
+            self._tick = f"{hh:02d}:{mm:02d}:{ss:02d}.{ms:03d}"
             self._ms = ms + ss * 1000 + mm * 60 * 1000 + hh * 3600 * 1000
         return self._tick
         

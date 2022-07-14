@@ -4,6 +4,8 @@
 
 在Xilinux Alveo U50上实现单板512只~4096只个股的订单簿重建。
 
+上交所和深交所消息格式差异主要在
+
 ## 设计约束
 
 >### Xilinux Alveo U50资源
@@ -12,8 +14,8 @@
 --|--|--
 LUT|872K
 REG|1473K
-36Kb BRAM|1344|72b*512 / 
-288Kb URAM|640|72b*4096
+36Kb BRAM|1344|32K x 1, 16K x 2, 8K x 4, 4K x 9, 2K x 18, 1K x 36, or 512 x 72, 16K x 1, 8K x 2, 4K x 4, 2K x 9, 1K x 18 or 512 x 36
+288Kb URAM|640|4K x 72
 HBM2|4GB x2, 256B位宽
 
 >### 宏单元

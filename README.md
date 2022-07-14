@@ -46,7 +46,7 @@ A股交易所L2行情相关背景参考：[交易所L2行情与撮合原理](/do
 
 * windows 10 / Centos 8 stream
 
-* Anaconda + python 3.8.11
+* Anaconda + python 3.8.10
 
 ---
 
