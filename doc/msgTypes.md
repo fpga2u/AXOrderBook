@@ -371,7 +371,7 @@ struct SBE_SSH_exe_t  //64B
       1|'1' |表示此产品全天停牌
       other|' '(空格)|无意义，当成此产品可正常交易处理
 
-  * 上交所，消息头中TradingPhase
+  * 上交所，消息头中TradingPhase，映射自的TradingPhaseCode字段的第1位(char[0])
     AX-SBE值|交易所值|说明
     --|--|--
     0|'S'|表示启动（开市前）时段
@@ -386,7 +386,7 @@ struct SBE_SSH_exe_t  //64B
     8|'V'|表示波动性中断
 
   * 上交所，消息体中TradingPhaseCodePack的子字段
-    * TradingPhaseCodePack.unpack.B1
+    * TradingPhaseCodePack.unpack.B1，映射自TradingPhaseCode字段的第2位(char[1])
       AX-SBE值|交易所值|说明
       --|--|--
       0|'0'|表示此产品不可正常交易
@@ -394,13 +394,27 @@ struct SBE_SSH_exe_t  //64B
       other|' '(空格)|无意义，当成此产品可正常交易处理
 
     * TradingPhaseCodePack.unpack.B2
-      AX-SBE值|交易所值|说明
-      --|--|--
-      0|'0'|表示未上市
-      1|'1'|表示已上市
-      other|' '(空格)|无意义
+      * 当为股票时，映射自 MDStreamID= MD002/MD003/MD004的TradingPhaseCode字段的第3位(char[2])
+        AX-SBE值|交易所值|说明
+        --|--|--
+        0|'0'|表示未上市
+        1|'1'|表示已上市
+        other|' '(空格)|无意义
 
-    * TradingPhaseCodePack.unpack.B3
+      * 当为期权时，映射自 MDStreamID= MD301的TradingPhaseCode字段的第3位(char[2])
+        AX-SBE值|交易所值|说明
+        --|--|--
+        0|'0'|表示不限制开仓
+        1|'1'|表示限制备兑开仓
+        2|'2'|表示卖出开仓
+        3|'3'|表示限制卖出开仓、备兑开仓
+        4|'4'|表示限制买入开仓
+        5|'5'|表示限制买入开仓、备兑开仓
+        6|'6'|表示限制买入开仓、卖出开仓
+        7|'7'|表示限制买入开仓、卖出开仓、备兑开仓
+        other|未定义|无意义
+
+    * TradingPhaseCodePack.unpack.B3，映射自TradingPhaseCode字段的第4位(char[3])
       AX-SBE值|交易所值|说明
       --|--|--
       0|'0'|表示此产品在当前时段不接受订单申报
