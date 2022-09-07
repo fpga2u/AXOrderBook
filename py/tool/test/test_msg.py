@@ -1,5 +1,5 @@
 from tool.msg_util import *
-
+import os
 
 def TEST_msg_byte_stream():
     ## test: byte_stream
@@ -104,3 +104,76 @@ def TEST_serial(TEST_NB = 100):
     return
 
 
+
+@timeit
+def TEST_msg_ms_filt(source_log, securityID, read_nb=0, print_nb = 100):
+    '''
+    打印消息时戳，指定证券代码
+    
+    '''
+    if not os.path.exists(source_log):
+        raise f"{source_log} not exists"
+
+    f = open("log/TEST_msg_ms_filt.log", "w")
+
+    securityID = int(securityID)
+
+    pn = 0
+    rn = 0
+    for msg in axsbe_file(source_log):
+        rn += 1
+        if read_nb>0:
+            if rn >= read_nb:
+                break
+
+        if msg.SecurityID != securityID:
+            continue
+        # print(msg.ms)
+        if msg.MsgType==axsbe_base.MsgType_order:
+            f.write(f"{rn:6d}\t{securityID:06d}\torder {msg.ms}\t{msg.tick}\n")
+        elif msg.MsgType==axsbe_base.MsgType_exe:
+            f.write(f"{rn:6d}\t{securityID:06d}\texe   {msg.ms}\t{msg.tick}\n")
+        else:
+            f.write(f"{rn:6d}\t{securityID:06d}\tsnap  {msg.ms}\t{msg.tick}\n")
+        pn += 1
+        if pn>=print_nb:
+            break
+
+    f.close()
+    print("TEST_msg_ms_filt done")
+    return
+
+
+@timeit
+def TEST_msg_text(source_log, securityID, read_nb=0, print_nb = 100):
+    '''
+    打印消息文本，指定证券代码
+    
+    '''
+    if not os.path.exists(source_log):
+        raise f"{source_log} not exists"
+
+    f = open("log/TEST_msg_text.log", "w")
+
+    securityID = int(securityID)
+
+    pn = 0
+    rn = 0
+    for msg in axsbe_file(source_log):
+        rn += 1
+        if read_nb>0:
+            if rn >= read_nb:
+                break
+
+        if msg.SecurityID != securityID:
+            continue
+        # print(msg.ms)
+        f.write(f"{rn:6d}\n")
+        f.write(str(msg))
+        pn += 1
+        if pn>=print_nb:
+            break
+
+    f.close()
+    print("TEST_msg_text done")
+    return
