@@ -1,4 +1,5 @@
 import tool.axsbe_base as axsbe_base
+from tool.axsbe_base import TPM, TPI
 import struct
 
 class price_level:
@@ -253,42 +254,56 @@ class axsbe_snap(axsbe_base.axsbe_base):
 
     @property
     def TradingPhaseMarket(self):
-        Code0 = self.TradingPhaseCode%16
+        if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
+            Code0 = self.TradingPhaseCode%16
 
-        if Code0==0:
-            return axsbe_base.TP_Starting
-        elif Code0==1:
-            return axsbe_base.TP_OpenCall
-        elif Code0==2:
-            return axsbe_base.TP_Trading
-        elif Code0==3:
-            return axsbe_base.TP_Breaking
-        elif Code0==4:
-            return axsbe_base.TP_CloseCall
-        elif Code0==5:
-            return axsbe_base.TP_Ending
-        elif Code0==6:
-            return axsbe_base.TP_HangingUp
-        elif Code0==7:
-            return axsbe_base.TP_AfterTrading
-        elif Code0==8:
-            return axsbe_base.TP_VolatilityBreaking
+            if Code0==0:
+                return TPM.Starting
+            elif Code0==1:
+                return TPM.OpenCall
+            elif Code0==2:
+                if self.HHMMSSms < 120000000:
+                    return TPM.AMTrading
+                else:
+                    return TPM.PMTrading
+            elif Code0==3:
+                if self.HHMMSSms < 93100000:
+                    return TPM.PreTradingBreaking
+                elif self.HHMMSSms < 133100000:
+                    return TPM.Breaking
+                else:
+                    return TPM.AfterCloseCallBreaking
+            elif Code0==4:
+                return TPM.CloseCall
+            elif Code0==5:
+                return TPM.Ending
+            elif Code0==6:
+                return TPM.HangingUp
+            elif Code0==7:
+                return TPM.AfterCloseTrading
+            elif Code0==8:
+                return TPM.VolatilityBreaking
+            else:
+                return TPM.Unknown
         else:
-            return None
+            return TPM.Unknown
 
     @property
     def TradingPhaseSecurity(self):
-        Code1 = self.TradingPhaseCode>>4
-        if Code1==0:
-            return axsbe_base.TP_Normal
-        elif Code1==1:
-            return axsbe_base.TP_NoTrade
+        if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
+            Code1 = self.TradingPhaseCode>>4
+            if Code1==0:
+                return TPI.Normal
+            elif Code1==1:
+                return TPI.NoTrade
+            else:
+                return TPI.Unknown
         else:
-            return None
+            return TPI.Unknown
 
     @property
     def TradingPhase_str(self):
-        return axsbe_base.TradingPhaseMarket_str[self.TradingPhaseMarket] + ";" + axsbe_base.TradingPhaseSecurity_str[self.TradingPhaseSecurity]
+        return TPM.str(self.TradingPhaseMarket) + ";" + TPI.str(self.TradingPhaseSecurity)
 
     def __str__(self):
         '''打印log，只有合法的SecurityIDSource才能被打印'''

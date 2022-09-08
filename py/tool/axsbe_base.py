@@ -1,6 +1,7 @@
 import abc
 import numpy as np
 import struct
+from enum import Enum
 
 ## 交易所代码
 SecurityIDSource_NULL = 0
@@ -13,39 +14,92 @@ MsgType_order = 192
 MsgType_snap  = 111
 
 
-## TradingPhase 交易阶段代码 Code0
-TP_Starting = 'S'  #启动（开市前）
-TP_OpenCall = 'O'  #开盘集合竞价
-TP_preTradingBreaking = 'p'    #集合竞价与连续竞价之间
-TP_Trading = 'T'   #连续竞价上半场
-TP_Breaking = 'B'  #休市
-TP_CloseCall = 'C' #收盘集合竞价
-TP_Ending = 'E'    #已闭市
-TP_HangingUp = 'H' #临时停牌
-TP_AfterTrading = 'A'  #盘后交易
-TP_VolatilityBreaking = 'V'    #波动性中断
-TradingPhaseMarket_str = {
-    TP_Starting : '启动',
-    TP_OpenCall : '开盘集合竞价',
-    TP_preTradingBreaking : '集合竞价与连续竞价之间',
-    TP_Trading : '连续竞价',
-    TP_Breaking : '休市',
-    TP_CloseCall : '收盘集合竞价',
-    TP_Ending : '已闭市',
-    TP_HangingUp : '临时停牌',
-    TP_AfterTrading : '盘后交易',
-    TP_VolatilityBreaking : '波动性中断',
-    None : '无意义',
-}
+# ## TradingPhase 交易阶段代码 Code0
+# TP_Starting = 'S'  #启动（开市前）
+# TP_OpenCall = 'O'  #开盘集合竞价
+# TP_preTradingBreaking = 'p'    #集合竞价与连续竞价之间
+# TP_Trading = 'T'   #连续竞价上半场
+# TP_Breaking = 'B'  #休市
+# TP_CloseCall = 'C' #收盘集合竞价
+# TP_Ending = 'E'    #已闭市
+# TP_HangingUp = 'H' #临时停牌
+# TP_AfterTrading = 'A'  #盘后交易
+# TP_VolatilityBreaking = 'V'    #波动性中断
+# TradingPhaseMarket_str = {
+#     TP_Starting : '启动',
+#     TP_OpenCall : '开盘集合竞价',
+#     TP_preTradingBreaking : '集合竞价与连续竞价之间',
+#     TP_Trading : '连续竞价',
+#     TP_Breaking : '休市',
+#     TP_CloseCall : '收盘集合竞价',
+#     TP_Ending : '已闭市',
+#     TP_HangingUp : '临时停牌',
+#     TP_AfterTrading : '盘后交易',
+#     TP_VolatilityBreaking : '波动性中断',
+#     None : '无意义',
+# }
 
-## TradingPhase 交易阶段代码 Code1
-TP_Normal = 0
-TP_NoTrade = 1
-TradingPhaseSecurity_str = {
-    TP_Normal : '正常',
-    TP_NoTrade : '全天停牌',
-    None : '无意义',
-}
+# ## TradingPhase 交易阶段代码 Code1
+# TP_Normal = 0
+# TP_NoTrade = 1
+# TradingPhaseSecurity_str = {
+#     TP_Normal : '正常',
+#     TP_NoTrade : '全天停牌',
+#     None : '无意义',
+# }
+
+class TPM():
+    # TradingPhase of Market，市场交易阶段内部编码
+    Starting = 0
+    OpenCall = 1
+    PreTradingBreaking = 2
+    AMTrading = 3
+    Breaking = 4
+    PMTrading = 5
+    CloseCall = 6
+    AfterCloseCallBreaking = 7
+    AfterCloseTrading = 8
+    Ending = 9
+    VolatilityBreaking = 10
+    HangingUp = 11
+    Fusing = 12
+
+    Unknown = -1
+
+    TPM_str = {
+        Starting : '启动',
+        OpenCall : '开盘集合竞价',
+        PreTradingBreaking : '开盘集合竞价后休市',
+        AMTrading : '连续竞价[上午]',
+        Breaking : '中午休市',
+        PMTrading : '连续竞价[下午]',
+        CloseCall : '收盘集合竞价',
+        AfterCloseCallBreaking : '收盘集合竞价后休市',
+        AfterCloseTrading : '盘后交易',
+        Ending : '已闭市',
+        VolatilityBreaking : '波动性中断',
+        HangingUp : '停牌',
+        Fusing : '熔断时段',
+        Unknown : '未知',
+    }
+
+    def str(tpm):
+        return TPM.TPM_str[tpm]
+
+class TPI():
+    # TradingPhase of Instrument，标的交易状态内部编码
+    Normal = 0
+    NoTrade = 1
+
+    Unknown = -1
+
+    TPI_str = {
+        Normal : '正常交易',
+        NoTrade : '不可交易',
+        Unknown : '未知',
+    }
+    def str(tpm):
+        return TPI.TPI_str[tpm]
 
 
 class axsbe_base(abc.ABC):
@@ -59,11 +113,12 @@ class axsbe_base(abc.ABC):
         self.SecurityID = -1
         self.ChannelNo = 0xffff
         self.ApplSeqNum = 0xffffffffffffffff
-        self.TransactTime = 0
+        self.TransactTime = 0   #上海snap时戳精度秒、逐笔精度10毫秒，在构造时统一到毫秒？
 
         self._tick = None
         self._HHMMSSms = None
         self._ms = None
+
 
     @property
     def ms(self):
@@ -74,7 +129,7 @@ class axsbe_base(abc.ABC):
 
     @property
     def HHMMSSms(self):
-        '''日内时间戳，可比较'''
+        '''日内时间戳，可比较; ms只有3位'''
         if self._HHMMSSms is None:
             if self.SecurityIDSource == SecurityIDSource_SZSE:
                 self._HHMMSSms = self.TransactTime % 1000000000
@@ -112,25 +167,33 @@ class axsbe_base(abc.ABC):
         '''
         t = self.HHMMSSms
         if t < 91500000:
-            return TP_Starting
+            return TPM.Starting
         elif t < 92500000:
-            return TP_OpenCall
+            return TPM.OpenCall
         elif t < 93000000:
-            return TP_preTradingBreaking
+            return TPM.PreTradingBreaking
         elif t < 113000000:
-            return TP_Trading
+            return TPM.AMTrading
         elif t < 130000000:
-            return TP_Breaking
+            return TPM.Breaking
         elif t < 145700000:
-            return TP_Trading
+            return TPM.PMTrading
         elif t < 150000000:
-            return TP_CloseCall
+            return TPM.CloseCall
         else:
-            return TP_Ending
+            if self.SecurityIDSource == SecurityIDSource_SZSE and self.SecurityID>=300000 and self.SecurityID<=309999:
+                if t < 150500000:
+                    return TPM.AfterCloseCallBreaking
+                elif t < 153000000:
+                    return TPM.AfterCloseTrading
+                else:
+                    return TPM.Ending
+            else:
+                return TPM.Ending
 
     @property
     def TradingPhase_str(self):
-        return TradingPhaseMarket_str(self.TradingPhaseMarket)
+        return TPM.str(self.TradingPhaseMarket)
 
     @property
     @abc.abstractmethod
@@ -162,6 +225,11 @@ class axsbe_base(abc.ABC):
         '''将numpy字节流解包成字段值'''
         bytes_i = np_i.tobytes()
         self.unpack_stream(bytes_i)
+
+        # 清除内部缓存
+        self._tick = None
+        self._HHMMSSms = None
+        self._ms = None
         
     @property
     @abc.abstractmethod
