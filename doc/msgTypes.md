@@ -286,7 +286,7 @@ struct SBE_SSH_instrument_snap_t  // 336B
     int64_t         TotalVolumeTrade;   //成交总量, 3位小数
     int64_t         TotalValueTrade;    //成交总金额, 5位小数
     int32_t         PrevClosePx;        //昨收盘价格, 3位小数
-    int32_t         LastPx;             //现价格, 3位小数
+    int32_t         LastPx;             //成交价格, 3位小数
     int32_t         OpenPx;             //开盘价格, 3位小数
     int32_t         HighPx;             //最高价格, 3位小数
     int32_t         LowPx;              //最低价格, 3位小数
