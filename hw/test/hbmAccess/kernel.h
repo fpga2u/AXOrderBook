@@ -13,12 +13,18 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+#include <ap_int.h>
 
+#ifndef HBM_ENTRIES
+#define HBM_ENTRIES (((256*8/512/2) << 20))   //单地址512b，单bank 256MB容量=256*8*2^20bit，即4M个地址
+#endif
 
-
+#ifndef BLENGTH
+#define BLENGTH 1 //burst 长度，即连续进行多少次访问(每次512b)
+#endif
 
 #ifndef DATA_ELEMENTS
-#define DATA_ELEMENTS 16
+#define DATA_ELEMENTS 16//一次访问512bit / int为32bit = 16
 #endif
 const unsigned int VDATA_SIZE = DATA_ELEMENTS;
 

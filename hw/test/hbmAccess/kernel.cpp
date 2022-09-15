@@ -17,9 +17,7 @@
 
 
 #include "kernel.h"
-#include <ap_int.h>
 #include <stdio.h>
-
 
 // TRIPCOUNT identifier
 const unsigned int c_total = 1024/VDATA_SIZE;
@@ -70,7 +68,26 @@ unsigned int gen_align_address_mask(unsigned int bl) {
     else if (bl==8  ) return (0xfffffff8); // ... 8 words
     else if (bl==16 ) return (0xfffffff0); // ... 16 words
     else if (bl==32 ) return (0xffffffe0); // ... 32 words
-    else              return (0xffffff00); // 64 words
+    else              return (0xffffff00); // ... 64 words
+}
+
+void ioData2vData(ap_uint<512>* ioData, v_dt* vData)
+{
+#pragma HLS INLINE
+    for (int i=0; i<VDATA_SIZE; ++i){
+    #pragma HLS UNROLL
+        vData->data[i] = ioData->range(i*32+31, i*32); // vData->data[0] = ioData->range(31, 0);
+    }
+}
+
+
+void vData2ioData(v_dt* vData, ap_uint<512>* ioData)
+{
+#pragma HLS INLINE
+    for (int i=0; i<VDATA_SIZE; ++i){
+    #pragma HLS UNROLL
+        ioData->range(i*32+31, i*32) = vData->data[i]; // v->data[0] = in->range(31, 0);
+    }
 }
 
 /*
@@ -83,21 +100,22 @@ unsigned int gen_align_address_mask(unsigned int bl) {
 */
 extern "C"
 void vadd(
-        const v_dt *in1,               // Read-Only Vector 1
-        const v_dt *in2,               // Read-Only Vector 2
-        v_dt *out,                     // Output Result for ADD
-        const unsigned int dsize,       // Size in integer
+        const ap_uint<512> in1[HBM_ENTRIES], // Read-Only Vector 1
+        const ap_uint<512> in2[HBM_ENTRIES], // Read-Only Vector 2
+        ap_uint<512> out[HBM_ENTRIES],      // Output Result for ADD
+        const unsigned int dsize,        // Size in integer, 总共访问多少个int；需为16的整数倍，因为每次读写HBM按512b为单位；一个bank = 64M 个int。
         const unsigned int kernel_loop,  // Running the same kernel operations kernel_loop times
-        bool addRandom                 // Address Pattern is random
+        bool addRandom                   // Address Pattern is random
         ) {
 #pragma HLS INTERFACE m_axi port = in1 offset = slave bundle = gmem0 latency = 300 num_read_outstanding = 128 num_write_outstanding=1
 #pragma HLS INTERFACE m_axi port = in2 offset = slave bundle = gmem1 latency = 300 num_read_outstanding = 128 num_write_outstanding=1
 #pragma HLS INTERFACE m_axi port = out offset = slave bundle = gmem2 latency = 50  num_write_outstanding= 128 num_read_outstanding=1
+#pragma HLS INTERFACE ap_ctrl_chain port=return
 
     // dsize is a multiple of 16, even 1024, VDATA_SIZE is power of 2
-    unsigned int vSize = dsize / VDATA_SIZE;
+    unsigned int vSize = dsize / VDATA_SIZE;    //访问HBM次数，若为一个bank，则 64M / 16 = 4M
     unsigned int in_index=0;
-    unsigned int bl = BLENGTH;
+    unsigned int bl = BLENGTH;                  //burst 长度，即连续进行多少次访问(每次512b)
     v_dt tmpOutAdd;
 
     // we separate the code between random access and sequential access
@@ -113,29 +131,37 @@ void vadd(
             //Per iteration of this loop perform vSize vector addition
     _vSizeLoop1:
             for (unsigned int i = 0; i < vSize/bl; i++) {
-		#pragma HLS PIPELINE 
+		        #pragma HLS PIPELINE 
                 #pragma HLS LOOP_TRIPCOUNT min = VDATA_SIZE max = VDATA_SIZE
                 in_index = i;
 
     _blLoop1:
                 for (unsigned int ii = 0; ii < bl; ii++) {
-		   //#pragma HLS UNROLL
-                   v_dt tmpIn1 = in1[in_index*bl+ii];
-                   v_dt tmpIn2 = in2[in_index*bl+ii];
+		            //#pragma HLS UNROLL
+                   v_dt tmpIn1;
+                   v_dt tmpIn2;
+
+                   ap_uint<512> inData1 = in1[in_index*bl+ii];
+                   ap_uint<512> inData2 = in2[in_index*bl+ii];
+
+                   ioData2vData(&inData1, &tmpIn1);
+                   ioData2vData(&inData2, &tmpIn2);
    
     _vecLoop1: // will be unrolled because parent loop is pipelined
                    for (int k = 0; k < VDATA_SIZE; k++) {
                        tmpOutAdd.data[k] = tmpIn1.data[k] + tmpIn2.data[k];
                    }
 
-                   out[in_index*bl+ii] = tmpOutAdd;
-		}
+                   ap_uint<512> tmpOut;
+                   vData2ioData(&tmpOutAdd, &tmpOut);
+                   out[in_index*bl+ii] = tmpOut;
+		        }
             }
         }
     } else {
         // random access
         unsigned int randvalue=0x12345678; // initialize to non-zero value!
-	unsigned int index_clip_mask = gen_clip_mask(vSize);
+	    unsigned int index_clip_mask = gen_clip_mask(vSize);
         unsigned int index_align_mask = gen_align_address_mask(BLENGTH);
     RandLoop:
         for (unsigned int count = 0; count < kernel_loop; count++) {
@@ -143,7 +169,7 @@ void vadd(
             //Per iteration of this loop perform vSize vector addition
     _vSizeLoop2:
             for (unsigned int i = 0; i < vSize/bl; i++) {
-		#pragma HLS PIPELINE 
+		        #pragma HLS PIPELINE 
                 #pragma HLS LOOP_TRIPCOUNT min = VDATA_SIZE max = VDATA_SIZE
                 randvalue = next_lfsr32(randvalue); // 32 bits
                 // index_clip_mask is less than vSize by construct, 
@@ -157,17 +183,25 @@ void vadd(
 
     _blLoop2:
                 for (unsigned int ii = 0; ii < bl; ii++) {
-		   //#pragma HLS UNROLL
-                   v_dt tmpIn1 = in1[in_index+ii];
-                   v_dt tmpIn2 = in2[in_index+ii];
+		            //#pragma HLS UNROLL
+                   v_dt tmpIn1;
+                   v_dt tmpIn2;
+
+                   ap_uint<512> inData1 = in1[in_index+ii];
+                   ap_uint<512> inData2 = in2[in_index+ii];
+
+                   ioData2vData(&inData1, &tmpIn1);
+                   ioData2vData(&inData2, &tmpIn2);
 
     _vecLoop2: // will be unrolled because parent loop is pipelined
                    for (int k = 0; k < VDATA_SIZE; k++) {
                        tmpOutAdd.data[k] = tmpIn1.data[k] + tmpIn2.data[k];
                    }
 
-                   out[in_index+ii] = tmpOutAdd;
-		}
+                   ap_uint<512> tmpOut;
+                   vData2ioData(&tmpOutAdd, &tmpOut);
+                   out[in_index+ii] = tmpOut;
+		        }
             }
         }
 
