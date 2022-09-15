@@ -1,0 +1,520 @@
+
+****** Vitis HLS - High-Level Synthesis from C, C++ and OpenCL v2022.1 (64-bit)
+  **** SW Build 3526262 on Mon Apr 18 15:48:16 MDT 2022
+  **** IP Build 3524634 on Mon Apr 18 20:55:01 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source C:/Xilinx/Vitis_HLS/2022.1/scripts/vitis_hls/hls.tcl -notrace
+INFO: [HLS 200-10] Running 'C:/Xilinx/Vitis_HLS/2022.1/bin/unwrapped/win64.o/vitis_hls.exe'
+INFO: [HLS 200-10] For user 'CZH' on host 'desktop-lme0oa5' (Windows NT_amd64 version 6.2) on Thu Sep 15 17:57:44 +0800 2022
+INFO: [HLS 200-10] In directory 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm'
+Sourcing Tcl script 'run_hls.tcl'
+INFO: [HLS 200-1510] Running: source run_hls.tcl
+INFO: [HLS 200-1510] Running: source settings.tcl
+INFO: [HLS 200-1510] Running: open_project -reset prj_hbm 
+INFO: [HLS 200-10] Opening and resetting project 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm'.
+WARNING: [HLS 200-40] No G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sol.aps file found.
+INFO: [HLS 200-1510] Running: add_files G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp -cflags -IG:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm 
+INFO: [HLS 200-10] Adding design file 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files -tb tb_hbm.cpp -cflags -IG:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm 
+INFO: [HLS 200-10] Adding test bench file 'tb_hbm.cpp' to the project
+INFO: [HLS 200-1510] Running: set_top vadd 
+INFO: [HLS 200-1510] Running: open_solution -reset sol -flow_target vivado 
+INFO: [HLS 200-10] Creating and opening solution 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol'.
+INFO: [HLS 200-10] Cleaning up the solution database.
+WARNING: [HLS 200-40] No G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sol.aps file found.
+INFO: [HLS 200-1505] Using flow_target 'vivado'
+Resolution: For help on HLS 200-1505 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-1505.html
+INFO: [HLS 200-435] Setting 'open_solution -flow_target vivado' configuration: config_interface -m_axi_latency=0
+INFO: [HLS 200-1510] Running: set_part xcu50-fsvh2104-2L-e 
+INFO: [HLS 200-1611] Setting target device to 'xcu50-fsvh2104-2L-e'
+INFO: [HLS 200-1510] Running: create_clock -period 330MHz -name default 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 3.03ns.
+INFO: [HLS 200-1510] Running: csim_design -ldflags -Wl,--stack,10737418240 
+INFO: [SIM 211-2] *************** CSIM start ***************
+INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
+   Compiling ../../../../tb_hbm.cpp in debug mode
+   Compiling ../../../../kernel.cpp in debug mode
+   Generating csim.exe
+In file included from C:/Xilinx/Vitis_HLS/2022.1/include/floating_point_v7_0_bitacc_cmodel.h:144:0,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_fpo.h:189,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half_fpo.h:64,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half.h:71,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/etc/ap_private.h:98,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_common.h:710,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_int.h:56,
+                 from ../../../../kernel.h:16,
+                 from ../../../../tb_hbm.cpp:1:
+C:/Xilinx/Vitis_HLS/2022.1/include/gmp.h:63:0: warning: "__GMP_LIBGMP_DLL" redefined
+ #define __GMP_LIBGMP_DLL  0
+ 
+In file included from C:/Xilinx/Vitis_HLS/2022.1/include/hls_fpo.h:189:0,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half_fpo.h:64,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half.h:71,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/etc/ap_private.h:98,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_common.h:710,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_int.h:56,
+                 from ../../../../kernel.h:16,
+                 from ../../../../tb_hbm.cpp:1:
+C:/Xilinx/Vitis_HLS/2022.1/include/floating_point_v7_0_bitacc_cmodel.h:136:0: note: this is the location of the previous definition
+ #define __GMP_LIBGMP_DLL 1
+ 
+In file included from C:/Xilinx/Vitis_HLS/2022.1/include/floating_point_v7_0_bitacc_cmodel.h:144:0,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_fpo.h:189,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half_fpo.h:64,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half.h:71,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/etc/ap_private.h:98,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_common.h:710,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_int.h:56,
+                 from ../../../../kernel.h:16,
+                 from ../../../../kernel.cpp:19:
+C:/Xilinx/Vitis_HLS/2022.1/include/gmp.h:63:0: warning: "__GMP_LIBGMP_DLL" redefined
+ #define __GMP_LIBGMP_DLL  0
+ 
+In file included from C:/Xilinx/Vitis_HLS/2022.1/include/hls_fpo.h:189:0,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half_fpo.h:64,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half.h:71,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/etc/ap_private.h:98,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_common.h:710,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_int.h:56,
+                 from ../../../../kernel.h:16,
+                 from ../../../../kernel.cpp:19:
+C:/Xilinx/Vitis_HLS/2022.1/include/floating_point_v7_0_bitacc_cmodel.h:136:0: note: this is the location of the previous definition
+ #define __GMP_LIBGMP_DLL 1
+ 
+TEST OK!
+INFO: [SIM 211-1] CSim done with 0 errors.
+INFO: [SIM 211-3] *************** CSIM finish ***************
+INFO: [HLS 200-111] Finished Command csim_design CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 2.484 seconds; current allocated memory: 0.535 MB.
+INFO: [HLS 200-1510] Running: csynth_design 
+INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.014 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] Analyzing design file 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp' ... 
+INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 3.254 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-777] Using interface defaults for 'Vivado' flow target.
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<512, false>::ap_range_ref(ap_int_base<512, false>*, int, int)' into 'ap_int_base<512, false>::range(int, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1094:12)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<512, false>::to_uint64() const' into 'ap_range_ref<512, false>::operator unsigned long long() const' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_ref.h:361:76)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<512, false>::range(int, int)' into 'ioData2vData(ap_uint<512>*, v_datatype*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:79:27)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<512, false>::operator unsigned long long() const' into 'ioData2vData(ap_uint<512>*, v_datatype*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:79:19)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi512ELb0EEC2EDq512_j' into 'ap_int_base<512, false>::ap_int_base(unsigned int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:261:76)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<512, false>::ap_int_base(unsigned int)' into 'ap_range_ref<512, false>::operator=(unsigned int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_ref.h:392:111)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<512, false>::range(int, int)' into 'vData2ioData(v_datatype*, ap_uint<512>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:89:10)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<512, false>::operator=(unsigned int)' into 'vData2ioData(v_datatype*, ap_uint<512>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:89:31)
+INFO: [HLS 214-131] Inlining function 'ssdm_int<32, false>::ssdm_int(unsigned int)' into 'ap_int_base<32, false>::ap_int_base(unsigned int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:261:76)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::ap_int_base(unsigned int)' into 'ap_uint<32>::ap_uint(unsigned int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int.h:334:67)
+INFO: [HLS 214-131] Inlining function 'ssdm_int<32, false>::ssdm_int(unsigned int)' into 'ap_int_base<32, false>::ap_int_base(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:260:67)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::ap_int_base(int)' into 'ap_int_base<32, false>::RType<32, false>::arg1 operator>><32, false>(ap_int_base<32, false> const&, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1715:558)
+INFO: [HLS 214-131] Inlining function 'ap_uint<32>::ap_uint<32, false>(ap_int_base<32, false> const&)' into 'ap_int_base<32, false>::RType<32, false>::arg1 operator>><32, false>(ap_int_base<32, false> const&, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1715:656)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::get_bit(int) const' into 'next_lfsr32(ap_uint<32>)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:30:23)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::to_uint() const' into 'next_lfsr32(ap_uint<32>)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:38:19)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::set_bit(int, bool)' into 'next_lfsr32(ap_uint<32>)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:36:12)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::RType<32, false>::arg1 operator>><32, false>(ap_int_base<32, false> const&, int)' into 'next_lfsr32(ap_uint<32>)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:35:34)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::get_bit(int) const' into 'next_lfsr32(ap_uint<32>)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:33:22)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::get_bit(int) const' into 'next_lfsr32(ap_uint<32>)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:32:22)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::get_bit(int) const' into 'next_lfsr32(ap_uint<32>)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:31:23)
+INFO: [HLS 214-131] Inlining function 'ioData2vData(ap_uint<512>*, v_datatype*)' into 'vadd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:147:20)
+INFO: [HLS 214-131] Inlining function 'vData2ioData(v_datatype*, ap_uint<512>*)' into 'vadd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:202:20)
+INFO: [HLS 214-131] Inlining function 'ioData2vData(ap_uint<512>*, v_datatype*)' into 'vadd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:194:20)
+INFO: [HLS 214-131] Inlining function 'ioData2vData(ap_uint<512>*, v_datatype*)' into 'vadd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:193:20)
+INFO: [HLS 214-131] Inlining function 'ioData2vData(ap_uint<512>*, v_datatype*)' into 'vadd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:148:20)
+INFO: [HLS 214-131] Inlining function 'ap_uint<32>::ap_uint(unsigned int)' into 'vadd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:174:26)
+INFO: [HLS 214-131] Inlining function 'vData2ioData(v_datatype*, ap_uint<512>*)' into 'vadd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:156:20)
+INFO: [HLS 214-291] Loop '_blLoop1' is marked as complete unroll implied by the pipeline pragma (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:139:17)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_77_1' is marked as complete unroll implied by the pipeline pragma (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:77:19)
+INFO: [HLS 214-291] Loop '_vecLoop1' is marked as complete unroll implied by the pipeline pragma (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:151:20)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_87_1' is marked as complete unroll implied by the pipeline pragma (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:87:19)
+INFO: [HLS 214-291] Loop '_blLoop2' is marked as complete unroll implied by the pipeline pragma (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:185:17)
+INFO: [HLS 214-291] Loop '_vecLoop2' is marked as complete unroll implied by the pipeline pragma (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:197:20)
+INFO: [HLS 214-186] Unrolling loop '_blLoop1' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:139:17) in function 'vadd' completely with a factor of 1 (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:109:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_87_1' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:87:19) in function 'vadd' completely with a factor of 16 (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:109:0)
+INFO: [HLS 214-186] Unrolling loop '_vecLoop1' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:151:20) in function 'vadd' completely with a factor of 16 (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:109:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_77_1' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:77:19) in function 'vadd' completely with a factor of 16 (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:109:0)
+INFO: [HLS 214-186] Unrolling loop '_blLoop2' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:185:17) in function 'vadd' completely with a factor of 1 (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:109:0)
+INFO: [HLS 214-186] Unrolling loop '_vecLoop2' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:197:20) in function 'vadd' completely with a factor of 16 (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:109:0)
+INFO: [HLS 214-178] Inlining function 'gen_clip_mask(unsigned int)' into 'vadd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:109:0)
+INFO: [HLS 214-178] Inlining function 'next_lfsr32(ap_uint<32>)' into 'vadd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:109:0)
+INFO: [HLS 214-241] Aggregating maxi variable 'out' with compact=none mode in 512-bits
+INFO: [HLS 214-241] Aggregating maxi variable 'in2' with compact=none mode in 512-bits
+INFO: [HLS 214-241] Aggregating maxi variable 'in1' with compact=none mode in 512-bits
+INFO: [HLS 214-115] Multiple burst reads of variable length and bit width 512 in loop '_vSizeLoop1'(G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:133:13) has been inferred on bundle 'gmem0'. These burst requests might be further partitioned into multiple requests during RTL generation, based on max_read_burst_length or max_write_burst_length settings. (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:133:13)
+INFO: [HLS 214-115] Multiple burst reads of variable length and bit width 512 in loop '_vSizeLoop1'(G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:133:13) has been inferred on bundle 'gmem1'. These burst requests might be further partitioned into multiple requests during RTL generation, based on max_read_burst_length or max_write_burst_length settings. (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:133:13)
+INFO: [HLS 214-115] Multiple burst writes of variable length and bit width 512 in loop '_vSizeLoop1'(G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:133:13) has been inferred on bundle 'gmem2'. These burst requests might be further partitioned into multiple requests during RTL generation, based on max_read_burst_length or max_write_burst_length settings. (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:133:13)
+INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 3.45 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.001 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] Starting code transformations ...
+INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.026 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] Checking synthesizability ...
+INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.025 seconds; current allocated memory: 1.204 GB.
+INFO: [XFORM 203-510] Pipelining loop 'gmask' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:55) in function 'vadd' automatically.
+INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.082 seconds; current allocated memory: 1.204 GB.
+WARNING: [HLS 200-960] Cannot flatten loop 'SeqLoop' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:127:27) in function 'vadd' the outer loop is not a perfect loop because there is nontrivial logic before entering the inner loop.
+Resolution: For help on HLS 200-960 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-960.html
+INFO: [XFORM 203-541] Flattening a loop nest 'RandLoop' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/kernel.cpp:117:18) in function 'vadd'.
+INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.072 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] Starting hardware synthesis ...
+INFO: [HLS 200-10] Synthesizing 'vadd' ...
+WARNING: [SYN 201-103] Legalizing function name 'vadd_Pipeline__vSizeLoop1' to 'vadd_Pipeline_vSizeLoop1'.
+WARNING: [SYN 201-103] Legalizing function name 'vadd_Pipeline_RandLoop__vSizeLoop2' to 'vadd_Pipeline_RandLoop_vSizeLoop2'.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'vadd_Pipeline_vSizeLoop1' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop '_vSizeLoop1'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 4, loop '_vSizeLoop1'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.108 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.053 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'vadd_Pipeline_gmask' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'gmask'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, loop 'gmask'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.07 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.014 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'vadd_Pipeline_RandLoop_vSizeLoop2' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'RandLoop__vSizeLoop2'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 366, loop 'RandLoop__vSizeLoop2'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.45 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 1.084 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'vadd' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.639 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 2 seconds. CPU system time: 0 seconds. Elapsed time: 1.101 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'vadd_Pipeline_vSizeLoop1' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'vadd_Pipeline_vSizeLoop1' pipeline '_vSizeLoop1' pipeline type 'loop pipeline'
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARVALID' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARADDR' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARID' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARLEN' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARSIZE' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARBURST' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARLOCK' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARCACHE' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARPROT' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARQOS' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARREGION' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem0_ARUSER' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARVALID' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARADDR' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARID' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARLEN' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARSIZE' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARBURST' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARLOCK' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARCACHE' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARPROT' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARQOS' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARREGION' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem1_ARUSER' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWVALID' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWADDR' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWID' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWLEN' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWSIZE' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWBURST' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWLOCK' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWCACHE' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWPROT' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWQOS' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWREGION' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_AWUSER' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'vadd_Pipeline_vSizeLoop1/m_axi_gmem2_BREADY' to 0.
+INFO: [RTGEN 206-100] Finished creating RTL model for 'vadd_Pipeline_vSizeLoop1'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.358 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'vadd_Pipeline_gmask' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'vadd_Pipeline_gmask'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.217 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'vadd_Pipeline_RandLoop_vSizeLoop2' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'vadd_Pipeline_RandLoop_vSizeLoop2' pipeline 'RandLoop__vSizeLoop2' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-104] Estimated max fanout for 'vadd_Pipeline_RandLoop_vSizeLoop2' is 19910 from HDL expression: (1'b0 == ap_block_pp0_stage0_11001)
+INFO: [RTGEN 206-100] Finished creating RTL model for 'vadd_Pipeline_RandLoop_vSizeLoop2'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.415 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'vadd' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+WARNING: [RTGEN 206-101] Design contains AXI ports. Reset is fixed to synchronous and active low.
+INFO: [RTGEN 206-500] Setting interface mode on port 'vadd/gmem0' to 'm_axi'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'vadd/gmem1' to 'm_axi'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'vadd/gmem2' to 'm_axi'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'vadd/in1' to 's_axilite & ap_none'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'vadd/in2' to 's_axilite & ap_none'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'vadd/out_r' to 's_axilite & ap_none'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'vadd/dsize' to 'ap_none'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'vadd/kernel_loop' to 'ap_none'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'vadd/addRandom' to 'ap_none'.
+INFO: [RTGEN 206-500] Setting interface mode on function 'vadd' to 'ap_ctrl_chain'.
+INFO: [RTGEN 206-100] Bundling port 'in1', 'in2' and 'out_r' to AXI-Lite port control.
+INFO: [RTGEN 206-100] Generating core module 'mul_32ns_28ns_60_3_1': 1 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'vadd'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.71 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.734 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-1603] Design has inferred MAXI bursts and missed bursts, see Vitis HLS GUI synthesis summary report for detailed information.
+INFO: [HLS 200-111] Finished Updating report files: CPU user time: 0 seconds. CPU system time: 1 seconds. Elapsed time: 0.784 seconds; current allocated memory: 1.204 GB.
+INFO: [VHDL 208-304] Generating VHDL RTL for vadd.
+INFO: [VLOG 209-307] Generating Verilog RTL for vadd.
+INFO: [HLS 200-790] **** Loop Constraint Status: All loop constraints were satisfied.
+INFO: [HLS 200-789] **** Estimated Fmax: 452.10 MHz
+INFO: [HLS 200-111] Finished Command csynth_design CPU user time: 7 seconds. CPU system time: 1 seconds. Elapsed time: 13.704 seconds; current allocated memory: 0.000 MB.
+INFO: [HLS 200-1510] Running: cosim_design -ldflags -Wl,--stack,10737418240 
+INFO: [COSIM 212-47] Using XSIM for RTL simulation.
+INFO: [COSIM 212-14] Instrumenting C test bench ...
+   Build using "C:/Xilinx/Vitis_HLS/2022.1/tps/win64/msys64/mingw64/bin/g++"
+   Compiling tb_hbm.cpp_pre.cpp.tb.cpp
+   Compiling apatb_vadd.cpp
+   Compiling kernel.cpp_pre.cpp.tb.cpp
+   Compiling apatb_vadd_ir.ll
+   Generating cosim.tv.exe
+INFO: [COSIM 212-302] Starting C TB testing ... 
+TEST OK!
+INFO: [COSIM 212-333] Generating C post check test bench ...
+INFO: [COSIM 212-12] Generating RTL test bench ...
+INFO: [COSIM 212-1] *** C/RTL co-simulation file generation completed. ***
+INFO: [COSIM 212-323] Starting verilog simulation. 
+INFO: [COSIM 212-15] Starting XSIM ...
+
+G:\work2t\40_SZG_SBE\develop\00_git\AXOrderBook\hw\test\hbm\prj_hbm\sol\sim\verilog>set PATH= 
+
+G:\work2t\40_SZG_SBE\develop\00_git\AXOrderBook\hw\test\hbm\prj_hbm\sol\sim\verilog>call C:/Xilinx/Vivado/2022.1/bin/xelab xil_defaultlib.apatb_vadd_top glbl -Oenable_linking_all_libraries  -prj vadd.prj -L smartconnect_v1_0 -L axi_protocol_checker_v1_1_12 -L axi_protocol_checker_v1_1_13 -L axis_protocol_checker_v1_1_11 -L axis_protocol_checker_v1_1_12 -L xil_defaultlib -L unisims_ver -L xpm  -L floating_point_v7_0_20 -L floating_point_v7_1_14 --lib "ieee_proposed=./ieee_proposed" -s vadd  
+Vivado Simulator v2022.1
+Copyright 1986-1999, 2001-2022 Xilinx, Inc. All Rights Reserved.
+Running: C:/Xilinx/Vivado/2022.1/bin/unwrapped/win64.o/xelab.exe xil_defaultlib.apatb_vadd_top glbl -Oenable_linking_all_libraries -prj vadd.prj -L smartconnect_v1_0 -L axi_protocol_checker_v1_1_12 -L axi_protocol_checker_v1_1_13 -L axis_protocol_checker_v1_1_11 -L axis_protocol_checker_v1_1_12 -L xil_defaultlib -L unisims_ver -L xpm -L floating_point_v7_0_20 -L floating_point_v7_1_14 --lib ieee_proposed=./ieee_proposed -s vadd 
+Multi-threading is on. Using 30 slave threads.
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/glbl.v" into library work
+INFO: [VRFC 10-311] analyzing module glbl
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/AESL_axi_master_gmem0.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_master_gmem0
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/AESL_axi_master_gmem1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_master_gmem1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/AESL_axi_master_gmem2.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_master_gmem2
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/AESL_axi_slave_control.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_slave_control
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd.autotb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module apatb_vadd_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd_control_s_axi.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd_control_s_axi
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd_flow_control_loop_pipe_sequential_init.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd_flow_control_loop_pipe_sequential_init
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd_gmem0_m_axi.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_load
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_store
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_flushManager
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_read
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_write
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_throttle
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_reg_slice
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_fifo
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_srl
+INFO: [VRFC 10-311] analyzing module vadd_gmem0_m_axi_mem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd_gmem1_m_axi.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_load
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_store
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_flushManager
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_read
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_write
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_throttle
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_reg_slice
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_fifo
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_srl
+INFO: [VRFC 10-311] analyzing module vadd_gmem1_m_axi_mem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd_gmem2_m_axi.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_load
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_store
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_flushManager
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_read
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_write
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_throttle
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_reg_slice
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_fifo
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_srl
+INFO: [VRFC 10-311] analyzing module vadd_gmem2_m_axi_mem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd_mul_32ns_28ns_60_3_1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd_mul_32ns_28ns_60_3_1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd_vadd_Pipeline_gmask.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd_vadd_Pipeline_gmask
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd_vadd_Pipeline_RandLoop_vSizeLoop2.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd_vadd_Pipeline_RandLoop_vSizeLoop2
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd_vadd_Pipeline_vSizeLoop1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vadd_vadd_Pipeline_vSizeLoop1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/dataflow_monitor.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dataflow_monitor
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package xil_defaultlib.$unit_dataflow_monitor_sv
+Compiling module xil_defaultlib.vadd_flow_control_loop_pipe_sequ...
+Compiling module xil_defaultlib.vadd_vadd_Pipeline_gmask
+Compiling module xil_defaultlib.vadd_vadd_Pipeline_vSizeLoop1
+Compiling module xil_defaultlib.vadd_vadd_Pipeline_RandLoop_vSiz...
+Compiling module xil_defaultlib.vadd_control_s_axi
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_mem(MEM_STYLE="...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_fifo(MEM_STYLE=...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_store(NUM_WRITE...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_mem(MEM_STYLE="...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_fifo(MEM_STYLE=...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_load(NUM_READ_O...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_throttle(CONSER...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_write(CONSERVAT...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi_read(C_USER_VAL...
+Compiling module xil_defaultlib.vadd_gmem0_m_axi(CONSERVATIVE=1,...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_mem(MEM_STYLE="...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_fifo(MEM_STYLE=...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_store(NUM_WRITE...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_mem(MEM_STYLE="...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_fifo(MEM_STYLE=...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_load(NUM_READ_O...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_throttle(CONSER...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_write(CONSERVAT...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi_read(C_USER_VAL...
+Compiling module xil_defaultlib.vadd_gmem1_m_axi(CONSERVATIVE=1,...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_mem(MEM_STYLE="...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_fifo(MEM_STYLE=...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_store(NUM_WRITE...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_mem(MEM_STYLE="...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_fifo(MEM_STYLE=...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_load(NUM_READ_O...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_throttle(CONSER...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_write(CONSERVAT...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_reg_slice(DATA_...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_srl(DATA_WIDTH=...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_fifo(DATA_WIDTH...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi_read(C_USER_VAL...
+Compiling module xil_defaultlib.vadd_gmem2_m_axi(CONSERVATIVE=1,...
+Compiling module xil_defaultlib.vadd_mul_32ns_28ns_60_3_1(NUM_ST...
+Compiling module xil_defaultlib.vadd
+Compiling module xil_defaultlib.AESL_axi_master_gmem0
+Compiling module xil_defaultlib.AESL_axi_master_gmem1
+Compiling module xil_defaultlib.AESL_axi_master_gmem2
+Compiling module xil_defaultlib.AESL_axi_slave_control
+Compiling module xil_defaultlib.nodf_module_intf
+Compiling module xil_defaultlib.seq_loop_intf(FSM_WIDTH=367)
+Compiling module xil_defaultlib.upc_loop_intf(FSM_WIDTH=1)
+Compiling module xil_defaultlib.dataflow_monitor_1
+Compiling module xil_defaultlib.apatb_vadd_top
+Compiling module work.glbl
+Built simulation snapshot vadd
+
+****** xsim v2022.1 (64-bit)
+  **** SW Build 3526262 on Mon Apr 18 15:48:16 MDT 2022
+  **** IP Build 3524634 on Mon Apr 18 20:55:01 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source xsim.dir/vadd/xsim_script.tcl
+# xsim {vadd} -autoloadwcfg -tclbatch {vadd.tcl}
+Time resolution is 1 ps
+source vadd.tcl
+## run all
+////////////////////////////////////////////////////////////////////////////////////
+// Inter-Transaction Progress: Completed Transaction / Total Transaction
+// Intra-Transaction Progress: Measured Latency / Latency Estimation * 100%
+//
+// RTL Simulation : "Inter-Transaction Progress" ["Intra-Transaction Progress"] @ "Simulation Time"
+////////////////////////////////////////////////////////////////////////////////////
+// RTL Simulation : 0 / 1 [0.00%] @ "107000"
+// RTL Simulation : 1 / 1 [100.00%] @ "1436000"
+////////////////////////////////////////////////////////////////////////////////////
+$finish called at time : 1454130 ps : File "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbm/prj_hbm/sol/sim/verilog/vadd.autotb.v" Line 972
+run: Time (s): cpu = 00:00:01 ; elapsed = 00:00:32 . Memory (MB): peak = 1205.012 ; gain = 0.000
+## quit
+INFO: xsimkernel Simulation Memory Usage: 2423556 KB (Peak: 2423556 KB), Simulation CPU Usage: 31515 ms
+INFO: [Common 17-206] Exiting xsim at Thu Sep 15 17:58:58 2022...
+INFO: [COSIM 212-316] Starting C post checking ...
+TEST OK!
+INFO: [COSIM 212-1000] *** C/RTL co-simulation finished: PASS ***
+INFO: [COSIM 212-211] II is measurable only when transaction number is greater than 1 in RTL simulation. Otherwise, they will be marked as all NA. If user wants to calculate them, please make sure there are at least 2 transactions in RTL simulation.
+INFO: [HLS 200-111] Finished Command cosim_design CPU user time: 2 seconds. CPU system time: 0 seconds. Elapsed time: 56.983 seconds; current allocated memory: 0.000 MB.
+INFO: [HLS 200-112] Total CPU user time: 11 seconds. Total CPU system time: 2 seconds. Total elapsed time: 74.69 seconds; peak allocated memory: 1.204 GB.
+INFO: [Common 17-206] Exiting vitis_hls at Thu Sep 15 17:58:59 2022...
