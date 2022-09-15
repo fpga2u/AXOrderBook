@@ -58,7 +58,7 @@ A股交易所L2行情相关背景参考：[交易所L2行情与撮合原理](/do
 
 * Centos 8 stream
 
-* Xilinx Vitis 2021.2
+* Xilinx Vitis 2022.1
 
 * Xilinx Alveo U50
 
