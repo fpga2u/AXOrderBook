@@ -12,6 +12,7 @@
 
 * vitis流程改为vivado流程
 * 接口从 unsigned int data[16] 改为 ap_uint<512>
+  * Xilinx教程采用512位宽，但我们在设计中尽量采用256（配合底层硬件原始位宽）。
   
 ## 运行
 

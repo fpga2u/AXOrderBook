@@ -19,6 +19,7 @@
 
 ## 测试
 
-通常以64Byte(512b)为单位访问HBM比较合适。
+Xilinux Alveo u50 hbm 使用 AXI3-256 bit 接口 最高跑 450MHz.
 
-
+* [移植自Xlinx教程的例子](../hw/test/hbmAccess/readme.md)
+* 多路访问 - HBM伪通道 仲裁器

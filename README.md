@@ -76,7 +76,7 @@ A股交易所L2行情相关背景参考：[交易所L2行情与撮合原理](/do
 
 我们从深交所某日的L2行情中截取了几只个股的行情消息，并格式化成易于阅读的和使用的二进制格式，可从以下地址下载后放置于[data目录](/data/)下：
 
-链接：https://pan.baidu.com/s/13O7b30DXM64j4WpnNgvXXg 
+链接：[百度盘](https://pan.baidu.com/s/13O7b30DXM64j4WpnNgvXXg)
 
 提取码：rxif
 
@@ -84,12 +84,12 @@ A股交易所L2行情相关背景参考：[交易所L2行情与撮合原理](/do
 
 ## 预备工作
 
-* 订单簿重建流程梳理
+* [订单簿重建流程梳理](doc/ob_workflow.md)
 
 * HLS 链表工具和测试
 
 * HLS AVL工具和测试
 
-* HLS HBM工具和测试
+* [HLS HBM工具和测试](doc/hls_hbm.md)
 
 * HLS 测试环境
