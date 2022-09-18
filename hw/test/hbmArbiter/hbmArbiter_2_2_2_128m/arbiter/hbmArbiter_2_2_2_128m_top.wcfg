@@ -1,0 +1,1930 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="hbmArbiter_2_2_2_128m_top.wdb" id="1">
+         <top_modules>
+            <top_module name="\$unit_dataflow_monitor_sv " />
+            <top_module name="apatb_hbmArbiter_2_2_2_128m_top_top" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="25.581 ns"></ZoomStartTime>
+      <ZoomEndTime time="888.960 ns"></ZoomEndTime>
+      <Cursor1Time time="3,154.390 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="257"></NameColumnWidth>
+      <ValueColumnWidth column_width="80"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="114" />
+   <wvobject fp_name="HLS Process Summary Group" type="group">
+      <obj_property name="label">HLS Process Summary</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top//AESL_inst_hbmArbiter_2_2_2_128m_top_activity" type="group">
+         <obj_property name="label">AESL_inst_hbmArbiter_2_2_2_128m_top_activity</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="UseFullPath">true</obj_property>
+         <obj_property name="ElementShortName">AESL_inst_hbmArbiter_2_2_2_128m_top_activity</obj_property>
+         <obj_property name="ObjectShortName">AESL_inst_hbmArbiter_2_2_2_128m_top_activity</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+         <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="CustomSignalColor">turquoise</obj_property>
+         <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+         <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top//AESL_inst_hbmArbiter_2_2_2_128m_top_activity.dataflowTxWaveData.Cycles</obj_property>
+         <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top//AESL_inst_hbmArbiter_2_2_2_128m_top_activity.dataflowTxWaveData.OutStanding</obj_property>
+         <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top//AESL_inst_hbmArbiter_2_2_2_128m_top_activity.dataflowTxTooltipData</obj_property>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_U0_activity" type="group">
+            <obj_property name="label">mainRun_0_U0_activity</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <obj_property name="UseFullPath">true</obj_property>
+            <obj_property name="ElementShortName">mainRun_0_U0_activity</obj_property>
+            <obj_property name="ObjectShortName">mainRun_0_U0_activity</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+            <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+            <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+            <obj_property name="UseCustomSignalColor">true</obj_property>
+            <obj_property name="CustomSignalColor">turquoise</obj_property>
+            <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+            <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_U0_activity.dataflowTxWaveData.Cycles</obj_property>
+            <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_U0_activity.dataflowTxWaveData.OutStanding</obj_property>
+            <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_U0_activity.dataflowTxTooltipData</obj_property>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/entry_proc_U0_activity" type="group">
+               <obj_property name="label">entry_proc_U0_activity</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <obj_property name="UseFullPath">true</obj_property>
+               <obj_property name="ElementShortName">entry_proc_U0_activity</obj_property>
+               <obj_property name="ObjectShortName">entry_proc_U0_activity</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+               <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+               <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="CustomSignalColor">turquoise</obj_property>
+               <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+               <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/entry_proc_U0_activity.dataflowTxWaveData.Cycles</obj_property>
+               <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/entry_proc_U0_activity.dataflowTxWaveData.OutStanding</obj_property>
+               <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/entry_proc_U0_activity.dataflowTxTooltipData</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mum_0_U0_activity" type="group">
+               <obj_property name="label">mum_0_U0_activity</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <obj_property name="UseFullPath">true</obj_property>
+               <obj_property name="ElementShortName">mum_0_U0_activity</obj_property>
+               <obj_property name="ObjectShortName">mum_0_U0_activity</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+               <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+               <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="CustomSignalColor">turquoise</obj_property>
+               <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+               <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mum_0_U0_activity.dataflowTxWaveData.Cycles</obj_property>
+               <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mum_0_U0_activity.dataflowTxWaveData.OutStanding</obj_property>
+               <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mum_0_U0_activity.dataflowTxTooltipData</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mum_1_U0_activity" type="group">
+               <obj_property name="label">mum_1_U0_activity</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <obj_property name="UseFullPath">true</obj_property>
+               <obj_property name="ElementShortName">mum_1_U0_activity</obj_property>
+               <obj_property name="ObjectShortName">mum_1_U0_activity</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+               <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+               <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="CustomSignalColor">turquoise</obj_property>
+               <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+               <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mum_1_U0_activity.dataflowTxWaveData.Cycles</obj_property>
+               <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mum_1_U0_activity.dataflowTxWaveData.OutStanding</obj_property>
+               <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mum_1_U0_activity.dataflowTxTooltipData</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/rr_U0_activity" type="group">
+               <obj_property name="label">rr_U0_activity</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <obj_property name="UseFullPath">true</obj_property>
+               <obj_property name="ElementShortName">rr_U0_activity</obj_property>
+               <obj_property name="ObjectShortName">rr_U0_activity</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+               <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+               <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="CustomSignalColor">turquoise</obj_property>
+               <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+               <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/rr_U0_activity.dataflowTxWaveData.Cycles</obj_property>
+               <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/rr_U0_activity.dataflowTxWaveData.OutStanding</obj_property>
+               <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/rr_U0_activity.dataflowTxTooltipData</obj_property>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_load_fu_190/grp_rr_Pipeline_loop_load_fu_190_activity" type="group">
+                  <obj_property name="label">grp_rr_Pipeline_loop_load_fu_190_activity</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <obj_property name="UseFullPath">true</obj_property>
+                  <obj_property name="ElementShortName">grp_rr_Pipeline_loop_load_fu_190_activity</obj_property>
+                  <obj_property name="ObjectShortName">grp_rr_Pipeline_loop_load_fu_190_activity</obj_property>
+                  <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+                  <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+                  <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+                  <obj_property name="CustomSignalColor">turquoise</obj_property>
+                  <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+                  <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_load_fu_190/grp_rr_Pipeline_loop_load_fu_190_activity.dataflowTxWaveData.Cycles</obj_property>
+                  <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_load_fu_190/grp_rr_Pipeline_loop_load_fu_190_activity.dataflowTxWaveData.OutStanding</obj_property>
+                  <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_load_fu_190/grp_rr_Pipeline_loop_load_fu_190_activity.dataflowTxTooltipData</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_act_fu_204/grp_rr_Pipeline_loop_act_fu_204_activity" type="group">
+                  <obj_property name="label">grp_rr_Pipeline_loop_act_fu_204_activity</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <obj_property name="UseFullPath">true</obj_property>
+                  <obj_property name="ElementShortName">grp_rr_Pipeline_loop_act_fu_204_activity</obj_property>
+                  <obj_property name="ObjectShortName">grp_rr_Pipeline_loop_act_fu_204_activity</obj_property>
+                  <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+                  <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+                  <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+                  <obj_property name="CustomSignalColor">turquoise</obj_property>
+                  <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+                  <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_act_fu_204/grp_rr_Pipeline_loop_act_fu_204_activity.dataflowTxWaveData.Cycles</obj_property>
+                  <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_act_fu_204/grp_rr_Pipeline_loop_act_fu_204_activity.dataflowTxWaveData.OutStanding</obj_property>
+                  <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_act_fu_204/grp_rr_Pipeline_loop_act_fu_204_activity.dataflowTxTooltipData</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_wb_fu_226/grp_rr_Pipeline_loop_wb_fu_226_activity" type="group">
+                  <obj_property name="label">grp_rr_Pipeline_loop_wb_fu_226_activity</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <obj_property name="UseFullPath">true</obj_property>
+                  <obj_property name="ElementShortName">grp_rr_Pipeline_loop_wb_fu_226_activity</obj_property>
+                  <obj_property name="ObjectShortName">grp_rr_Pipeline_loop_wb_fu_226_activity</obj_property>
+                  <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+                  <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+                  <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+                  <obj_property name="CustomSignalColor">turquoise</obj_property>
+                  <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+                  <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_wb_fu_226/grp_rr_Pipeline_loop_wb_fu_226_activity.dataflowTxWaveData.Cycles</obj_property>
+                  <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_wb_fu_226/grp_rr_Pipeline_loop_wb_fu_226_activity.dataflowTxWaveData.OutStanding</obj_property>
+                  <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_wb_fu_226/grp_rr_Pipeline_loop_wb_fu_226_activity.dataflowTxTooltipData</obj_property>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_Block_entry48_proc_U0/mainRun_0_Block_entry48_proc_U0_activity" type="group">
+               <obj_property name="label">mainRun_0_Block_entry48_proc_U0_activity</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <obj_property name="UseFullPath">true</obj_property>
+               <obj_property name="ElementShortName">mainRun_0_Block_entry48_proc_U0_activity</obj_property>
+               <obj_property name="ObjectShortName">mainRun_0_Block_entry48_proc_U0_activity</obj_property>
+               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+               <obj_property name="WaveformStyle">STYLE_ENUM_TRANSACTION</obj_property>
+               <obj_property name="EnumTransactionColorTable">0=blank ffff=blank 0bad=#FF0000</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="CustomSignalColor">turquoise</obj_property>
+               <obj_property name="EnumTransactionValueTable">65535=blank</obj_property>
+               <obj_property name="Render_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_Block_entry48_proc_U0/mainRun_0_Block_entry48_proc_U0_activity.dataflowTxWaveData.Cycles</obj_property>
+               <obj_property name="Value_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_Block_entry48_proc_U0/mainRun_0_Block_entry48_proc_U0_activity.dataflowTxWaveData.OutStanding</obj_property>
+               <obj_property name="Detail_Data">/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_Block_entry48_proc_U0/mainRun_0_Block_entry48_proc_U0_activity.dataflowTxTooltipData</obj_property>
+            </wvobject>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/AESL_inst_hbmArbiter_2_2_2_128m_top_activity" type="protoinst">
+      <obj_property name="ElementShortName">AESL_inst_hbmArbiter_2_2_2_128m_top_activity</obj_property>
+      <obj_property name="ObjectShortName">AESL_inst_hbmArbiter_2_2_2_128m_top_activity</obj_property>
+   </wvobject>
+   <wvobject fp_name="AESL_inst_hbmArbiter_2_2_2_128m_top_group" type="group">
+      <obj_property name="label">AESL_inst_hbmArbiter_2_2_2_128m_top</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_U0_activity" type="protoinst">
+         <obj_property name="ElementShortName">mainRun_0_U0_activity</obj_property>
+         <obj_property name="ObjectShortName">mainRun_0_U0_activity</obj_property>
+      </wvobject>
+      <wvobject fp_name="AESL_inst_hbmArbiter_2_2_2_128m_top_Handshake_group" type="group">
+         <obj_property name="label">Block-level handshake</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/ap_start" type="logic">
+            <obj_property name="ElementShortName">ap_start</obj_property>
+            <obj_property name="ObjectShortName">ap_start</obj_property>
+         </wvobject>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/ap_ready" type="logic">
+            <obj_property name="ElementShortName">ap_ready</obj_property>
+            <obj_property name="ObjectShortName">ap_ready</obj_property>
+         </wvobject>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/ap_done" type="logic">
+            <obj_property name="ElementShortName">ap_done</obj_property>
+            <obj_property name="ObjectShortName">ap_done</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="mainRun_0_U0_group" type="group">
+         <obj_property name="label">mainRun_0_U0</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/entry_proc_U0_activity" type="protoinst">
+            <obj_property name="ElementShortName">entry_proc_U0_activity</obj_property>
+            <obj_property name="ObjectShortName">entry_proc_U0_activity</obj_property>
+         </wvobject>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mum_0_U0_activity" type="protoinst">
+            <obj_property name="ElementShortName">mum_0_U0_activity</obj_property>
+            <obj_property name="ObjectShortName">mum_0_U0_activity</obj_property>
+         </wvobject>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mum_1_U0_activity" type="protoinst">
+            <obj_property name="ElementShortName">mum_1_U0_activity</obj_property>
+            <obj_property name="ObjectShortName">mum_1_U0_activity</obj_property>
+         </wvobject>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/rr_U0_activity" type="protoinst">
+            <obj_property name="ElementShortName">rr_U0_activity</obj_property>
+            <obj_property name="ObjectShortName">rr_U0_activity</obj_property>
+         </wvobject>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_Block_entry48_proc_U0/mainRun_0_Block_entry48_proc_U0_activity" type="protoinst">
+            <obj_property name="ElementShortName">mainRun_0_Block_entry48_proc_U0_activity</obj_property>
+            <obj_property name="ObjectShortName">mainRun_0_Block_entry48_proc_U0_activity</obj_property>
+         </wvobject>
+         <wvobject fp_name="mainRun_0_U0_Input_group" type="group">
+            <obj_property name="label">Input Channels</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+         </wvobject>
+         <wvobject fp_name="mainRun_0_U0_Handshake_group" type="group">
+            <obj_property name="label">Block-level handshake</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/ap_start" type="logic">
+               <obj_property name="ElementShortName">ap_start</obj_property>
+               <obj_property name="ObjectShortName">ap_start</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/ap_ready" type="logic">
+               <obj_property name="ElementShortName">ap_ready</obj_property>
+               <obj_property name="ObjectShortName">ap_ready</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/ap_done" type="logic">
+               <obj_property name="ElementShortName">ap_done</obj_property>
+               <obj_property name="ObjectShortName">ap_done</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/ap_continue" type="logic">
+               <obj_property name="ElementShortName">ap_continue</obj_property>
+               <obj_property name="ObjectShortName">ap_continue</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="mainRun_0_U0_Output_group" type="group">
+            <obj_property name="label">Output Channels</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+         </wvobject>
+         <wvobject fp_name="entry_proc_U0_group" type="group">
+            <obj_property name="label">entry_proc_U0</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="entry_proc_U0_Input_group" type="group">
+               <obj_property name="label">Input Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+            </wvobject>
+            <wvobject fp_name="entry_proc_U0_Handshake_group" type="group">
+               <obj_property name="label">Block-level handshake</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/ap_start" type="logic">
+                  <obj_property name="ElementShortName">ap_start</obj_property>
+                  <obj_property name="ObjectShortName">ap_start</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/ap_ready" type="logic">
+                  <obj_property name="ElementShortName">ap_ready</obj_property>
+                  <obj_property name="ObjectShortName">ap_ready</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/ap_done" type="logic">
+                  <obj_property name="ElementShortName">ap_done</obj_property>
+                  <obj_property name="ObjectShortName">ap_done</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/ap_continue" type="logic">
+                  <obj_property name="ElementShortName">ap_continue</obj_property>
+                  <obj_property name="ObjectShortName">ap_continue</obj_property>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="entry_proc_U0_Output_group" type="group">
+               <obj_property name="label">Output Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="hbm_c_group" type="group">
+                  <obj_property name="label">hbm_c(hbm_c_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/hbm_c_blk_n" type="logic">
+                     <obj_property name="ElementShortName">hbm_c_blk_n</obj_property>
+                     <obj_property name="ObjectShortName">hbm_c_blk_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/hbm_c_din" type="array">
+                     <obj_property name="ElementShortName">hbm_c_din[63:0]</obj_property>
+                     <obj_property name="ObjectShortName">hbm_c_din[63:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/hbm_c_full_n" type="logic">
+                     <obj_property name="ElementShortName">hbm_c_full_n</obj_property>
+                     <obj_property name="ObjectShortName">hbm_c_full_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/entry_proc_U0/hbm_c_write" type="logic">
+                     <obj_property name="ElementShortName">hbm_c_write</obj_property>
+                     <obj_property name="ObjectShortName">hbm_c_write</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="mum_0_U0_group" type="group">
+            <obj_property name="label">mum_0_U0</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="mum_0_U0_Input_group" type="group">
+               <obj_property name="label">Input Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="mu0_ack_stream_group" type="group">
+                  <obj_property name="label">mu0_ack_stream(mu0_ack_stream_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mu0_ack_stream_blk_n" type="logic">
+                     <obj_property name="ElementShortName">mu0_ack_stream_blk_n</obj_property>
+                     <obj_property name="ObjectShortName">mu0_ack_stream_blk_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mu0_ack_stream_dout" type="array">
+                     <obj_property name="ElementShortName">mu0_ack_stream_dout[256:0]</obj_property>
+                     <obj_property name="ObjectShortName">mu0_ack_stream_dout[256:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mu0_ack_stream_empty_n" type="logic">
+                     <obj_property name="ElementShortName">mu0_ack_stream_empty_n</obj_property>
+                     <obj_property name="ObjectShortName">mu0_ack_stream_empty_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mu0_ack_stream_read" type="logic">
+                     <obj_property name="ElementShortName">mu0_ack_stream_read</obj_property>
+                     <obj_property name="ObjectShortName">mu0_ack_stream_read</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="mum_0_U0_Handshake_group" type="group">
+               <obj_property name="label">Block-level handshake</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/ap_start" type="logic">
+                  <obj_property name="ElementShortName">ap_start</obj_property>
+                  <obj_property name="ObjectShortName">ap_start</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/ap_ready" type="logic">
+                  <obj_property name="ElementShortName">ap_ready</obj_property>
+                  <obj_property name="ObjectShortName">ap_ready</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/ap_done" type="logic">
+                  <obj_property name="ElementShortName">ap_done</obj_property>
+                  <obj_property name="ObjectShortName">ap_done</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/ap_continue" type="logic">
+                  <obj_property name="ElementShortName">ap_continue</obj_property>
+                  <obj_property name="ObjectShortName">ap_continue</obj_property>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="mum_0_U0_Output_group" type="group">
+               <obj_property name="label">Output Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="mu0_cmd_stream_group" type="group">
+                  <obj_property name="label">mu0_cmd_stream(mu0_cmd_stream_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mu0_cmd_stream_blk_n" type="logic">
+                     <obj_property name="ElementShortName">mu0_cmd_stream_blk_n</obj_property>
+                     <obj_property name="ObjectShortName">mu0_cmd_stream_blk_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mu0_cmd_stream_din" type="array">
+                     <obj_property name="ElementShortName">mu0_cmd_stream_din[278:0]</obj_property>
+                     <obj_property name="ObjectShortName">mu0_cmd_stream_din[278:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mu0_cmd_stream_full_n" type="logic">
+                     <obj_property name="ElementShortName">mu0_cmd_stream_full_n</obj_property>
+                     <obj_property name="ObjectShortName">mu0_cmd_stream_full_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_0_U0/mu0_cmd_stream_write" type="logic">
+                     <obj_property name="ElementShortName">mu0_cmd_stream_write</obj_property>
+                     <obj_property name="ObjectShortName">mu0_cmd_stream_write</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="mum_1_U0_group" type="group">
+            <obj_property name="label">mum_1_U0</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="mum_1_U0_Input_group" type="group">
+               <obj_property name="label">Input Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="mu1_ack_stream_group" type="group">
+                  <obj_property name="label">mu1_ack_stream(mu1_ack_stream_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mu1_ack_stream_blk_n" type="logic">
+                     <obj_property name="ElementShortName">mu1_ack_stream_blk_n</obj_property>
+                     <obj_property name="ObjectShortName">mu1_ack_stream_blk_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mu1_ack_stream_dout" type="array">
+                     <obj_property name="ElementShortName">mu1_ack_stream_dout[256:0]</obj_property>
+                     <obj_property name="ObjectShortName">mu1_ack_stream_dout[256:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mu1_ack_stream_empty_n" type="logic">
+                     <obj_property name="ElementShortName">mu1_ack_stream_empty_n</obj_property>
+                     <obj_property name="ObjectShortName">mu1_ack_stream_empty_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mu1_ack_stream_read" type="logic">
+                     <obj_property name="ElementShortName">mu1_ack_stream_read</obj_property>
+                     <obj_property name="ObjectShortName">mu1_ack_stream_read</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="mum_1_U0_Handshake_group" type="group">
+               <obj_property name="label">Block-level handshake</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/ap_start" type="logic">
+                  <obj_property name="ElementShortName">ap_start</obj_property>
+                  <obj_property name="ObjectShortName">ap_start</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/ap_ready" type="logic">
+                  <obj_property name="ElementShortName">ap_ready</obj_property>
+                  <obj_property name="ObjectShortName">ap_ready</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/ap_done" type="logic">
+                  <obj_property name="ElementShortName">ap_done</obj_property>
+                  <obj_property name="ObjectShortName">ap_done</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/ap_continue" type="logic">
+                  <obj_property name="ElementShortName">ap_continue</obj_property>
+                  <obj_property name="ObjectShortName">ap_continue</obj_property>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="mum_1_U0_Output_group" type="group">
+               <obj_property name="label">Output Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="mu1_cmd_stream_group" type="group">
+                  <obj_property name="label">mu1_cmd_stream(mu1_cmd_stream_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mu1_cmd_stream_blk_n" type="logic">
+                     <obj_property name="ElementShortName">mu1_cmd_stream_blk_n</obj_property>
+                     <obj_property name="ObjectShortName">mu1_cmd_stream_blk_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mu1_cmd_stream_din" type="array">
+                     <obj_property name="ElementShortName">mu1_cmd_stream_din[278:0]</obj_property>
+                     <obj_property name="ObjectShortName">mu1_cmd_stream_din[278:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mu1_cmd_stream_full_n" type="logic">
+                     <obj_property name="ElementShortName">mu1_cmd_stream_full_n</obj_property>
+                     <obj_property name="ObjectShortName">mu1_cmd_stream_full_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mum_1_U0/mu1_cmd_stream_write" type="logic">
+                     <obj_property name="ElementShortName">mu1_cmd_stream_write</obj_property>
+                     <obj_property name="ObjectShortName">mu1_cmd_stream_write</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="rr_U0_group" type="group">
+            <obj_property name="label">rr_U0</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_load_fu_190/grp_rr_Pipeline_loop_load_fu_190_activity" type="protoinst">
+               <obj_property name="ElementShortName">grp_rr_Pipeline_loop_load_fu_190_activity</obj_property>
+               <obj_property name="ObjectShortName">grp_rr_Pipeline_loop_load_fu_190_activity</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_act_fu_204/grp_rr_Pipeline_loop_act_fu_204_activity" type="protoinst">
+               <obj_property name="ElementShortName">grp_rr_Pipeline_loop_act_fu_204_activity</obj_property>
+               <obj_property name="ObjectShortName">grp_rr_Pipeline_loop_act_fu_204_activity</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_wb_fu_226/grp_rr_Pipeline_loop_wb_fu_226_activity" type="protoinst">
+               <obj_property name="ElementShortName">grp_rr_Pipeline_loop_wb_fu_226_activity</obj_property>
+               <obj_property name="ObjectShortName">grp_rr_Pipeline_loop_wb_fu_226_activity</obj_property>
+            </wvobject>
+            <wvobject fp_name="rr_U0_Input_group" type="group">
+               <obj_property name="label">Input Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="hbm_group" type="group">
+                  <obj_property name="label">hbm(hbm_c_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/hbm_blk_n" type="logic">
+                     <obj_property name="ElementShortName">hbm_blk_n</obj_property>
+                     <obj_property name="ObjectShortName">hbm_blk_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/hbm_dout" type="array">
+                     <obj_property name="ElementShortName">hbm_dout[63:0]</obj_property>
+                     <obj_property name="ObjectShortName">hbm_dout[63:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/hbm_empty_n" type="logic">
+                     <obj_property name="ElementShortName">hbm_empty_n</obj_property>
+                     <obj_property name="ObjectShortName">hbm_empty_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/hbm_read" type="logic">
+                     <obj_property name="ElementShortName">hbm_read</obj_property>
+                     <obj_property name="ObjectShortName">hbm_read</obj_property>
+                  </wvobject>
+               </wvobject>
+               <wvobject fp_name="mu0_cmd_stream_group" type="group">
+                  <obj_property name="label">mu0_cmd_stream(mu0_cmd_stream_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu0_cmd_stream_dout" type="array">
+                     <obj_property name="ElementShortName">mu0_cmd_stream_dout[278:0]</obj_property>
+                     <obj_property name="ObjectShortName">mu0_cmd_stream_dout[278:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu0_cmd_stream_empty_n" type="logic">
+                     <obj_property name="ElementShortName">mu0_cmd_stream_empty_n</obj_property>
+                     <obj_property name="ObjectShortName">mu0_cmd_stream_empty_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu0_cmd_stream_read" type="logic">
+                     <obj_property name="ElementShortName">mu0_cmd_stream_read</obj_property>
+                     <obj_property name="ObjectShortName">mu0_cmd_stream_read</obj_property>
+                  </wvobject>
+               </wvobject>
+               <wvobject fp_name="mu1_cmd_stream_group" type="group">
+                  <obj_property name="label">mu1_cmd_stream(mu1_cmd_stream_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu1_cmd_stream_dout" type="array">
+                     <obj_property name="ElementShortName">mu1_cmd_stream_dout[278:0]</obj_property>
+                     <obj_property name="ObjectShortName">mu1_cmd_stream_dout[278:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu1_cmd_stream_empty_n" type="logic">
+                     <obj_property name="ElementShortName">mu1_cmd_stream_empty_n</obj_property>
+                     <obj_property name="ObjectShortName">mu1_cmd_stream_empty_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu1_cmd_stream_read" type="logic">
+                     <obj_property name="ElementShortName">mu1_cmd_stream_read</obj_property>
+                     <obj_property name="ObjectShortName">mu1_cmd_stream_read</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="rr_U0_Handshake_group" type="group">
+               <obj_property name="label">Block-level handshake</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/ap_start" type="logic">
+                  <obj_property name="ElementShortName">ap_start</obj_property>
+                  <obj_property name="ObjectShortName">ap_start</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/ap_ready" type="logic">
+                  <obj_property name="ElementShortName">ap_ready</obj_property>
+                  <obj_property name="ObjectShortName">ap_ready</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/ap_done" type="logic">
+                  <obj_property name="ElementShortName">ap_done</obj_property>
+                  <obj_property name="ObjectShortName">ap_done</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/ap_continue" type="logic">
+                  <obj_property name="ElementShortName">ap_continue</obj_property>
+                  <obj_property name="ObjectShortName">ap_continue</obj_property>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="rr_U0_Output_group" type="group">
+               <obj_property name="label">Output Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="mu0_ack_stream_group" type="group">
+                  <obj_property name="label">mu0_ack_stream(mu0_ack_stream_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu0_ack_stream_din" type="array">
+                     <obj_property name="ElementShortName">mu0_ack_stream_din[256:0]</obj_property>
+                     <obj_property name="ObjectShortName">mu0_ack_stream_din[256:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu0_ack_stream_full_n" type="logic">
+                     <obj_property name="ElementShortName">mu0_ack_stream_full_n</obj_property>
+                     <obj_property name="ObjectShortName">mu0_ack_stream_full_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu0_ack_stream_write" type="logic">
+                     <obj_property name="ElementShortName">mu0_ack_stream_write</obj_property>
+                     <obj_property name="ObjectShortName">mu0_ack_stream_write</obj_property>
+                  </wvobject>
+               </wvobject>
+               <wvobject fp_name="mu1_ack_stream_group" type="group">
+                  <obj_property name="label">mu1_ack_stream(mu1_ack_stream_U, FIFO)</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu1_ack_stream_din" type="array">
+                     <obj_property name="ElementShortName">mu1_ack_stream_din[256:0]</obj_property>
+                     <obj_property name="ObjectShortName">mu1_ack_stream_din[256:0]</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu1_ack_stream_full_n" type="logic">
+                     <obj_property name="ElementShortName">mu1_ack_stream_full_n</obj_property>
+                     <obj_property name="ObjectShortName">mu1_ack_stream_full_n</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/mu1_ack_stream_write" type="logic">
+                     <obj_property name="ElementShortName">mu1_ack_stream_write</obj_property>
+                     <obj_property name="ObjectShortName">mu1_ack_stream_write</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="grp_rr_Pipeline_loop_load_fu_190_group" type="group">
+               <obj_property name="label">grp_rr_Pipeline_loop_load_fu_190</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="grp_rr_Pipeline_loop_load_fu_190_Handshake_group" type="group">
+                  <obj_property name="label">Block-level handshake</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_load_fu_190/ap_start" type="logic">
+                     <obj_property name="ElementShortName">ap_start</obj_property>
+                     <obj_property name="ObjectShortName">ap_start</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_load_fu_190/ap_ready" type="logic">
+                     <obj_property name="ElementShortName">ap_ready</obj_property>
+                     <obj_property name="ObjectShortName">ap_ready</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_load_fu_190/ap_done" type="logic">
+                     <obj_property name="ElementShortName">ap_done</obj_property>
+                     <obj_property name="ObjectShortName">ap_done</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="grp_rr_Pipeline_loop_act_fu_204_group" type="group">
+               <obj_property name="label">grp_rr_Pipeline_loop_act_fu_204</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="grp_rr_Pipeline_loop_act_fu_204_Handshake_group" type="group">
+                  <obj_property name="label">Block-level handshake</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_act_fu_204/ap_start" type="logic">
+                     <obj_property name="ElementShortName">ap_start</obj_property>
+                     <obj_property name="ObjectShortName">ap_start</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_act_fu_204/ap_ready" type="logic">
+                     <obj_property name="ElementShortName">ap_ready</obj_property>
+                     <obj_property name="ObjectShortName">ap_ready</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_act_fu_204/ap_done" type="logic">
+                     <obj_property name="ElementShortName">ap_done</obj_property>
+                     <obj_property name="ObjectShortName">ap_done</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="grp_rr_Pipeline_loop_wb_fu_226_group" type="group">
+               <obj_property name="label">grp_rr_Pipeline_loop_wb_fu_226</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="grp_rr_Pipeline_loop_wb_fu_226_Handshake_group" type="group">
+                  <obj_property name="label">Block-level handshake</obj_property>
+                  <obj_property name="DisplayName">label</obj_property>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_wb_fu_226/ap_start" type="logic">
+                     <obj_property name="ElementShortName">ap_start</obj_property>
+                     <obj_property name="ObjectShortName">ap_start</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_wb_fu_226/ap_ready" type="logic">
+                     <obj_property name="ElementShortName">ap_ready</obj_property>
+                     <obj_property name="ObjectShortName">ap_ready</obj_property>
+                  </wvobject>
+                  <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/rr_U0/grp_rr_Pipeline_loop_wb_fu_226/ap_done" type="logic">
+                     <obj_property name="ElementShortName">ap_done</obj_property>
+                     <obj_property name="ObjectShortName">ap_done</obj_property>
+                  </wvobject>
+               </wvobject>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="mainRun_0_Block_entry48_proc_U0_group" type="group">
+            <obj_property name="label">mainRun_0_Block_entry48_proc_U0</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="mainRun_0_Block_entry48_proc_U0_Input_group" type="group">
+               <obj_property name="label">Input Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+            </wvobject>
+            <wvobject fp_name="mainRun_0_Block_entry48_proc_U0_Handshake_group" type="group">
+               <obj_property name="label">Block-level handshake</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_Block_entry48_proc_U0/ap_start" type="logic">
+                  <obj_property name="ElementShortName">ap_start</obj_property>
+                  <obj_property name="ObjectShortName">ap_start</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_Block_entry48_proc_U0/ap_ready" type="logic">
+                  <obj_property name="ElementShortName">ap_ready</obj_property>
+                  <obj_property name="ObjectShortName">ap_ready</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_Block_entry48_proc_U0/ap_done" type="logic">
+                  <obj_property name="ElementShortName">ap_done</obj_property>
+                  <obj_property name="ObjectShortName">ap_done</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mainRun_0_U0/mainRun_0_Block_entry48_proc_U0/ap_continue" type="logic">
+                  <obj_property name="ElementShortName">ap_continue</obj_property>
+                  <obj_property name="ObjectShortName">ap_continue</obj_property>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="mainRun_0_Block_entry48_proc_U0_Output_group" type="group">
+               <obj_property name="label">Output Channels</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+            </wvobject>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group232" type="group">
+      <obj_property name="label">Design Top Signals</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="group233" type="group">
+         <obj_property name="label">C InOuts</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="group234" type="group">
+            <obj_property name="label">hbm(axi_master)</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="group235" type="group">
+               <obj_property name="label">Read Channel</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RRESP" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_RRESP[1:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_RRESP[1:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RUSER" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_RUSER[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_RUSER[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RID" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_RID[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_RID[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RDATA" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_RDATA[255:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_RDATA[255:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARUSER" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARUSER[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARUSER[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARREGION" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARREGION[3:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARREGION[3:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARQOS" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARQOS[3:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARQOS[3:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARPROT" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARPROT[2:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARPROT[2:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARCACHE" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARCACHE[3:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARCACHE[3:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARLOCK" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARLOCK[1:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARLOCK[1:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARBURST" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARBURST[1:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARBURST[1:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARSIZE" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARSIZE[2:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARSIZE[2:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARLEN" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARLEN[7:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARLEN[7:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARID" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARID[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARID[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARADDR" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARADDR[63:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARADDR[63:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="group236" type="group">
+               <obj_property name="label">Write Channel</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BUSER" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_BUSER[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_BUSER[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BID" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_BID[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_BID[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BRESP" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_BRESP[1:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_BRESP[1:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WUSER" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_WUSER[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_WUSER[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WID" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_WID[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_WID[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WSTRB" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_WSTRB[31:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_WSTRB[31:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WDATA" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_WDATA[255:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_WDATA[255:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWUSER" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWUSER[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWUSER[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWREGION" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWREGION[3:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWREGION[3:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWQOS" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWQOS[3:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWQOS[3:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWPROT" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWPROT[2:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWPROT[2:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWCACHE" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWCACHE[3:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWCACHE[3:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWLOCK" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWLOCK[1:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWLOCK[1:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWBURST" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWBURST[1:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWBURST[1:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWSIZE" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWSIZE[2:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWSIZE[2:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWLEN" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWLEN[7:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWLEN[7:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWID" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWID[0:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWID[0:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWADDR" type="array">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWADDR[63:0]</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWADDR[63:0]</obj_property>
+                  <obj_property name="Radix">HEXRADIX</obj_property>
+               </wvobject>
+            </wvobject>
+            <wvobject fp_name="group237" type="group">
+               <obj_property name="label">Handshakes</obj_property>
+               <obj_property name="DisplayName">label</obj_property>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BREADY" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_BREADY</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_BREADY</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BVALID" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_BVALID</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_BVALID</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RLAST" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_RLAST</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_RLAST</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RREADY" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_RREADY</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_RREADY</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RVALID" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_RVALID</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_RVALID</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARREADY" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARREADY</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARREADY</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARVALID" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_ARVALID</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_ARVALID</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WLAST" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_WLAST</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_WLAST</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WREADY" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_WREADY</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_WREADY</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WVALID" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_WVALID</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_WVALID</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWREADY" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWREADY</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWREADY</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+               <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWVALID" type="logic">
+                  <obj_property name="ElementShortName">m_axi_gmem0_AWVALID</obj_property>
+                  <obj_property name="ObjectShortName">m_axi_gmem0_AWVALID</obj_property>
+                  <obj_property name="CustomSignalColor">#ffff00</obj_property>
+                  <obj_property name="UseCustomSignalColor">true</obj_property>
+               </wvobject>
+            </wvobject>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group283" type="group">
+         <obj_property name="label">C Outputs</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="group284" type="group">
+            <obj_property name="label">return(axis)</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo1_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu1_rdo1_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo1_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo1_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu1_rdo1_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo1_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo0_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu1_rdo0_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo0_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo0_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu1_rdo0_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo0_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu0_rdo1_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo1_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu0_rdo1_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo1_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu0_rdo0_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo0_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu0_rdo0_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo0_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo1_TLAST" type="array">
+               <obj_property name="ElementShortName">mu1_rdo1_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo1_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo1_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu1_rdo1_TSTRB[31:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo1_TSTRB[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo1_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu1_rdo1_TKEEP[31:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo1_TKEEP[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo1_TDATA" type="array">
+               <obj_property name="ElementShortName">mu1_rdo1_TDATA[255:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo1_TDATA[255:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo0_TLAST" type="array">
+               <obj_property name="ElementShortName">mu1_rdo0_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo0_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo0_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu1_rdo0_TSTRB[31:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo0_TSTRB[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo0_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu1_rdo0_TKEEP[31:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo0_TKEEP[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdo0_TDATA" type="array">
+               <obj_property name="ElementShortName">mu1_rdo0_TDATA[255:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdo0_TDATA[255:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TLAST" type="array">
+               <obj_property name="ElementShortName">mu0_rdo1_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo1_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu0_rdo1_TSTRB[31:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo1_TSTRB[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu0_rdo1_TKEEP[31:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo1_TKEEP[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TDATA" type="array">
+               <obj_property name="ElementShortName">mu0_rdo1_TDATA[255:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo1_TDATA[255:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TLAST" type="array">
+               <obj_property name="ElementShortName">mu0_rdo0_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo0_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu0_rdo0_TSTRB[31:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo0_TSTRB[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu0_rdo0_TKEEP[31:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo0_TKEEP[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TDATA" type="array">
+               <obj_property name="ElementShortName">mu0_rdo0_TDATA[255:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdo0_TDATA[255:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+         </wvobject>
+         <wvobject fp_name="group309" type="group">
+            <obj_property name="label">reg_guard_bgn__mu0_rdi_nb__mu0_wri_nb__mu0_rdo_nb__mu0_max_addr__mu1_rdi_nb__mu1_wri_nb__mu1_rdo_nb__mu1_max_addr__hbm_rd_nb__hbm_wr_nb__reg_guard_end__hbm__return(axi_slave)</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/interrupt" type="logic">
+               <obj_property name="ElementShortName">interrupt</obj_property>
+               <obj_property name="ObjectShortName">interrupt</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_BRESP" type="array">
+               <obj_property name="ElementShortName">s_axi_control_BRESP[1:0]</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_BRESP[1:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_BREADY" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_BREADY</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_BREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_BVALID" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_BVALID</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_BVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_RRESP" type="array">
+               <obj_property name="ElementShortName">s_axi_control_RRESP[1:0]</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_RRESP[1:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_RDATA" type="array">
+               <obj_property name="ElementShortName">s_axi_control_RDATA[31:0]</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_RDATA[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_RREADY" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_RREADY</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_RREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_RVALID" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_RVALID</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_RVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_ARREADY" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_ARREADY</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_ARREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_ARVALID" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_ARVALID</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_ARVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_ARADDR" type="array">
+               <obj_property name="ElementShortName">s_axi_control_ARADDR[7:0]</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_ARADDR[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_WSTRB" type="array">
+               <obj_property name="ElementShortName">s_axi_control_WSTRB[3:0]</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_WSTRB[3:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_WDATA" type="array">
+               <obj_property name="ElementShortName">s_axi_control_WDATA[31:0]</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_WDATA[31:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_WREADY" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_WREADY</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_WREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_WVALID" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_WVALID</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_WVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_AWREADY" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_AWREADY</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_AWREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_AWVALID" type="logic">
+               <obj_property name="ElementShortName">s_axi_control_AWVALID</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_AWVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_AWADDR" type="array">
+               <obj_property name="ElementShortName">s_axi_control_AWADDR[7:0]</obj_property>
+               <obj_property name="ObjectShortName">s_axi_control_AWADDR[7:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group328" type="group">
+         <obj_property name="label">C Inputs</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="group329" type="group">
+            <obj_property name="label">return(axis)</obj_property>
+            <obj_property name="DisplayName">label</obj_property>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu1_wri1_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri1_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu1_wri1_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri1_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu1_wri0_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri0_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu1_wri0_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri0_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi1_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu1_rdi1_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi1_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi1_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu1_rdi1_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi1_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi0_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu1_rdi0_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi0_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi0_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu1_rdi0_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi0_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu0_wri1_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri1_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu0_wri1_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri1_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu0_wri0_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri0_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu0_wri0_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri0_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu0_rdi1_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi1_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu0_rdi1_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi1_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TREADY" type="logic">
+               <obj_property name="ElementShortName">mu0_rdi0_TREADY</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi0_TREADY</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TVALID" type="logic">
+               <obj_property name="ElementShortName">mu0_rdi0_TVALID</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi0_TVALID</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TLAST" type="array">
+               <obj_property name="ElementShortName">mu1_wri1_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri1_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu1_wri1_TSTRB[34:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri1_TSTRB[34:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu1_wri1_TKEEP[34:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri1_TKEEP[34:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TDATA" type="array">
+               <obj_property name="ElementShortName">mu1_wri1_TDATA[279:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri1_TDATA[279:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TLAST" type="array">
+               <obj_property name="ElementShortName">mu1_wri0_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri0_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu1_wri0_TSTRB[34:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri0_TSTRB[34:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu1_wri0_TKEEP[34:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri0_TKEEP[34:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TDATA" type="array">
+               <obj_property name="ElementShortName">mu1_wri0_TDATA[279:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_wri0_TDATA[279:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi1_TLAST" type="array">
+               <obj_property name="ElementShortName">mu1_rdi1_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi1_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi1_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu1_rdi1_TSTRB[2:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi1_TSTRB[2:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi1_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu1_rdi1_TKEEP[2:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi1_TKEEP[2:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi1_TDATA" type="array">
+               <obj_property name="ElementShortName">mu1_rdi1_TDATA[23:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi1_TDATA[23:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi0_TLAST" type="array">
+               <obj_property name="ElementShortName">mu1_rdi0_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi0_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi0_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu1_rdi0_TSTRB[2:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi0_TSTRB[2:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi0_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu1_rdi0_TKEEP[2:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi0_TKEEP[2:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_rdi0_TDATA" type="array">
+               <obj_property name="ElementShortName">mu1_rdi0_TDATA[23:0]</obj_property>
+               <obj_property name="ObjectShortName">mu1_rdi0_TDATA[23:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TLAST" type="array">
+               <obj_property name="ElementShortName">mu0_wri1_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri1_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu0_wri1_TSTRB[34:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri1_TSTRB[34:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu0_wri1_TKEEP[34:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri1_TKEEP[34:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TDATA" type="array">
+               <obj_property name="ElementShortName">mu0_wri1_TDATA[279:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri1_TDATA[279:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TLAST" type="array">
+               <obj_property name="ElementShortName">mu0_wri0_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri0_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu0_wri0_TSTRB[34:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri0_TSTRB[34:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu0_wri0_TKEEP[34:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri0_TKEEP[34:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TDATA" type="array">
+               <obj_property name="ElementShortName">mu0_wri0_TDATA[279:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_wri0_TDATA[279:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TLAST" type="array">
+               <obj_property name="ElementShortName">mu0_rdi1_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi1_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu0_rdi1_TSTRB[2:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi1_TSTRB[2:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu0_rdi1_TKEEP[2:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi1_TKEEP[2:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TDATA" type="array">
+               <obj_property name="ElementShortName">mu0_rdi1_TDATA[23:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi1_TDATA[23:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TLAST" type="array">
+               <obj_property name="ElementShortName">mu0_rdi0_TLAST[0:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi0_TLAST[0:0]</obj_property>
+               <obj_property name="CustomSignalColor">#ffff00</obj_property>
+               <obj_property name="UseCustomSignalColor">true</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TSTRB" type="array">
+               <obj_property name="ElementShortName">mu0_rdi0_TSTRB[2:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi0_TSTRB[2:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TKEEP" type="array">
+               <obj_property name="ElementShortName">mu0_rdi0_TKEEP[2:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi0_TKEEP[2:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+            <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TDATA" type="array">
+               <obj_property name="ElementShortName">mu0_rdi0_TDATA[23:0]</obj_property>
+               <obj_property name="ObjectShortName">mu0_rdi0_TDATA[23:0]</obj_property>
+               <obj_property name="Radix">HEXRADIX</obj_property>
+            </wvobject>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group378" type="group">
+         <obj_property name="label">Reset</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/ap_rst_n" type="logic">
+            <obj_property name="ElementShortName">ap_rst_n</obj_property>
+            <obj_property name="ObjectShortName">ap_rst_n</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="group380" type="group">
+         <obj_property name="label">Clock</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/ap_clk" type="logic">
+            <obj_property name="ElementShortName">ap_clk</obj_property>
+            <obj_property name="ObjectShortName">ap_clk</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_AWVALID" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_AWVALID</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_AWVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_AWREADY" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_AWREADY</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_AWREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_AWADDR" type="array">
+      <obj_property name="ElementShortName">s_axi_control_AWADDR[7:0]</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_AWADDR[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_WVALID" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_WVALID</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_WVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_WREADY" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_WREADY</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_WREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_WDATA" type="array">
+      <obj_property name="ElementShortName">s_axi_control_WDATA[31:0]</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_WDATA[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_WSTRB" type="array">
+      <obj_property name="ElementShortName">s_axi_control_WSTRB[3:0]</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_WSTRB[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_ARVALID" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_ARVALID</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_ARVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_ARREADY" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_ARREADY</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_ARREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_ARADDR" type="array">
+      <obj_property name="ElementShortName">s_axi_control_ARADDR[7:0]</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_ARADDR[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_RVALID" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_RVALID</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_RVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_RREADY" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_RREADY</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_RREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_RDATA" type="array">
+      <obj_property name="ElementShortName">s_axi_control_RDATA[31:0]</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_RDATA[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_RRESP" type="array">
+      <obj_property name="ElementShortName">s_axi_control_RRESP[1:0]</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_RRESP[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_BVALID" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_BVALID</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_BVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_BREADY" type="logic">
+      <obj_property name="ElementShortName">s_axi_control_BREADY</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_BREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/s_axi_control_BRESP" type="array">
+      <obj_property name="ElementShortName">s_axi_control_BRESP[1:0]</obj_property>
+      <obj_property name="ObjectShortName">s_axi_control_BRESP[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TDATA" type="array">
+      <obj_property name="ElementShortName">mu0_rdi0_TDATA[23:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi0_TDATA[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TKEEP" type="array">
+      <obj_property name="ElementShortName">mu0_rdi0_TKEEP[2:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi0_TKEEP[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TSTRB" type="array">
+      <obj_property name="ElementShortName">mu0_rdi0_TSTRB[2:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi0_TSTRB[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TLAST" type="array">
+      <obj_property name="ElementShortName">mu0_rdi0_TLAST[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi0_TLAST[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TVALID" type="logic">
+      <obj_property name="ElementShortName">mu0_rdi0_TVALID</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi0_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi0_TREADY" type="logic">
+      <obj_property name="ElementShortName">mu0_rdi0_TREADY</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi0_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TDATA" type="array">
+      <obj_property name="ElementShortName">mu0_rdo0_TDATA[255:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo0_TDATA[255:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TKEEP" type="array">
+      <obj_property name="ElementShortName">mu0_rdo0_TKEEP[31:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo0_TKEEP[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TSTRB" type="array">
+      <obj_property name="ElementShortName">mu0_rdo0_TSTRB[31:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo0_TSTRB[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TLAST" type="array">
+      <obj_property name="ElementShortName">mu0_rdo0_TLAST[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo0_TLAST[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TVALID" type="logic">
+      <obj_property name="ElementShortName">mu0_rdo0_TVALID</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo0_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo0_TREADY" type="logic">
+      <obj_property name="ElementShortName">mu0_rdo0_TREADY</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo0_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TDATA" type="array">
+      <obj_property name="ElementShortName">mu0_rdi1_TDATA[23:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi1_TDATA[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TKEEP" type="array">
+      <obj_property name="ElementShortName">mu0_rdi1_TKEEP[2:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi1_TKEEP[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TSTRB" type="array">
+      <obj_property name="ElementShortName">mu0_rdi1_TSTRB[2:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi1_TSTRB[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TLAST" type="array">
+      <obj_property name="ElementShortName">mu0_rdi1_TLAST[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi1_TLAST[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TVALID" type="logic">
+      <obj_property name="ElementShortName">mu0_rdi1_TVALID</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi1_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdi1_TREADY" type="logic">
+      <obj_property name="ElementShortName">mu0_rdi1_TREADY</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdi1_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TDATA" type="array">
+      <obj_property name="ElementShortName">mu0_rdo1_TDATA[255:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo1_TDATA[255:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TKEEP" type="array">
+      <obj_property name="ElementShortName">mu0_rdo1_TKEEP[31:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo1_TKEEP[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TSTRB" type="array">
+      <obj_property name="ElementShortName">mu0_rdo1_TSTRB[31:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo1_TSTRB[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TLAST" type="array">
+      <obj_property name="ElementShortName">mu0_rdo1_TLAST[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo1_TLAST[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TVALID" type="logic">
+      <obj_property name="ElementShortName">mu0_rdo1_TVALID</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo1_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_rdo1_TREADY" type="logic">
+      <obj_property name="ElementShortName">mu0_rdo1_TREADY</obj_property>
+      <obj_property name="ObjectShortName">mu0_rdo1_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TDATA" type="array">
+      <obj_property name="ElementShortName">mu0_wri0_TDATA[279:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri0_TDATA[279:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TKEEP" type="array">
+      <obj_property name="ElementShortName">mu0_wri0_TKEEP[34:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri0_TKEEP[34:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TSTRB" type="array">
+      <obj_property name="ElementShortName">mu0_wri0_TSTRB[34:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri0_TSTRB[34:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TLAST" type="array">
+      <obj_property name="ElementShortName">mu0_wri0_TLAST[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri0_TLAST[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TVALID" type="logic">
+      <obj_property name="ElementShortName">mu0_wri0_TVALID</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri0_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri0_TREADY" type="logic">
+      <obj_property name="ElementShortName">mu0_wri0_TREADY</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri0_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TDATA" type="array">
+      <obj_property name="ElementShortName">mu0_wri1_TDATA[279:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri1_TDATA[279:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TKEEP" type="array">
+      <obj_property name="ElementShortName">mu0_wri1_TKEEP[34:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri1_TKEEP[34:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TSTRB" type="array">
+      <obj_property name="ElementShortName">mu0_wri1_TSTRB[34:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri1_TSTRB[34:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TLAST" type="array">
+      <obj_property name="ElementShortName">mu0_wri1_TLAST[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri1_TLAST[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TVALID" type="logic">
+      <obj_property name="ElementShortName">mu0_wri1_TVALID</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri1_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu0_wri1_TREADY" type="logic">
+      <obj_property name="ElementShortName">mu0_wri1_TREADY</obj_property>
+      <obj_property name="ObjectShortName">mu0_wri1_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TDATA" type="array">
+      <obj_property name="ElementShortName">mu1_wri0_TDATA[279:0]</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri0_TDATA[279:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TKEEP" type="array">
+      <obj_property name="ElementShortName">mu1_wri0_TKEEP[34:0]</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri0_TKEEP[34:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TSTRB" type="array">
+      <obj_property name="ElementShortName">mu1_wri0_TSTRB[34:0]</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri0_TSTRB[34:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TLAST" type="array">
+      <obj_property name="ElementShortName">mu1_wri0_TLAST[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri0_TLAST[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TVALID" type="logic">
+      <obj_property name="ElementShortName">mu1_wri0_TVALID</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri0_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri0_TREADY" type="logic">
+      <obj_property name="ElementShortName">mu1_wri0_TREADY</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri0_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TDATA" type="array">
+      <obj_property name="ElementShortName">mu1_wri1_TDATA[279:0]</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri1_TDATA[279:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TKEEP" type="array">
+      <obj_property name="ElementShortName">mu1_wri1_TKEEP[34:0]</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri1_TKEEP[34:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TSTRB" type="array">
+      <obj_property name="ElementShortName">mu1_wri1_TSTRB[34:0]</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri1_TSTRB[34:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TLAST" type="array">
+      <obj_property name="ElementShortName">mu1_wri1_TLAST[0:0]</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri1_TLAST[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TVALID" type="logic">
+      <obj_property name="ElementShortName">mu1_wri1_TVALID</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri1_TVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/mu1_wri1_TREADY" type="logic">
+      <obj_property name="ElementShortName">mu1_wri1_TREADY</obj_property>
+      <obj_property name="ObjectShortName">mu1_wri1_TREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWVALID" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWVALID</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWREADY" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWREADY</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWADDR" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWADDR[63:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWADDR[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWID" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWID[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWID[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWLEN" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWLEN[7:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWLEN[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWSIZE" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWSIZE[2:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWSIZE[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWBURST" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWBURST[1:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWBURST[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWLOCK" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWLOCK[1:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWLOCK[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWCACHE" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWCACHE[3:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWCACHE[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWPROT" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWPROT[2:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWPROT[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWQOS" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWQOS[3:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWQOS[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWREGION" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWREGION[3:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWREGION[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_AWUSER" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_AWUSER[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_AWUSER[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WVALID" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_WVALID</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_WVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WREADY" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_WREADY</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_WREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WDATA" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_WDATA[255:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_WDATA[255:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WSTRB" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_WSTRB[31:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_WSTRB[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WLAST" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_WLAST</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_WLAST</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WID" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_WID[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_WID[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_WUSER" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_WUSER[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_WUSER[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARVALID" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARVALID</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARREADY" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARREADY</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARADDR" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARADDR[63:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARADDR[63:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARID" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARID[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARID[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARLEN" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARLEN[7:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARLEN[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARSIZE" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARSIZE[2:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARSIZE[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARBURST" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARBURST[1:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARBURST[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARLOCK" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARLOCK[1:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARLOCK[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARCACHE" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARCACHE[3:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARCACHE[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARPROT" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARPROT[2:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARPROT[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARQOS" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARQOS[3:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARQOS[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARREGION" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARREGION[3:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARREGION[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_ARUSER" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_ARUSER[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_ARUSER[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RVALID" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_RVALID</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_RVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RREADY" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_RREADY</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_RREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RDATA" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_RDATA[255:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_RDATA[255:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RLAST" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_RLAST</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_RLAST</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RID" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_RID[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_RID[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RUSER" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_RUSER[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_RUSER[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_RRESP" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_RRESP[1:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_RRESP[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BVALID" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_BVALID</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_BVALID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BREADY" type="logic">
+      <obj_property name="ElementShortName">m_axi_gmem0_BREADY</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_BREADY</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BRESP" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_BRESP[1:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_BRESP[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BID" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_BID[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_BID[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/apatb_hbmArbiter_2_2_2_128m_top_top/AESL_inst_hbmArbiter_2_2_2_128m_top/m_axi_gmem0_BUSER" type="array">
+      <obj_property name="ElementShortName">m_axi_gmem0_BUSER[0:0]</obj_property>
+      <obj_property name="ObjectShortName">m_axi_gmem0_BUSER[0:0]</obj_property>
+   </wvobject>
+</wave_config>

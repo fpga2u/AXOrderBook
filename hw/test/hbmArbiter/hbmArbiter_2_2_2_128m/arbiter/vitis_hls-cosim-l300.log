@@ -1,0 +1,900 @@
+
+****** Vitis HLS - High-Level Synthesis from C, C++ and OpenCL v2022.1 (64-bit)
+  **** SW Build 3526262 on Mon Apr 18 15:48:16 MDT 2022
+  **** IP Build 3524634 on Mon Apr 18 20:55:01 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source C:/Xilinx/Vitis_HLS/2022.1/scripts/vitis_hls/hls.tcl -notrace
+INFO: [HLS 200-10] Running 'C:/Xilinx/Vitis_HLS/2022.1/bin/unwrapped/win64.o/vitis_hls.exe'
+INFO: [HLS 200-10] For user 'CZH' on host 'desktop-lme0oa5' (Windows NT_amd64 version 6.2) on Sun Sep 18 13:10:10 +0800 2022
+INFO: [HLS 200-10] In directory 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter'
+Sourcing Tcl script 'run_hls.tcl'
+INFO: [HLS 200-1510] Running: source run_hls.tcl
+INFO: [HLS 200-1510] Running: source settings.tcl
+INFO: [HLS 200-1510] Running: open_project -reset prj_hbmArbiter_2_2_2_128m 
+INFO: [HLS 200-10] Opening and resetting project 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m'.
+WARNING: [HLS 200-40] No G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sol.aps file found.
+INFO: [HLS 200-1510] Running: add_files G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m_top.cpp -cflags -IG:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter -D_C_TEST_ 
+INFO: [HLS 200-10] Adding design file 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m_top.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files -tb hbmArbiter_2_2_2_128m_tb.cpp -cflags -IG:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter -D_C_TEST_ 
+INFO: [HLS 200-10] Adding test bench file 'hbmArbiter_2_2_2_128m_tb.cpp' to the project
+INFO: [HLS 200-1510] Running: set_top hbmArbiter_2_2_2_128m_top 
+INFO: [HLS 200-1510] Running: open_solution -reset sol -flow_target vivado 
+INFO: [HLS 200-10] Creating and opening solution 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol'.
+INFO: [HLS 200-10] Cleaning up the solution database.
+WARNING: [HLS 200-40] No G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sol.aps file found.
+INFO: [HLS 200-1505] Using flow_target 'vivado'
+Resolution: For help on HLS 200-1505 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-1505.html
+INFO: [HLS 200-435] Setting 'open_solution -flow_target vivado' configuration: config_interface -m_axi_latency=0
+INFO: [HLS 200-1510] Running: set_part xcu50-fsvh2104-2L-e 
+INFO: [HLS 200-1611] Setting target device to 'xcu50-fsvh2104-2L-e'
+INFO: [HLS 200-1510] Running: create_clock -period 330MHz -name default 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 3.03ns.
+INFO: [HLS 200-1510] Running: csim_design -ldflags -Wl,--stack,10737418240 
+INFO: [SIM 211-2] *************** CSIM start ***************
+INFO: [SIM 211-4] CSIM will launch GCC as the compiler.
+   Compiling ../../../../hbmArbiter_2_2_2_128m_tb.cpp in debug mode
+   Compiling ../../../../hbmArbiter_2_2_2_128m_top.cpp in debug mode
+   Generating csim.exe
+In file included from C:/Xilinx/Vitis_HLS/2022.1/include/floating_point_v7_0_bitacc_cmodel.h:144:0,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_fpo.h:189,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half_fpo.h:64,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half.h:71,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/etc/ap_private.h:98,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_common.h:710,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_int.h:56,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_axi_sdata.h:88,
+                 from ../../../../hbmArbiter_2_2_2_128m.h:6,
+                 from ../../../../hbmArbiter_2_2_2_128m_top.h:5,
+                 from ../../../../hbmArbiter_2_2_2_128m_tb.cpp:1:
+C:/Xilinx/Vitis_HLS/2022.1/include/gmp.h:63:0: warning: "__GMP_LIBGMP_DLL" redefined
+ #define __GMP_LIBGMP_DLL  0
+ 
+In file included from C:/Xilinx/Vitis_HLS/2022.1/include/hls_fpo.h:189:0,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half_fpo.h:64,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half.h:71,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/etc/ap_private.h:98,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_common.h:710,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_int.h:56,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_axi_sdata.h:88,
+                 from ../../../../hbmArbiter_2_2_2_128m.h:6,
+                 from ../../../../hbmArbiter_2_2_2_128m_top.h:5,
+                 from ../../../../hbmArbiter_2_2_2_128m_tb.cpp:1:
+C:/Xilinx/Vitis_HLS/2022.1/include/floating_point_v7_0_bitacc_cmodel.h:136:0: note: this is the location of the previous definition
+ #define __GMP_LIBGMP_DLL 1
+ 
+In file included from C:/Xilinx/Vitis_HLS/2022.1/include/floating_point_v7_0_bitacc_cmodel.h:144:0,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_fpo.h:189,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half_fpo.h:64,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half.h:71,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/etc/ap_private.h:98,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_common.h:710,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_int.h:56,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_axi_sdata.h:88,
+                 from ../../../../hbmArbiter_2_2_2_128m.h:6,
+                 from ../../../../hbmArbiter_2_2_2_128m_top.h:5,
+                 from ../../../../hbmArbiter_2_2_2_128m_top.cpp:1:
+C:/Xilinx/Vitis_HLS/2022.1/include/gmp.h:63:0: warning: "__GMP_LIBGMP_DLL" redefined
+ #define __GMP_LIBGMP_DLL  0
+ 
+In file included from C:/Xilinx/Vitis_HLS/2022.1/include/hls_fpo.h:189:0,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half_fpo.h:64,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/hls_half.h:71,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/etc/ap_private.h:98,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_common.h:710,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_int.h:56,
+                 from C:/Xilinx/Vitis_HLS/2022.1/include/ap_axi_sdata.h:88,
+                 from ../../../../hbmArbiter_2_2_2_128m.h:6,
+                 from ../../../../hbmArbiter_2_2_2_128m_top.h:5,
+                 from ../../../../hbmArbiter_2_2_2_128m_top.cpp:1:
+C:/Xilinx/Vitis_HLS/2022.1/include/floating_point_v7_0_bitacc_cmodel.h:136:0: note: this is the location of the previous definition
+ #define __GMP_LIBGMP_DLL 1
+ 
+MU0 write0 to A=0 V=0x02
+MU0 write1 to A=1 V=0x03
+MU1 write0 to A=0 V=0x02
+MU1 write1 to A=1 V=0x03
+MU0 write1 to A=17 V=0x07
+MU1 write0 to A=23 V=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+MU0 read1 from A=0
+MU1 read1 from A=0
+MU0 read0 from A=1
+MU1 read0 from A=1
+MU0 read0 from A=17
+MU1 read1 from A=23
+TEST OK!
+INFO: [SIM 211-1] CSim done with 0 errors.
+INFO: [SIM 211-3] *************** CSIM finish ***************
+INFO: [HLS 200-111] Finished Command csim_design CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 5.566 seconds; current allocated memory: 0.371 MB.
+INFO: [HLS 200-1510] Running: csynth_design 
+INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.014 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] Analyzing design file 'G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m_top.cpp' ... 
+WARNING: [HLS 214-111] Static scalars and arrays declared inside a dataflow region will be treated like local variables (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:337:22)
+Resolution: For help on HLS 214-111 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=214-111.html
+WARNING: [HLS 214-111] Static scalars and arrays declared inside a dataflow region will be treated like local variables (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:338:25)
+Resolution: For help on HLS 214-111 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=214-111.html
+WARNING: [HLS 214-114] Since the only kind of statements allowed in a canonical dataflow region are variable declarations and function calls, the compiler may not be able to correctly handle the region (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:358:9)
+Resolution: For help on HLS 214-114 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=214-114.html
+WARNING: [HLS 200-471] Dataflow form checks found 3 issue(s) in file G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m_top.cpp
+Resolution: For help on HLS 200-471 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-471.html
+INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 3.415 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-777] Using interface defaults for 'Vivado' flow target.
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>::get_user_ptr()' into 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::empty()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:267:60)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>::get_dest_ptr()' into 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::empty()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:268:61)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>::get_id_ptr()' into 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::empty()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:268:45)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>::get_user_ptr()' into 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:50)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>::get_dest_ptr()' into 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:296:25)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>::get_id_ptr()' into 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:295:67)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>::get_user_ptr()' into 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:295:36)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>::get_dest_ptr()' into 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:294:39)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>::get_id_ptr()' into 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:294:23)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<277, false>::ap_range_ref(ap_int_base<277, false>*, int, int)' into 'ap_int_base<277, false>::range(int, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1094:12)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<277, false>::get() const' into 'ap_int_base<21, false>::ap_int_base<277, false>(ap_range_ref<277, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:404:20)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<21, false>::ap_int_base<277, false>(ap_range_ref<277, false> const&)' into 'ap_uint<21>::ap_uint<277, false>(ap_range_ref<277, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:266:92)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<277, false>::get() const' into 'ap_int_base<256, false>::ap_int_base<277, false>(ap_range_ref<277, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:404:20)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<256, false>::ap_int_base<277, false>(ap_range_ref<277, false> const&)' into 'ap_uint<256>::ap_uint<277, false>(ap_range_ref<277, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:266:92)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi1ELb0EEC2EDq1_j' into 'ap_int_base<1, false>::ap_int_base(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:260:67)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<1, false>::ap_int_base(int)' into 'ap_uint<1>::ap_uint(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:333:58)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>::get_user_ptr()' into 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::empty()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:267:60)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>::get_dest_ptr()' into 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::empty()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:268:61)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>::get_id_ptr()' into 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::empty()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:268:45)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>::get_user_ptr()' into 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:50)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>::get_dest_ptr()' into 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:296:25)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>::get_id_ptr()' into 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:295:67)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>::get_user_ptr()' into 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:295:36)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>::get_dest_ptr()' into 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:294:39)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>::get_id_ptr()' into 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:294:23)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi256ELb0EEC2EDq256_j' into 'ap_int_base<256, false>::ap_int_base(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:260:67)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<256, false>::ap_int_base(int)' into 'ap_uint<256>::ap_uint(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:333:58)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>::ap_range_ref(ap_int_base<279, false>*, int, int)' into 'ap_int_base<279, false>::range(int, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1094:12)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi279ELb0EEC2EDq279_j' into 'ap_int_base<279, false>::ap_int_base(bool)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:254:68)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::ap_int_base(bool)' into 'ap_range_ref<279, false>::operator=(bool)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_ref.h:385:103)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi279ELb0EEC2EDq279_j' into 'ap_int_base<279, false>::ap_int_base<1, false>(ap_int_base<1, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:231:106)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::ap_int_base<1, false>(ap_int_base<1, false> const&)' into 'ap_range_ref<279, false>& ap_range_ref<279, false>::operator=<1, false>(ap_int_base<1, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_ref.h:413:31)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi279ELb0EEC2EDq279_j' into 'ap_int_base<279, false>::ap_int_base<21, false>(ap_int_base<21, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:231:106)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::ap_int_base<21, false>(ap_int_base<21, false> const&)' into 'ap_range_ref<279, false>& ap_range_ref<279, false>::operator=<21, false>(ap_int_base<21, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_ref.h:413:31)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi279ELb0EEC2EDq279_j' into 'ap_int_base<279, false>::ap_int_base<256, false>(ap_int_base<256, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:231:106)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::ap_int_base<256, false>(ap_int_base<256, false> const&)' into 'ap_range_ref<279, false>& ap_range_ref<279, false>::operator=<256, false>(ap_int_base<256, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_ref.h:413:31)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:46:12)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>& ap_range_ref<279, false>::operator=<256, false>(ap_int_base<256, false> const&)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:49:31)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:49:15)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>& ap_range_ref<279, false>::operator=<21, false>(ap_int_base<21, false> const&)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:48:36)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:48:15)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>& ap_range_ref<279, false>::operator=<1, false>(ap_int_base<1, false> const&)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:47:41)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:47:15)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>::operator=(bool)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:46:42)
+INFO: [HLS 214-131] Inlining function 'ssdm_int<32, false>::ssdm_int(unsigned int)' into 'ap_int_base<32, false>::ap_int_base(unsigned int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:261:76)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, false>::ap_int_base(unsigned int)' into 'bool operator><21, false>(ap_int_base<21, false> const&, unsigned int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1835:356)
+INFO: [HLS 214-131] Inlining function 'bool ap_int_base<21, false>::operator><32, false>(ap_int_base<32, false> const&) const' into 'bool operator><21, false>(ap_int_base<21, false> const&, unsigned int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1835:354)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<257, false>::ap_range_ref(ap_int_base<257, false>*, int, int)' into 'ap_int_base<257, false>::range(int, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1094:12)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<257, false>::get() const' into 'ap_int_base<1, false>::ap_int_base<257, false>(ap_range_ref<257, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:404:20)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<1, false>::ap_int_base<257, false>(ap_range_ref<257, false> const&)' into 'ap_uint<1>::ap_uint<257, false>(ap_range_ref<257, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:266:92)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<257, false>::get() const' into 'ap_int_base<256, false>::ap_int_base<257, false>(ap_range_ref<257, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:404:20)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<256, false>::ap_int_base<257, false>(ap_range_ref<257, false> const&)' into 'ap_uint<256>::ap_uint<257, false>(ap_range_ref<257, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:266:92)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<257, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::ackUnPack(ap_uint<257>*, hbmArbiter_2_2_2_128m::arbiter::acktype*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:82:23)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<257, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::ackUnPack(ap_uint<257>*, hbmArbiter_2_2_2_128m::arbiter::acktype*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:83:27)
+INFO: [HLS 214-131] Inlining function 'ssdm_int<32, true>::ssdm_int(int)' into 'ap_int_base<32, true>::ap_int_base(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:260:67)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, true>::ap_int_base(int)' into 'bool operator==<1, false>(ap_int_base<1, false> const&, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1834:1853)
+INFO: [HLS 214-131] Inlining function 'bool ap_int_base<1, false>::operator==<32, true>(ap_int_base<32, true> const&) const' into 'bool operator==<1, false>(ap_int_base<1, false> const&, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1834:1850)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>::get_user_ptr()' into 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:304:51)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>::get_dest_ptr()' into 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:307:26)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>::get_id_ptr()' into 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:306:68)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>::get_user_ptr()' into 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:306:37)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>::get_dest_ptr()' into 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:305:40)
+INFO: [HLS 214-131] Inlining function 'hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>::get_id_ptr()' into 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:305:24)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::empty()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:122:15)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:179:18)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:177:18)
+INFO: [HLS 214-131] Inlining function 'bool operator==<1, false>(ap_int_base<1, false> const&, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:176:20)
+INFO: [HLS 214-131] Inlining function 'hbmArbiter_2_2_2_128m::arbiter::ackUnPack(ap_uint<257>*, hbmArbiter_2_2_2_128m::arbiter::acktype*)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:171:9)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<21, false>::operator unsigned long long() const' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:164:26)
+INFO: [HLS 214-131] Inlining function 'bool operator><21, false>(ap_int_base<21, false> const&, unsigned int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:163:21)
+INFO: [HLS 214-131] Inlining function 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:161:9)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:150:28)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::empty()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:149:15)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:141:28)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::empty()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:140:15)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<277, false>::range(int, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:134:28)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<277, false>::range(int, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:133:28)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:132:25)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::empty()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:131:15)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<277, false>::range(int, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:125:28)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<277, false>::range(int, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:124:28)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:123:25)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::empty()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:122:15)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:179:18)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>::write(hls::axis<ap_uint<256>, 0ul, 0ul, 0ul> const&)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:177:18)
+INFO: [HLS 214-131] Inlining function 'bool operator==<1, false>(ap_int_base<1, false> const&, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:176:20)
+INFO: [HLS 214-131] Inlining function 'hbmArbiter_2_2_2_128m::arbiter::ackUnPack(ap_uint<257>*, hbmArbiter_2_2_2_128m::arbiter::acktype*)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:171:9)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<21, false>::operator unsigned long long() const' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:164:26)
+INFO: [HLS 214-131] Inlining function 'bool operator><21, false>(ap_int_base<21, false> const&, unsigned int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:163:21)
+INFO: [HLS 214-131] Inlining function 'hbmArbiter_2_2_2_128m::arbiter::cmdPack(hbmArbiter_2_2_2_128m::arbiter::cmdtype*, ap_uint<279>*)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:161:9)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:150:28)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::empty()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:149:15)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::read()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:141:28)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>::empty()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:140:15)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<277, false>::range(int, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:134:28)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<277, false>::range(int, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:133:28)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:132:25)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::empty()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:131:15)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<277, false>::range(int, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:125:28)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<277, false>::range(int, int)' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:124:28)
+INFO: [HLS 214-131] Inlining function 'hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>::read()' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:123:25)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi4ELb0EEC2EDq4_j' into 'ap_int_base<4, false>::ap_int_base(unsigned int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:261:76)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<4, false>::ap_int_base(unsigned int)' into 'ap_uint<4>::ap_uint(unsigned int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:334:67)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi4ELb0EEC2EDq4_j' into 'ap_int_base<4, false>::ap_int_base(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:260:67)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<4, false>::ap_int_base(int)' into 'ap_uint<4>::ap_uint(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:333:58)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, true>::ap_int_base(int)' into 'bool operator<<4, false>(int, ap_int_base<4, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1834:520)
+INFO: [HLS 214-131] Inlining function 'bool ap_int_base<32, true>::operator<<4, false>(ap_int_base<4, false> const&) const' into 'bool operator<<4, false>(int, ap_int_base<4, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1834:558)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>::to_uint64() const' into 'ap_range_ref<279, false>::operator unsigned long long() const' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_ref.h:361:76)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>::get() const' into 'ap_int_base<1, false>::ap_int_base<279, false>(ap_range_ref<279, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:404:20)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<1, false>::ap_int_base<279, false>(ap_range_ref<279, false> const&)' into 'ap_uint<1>::ap_uint<279, false>(ap_range_ref<279, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:266:92)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>::get() const' into 'ap_int_base<21, false>::ap_int_base<279, false>(ap_range_ref<279, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:404:20)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<21, false>::ap_int_base<279, false>(ap_range_ref<279, false> const&)' into 'ap_uint<21>::ap_uint<279, false>(ap_range_ref<279, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:266:92)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>::get() const' into 'ap_int_base<256, false>::ap_int_base<279, false>(ap_range_ref<279, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:404:20)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<256, false>::ap_int_base<279, false>(ap_range_ref<279, false> const&)' into 'ap_uint<256>::ap_uint<279, false>(ap_range_ref<279, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:266:92)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdUnPack(ap_uint<279>*, hbmArbiter_2_2_2_128m::arbiter::cmdtype*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:57:24)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdUnPack(ap_uint<279>*, hbmArbiter_2_2_2_128m::arbiter::cmdtype*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:60:27)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdUnPack(ap_uint<279>*, hbmArbiter_2_2_2_128m::arbiter::cmdtype*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:59:27)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<279, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::cmdUnPack(ap_uint<279>*, hbmArbiter_2_2_2_128m::arbiter::cmdtype*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:58:26)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<279, false>::operator unsigned long long() const' into 'hbmArbiter_2_2_2_128m::arbiter::cmdUnPack(ap_uint<279>*, hbmArbiter_2_2_2_128m::arbiter::cmdtype*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:57:14)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi23ELb0EEC2EDq23_j' into 'ap_int_base<23, false>::ap_int_base<21, false>(ap_int_base<21, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:231:106)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<23, false>::ap_int_base<21, false>(ap_int_base<21, false> const&)' into 'ap_uint<23>::ap_uint<21>(ap_uint<21> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:232:90)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi33ELb1EEC2EDq33_i' into 'ap_int_base<33, true>::ap_int_base<21, false>(ap_int_base<21, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:231:106)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi33ELb1EEC2EDq33_i' into 'ap_int_base<33, true>::ap_int_base<32, true>(ap_int_base<32, true> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:231:106)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi33ELb1EEC2EDq33_i' into 'ap_int_base<33, true>::ap_int_base(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:260:67)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<33, true>::ap_int_base<21, false>(ap_int_base<21, false> const&)' into 'ap_int_base<21, false>::RType<32, true>::plus operator+<21, false, 32, true>(ap_int_base<21, false> const&, ap_int_base<32, true> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1541:339)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<33, true>::ap_int_base(int)' into 'ap_int_base<21, false>::RType<32, true>::plus operator+<21, false, 32, true>(ap_int_base<21, false> const&, ap_int_base<32, true> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1541:516)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<33, true>::ap_int_base<32, true>(ap_int_base<32, true> const&)' into 'ap_int_base<21, false>::RType<32, true>::plus operator+<21, false, 32, true>(ap_int_base<21, false> const&, ap_int_base<32, true> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1541:427)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<32, true>::ap_int_base(int)' into 'ap_int_base<21, false>::RType<($_0)32, true>::plus operator+<21, false>(ap_int_base<21, false> const&, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1679:1006)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<21, false>::RType<32, true>::plus operator+<21, false, 32, true>(ap_int_base<21, false> const&, ap_int_base<32, true> const&)' into 'ap_int_base<21, false>::RType<($_0)32, true>::plus operator+<21, false>(ap_int_base<21, false> const&, int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:1679:1004)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi23ELb0EEC2EDq23_j' into 'ap_int_base<23, false>::ap_int_base<33, true>(ap_int_base<33, true> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:231:106)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<23, false>::ap_int_base<33, true>(ap_int_base<33, true> const&)' into 'ap_uint<23>::ap_uint<33>(ap_int<33> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/ap_int.h:238:89)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<1, false>::ap_int_base(int)' into 'ap_int_base<4, false>::operator++(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:925:16)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<4, false>& ap_int_base<4, false>::operator+=<1, false>(ap_int_base<1, false> const&)' into 'ap_int_base<4, false>::operator++(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:925:5)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi257ELb0EEC2EDq257_j' into 'ap_int_base<257, false>::ap_int_base<1, false>(ap_int_base<1, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:231:106)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<257, false>::ap_int_base<1, false>(ap_int_base<1, false> const&)' into 'ap_range_ref<257, false>& ap_range_ref<257, false>::operator=<1, false>(ap_int_base<1, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_ref.h:413:31)
+INFO: [HLS 214-131] Inlining function '_ZN8ssdm_intILi257ELb0EEC2EDq257_j' into 'ap_int_base<257, false>::ap_int_base<256, false>(ap_int_base<256, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:231:106)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<257, false>::ap_int_base<256, false>(ap_int_base<256, false> const&)' into 'ap_range_ref<257, false>& ap_range_ref<257, false>::operator=<256, false>(ap_int_base<256, false> const&)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_ref.h:413:31)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<257, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::ackPack(hbmArbiter_2_2_2_128m::arbiter::acktype*, ap_uint<257>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:73:12)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<257, false>& ap_range_ref<257, false>::operator=<256, false>(ap_int_base<256, false> const&)' into 'hbmArbiter_2_2_2_128m::arbiter::ackPack(hbmArbiter_2_2_2_128m::arbiter::acktype*, ap_uint<257>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:74:31)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<257, false>::range(int, int)' into 'hbmArbiter_2_2_2_128m::arbiter::ackPack(hbmArbiter_2_2_2_128m::arbiter::acktype*, ap_uint<257>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:74:15)
+INFO: [HLS 214-131] Inlining function 'ap_range_ref<257, false>& ap_range_ref<257, false>::operator=<1, false>(ap_int_base<1, false> const&)' into 'hbmArbiter_2_2_2_128m::arbiter::ackPack(hbmArbiter_2_2_2_128m::arbiter::acktype*, ap_uint<257>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:73:32)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<1, false>::ap_int_base(int)' into 'ap_int_base<1, false>::operator++(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:925:16)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<1, false>& ap_int_base<1, false>::operator+=<1, false>(ap_int_base<1, false> const&)' into 'ap_int_base<1, false>::operator++(int)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_int_base.h:925:5)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<1, false>::operator++(int)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:279:9)
+INFO: [HLS 214-131] Inlining function 'bool operator==<1, false>(ap_int_base<1, false> const&, int)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:272:24)
+INFO: [HLS 214-131] Inlining function 'hbmArbiter_2_2_2_128m::arbiter::ackPack(hbmArbiter_2_2_2_128m::arbiter::acktype*, ap_uint<257>*)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:271:13)
+INFO: [HLS 214-131] Inlining function 'bool operator<<4, false>(int, ap_int_base<4, false> const&)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:267:24)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<23, false>::operator unsigned long long() const' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:261:21)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<4, false>::operator++(int)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:258:17)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<23, false>::operator unsigned long long() const' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:256:37)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<21, false>::RType<($_0)32, true>::plus operator+<21, false>(ap_int_base<21, false> const&, int)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:253:42)
+INFO: [HLS 214-131] Inlining function 'bool operator==<1, false>(ap_int_base<1, false> const&, int)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:250:24)
+INFO: [HLS 214-131] Inlining function 'bool operator<<4, false>(int, ap_int_base<4, false> const&)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:246:24)
+INFO: [HLS 214-131] Inlining function 'hbmArbiter_2_2_2_128m::arbiter::cmdUnPack(ap_uint<279>*, hbmArbiter_2_2_2_128m::arbiter::cmdtype*)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:242:13)
+INFO: [HLS 214-131] Inlining function 'bool operator==<1, false>(ap_int_base<1, false> const&, int)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:237:24)
+INFO: [HLS 214-131] Inlining function 'bool operator<<4, false>(int, ap_int_base<4, false> const&)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:233:24)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<4, false>::operator!() const' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:224:60)
+INFO: [HLS 214-131] Inlining function 'bool operator==<1, false>(ap_int_base<1, false> const&, int)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:224:53)
+INFO: [HLS 214-131] Inlining function 'ap_int_base<4, false>::operator unsigned long long() const' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:224:28)
+INFO: [HLS 214-131] Inlining function 'bool operator==<1, false>(ap_int_base<1, false> const&, int)' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*)' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:224:21)
+INFO: [HLS 214-291] Loop 'loop_load' is marked as complete unroll implied by the pipeline pragma (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:233:9)
+INFO: [HLS 214-291] Loop 'loop_act' is marked as complete unroll implied by the pipeline pragma (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:246:9)
+INFO: [HLS 214-291] Loop 'loop_wb' is marked as complete unroll implied by the pipeline pragma (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:267:9)
+INFO: [HLS 214-241] Aggregating maxi variable 'hbm' with compact=none mode in 256-bits
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<277>s.i277' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.pack.none.i1.s_struct.ap_uint<1>s' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:304:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.pack.none.i32.s_struct.ap_uint<32>s' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:304:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.pack.none.i256.s_struct.ap_uint<256>s' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:304:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.pack.none.i279.s_struct.ap_uint<279>s' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:174:9)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<1>s.i1' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<3>s.i3' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<21>s.i21' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<35>s.i35' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<0>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<277>s.i277' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.pack.none.i1.s_struct.ap_uint<1>s' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:304:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.pack.none.i32.s_struct.ap_uint<32>s' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:304:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.pack.none.i256.s_struct.ap_uint<256>s' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:304:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.pack.none.i279.s_struct.ap_uint<279>s' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:174:9)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<1>s.i1' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<3>s.i3' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<21>s.i21' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.unpack.none.s_struct.ap_uint<35>s.i35' into 'void hbmArbiter_2_2_2_128m::arbiter::mum<1>(unsigned int&, unsigned int&, unsigned int&, unsigned int&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<21>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<256>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<hls::axis<ap_uint<277>, 0ul, 0ul, 0ul>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot\ap_axi_sdata.h:293:5)
+INFO: [HLS 214-131] Inlining function '_llvm.fpga.pack.none.i257.s_struct.ap_uint<257>s' into 'hbmArbiter_2_2_2_128m::arbiter::rr(unsigned int&, unsigned int&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, hls::stream<ap_uint<279>, 0>&, hls::stream<ap_uint<257>, 0>&, ap_uint<256>*) (.1)' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:174:9)
+INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 2 seconds. CPU system time: 0 seconds. Elapsed time: 4.647 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.001 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] Starting code transformations ...
+INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.069 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] Checking synthesizability ...
+INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.125 seconds; current allocated memory: 1.204 GB.
+INFO: [XFORM 203-502] Unrolling all sub-loops inside loop 'loop_rr' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:0) in function 'hbmArbiter_2_2_2_128m::arbiter::rr' for pipelining.
+WARNING: [HLS 200-936] Cannot unroll loop 'loop_load' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:233) in function 'hbmArbiter_2_2_2_128m::arbiter::rr': cannot completely unroll a loop with a variable trip count.
+Resolution: For help on HLS 200-936 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-936.html
+WARNING: [HLS 200-936] Cannot unroll loop 'loop_act' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:222) in function 'hbmArbiter_2_2_2_128m::arbiter::rr': cannot completely unroll a loop with a variable trip count.
+Resolution: For help on HLS 200-936 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-936.html
+WARNING: [HLS 200-936] Cannot unroll loop 'loop_wb' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:267) in function 'hbmArbiter_2_2_2_128m::arbiter::rr': cannot completely unroll a loop with a variable trip count.
+Resolution: For help on HLS 200-936 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-936.html
+WARNING: [HLS 200-786] Detected dataflow-on-top in function  'hbmArbiter_2_2_2_128m_top' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m_top.cpp:5:1)  with default interface mode 'ap_ctrl_hs'. Overlapped execution of successive kernel calls will not happen unless interface mode 'ap_ctrl_chain' is used (or 'ap_ctrl_none' for a purely data-driven design).
+Resolution: For help on HLS 200-786 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-786.html
+INFO: [XFORM 203-712] Applying dataflow to function 'hbmArbiter_2_2_2_128m::arbiter::mainRun<0>' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:336:1), detected/extracted 5 process function(s): 
+	 'entry_proc'
+	 'hbmArbiter_2_2_2_128m::arbiter::mum<0>'
+	 'hbmArbiter_2_2_2_128m::arbiter::mum<1>'
+	 'hbmArbiter_2_2_2_128m::arbiter::rr'
+	 'hbmArbiter_2_2_2_128m::arbiter::mainRun<0>_Block_entry48_proc'.
+INFO: [XFORM 203-712] Applying dataflow to function 'hbmArbiter_2_2_2_128m_top' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m_top.cpp:5:1), detected/extracted 1 process function(s): 
+	 'hbmArbiter_2_2_2_128m::arbiter::mainRun<0>'.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:218:9) to (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:233:9) in function 'hbmArbiter_2_2_2_128m::arbiter::rr'... converting 4 basic blocks.
+INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.35 seconds; current allocated memory: 1.204 GB.
+WARNING: [HLS 200-960] Cannot flatten loop 'loop_rr' (C:/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:0) in function 'hbmArbiter_2_2_2_128m::arbiter::rr' more than one sub loop.
+Resolution: For help on HLS 200-960 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-960.html
+INFO: [HLS 200-472] Inferring partial write operation for 'tempc.isRd' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:57:12)
+INFO: [HLS 200-472] Inferring partial write operation for 'tempc.src.V' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:58:14)
+INFO: [HLS 200-472] Inferring partial write operation for 'tempc.addr.V' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:59:15)
+INFO: [HLS 200-472] Inferring partial write operation for 'tempc.data.V' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:60:15)
+INFO: [HLS 200-472] Inferring partial write operation for 'tempr.data.V' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:256:31)
+INFO: [HLS 200-472] Inferring partial write operation for 'tempr.src.V' (G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/hbmArbiter_2_2_2_128m.h:257:30)
+WARNING: [HLS 200-657] Generating channel mu0_ack_stream that flows backwards in the dataflow region.
+WARNING: [HLS 200-657] Generating channel mu1_ack_stream that flows backwards in the dataflow region.
+WARNING: [HLS 200-1450] Process mum<0> has both a successor and writes an output to its caller (see the GUI dataflow viewer). This may lead to lower throughput. Consider copying this output via a successor process.
+Resolution: For help on HLS 200-1450 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-1450.html
+WARNING: [HLS 200-1450] Process mum<1> has both a successor and writes an output to its caller (see the GUI dataflow viewer). This may lead to lower throughput. Consider copying this output via a successor process.
+Resolution: For help on HLS 200-1450 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-1450.html
+WARNING: [HLS 200-1449] Process rr has both a predecessor and reads an input from its caller (see the GUI dataflow viewer). This may lead to lower throughput. Consider copying this input via a predecessor process.
+INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.247 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] Starting hardware synthesis ...
+INFO: [HLS 200-10] Synthesizing 'hbmArbiter_2_2_2_128m_top' ...
+WARNING: [SYN 201-103] Legalizing function name 'mum<0>' to 'mum_0_s'.
+WARNING: [SYN 201-103] Legalizing function name 'mum<1>' to 'mum_1_s'.
+WARNING: [SYN 201-103] Legalizing function name 'mainRun<0>_Block_entry48_proc' to 'mainRun_0_Block_entry48_proc'.
+WARNING: [SYN 201-103] Legalizing function name 'mainRun<0>' to 'mainRun_0_s'.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'entry_proc' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.1 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.022 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'mum_0_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.047 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.048 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'mum_1_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.073 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.046 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'rr_Pipeline_loop_load' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+WARNING: [SCHED 204-65] Unable to satisfy pipeline directive for function 'rr_Pipeline_loop_load': contains subloop(s) that are not unrolled.
+INFO: [SCHED 204-61] Pipelining loop 'loop_load'.
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 3, loop 'loop_load'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.078 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.045 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'rr_Pipeline_loop_act' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+WARNING: [SCHED 204-65] Unable to satisfy pipeline directive for function 'rr_Pipeline_loop_act': contains subloop(s) that are not unrolled.
+INFO: [SCHED 204-61] Pipelining loop 'loop_act'.
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 614, loop 'loop_act'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.686 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 2 seconds. CPU system time: 0 seconds. Elapsed time: 1.752 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'rr_Pipeline_loop_wb' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+WARNING: [SCHED 204-65] Unable to satisfy pipeline directive for function 'rr_Pipeline_loop_wb': contains subloop(s) that are not unrolled.
+INFO: [SCHED 204-61] Pipelining loop 'loop_wb'.
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'loop_wb'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.318 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'rr' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+WARNING: [SCHED 204-67] Unable to satisfy pipeline directive for loop 'loop_rr': contains subfunction 'rr_Pipeline_loop_load' which is not pipelined.
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.067 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.1 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'mainRun_0_Block_entry48_proc' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.098 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.026 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'mainRun_0_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.036 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.081 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'hbmArbiter_2_2_2_128m_top' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.158 seconds; current allocated memory: 1.204 GB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.08 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'entry_proc' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'entry_proc'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.151 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'mum_0_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+WARNING: [RTGEN 206-101] Register 'r_wri_nb_1' is power-on initialization.
+WARNING: [RTGEN 206-101] Register 'r_rdi_nb_1' is power-on initialization.
+WARNING: [RTGEN 206-101] Register 'r_max_addr_1' is power-on initialization.
+WARNING: [RTGEN 206-101] Register 'r_rdo_nb_1' is power-on initialization.
+INFO: [RTGEN 206-100] Finished creating RTL model for 'mum_0_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.08 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'mum_1_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+WARNING: [RTGEN 206-101] Register 'r_wri_nb' is power-on initialization.
+WARNING: [RTGEN 206-101] Register 'r_rdi_nb' is power-on initialization.
+WARNING: [RTGEN 206-101] Register 'r_max_addr' is power-on initialization.
+WARNING: [RTGEN 206-101] Register 'r_rdo_nb' is power-on initialization.
+INFO: [RTGEN 206-100] Finished creating RTL model for 'mum_1_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 1 seconds. Elapsed time: 0.27 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'rr_Pipeline_loop_load' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'rr_Pipeline_loop_load' pipeline 'loop_load' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'rr_Pipeline_loop_load'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.242 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'rr_Pipeline_loop_act' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'rr_Pipeline_loop_act' pipeline 'loop_act' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-104] Estimated max fanout for 'rr_Pipeline_loop_act' is 41063 from HDL expression: (1'b0 == ap_block_pp0_stage0_11001)
+INFO: [RTGEN 206-100] Finished creating RTL model for 'rr_Pipeline_loop_act'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 1.2 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'rr_Pipeline_loop_wb' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'rr_Pipeline_loop_wb' pipeline 'loop_wb' pipeline type 'loop pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'rr_Pipeline_loop_wb'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.658 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'rr' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+WARNING: [RTGEN 206-101] Register 'r_rr_id_V' is power-on initialization.
+WARNING: [RTGEN 206-101] Register 'r_hbm_rd_nb' is power-on initialization.
+WARNING: [RTGEN 206-101] Register 'r_hbm_wr_nb' is power-on initialization.
+WARNING: [RTGEN 206-101] Setting dangling out port 'rr/mu0_cmd_stream_din' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'rr/mu0_cmd_stream_write' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'rr/mu1_cmd_stream_din' to 0.
+WARNING: [RTGEN 206-101] Setting dangling out port 'rr/mu1_cmd_stream_write' to 0.
+INFO: [RTGEN 206-100] Finished creating RTL model for 'rr'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.135 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'mainRun_0_Block_entry48_proc' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'mainRun_0_Block_entry48_proc'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.306 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'mainRun_0_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'mainRun_0_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'hbmArbiter_2_2_2_128m_top' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+WARNING: [RTGEN 206-101] Design contains AXI ports. Reset is fixed to synchronous and active low.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/gmem0' to 'm_axi'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/reg_guard_bgn' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdi_nb' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_wri_nb' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdo_nb' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_max_addr' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdi_nb' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_wri_nb' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdo_nb' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_max_addr' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/hbm_rd_nb' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/hbm_wr_nb' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/reg_guard_end' to 's_axilite & ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdi0_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdi0_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdi0_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdi0_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdo0_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdo0_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdo0_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdo0_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdi1_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdi1_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdi1_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdi1_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdo1_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdo1_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdo1_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_rdo1_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_wri0_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_wri0_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_wri0_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_wri0_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_wri1_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_wri1_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_wri1_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu0_wri1_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdi0_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdi0_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdi0_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdi0_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdo0_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdo0_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdo0_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdo0_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdi1_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdi1_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdi1_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdi1_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdo1_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdo1_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdo1_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_rdo1_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_wri0_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_wri0_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_wri0_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_wri0_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_wri1_V_data_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_wri1_V_keep_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_wri1_V_strb_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/mu1_wri1_V_last_V' to 'axis' (register, both mode).
+INFO: [RTGEN 206-500] Setting interface mode on port 'hbmArbiter_2_2_2_128m_top/hbm' to 's_axilite & ap_none'.
+INFO: [RTGEN 206-500] Setting interface mode on function 'hbmArbiter_2_2_2_128m_top' to 's_axilite & ap_ctrl_hs'.
+INFO: [RTGEN 206-100] Bundling port 'reg_guard_bgn', 'mu0_rdi_nb', 'mu0_wri_nb', 'mu0_rdo_nb', 'mu0_max_addr', 'mu1_rdi_nb', 'mu1_wri_nb', 'mu1_rdo_nb', 'mu1_max_addr', 'hbm_rd_nb', 'hbm_wr_nb', 'reg_guard_end', 'hbm' to AXI-Lite port control.
+INFO: [RTGEN 206-100] Finished creating RTL model for 'hbmArbiter_2_2_2_128m_top'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0.549 seconds; current allocated memory: 1.204 GB.
+INFO: [RTMG 210-278] Implementing memory 'hbmArbiter_2_2_2_128m_top_rr_tempc_isRd_RAM_AUTO_1R1W_ram (RAM)' using auto RAMs.
+INFO: [RTMG 210-278] Implementing memory 'hbmArbiter_2_2_2_128m_top_rr_tempc_addr_V_RAM_AUTO_1R1W_ram (RAM)' using auto RAMs.
+INFO: [RTMG 210-278] Implementing memory 'hbmArbiter_2_2_2_128m_top_rr_tempc_data_V_RAM_AUTO_1R1W_ram (RAM)' using auto RAMs.
+INFO: [RTMG 210-285] Implementing FIFO 'hbm_c_U(hbmArbiter_2_2_2_128m_top_fifo_w64_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'mu0_cmd_stream_U(hbmArbiter_2_2_2_128m_top_fifo_w279_d8_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'mu0_ack_stream_U(hbmArbiter_2_2_2_128m_top_fifo_w257_d8_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'mu1_cmd_stream_U(hbmArbiter_2_2_2_128m_top_fifo_w279_d8_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'mu1_ack_stream_U(hbmArbiter_2_2_2_128m_top_fifo_w257_d8_S)' using Shift Registers.
+INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 0.956 seconds; current allocated memory: 1.204 GB.
+INFO: [HLS 200-111] Finished Updating report files: CPU user time: 1 seconds. CPU system time: 0 seconds. Elapsed time: 1.576 seconds; current allocated memory: 1.204 GB.
+INFO: [VHDL 208-304] Generating VHDL RTL for hbmArbiter_2_2_2_128m_top.
+INFO: [VLOG 209-307] Generating Verilog RTL for hbmArbiter_2_2_2_128m_top.
+INFO: [HLS 200-789] **** Estimated Fmax: 452.10 MHz
+INFO: [HLS 200-111] Finished Command csynth_design CPU user time: 11 seconds. CPU system time: 1 seconds. Elapsed time: 19.111 seconds; current allocated memory: 0.000 MB.
+INFO: [HLS 200-1510] Running: cosim_design -ldflags -Wl,--stack,10737418240 -disable_deadlock_detection 
+WARNING: [COSIM 212-384] This design has internal non-blocking FIFO/Stream accesses, which may result in mismatches or simulation hanging.
+INFO: [COSIM 212-47] Using XSIM for RTL simulation.
+INFO: [COSIM 212-14] Instrumenting C test bench ...
+   Build using "C:/Xilinx/Vitis_HLS/2022.1/tps/win64/msys64/mingw64/bin/g++"
+   Compiling hbmArbiter_2_2_2_128m_top.cpp_pre.cpp.tb.cpp
+   Compiling apatb_hbmArbiter_2_2_2_128m_top.cpp
+   Compiling apatb_hbmArbiter_2_2_2_128m_top_util.cpp
+   Compiling hbmArbiter_2_2_2_128m_tb.cpp_pre.cpp.tb.cpp
+   Compiling apatb_hbmArbiter_2_2_2_128m_top_ir.ll
+   Generating cosim.tv.exe
+INFO: [COSIM 212-302] Starting C TB testing ... 
+MU0 write0 to A=0 V=0x02
+MU0 write1 to A=1 V=0x03
+MU1 write0 to A=0 V=0x02
+MU1 write1 to A=1 V=0x03
+MU0 write1 to A=17 V=0x07
+MU1 write0 to A=23 V=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+MU0 read1 from A=0
+MU1 read1 from A=0
+MU0 read0 from A=1
+MU1 read0 from A=1
+MU0 read0 from A=17
+MU1 read1 from A=23
+TEST OK!
+INFO: [COSIM 212-333] Generating C post check test bench ...
+INFO: [COSIM 212-12] Generating RTL test bench ...
+WARNING: [HLS 200-616] This design uses AXI slave interface in dataflow mode, which can result in simulation dead-lock and/or mismatching results (due to AXI slave FIFO sizing).
+INFO: [COSIM 212-1] *** C/RTL co-simulation file generation completed. ***
+INFO: [COSIM 212-323] Starting verilog simulation. 
+INFO: [COSIM 212-15] Starting XSIM ...
+
+G:\work2t\40_SZG_SBE\develop\00_git\AXOrderBook\hw\test\hbmArbiter\hbmArbiter_2_2_2_128m\arbiter\prj_hbmArbiter_2_2_2_128m\sol\sim\verilog>set PATH= 
+
+G:\work2t\40_SZG_SBE\develop\00_git\AXOrderBook\hw\test\hbmArbiter\hbmArbiter_2_2_2_128m\arbiter\prj_hbmArbiter_2_2_2_128m\sol\sim\verilog>call C:/Xilinx/Vivado/2022.1/bin/xelab xil_defaultlib.apatb_hbmArbiter_2_2_2_128m_top_top glbl -Oenable_linking_all_libraries  -prj hbmArbiter_2_2_2_128m_top.prj -L smartconnect_v1_0 -L axi_protocol_checker_v1_1_12 -L axi_protocol_checker_v1_1_13 -L axis_protocol_checker_v1_1_11 -L axis_protocol_checker_v1_1_12 -L xil_defaultlib -L unisims_ver -L xpm  -L floating_point_v7_0_20 -L floating_point_v7_1_14 --lib "ieee_proposed=./ieee_proposed" -s hbmArbiter_2_2_2_128m_top  
+Vivado Simulator v2022.1
+Copyright 1986-1999, 2001-2022 Xilinx, Inc. All Rights Reserved.
+Running: C:/Xilinx/Vivado/2022.1/bin/unwrapped/win64.o/xelab.exe xil_defaultlib.apatb_hbmArbiter_2_2_2_128m_top_top glbl -Oenable_linking_all_libraries -prj hbmArbiter_2_2_2_128m_top.prj -L smartconnect_v1_0 -L axi_protocol_checker_v1_1_12 -L axi_protocol_checker_v1_1_13 -L axis_protocol_checker_v1_1_11 -L axis_protocol_checker_v1_1_12 -L xil_defaultlib -L unisims_ver -L xpm -L floating_point_v7_0_20 -L floating_point_v7_1_14 --lib ieee_proposed=./ieee_proposed -s hbmArbiter_2_2_2_128m_top 
+Multi-threading is on. Using 30 slave threads.
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/glbl.v" into library work
+INFO: [VRFC 10-311] analyzing module glbl
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_master_gmem0.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_master_gmem0
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_slave_control.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_slave_control
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu0_rdi0.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu0_rdi0
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu0_rdi1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu0_rdi1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu0_rdo0.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu0_rdo0
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu0_rdo1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu0_rdo1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu0_wri0.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu0_wri0
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu0_wri1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu0_wri1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu1_rdi0.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu1_rdi0
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu1_rdi1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu1_rdi1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu1_rdo0.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu1_rdo0
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu1_rdo1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu1_rdo1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu1_wri0.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu1_wri0
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_axi_s_mu1_wri1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module AESL_axi_s_mu1_wri1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/AESL_fifo.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fifo
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top.autotb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module apatb_hbmArbiter_2_2_2_128m_top_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_control_s_axi.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_control_s_axi
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_entry_proc.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_entry_proc
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_fifo_w257_d8_S.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_fifo_w257_d8_S_shiftReg
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_fifo_w257_d8_S
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_fifo_w279_d8_S.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_fifo_w279_d8_S_shiftReg
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_fifo_w279_d8_S
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_fifo_w64_d3_S.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_fifo_w64_d3_S_shiftReg
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_fifo_w64_d3_S
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_flow_control_loop_pipe_sequential_init.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_flow_control_loop_pipe_sequential_init
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_gmem0_m_axi.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_load
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_store
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_flushManager
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_read
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_write
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_throttle
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_reg_slice
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_fifo
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_srl
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_gmem0_m_axi_mem
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_mainRun_0_Block_entry48_proc.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_mainRun_0_Block_entry48_proc
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_mainRun_0_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_mainRun_0_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_mum_0_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_mum_0_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_mum_1_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_mum_1_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_regslice_both.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_regslice_both
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_regslice_both_w1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_rr.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_rr
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_rr_Pipeline_loop_act.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_rr_Pipeline_loop_act
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_rr_Pipeline_loop_load.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_rr_Pipeline_loop_load
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_rr_Pipeline_loop_wb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_rr_Pipeline_loop_wb
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_rr_tempc_addr_V_RAM_AUTO_1R1W.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_rr_tempc_addr_V_RAM_AUTO_1R1W
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_rr_tempc_data_V_RAM_AUTO_1R1W.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_rr_tempc_data_V_RAM_AUTO_1R1W
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top_rr_tempc_isRd_RAM_AUTO_1R1W.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module hbmArbiter_2_2_2_128m_top_rr_tempc_isRd_RAM_AUTO_1R1W
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/dataflow_monitor.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dataflow_monitor
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package xil_defaultlib.$unit_dataflow_monitor_sv
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_contro...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_gmem0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_entry_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_regsli...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_regsli...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_regsli...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_regsli...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_regsli...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_regsli...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_regsli...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_mum_0_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_mum_1_...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_rr_tem...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_rr_tem...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_rr_tem...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_flow_c...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_rr_Pip...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_rr_Pip...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_rr_Pip...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_rr
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_mainRu...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_fifo_w...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_fifo_w...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_fifo_w...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_fifo_w...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_fifo_w...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_fifo_w...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top_mainRu...
+Compiling module xil_defaultlib.hbmArbiter_2_2_2_128m_top
+Compiling module xil_defaultlib.fifo(DEPTH=1,WIDTH=24)
+Compiling module xil_defaultlib.fifo(DEPTH=1,WIDTH=3)
+Compiling module xil_defaultlib.fifo(DEPTH=1,WIDTH=1)
+Compiling module xil_defaultlib.AESL_axi_s_mu0_rdi0
+Compiling module xil_defaultlib.fifo(DEPTH=1,WIDTH=256)
+Compiling module xil_defaultlib.fifo(DEPTH=1,WIDTH=32)
+Compiling module xil_defaultlib.AESL_axi_s_mu0_rdo0
+Compiling module xil_defaultlib.AESL_axi_s_mu0_rdi1
+Compiling module xil_defaultlib.AESL_axi_s_mu0_rdo1
+Compiling module xil_defaultlib.fifo(DEPTH=1,WIDTH=280)
+Compiling module xil_defaultlib.fifo(DEPTH=1,WIDTH=35)
+Compiling module xil_defaultlib.AESL_axi_s_mu0_wri0
+Compiling module xil_defaultlib.AESL_axi_s_mu0_wri1
+Compiling module xil_defaultlib.AESL_axi_s_mu1_rdi0
+Compiling module xil_defaultlib.AESL_axi_s_mu1_rdo0
+Compiling module xil_defaultlib.AESL_axi_s_mu1_rdi1
+Compiling module xil_defaultlib.AESL_axi_s_mu1_rdo1
+Compiling module xil_defaultlib.AESL_axi_s_mu1_wri0
+Compiling module xil_defaultlib.AESL_axi_s_mu1_wri1
+Compiling module xil_defaultlib.AESL_axi_master_gmem0
+Compiling module xil_defaultlib.AESL_axi_slave_control
+Compiling module xil_defaultlib.df_fifo_intf
+Compiling module xil_defaultlib.df_process_intf
+Compiling module xil_defaultlib.nodf_module_intf
+Compiling module xil_defaultlib.seq_loop_intf(FSM_WIDTH=9)
+Compiling module xil_defaultlib.upc_loop_intf(FSM_WIDTH=1)
+Compiling module xil_defaultlib.dataflow_monitor_1
+Compiling module xil_defaultlib.apatb_hbmArbiter_2_2_2_128m_top_...
+Compiling module work.glbl
+Built simulation snapshot hbmArbiter_2_2_2_128m_top
+
+****** xsim v2022.1 (64-bit)
+  **** SW Build 3526262 on Mon Apr 18 15:48:16 MDT 2022
+  **** IP Build 3524634 on Mon Apr 18 20:55:01 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source xsim.dir/hbmArbiter_2_2_2_128m_top/xsim_script.tcl
+# xsim {hbmArbiter_2_2_2_128m_top} -autoloadwcfg -tclbatch {hbmArbiter_2_2_2_128m_top.tcl}
+Time resolution is 1 ps
+source hbmArbiter_2_2_2_128m_top.tcl
+## run all
+////////////////////////////////////////////////////////////////////////////////////
+// Inter-Transaction Progress: Completed Transaction / Total Transaction
+// Intra-Transaction Progress: Measured Latency / Latency Estimation * 100%
+//
+// RTL Simulation : "Inter-Transaction Progress" ["Intra-Transaction Progress"] @ "Simulation Time"
+////////////////////////////////////////////////////////////////////////////////////
+// RTL Simulation : 0 / 9 [0.00%] @ "107000"
+// RTL Simulation : 1 / 9 [8.99%] @ "4495000"
+// RTL Simulation : 2 / 9 [8.99%] @ "8856000"
+// RTL Simulation : 3 / 9 [8.99%] @ "13217000"
+// RTL Simulation : 4 / 9 [8.99%] @ "17521000"
+// RTL Simulation : 5 / 9 [8.99%] @ "18037000"
+// RTL Simulation : 6 / 9 [8.99%] @ "22340000"
+// RTL Simulation : 7 / 9 [8.99%] @ "22857000"
+// RTL Simulation : 8 / 9 [8.99%] @ "27160000"
+// RTL Simulation : 9 / 9 [100.00%] @ "27677000"
+////////////////////////////////////////////////////////////////////////////////////
+$finish called at time : 27694910 ps : File "G:/work2t/40_SZG_SBE/develop/00_git/AXOrderBook/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/arbiter/prj_hbmArbiter_2_2_2_128m/sol/sim/verilog/hbmArbiter_2_2_2_128m_top.autotb.v" Line 1266
+run: Time (s): cpu = 00:00:01 ; elapsed = 00:09:09 . Memory (MB): peak = 1206.680 ; gain = 0.000
+## quit
+INFO: xsimkernel Simulation Memory Usage: 8893328 KB (Peak: 8893328 KB), Simulation CPU Usage: 549155 ms
+INFO: [Common 17-206] Exiting xsim at Sun Sep 18 13:20:34 2022...
+INFO: [COSIM 212-316] Starting C post checking ...
+MU0 write0 to A=0 V=0x02
+MU0 write1 to A=1 V=0x03
+MU1 write0 to A=0 V=0x02
+MU1 write1 to A=1 V=0x03
+MU0 write1 to A=17 V=0x07
+MU1 write0 to A=23 V=0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+MU0 read1 from A=0
+MU1 read1 from A=0
+MU0 read0 from A=1
+MU1 read0 from A=1
+MU0 read0 from A=17
+MU1 read1 from A=23
+TEST OK!
+INFO: [COSIM 212-1000] *** C/RTL co-simulation finished: PASS ***
+INFO: [HLS 200-111] Finished Command cosim_design CPU user time: 2 seconds. CPU system time: 0 seconds. Elapsed time: 607.374 seconds; current allocated memory: 0.000 MB.
+INFO: [HLS 200-112] Total CPU user time: 15 seconds. Total CPU system time: 3 seconds. Total elapsed time: 633.277 seconds; peak allocated memory: 1.204 GB.
+INFO: [Common 17-206] Exiting vitis_hls at Sun Sep 18 13:20:43 2022...
