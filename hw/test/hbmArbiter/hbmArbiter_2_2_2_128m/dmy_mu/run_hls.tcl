@@ -14,6 +14,18 @@
 # limitations under the License.
 #
 
+if { [catch { set uname_r [exec uname] } conn_handle] } {
+    puts $conn_handle
+    set isLinux 0
+} else {
+    if {[string equal ${uname_r} "Linux"]} {
+        set isLinux 1
+    } else {
+        set isLinux 0
+    }
+}
+puts "isLinux=${isLinux}"
+
 if { [catch { [ string length $::env(EXPORT_XO_ONLY) ] } conn_handle] } {
     # Using setting.tcl
     puts $conn_handle
@@ -47,7 +59,7 @@ if {$EXPORT_XO_ONLY == 0} {
 }
 
 if {$EXPORT_XO_ONLY == 1} {
-    set PROJ "xo_${TOP_NAME}"
+    set PROJ "xo_prj"
 }
 
 open_project -reset $PROJ
@@ -77,8 +89,13 @@ if {$EXPORT_XO_ONLY == 1} {
     exit
 }
 
+if {$isLinux == 0} {
+    set LDFLAGS "{-Wl,--stack,10737418240}"
+} else {
+    set LDFLAGS "{-z stack-size=10737418240}"
+}
 if {$CSIM == 1} {
-  csim_design -ldflags {-Wl,--stack,10737418240}
+    csim_design -ldflags ${LDFLAGS}
 }
 
 if {$CSYNTH == 1} {
@@ -92,9 +109,9 @@ if {$COSIM == 1} {
         } else {
             set TRACE_LEVEL "port_hier"
         }
-        cosim_design -ldflags {-Wl,--stack,10737418240} -wave_debug -trace_level ${TRACE_LEVEL} 
+        cosim_design -ldflags ${LDFLAGS} -wave_debug -trace_level ${TRACE_LEVEL} 
     } else {
-        cosim_design -ldflags {-Wl,--stack,10737418240}
+        cosim_design -ldflags ${LDFLAGS}
     }
 }
 
