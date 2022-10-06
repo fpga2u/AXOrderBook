@@ -7,6 +7,11 @@ set XPART xcu50-fsvh2104-2L-e
 # U280
 # set XPART xcu280-fsvh2892-2L-e
 
+set CLKP 330MHz
+
+# do .xo kernel export only:
+set EXPORT_XO_ONLY 0
+
 #COSIM waveform enable:
 set WAVE_DEBUG 1
 #COSIM waveform dump ALL (1=ALL, 0=PORT):

@@ -60,17 +60,17 @@ int main()
         wri1
     );
 
-    ap_uint<256> mem[1024];
+    ap_uint<256> hbm_mem[1024];
 
     while (!wri0.empty()){
         wi_st wi = wri0.read();
-        mem[wi.data.range(256+21-1, 256)] = wi.data.range(255, 0);
+        hbm_mem[wi.data.range(256+21-1, 256)] = wi.data.range(255, 0);
         assert(wi.data.range(255, 0) == wi.data.range(256+21-1, 256) + min_data);
     }
 
     while (!wri1.empty()){
         wi_st wi = wri1.read();
-        mem[wi.data.range(256+21-1, 256)] = wi.data.range(255, 0);
+        hbm_mem[wi.data.range(256+21-1, 256)] = wi.data.range(255, 0);
         assert(wi.data.range(255, 0) == wi.data.range(256+21-1, 256) + min_data);
     }
 
@@ -78,14 +78,14 @@ int main()
     while (!rdi0.empty()){
         raddr_st ra = rdi0.read();
         rdata_st rdat;
-        rdat.data = mem[ra.data];
+        rdat.data = hbm_mem[ra.data];
         rdo0.write(rdat);
     }
 
     while (!rdi1.empty()){
         raddr_st ra = rdi1.read();
         rdata_st rdat;
-        rdat.data = mem[ra.data];
+        rdat.data = hbm_mem[ra.data];
         rdo1.write(rdat);
     }
 
@@ -115,13 +115,13 @@ int main()
 
     while (!wri0.empty()){
         wi_st wi = wri0.read();
-        mem[wi.data.range(256+21-1, 256)] = wi.data.range(255, 0);
+        hbm_mem[wi.data.range(256+21-1, 256)] = wi.data.range(255, 0);
         assert(wi.data.range(255, 0) == wi.data.range(256+21-1, 256) + min_data);
     }
 
     while (!wri1.empty()){
         wi_st wi = wri1.read();
-        mem[wi.data.range(256+21-1, 256)] = wi.data.range(255, 0);
+        hbm_mem[wi.data.range(256+21-1, 256)] = wi.data.range(255, 0);
         assert(wi.data.range(255, 0) == wi.data.range(256+21-1, 256) + min_data);
     }
 
