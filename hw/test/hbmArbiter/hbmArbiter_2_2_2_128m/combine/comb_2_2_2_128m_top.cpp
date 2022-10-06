@@ -7,7 +7,7 @@
 using namespace hbmArbiter_2_2_2_128m;
 
 
-void dmy_mu_2_2_2_128m_top_i0(
+void mu0(
     /* register-to-host */
     unsigned int& reg_guard_bgn,
 
@@ -57,7 +57,7 @@ void dmy_mu_2_2_2_128m_top_i0(
     );
 };
 
-void dmy_mu_2_2_2_128m_top_i1(
+void mu1(
     /* register-to-host */
     unsigned int& reg_guard_bgn,
 
@@ -108,7 +108,7 @@ void dmy_mu_2_2_2_128m_top_i1(
 };
 
 
-void lm_2_2_2_128m_top_i0(
+void lm_mu0_rd0(
         unsigned int&  reg_guard_bgn,
         unsigned int&  free_cnt,
         unsigned int&  up_nb,
@@ -145,7 +145,7 @@ void lm_2_2_2_128m_top_i0(
     );
 };
 
-void lm_2_2_2_128m_top_i1(
+void lm_mu0_rd1(
         unsigned int&  reg_guard_bgn,
         unsigned int&  free_cnt,
         unsigned int&  up_nb,
@@ -182,7 +182,7 @@ void lm_2_2_2_128m_top_i1(
     );
 };
 
-void lm_2_2_2_128m_top_i2(
+void lm_mu1_rd0(
         unsigned int&  reg_guard_bgn,
         unsigned int&  free_cnt,
         unsigned int&  up_nb,
@@ -219,7 +219,7 @@ void lm_2_2_2_128m_top_i2(
     );
 };
 
-void lm_2_2_2_128m_top_i3(
+void lm_mu1_rd1(
         unsigned int&  reg_guard_bgn,
         unsigned int&  free_cnt,
         unsigned int&  up_nb,
@@ -545,7 +545,7 @@ void comb_2_2_2_128m_top(
 #pragma HLS BIND_STORAGE variable = mu1_rdo1_dn type = FIFO
 
 
-        dmy_mu_2_2_2_128m_top_i0(
+        mu0(
             MUreg_guard_bgn0,
             wk_nb0,
             min_addr0,
@@ -565,7 +565,7 @@ void comb_2_2_2_128m_top(
             mu0_wri1
         );
 
-        dmy_mu_2_2_2_128m_top_i1(
+        mu1(
             MUreg_guard_bgn1,
             wk_nb1,
             min_addr1,
@@ -585,7 +585,7 @@ void comb_2_2_2_128m_top(
             mu1_wri1
         );
 
-        lm_2_2_2_128m_top_i0(
+        lm_mu0_rd0(
             LMreg_guard_bgn0,
             free_cnt0,
             up_nb0,
@@ -603,7 +603,7 @@ void comb_2_2_2_128m_top(
             mu0_rdo0_up
         );
 
-        lm_2_2_2_128m_top_i1(
+        lm_mu0_rd1(
             LMreg_guard_bgn1,
             free_cnt1,
             up_nb1,
@@ -621,7 +621,7 @@ void comb_2_2_2_128m_top(
             mu0_rdo1_up
         );
 
-        lm_2_2_2_128m_top_i2(
+        lm_mu1_rd0(
             LMreg_guard_bgn2,
             free_cnt2,
             up_nb2,
@@ -639,7 +639,7 @@ void comb_2_2_2_128m_top(
             mu1_rdo0_up
         );
 
-        lm_2_2_2_128m_top_i3(
+        lm_mu1_rd1(
             LMreg_guard_bgn3,
             free_cnt3,
             up_nb3,
