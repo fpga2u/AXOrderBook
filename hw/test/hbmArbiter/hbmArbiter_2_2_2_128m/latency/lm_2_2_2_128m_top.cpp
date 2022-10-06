@@ -27,6 +27,7 @@ void lm_2_2_2_128m_top(
 #pragma HLS INTERFACE axis port=dn_in
 #pragma HLS INTERFACE axis port=dn_out
 
+#pragma HLS INTERFACE s_axilite port=reg_guard_bgn   bundle=control
 #pragma HLS INTERFACE s_axilite port=free_cnt   bundle=control
 #pragma HLS INTERFACE s_axilite port=up_nb   bundle=control
 #pragma HLS INTERFACE s_axilite port=dn_nb   bundle=control
@@ -36,6 +37,7 @@ void lm_2_2_2_128m_top(
 #pragma HLS INTERFACE s_axilite port=up_history_tick   bundle=control
 #pragma HLS INTERFACE s_axilite port=dn_history_tick   bundle=control
 #pragma HLS INTERFACE s_axilite port=reset_reg   bundle=control
+#pragma HLS INTERFACE s_axilite port=reg_guard_end   bundle=control
 
 #ifdef _C_TEST_
 #pragma HLS INTERFACE ap_ctrl_chain port=return

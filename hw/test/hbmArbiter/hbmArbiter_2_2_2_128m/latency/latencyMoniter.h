@@ -26,14 +26,6 @@ void mainRun(
                unsigned int&        reg_guard_end
                ) 
 {
-// #pragma HLS INTERFACE axis port = up_in
-// #pragma HLS INTERFACE axis port = up_out
-// #pragma HLS INTERFACE axis port = in
-// #pragma HLS INTERFACE s_axilite port = in_nb bundle = control
-// #pragma HLS INTERFACE s_axilite port = out_nb bundle = control
-// #pragma HLS INTERFACE s_axilite port = bytes bundle = control
-// #pragma HLS INTERFACE s_axilite port = reset_reg bundle = control
-// #pragma HLS INTERFACE ap_ctrl_none port=return
 #pragma HLS PIPELINE II=1
 
     static ap_uint<32> up_tick_history[64];
