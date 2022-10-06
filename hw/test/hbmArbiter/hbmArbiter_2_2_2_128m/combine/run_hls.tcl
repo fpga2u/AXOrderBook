@@ -14,7 +14,24 @@
 # limitations under the License.
 #
 
-source settings.tcl
+if { [catch { [ string length $::env(EXPORT_XO_ONLY) ] } conn_handle] } {
+    # Using setting.tcl
+    puts $conn_handle
+    source settings.tcl
+    puts "Using XPART=setting(${XPART})"
+    puts "Using CLKP=setting(${CLKP})"
+    puts "Using EXPORT_XO_ONLY=setting(${EXPORT_XO_ONLY})"
+} else {
+    # Using environment variable
+    set XPART $::env(XPART)
+    puts "Using XPART=Env(${XPART})"
+
+    set CLKP $::env(CLKP)
+    puts "Using CLKP=Env(${CLKP})"
+
+    set EXPORT_XO_ONLY $::env(EXPORT_XO_ONLY)
+    puts "Using EXPORT_XO_ONLY=Env(${EXPORT_XO_ONLY})"
+}
 
 set TOP_NAME "comb_2_2_2_128m_top"
 set PROJ "prj_${TOP_NAME}"
