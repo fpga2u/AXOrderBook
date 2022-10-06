@@ -16,25 +16,48 @@
 
 source settings.tcl
 
-set PROJ "prj_hbmArbiter_2_2_2_128m"
+set TOP_NAME "hbmArbiter_2_2_2_128m_top"
+set PROJ "prj_${TOP_NAME}"
 set SOLN "sol"
-set CLKP 330MHz
 set CASE_ROOT [pwd]
 set KERNEL_ROOT "${CASE_ROOT}"
 
+if {$EXPORT_XO == 0} {
+    set DEF_C_TEST "-D_C_TEST_"
+} else {
+    set DEF_C_TEST ""
+}
+
+if {$EXPORT_XO == 1} {
+    set PROJ "xo_${TOP_NAME}"
+}
 
 open_project -reset $PROJ
 
-add_files "${KERNEL_ROOT}/hbmArbiter_2_2_2_128m_top.cpp" -cflags "-I${KERNEL_ROOT} -D_C_TEST_"
+add_files "${KERNEL_ROOT}/hbmArbiter_2_2_2_128m_top.cpp" -cflags "-I${KERNEL_ROOT} ${DEF_C_TEST}"
 
-add_files -tb "hbmArbiter_2_2_2_128m_tb.cpp" -cflags "-I${KERNEL_ROOT} -D_C_TEST_"
+if {$EXPORT_XO == 0} {
+    add_files -tb "hbmArbiter_2_2_2_128m_tb.cpp" -cflags "-I${KERNEL_ROOT} -D_C_TEST_"
+}
 
-set_top hbmArbiter_2_2_2_128m_top
+set_top ${TOP_NAME}
 
-open_solution -reset $SOLN -flow_target vivado
+if {$EXPORT_XO == 0} {
+    set FLOW_TARGET "vivado"
+} else {
+    set FLOW_TARGET "vitis"
+}
+open_solution -reset $SOLN -flow_target ${FLOW_TARGET}
 
 set_part $XPART
 create_clock -period $CLKP -name default
+
+if {$EXPORT_XO == 1} {
+    config_sdx -target xocc
+    csynth_design
+    export_design -rtl verilog -format xo -output ${KERNEL_ROOT}/${TOP_NAME}.xo
+    exit
+}
 
 if {$CSIM == 1} {
   csim_design -ldflags {-Wl,--stack,10737418240}
@@ -47,10 +70,11 @@ if {$CSYNTH == 1} {
 if {$COSIM == 1} {
     if {$WAVE_DEBUG == 1} {
         if {$TRACE_LEVEL_ALL == 1} {
-            cosim_design -wave_debug -ldflags {-Wl,--stack,10737418240} -trace_level all 
+            set TRACE_LEVEL "all"
         } else {
-            cosim_design -wave_debug -ldflags {-Wl,--stack,10737418240} -trace_level port 
+            set TRACE_LEVEL "port"
         }
+        cosim_design -wave_debug -ldflags {-Wl,--stack,10737418240} -trace_level ${TRACE_LEVEL} 
     } else {
         cosim_design -ldflags {-Wl,--stack,10737418240} -disable_deadlock_detection
     }
