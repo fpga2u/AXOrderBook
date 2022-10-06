@@ -29,7 +29,7 @@ if {$EXPORT_XO_ONLY == 0} {
 }
 
 if {$EXPORT_XO_ONLY == 1} {
-    set PROJ "xo_${TOP_NAME}"
+    set PROJ "xo_prj"
 }
 
 open_project -reset $PROJ
