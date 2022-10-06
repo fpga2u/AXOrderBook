@@ -22,13 +22,13 @@ set SOLN "sol"
 set CASE_ROOT [pwd]
 set KERNEL_ROOT "${CASE_ROOT}"
 
-if {$EXPORT_XO == 0} {
+if {$EXPORT_XO_ONLY == 0} {
     set DEF_C_TEST "-D_C_TEST_"
 } else {
     set DEF_C_TEST ""
 }
 
-if {$EXPORT_XO == 1} {
+if {$EXPORT_XO_ONLY == 1} {
     set PROJ "xo_${TOP_NAME}"
 }
 
@@ -36,13 +36,13 @@ open_project -reset $PROJ
 
 add_files "${KERNEL_ROOT}/hbmArbiter_2_2_2_128m_top.cpp" -cflags "-I${KERNEL_ROOT} ${DEF_C_TEST}"
 
-if {$EXPORT_XO == 0} {
+if {$EXPORT_XO_ONLY == 0} {
     add_files -tb "hbmArbiter_2_2_2_128m_tb.cpp" -cflags "-I${KERNEL_ROOT} -D_C_TEST_"
 }
 
 set_top ${TOP_NAME}
 
-if {$EXPORT_XO == 0} {
+if {$EXPORT_XO_ONLY == 0} {
     set FLOW_TARGET "vivado"
 } else {
     set FLOW_TARGET "vitis"
@@ -52,7 +52,7 @@ open_solution -reset $SOLN -flow_target ${FLOW_TARGET}
 set_part $XPART
 create_clock -period $CLKP -name default
 
-if {$EXPORT_XO == 1} {
+if {$EXPORT_XO_ONLY == 1} {
     config_sdx -target xocc
     csynth_design
     export_design -rtl verilog -format xo -output ${KERNEL_ROOT}/${TOP_NAME}.xo
@@ -72,11 +72,11 @@ if {$COSIM == 1} {
         if {$TRACE_LEVEL_ALL == 1} {
             set TRACE_LEVEL "all"
         } else {
-            set TRACE_LEVEL "port"
+            set TRACE_LEVEL "port_hier"
         }
-        cosim_design -wave_debug -ldflags {-Wl,--stack,10737418240} -trace_level ${TRACE_LEVEL} 
+        cosim_design -ldflags {-Wl,--stack,10737418240} -wave_debug -trace_level ${TRACE_LEVEL} 
     } else {
-        cosim_design -ldflags {-Wl,--stack,10737418240} -disable_deadlock_detection
+        cosim_design -ldflags {-Wl,--stack,10737418240}
     }
 }
 
