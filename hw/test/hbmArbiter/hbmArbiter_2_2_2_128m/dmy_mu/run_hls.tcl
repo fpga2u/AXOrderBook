@@ -92,6 +92,7 @@ if {$EXPORT_XO_ONLY == 1} {
 if {$isLinux == 0} {
     set LDFLAGS "{-Wl,--stack,10737418240}"
 } else {
+    #if @E Simulation failed: SIGSEGV. then try: ulimit -s unlimited
     set LDFLAGS "{-z stack-size=10737418240}"
 }
 if {$CSIM == 1} {

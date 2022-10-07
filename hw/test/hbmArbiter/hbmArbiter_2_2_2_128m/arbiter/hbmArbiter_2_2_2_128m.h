@@ -216,7 +216,7 @@ static void rr(
     for (int l=0; l<2; ++l){
         #pragma HLS PIPELINE II = 1
     
-        ap_uint<4> mu0_cmd_size = mu0_cmd_stream.size();    //max size = 8
+        ap_uint<4> mu0_cmd_size = mu0_cmd_stream.size();    //max size = 8  //require vitis_hls>=2022.1
         ap_uint<4> mu1_cmd_size = mu1_cmd_stream.size();
         ap_uint<4> tempr_size = 0;
         

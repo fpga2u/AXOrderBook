@@ -66,7 +66,10 @@ open_project -reset $PROJ
 
 add_files "${KERNEL_ROOT}/lm_2_2_2_128m_top.cpp" -cflags "-I${KERNEL_ROOT} -I${ARBITER_ROOT} ${DEF_C_TEST}"
 
-add_files -tb "lm_2_2_2_128m_tb.cpp" -cflags "-I${KERNEL_ROOT} -I${ARBITER_ROOT} -D_C_TEST_"
+
+if {$EXPORT_XO_ONLY == 0} {
+    add_files -tb "lm_2_2_2_128m_tb.cpp" -cflags "-I${KERNEL_ROOT} -I${ARBITER_ROOT} -D_C_TEST_"
+}
 
 set_top ${TOP_NAME}
 
@@ -90,6 +93,7 @@ if {$EXPORT_XO_ONLY == 1} {
 if {$isLinux == 0} {
     set LDFLAGS "{-Wl,--stack,10737418240}"
 } else {
+    #if @E Simulation failed: SIGSEGV. then try: ulimit -s unlimited
     set LDFLAGS "{-z stack-size=10737418240}"
 }
 if {$CSIM == 1} {

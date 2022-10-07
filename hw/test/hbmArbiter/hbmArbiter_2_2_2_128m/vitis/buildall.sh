@@ -35,6 +35,13 @@ pushd ${BASE_DIR}/../arbiter
 make DEVICE=${DEVICE} XPART=${XPART} CLKP=${CLKP} all
 popd
 
+pushd ${BASE_DIR}/../dmy_mu
+make DEVICE=${DEVICE} XPART=${XPART} CLKP=${CLKP} all
+popd
+
+pushd ${BASE_DIR}/../latency
+make DEVICE=${DEVICE} XPART=${XPART} CLKP=${CLKP} all
+popd
 
 # xilinx binary container (xclbin)
 pushd ${BASE_DIR}
