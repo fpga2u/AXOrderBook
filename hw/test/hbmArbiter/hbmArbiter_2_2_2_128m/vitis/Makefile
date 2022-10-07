@@ -68,9 +68,9 @@ DMY_MU_XO := dmy_mu_2_2_2_128m_top.xo
 LATENCY_XO := lm_2_2_2_128m_top.xo
 
 
-ARBITERXO_FULLPATH=../arbiter/$(ARBITER_XO)
-DMY_MUXO_FULLPATH=../dmy_mu/$(DMY_MU_XO)
-LATENCYXO_FULLPATH=../latency/$(LATENCY_XO)
+ARBITER_XO_FULLPATH=../arbiter/$(ARBITER_XO)
+DMY_MU_XO_FULLPATH=../dmy_mu/$(DMY_MU_XO)
+LATENCY_XO_FULLPATH=../latency/$(LATENCY_XO)
 
 # shell specific connectivity
 ifneq (,$(shell echo $(XILINX_PLATFORM) | awk '/_u50_gen.*_xdma_/'))

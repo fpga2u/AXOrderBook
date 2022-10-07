@@ -23,7 +23,7 @@ BASE_DIR=$(dirname $(readlink -f $0))
 
 # check platform target, avoid delayed build failure at xclbin generation stage
 if [ -z "${XILINX_PLATFORM}" ]; then
-    source setEnv.sh
+    source setting.sh
     if [ $? -ne 0 ]; then
         echo "ERROR: Environment variable XILINX_PLATFORM is required"
         exit 1
