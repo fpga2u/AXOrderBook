@@ -1,22 +1,10 @@
+# -*- coding: utf-8 -*-
 
 import tool.axsbe_base as axsbe_base
 from tool.axsbe_exe import axsbe_exe
 from tool.axsbe_order import axsbe_order
 from tool.axsbe_snap import axsbe_snap, price_level
 
-from functools import wraps
-from time import time
-
-def timeit(f):
-    @wraps(f)
-    def wrap(*args, **kw):
-        ts = time()
-        result = f(*args, **kw)
-        te = time()
-        print('func:%r args:[%r, %r] took: %2.4f sec' % \
-          (f.__name__, args, kw, te-ts))
-        return result
-    return wrap
 
 def str_to_dict(s:str):
     if s[:2] != "//":

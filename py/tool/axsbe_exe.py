@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import tool.axsbe_base as axsbe_base
 import  struct
 

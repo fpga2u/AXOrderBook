@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import tool.axsbe_base as axsbe_base
 from tool.axsbe_base import TPM, TPI
 import struct

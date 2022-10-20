@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+from tool.test_util import *
 from tool.msg_util import *
 import os
 
