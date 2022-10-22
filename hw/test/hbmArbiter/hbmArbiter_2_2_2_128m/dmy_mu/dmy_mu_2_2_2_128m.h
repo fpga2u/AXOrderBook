@@ -47,7 +47,7 @@ void mainRun(
     hbmArbiter_2_2_2_128m::wriStream_t& wri1
 )
 {
-    reg_guard_bgn = 0xD222128B;
+    reg_guard_bgn = 0xD222128B; //TODO: 实机会读成0
     reg_guard_end = 0xD222128E;
 
     static int reg_rdo0_nb = 0;
@@ -72,7 +72,7 @@ void mainRun(
     loop_write0_gap:
     for (int i=0; i<gap_nb; ++i){
     #pragma HLS PIPELINE II = 16
-        if (!rdo0.empty()){
+        if (!rdo0.empty()){ //TODO: 不合理
             rdata_st rdo = rdo0.read();
             reg_rdo0_nb++;
         }
@@ -92,7 +92,7 @@ void mainRun(
     loop_write1_gap:
     for (int i=0; i<gap_nb; ++i){
     #pragma HLS PIPELINE II = 16
-        if (!rdo1.empty()){
+        if (!rdo1.empty()){ //TODO: 不合理
             rdata_st rdo = rdo1.read();
             reg_rdo1_nb++;
         }
@@ -113,7 +113,7 @@ void mainRun(
     loop_read0_gap:
     for (int i=0; i<gap_nb; ++i){
     #pragma HLS PIPELINE II = 16
-        if (!rdo1.empty()){
+        if (!rdo1.empty()){ //TODO: 不合理
             rdata_st rdo = rdo1.read();
             reg_rdo1_nb++;
         }
@@ -122,7 +122,7 @@ void mainRun(
     loop_read0_a:
     for (int i=0; i<wk_nb; ++i){
     #pragma HLS PIPELINE II = 1
-        if (!rdo0.empty()){
+        if (!rdo0.empty()){ //TODO: 这里不该用非阻塞，当读写异步时，实机会快速地跳过这里，rdo0的数据就遗留在队列中，使得Arbiter阻塞在write
             rdata_st rdo = rdo0.read();
             if (--addr_tgt + min_addr != rdo.data){
                 reg_rd0err_nb++;
@@ -146,7 +146,7 @@ void mainRun(
     loop_read1_gap:
     for (int i=0; i<gap_nb; ++i){
     #pragma HLS PIPELINE II = 16
-        if (!rdo0.empty()){
+        if (!rdo0.empty()){ //TODO: 不合理
             rdata_st rdo = rdo0.read();
             reg_rdo0_nb++;
         }
@@ -155,7 +155,7 @@ void mainRun(
     loop_read1_a:
     for (int i=0; i<wk_nb; ++i){
     #pragma HLS PIPELINE II = 1
-        if (!rdo1.empty()){
+        if (!rdo1.empty()){ //TODO: 这里不该用非阻塞，当读写异步时，实机会快速地跳过这里，rdo0的数据就遗留在队列中，使得Arbiter阻塞在write
             rdata_st rdo = rdo1.read();
             if (--addr_tgt + min_addr != rdo.data){
                 reg_rd1err_nb++;

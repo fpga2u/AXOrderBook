@@ -83,7 +83,7 @@ void mainRun(
         reg_dn_nb = 0;
     }
 
-    free_cnt = ++reg_freeCount;
+    free_cnt = ++reg_freeCount; //TODO: 实机被ap_vld同步后才映射到寄存器，如果卡在前面的write，则此值在寄存器界面也卡卡住了，应该有个pragma取消寄存器的ap_vld
     up_nb = reg_up_nb;
     dn_nb = reg_dn_nb;
     up_last_tick = reg_up_last_tick;
@@ -96,7 +96,7 @@ void mainRun(
     up_in_idle_d1 = up_in_idle;
     dn_in_idle_d1 = dn_in_idle;
 
-    reg_guard_bgn = guard_bgn;
+    reg_guard_bgn = guard_bgn;  //TODO: 实机的实现形式很奇怪，不是将常亮给寄存器界面，可能原因与free_cnt一样
     reg_guard_end = guard_end;
 }
 
