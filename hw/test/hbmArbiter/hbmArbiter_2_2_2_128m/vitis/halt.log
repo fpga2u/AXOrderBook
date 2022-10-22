@@ -1,0 +1,95 @@
+hbmArbiter_2_2_2_128m_top_1.RegisterMap {
+  reg_guard_bgn = Register(value=2720141963),
+  mu0_rdi_nb = Register(value=7),
+  mu0_wri_nb = Register(value=32),
+  mu0_rdo_nb = Register(value=6),
+  mu0_max_addr = Register(value=2097151),   TODO: 全F？
+  mu1_rdi_nb = Register(value=0),
+  mu1_wri_nb = Register(value=0),
+  mu1_rdo_nb = Register(value=0),
+  mu1_max_addr = Register(value=0),
+  hbm_rd_nb = Register(value=8),
+  hbm_wr_nb = Register(value=32),
+  reg_guard_end = Register(value=2720141966),
+  hbm = Register(value=0)
+}
+lm_mu0_rd0.RegisterMap {
+  reg_guard_bgn = Register(value=572598523),
+  free_cnt = Register(value=3378324325),
+  up_nb = Register(value=8),
+  dn_nb = Register(value=2),
+  up_last_tick = Register(value=3378324324),
+  dn_last_tick = Register(value=3378324324),
+  history_id = Register(value=0),
+  up_history_tick = Register(value=3378324317),
+  dn_history_tick = Register(value=3378324323),
+  reset_reg = Register(value=0),
+  reg_guard_end = Register(value=572598526)
+}
+lm_mu0_rd1.RegisterMap {
+  reg_guard_bgn = Register(value=572598523),
+  free_cnt = Register(value=2462577115),
+  up_nb = Register(value=0),
+  dn_nb = Register(value=0),
+  up_last_tick = Register(value=0),
+  dn_last_tick = Register(value=0),
+  history_id = Register(value=0),
+  up_history_tick = Register(value=0),
+  dn_history_tick = Register(value=0),
+  reset_reg = Register(value=0),
+  reg_guard_end = Register(value=572598526)
+}
+lm_mu1_rd0.RegisterMap {
+  reg_guard_bgn = Register(value=572598523),
+  free_cnt = Register(value=2462731573),
+  up_nb = Register(value=0),
+  dn_nb = Register(value=0),
+  up_last_tick = Register(value=0),
+  dn_last_tick = Register(value=0),
+  history_id = Register(value=0),
+  up_history_tick = Register(value=0),
+  dn_history_tick = Register(value=0),
+  reset_reg = Register(value=0),
+  reg_guard_end = Register(value=572598526)
+}
+lm_mu1_rd1.RegisterMap {
+  reg_guard_bgn = Register(value=572598523),
+  free_cnt = Register(value=2462887990),
+  up_nb = Register(value=0),
+  dn_nb = Register(value=0),
+  up_last_tick = Register(value=0),
+  dn_last_tick = Register(value=0),
+  history_id = Register(value=0),
+  up_history_tick = Register(value=0),
+  dn_history_tick = Register(value=0),
+  reset_reg = Register(value=0),
+  reg_guard_end = Register(value=572598526)
+}
+mu0.RegisterMap {
+  CTRL = Register(AP_START=1, AP_DONE=0, AP_IDLE=0, AP_READY=0, AUTO_RESTART=0, AP_CONTINUE=0),   # TODO: halt
+  reg_guard_bgn = Register(value=0),
+  wk_nb = Register(value=16),
+  min_addr = Register(value=0),
+  max_addr = Register(value=16),
+  min_data = Register(value=0),
+  gap_nb = Register(value=4),
+  rdo0_nb = Register(value=0),
+  rdo1_nb = Register(value=0),
+  rd0err_nb = Register(value=0),
+  rd1err_nb = Register(value=0),
+  reg_guard_end = Register(value=0)
+}
+mu1.RegisterMap {
+  CTRL = Register(AP_START=0, AP_DONE=0, AP_IDLE=1, AP_READY=0, AUTO_RESTART=0, AP_CONTINUE=0),
+  reg_guard_bgn = Register(value=0),
+  wk_nb = Register(value=0),
+  min_addr = Register(value=0),
+  max_addr = Register(value=0),
+  min_data = Register(value=0),
+  gap_nb = Register(value=0),
+  rdo0_nb = Register(value=0),
+  rdo1_nb = Register(value=0),
+  rd0err_nb = Register(value=0),
+  rd1err_nb = Register(value=0),
+  reg_guard_end = Register(value=0)
+}
