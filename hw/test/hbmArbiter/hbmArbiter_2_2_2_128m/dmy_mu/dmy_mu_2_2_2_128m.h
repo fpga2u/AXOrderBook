@@ -28,8 +28,12 @@ void mainRun(
     unsigned int  min_data,
     unsigned int  gap_nb,
 
-    unsigned int& rdo0_nb,
-    unsigned int& rdo1_nb,
+    unsigned int& wr0_wk_nb,
+    unsigned int& wr1_wk_nb,
+    unsigned int& rd0_wk_nb,
+    unsigned int& rd1_wk_nb,
+    unsigned int& rdo0_rx_nb,
+    unsigned int& rdo1_rx_nb,
     unsigned int& rd0err_nb,
     unsigned int& rd1err_nb,
 
@@ -47,11 +51,15 @@ void mainRun(
     hbmArbiter_2_2_2_128m::wriStream_t& wri1
 )
 {
-    reg_guard_bgn = 0xD222128B; //TODO: 实机会读成0
-    reg_guard_end = 0xD222128E;
+    const unsigned int guard_bgn = 0xD222128B;
+    const unsigned int guard_end = 0xD222128E;
 
-    static int reg_rdo0_nb = 0;
-    static int reg_rdo1_nb = 0;
+    static int reg_wr0_wk_nb = 0;
+    static int reg_wr1_wk_nb = 0;
+    static int reg_rd0_wk_nb = 0;
+    static int reg_rd1_wk_nb = 0;
+    static int reg_rdo0_rx_nb = 0;
+    static int reg_rdo1_rx_nb = 0;
     static int reg_rd0err_nb = 0;
     static int reg_rd1err_nb = 0;
 
@@ -67,6 +75,7 @@ void mainRun(
         if (++addr>=max_addr) addr = min_addr;
         wri.last = 1;
         wri0.write(wri);
+        reg_wr0_wk_nb++;
     }
 
     loop_write0_gap:
@@ -74,7 +83,7 @@ void mainRun(
     #pragma HLS PIPELINE II = 16
         if (!rdo0.empty()){ //TODO: 不合理
             rdata_st rdo = rdo0.read();
-            reg_rdo0_nb++;
+            reg_rdo0_rx_nb++;
         }
     }
 
@@ -87,6 +96,7 @@ void mainRun(
         if (++addr>=max_addr) addr = min_addr;
         wri.last = 1;
         wri1.write(wri);
+        reg_wr1_wk_nb++;
     }
 
     loop_write1_gap:
@@ -94,7 +104,7 @@ void mainRun(
     #pragma HLS PIPELINE II = 16
         if (!rdo1.empty()){ //TODO: 不合理
             rdata_st rdo = rdo1.read();
-            reg_rdo1_nb++;
+            reg_rdo1_rx_nb++;
         }
     }
 
@@ -108,6 +118,7 @@ void mainRun(
         if (addr==min_addr) addr = max_addr;
         rdi.last = 1;
         rdi0.write(rdi);
+        reg_rd0_wk_nb++;
     }
 
     loop_read0_gap:
@@ -115,21 +126,21 @@ void mainRun(
     #pragma HLS PIPELINE II = 16
         if (!rdo1.empty()){ //TODO: 不合理
             rdata_st rdo = rdo1.read();
-            reg_rdo1_nb++;
+            reg_rdo1_rx_nb++;
         }
     }
 
     loop_read0_a:
     for (int i=0; i<wk_nb; ++i){
     #pragma HLS PIPELINE II = 1
-        if (!rdo0.empty()){ //TODO: 这里不该用非阻塞，当读写异步时，实机会快速地跳过这里，rdo0的数据就遗留在队列中，使得Arbiter阻塞在write
+        // if (!rdo0.empty()){ //TODO: 这里不该用非阻塞，当读写异步时，实机会快速地跳过这里，rdo0的数据就遗留在队列中，使得Arbiter阻塞在write
             rdata_st rdo = rdo0.read();
             if (--addr_tgt + min_addr != rdo.data){
                 reg_rd0err_nb++;
             }
             if (addr_tgt==min_addr) addr_tgt = max_addr;
-            reg_rdo0_nb++;
-        }
+            reg_rdo0_rx_nb++;
+        // }
     }
 
 
@@ -141,6 +152,7 @@ void mainRun(
         if (addr==min_addr) addr = max_addr;
         rdi.last = 1;
         rdi1.write(rdi);
+        reg_rd1_wk_nb++;
     }
 
     loop_read1_gap:
@@ -148,7 +160,7 @@ void mainRun(
     #pragma HLS PIPELINE II = 16
         if (!rdo0.empty()){ //TODO: 不合理
             rdata_st rdo = rdo0.read();
-            reg_rdo0_nb++;
+            reg_rdo0_rx_nb++;
         }
     }
 
@@ -161,15 +173,21 @@ void mainRun(
                 reg_rd1err_nb++;
             }
             if (addr_tgt==min_addr) addr_tgt = max_addr;
-            reg_rdo1_nb++;
+            reg_rdo1_rx_nb++;
         }
     }
 
-    rdo0_nb = reg_rdo0_nb;
-    rdo1_nb = reg_rdo1_nb;
+    wr0_wk_nb = reg_wr0_wk_nb;
+    wr1_wk_nb = reg_wr1_wk_nb;
+    rd0_wk_nb = reg_rd0_wk_nb;
+    rd1_wk_nb = reg_rd1_wk_nb;
+    rdo0_rx_nb = reg_rdo0_rx_nb;
+    rdo1_rx_nb = reg_rdo1_rx_nb;
     rd0err_nb = reg_rd0err_nb;
     rd1err_nb = reg_rd1err_nb;
 
+    reg_guard_bgn = guard_bgn; //TODO: 实机会读成0
+    reg_guard_end = guard_end;
 }
 
 

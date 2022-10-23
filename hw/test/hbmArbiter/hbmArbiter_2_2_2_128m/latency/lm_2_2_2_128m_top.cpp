@@ -22,12 +22,14 @@ void lm_2_2_2_128m_top(
         hbmArbiter_2_2_2_128m::rdoStream_t& dn_out
 )
 {
-#pragma HLS INTERFACE axis port=up_in
-#pragma HLS INTERFACE axis port=up_out
-#pragma HLS INTERFACE axis port=dn_in
-#pragma HLS INTERFACE axis port=dn_out
-
+/* register-to-host */
+//guard
 #pragma HLS INTERFACE s_axilite port=reg_guard_bgn   bundle=control
+#pragma HLS INTERFACE s_axilite port=reg_guard_end   bundle=control
+#pragma HLS INTERFACE mode=ap_none port=reg_guard_bgn
+#pragma HLS INTERFACE mode=ap_none port=reg_guard_end
+
+//app
 #pragma HLS INTERFACE s_axilite port=free_cnt   bundle=control
 #pragma HLS INTERFACE s_axilite port=up_nb   bundle=control
 #pragma HLS INTERFACE s_axilite port=dn_nb   bundle=control
@@ -37,7 +39,21 @@ void lm_2_2_2_128m_top(
 #pragma HLS INTERFACE s_axilite port=up_history_tick   bundle=control
 #pragma HLS INTERFACE s_axilite port=dn_history_tick   bundle=control
 #pragma HLS INTERFACE s_axilite port=reset_reg   bundle=control
-#pragma HLS INTERFACE s_axilite port=reg_guard_end   bundle=control
+
+//app output register
+#pragma HLS INTERFACE mode=ap_none port=free_cnt
+#pragma HLS INTERFACE mode=ap_none port=up_nb
+#pragma HLS INTERFACE mode=ap_none port=dn_nb
+#pragma HLS INTERFACE mode=ap_none port=up_last_tick
+#pragma HLS INTERFACE mode=ap_none port=dn_last_tick
+#pragma HLS INTERFACE mode=ap_none port=up_history_tick
+#pragma HLS INTERFACE mode=ap_none port=dn_history_tick
+
+/* data flow stream */
+#pragma HLS INTERFACE axis port=up_in
+#pragma HLS INTERFACE axis port=up_out
+#pragma HLS INTERFACE axis port=dn_in
+#pragma HLS INTERFACE axis port=dn_out
 
 #ifdef _C_TEST_
 #pragma HLS INTERFACE ap_ctrl_chain port=return

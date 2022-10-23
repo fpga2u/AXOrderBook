@@ -12,8 +12,13 @@ int main()
     unsigned int min_data;
     unsigned int gap_nb;
 
-    unsigned int rdo0_nb;
-    unsigned int rdo1_nb;
+
+    unsigned int wr0_wk_nb;
+    unsigned int wr1_wk_nb;
+    unsigned int rd0_wk_nb;
+    unsigned int rd1_wk_nb;
+    unsigned int rdo0_rx_nb;
+    unsigned int rdo1_rx_nb;
     unsigned int rd0err_nb;
     unsigned int rd1err_nb;
 
@@ -31,6 +36,7 @@ int main()
     hbmArbiter_2_2_2_128m::wriStream_t wri1("wri1");
 
 
+    //wish: wr(addr, dat)={0:100, 1:101, 2:102, ... 16:116}
     wk_nb = 16;
 
     min_addr = 0;
@@ -47,8 +53,13 @@ int main()
         max_addr,
         min_data,
         gap_nb,
-        rdo0_nb,
-        rdo1_nb,
+
+        wr0_wk_nb,
+        wr1_wk_nb,
+        rd0_wk_nb,
+        rd1_wk_nb,
+        rdo0_rx_nb,
+        rdo1_rx_nb,
         rd0err_nb,
         rd1err_nb,
         reg_guard_end,
@@ -99,8 +110,12 @@ int main()
             max_addr,
             min_data,
             gap_nb,
-            rdo0_nb,
-            rdo1_nb,
+            wr0_wk_nb,
+            wr1_wk_nb,
+            rd0_wk_nb,
+            rd1_wk_nb,
+            rdo0_rx_nb,
+            rdo1_rx_nb,
             rd0err_nb,
             rd1err_nb,
             reg_guard_end,
@@ -133,8 +148,12 @@ int main()
         raddr_st ra = rdi1.read();
     }
 
-    assert(rdo0_nb==wk_nb);
-    assert(rdo1_nb==wk_nb);
+    assert(wr0_wk_nb==wk_nb);
+    assert(wr1_wk_nb==wk_nb);
+    assert(rd0_wk_nb==wk_nb);
+    assert(rd1_wk_nb==wk_nb);
+    assert(rdo0_rx_nb==wk_nb);
+    assert(rdo1_rx_nb==wk_nb);
     assert(rd0err_nb==0);
     assert(rd1err_nb==0);
     

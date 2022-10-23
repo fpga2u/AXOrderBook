@@ -14,8 +14,12 @@ void dmy_mu_2_2_2_128m_top(
     unsigned int  min_data,
     unsigned int  gap_nb,
 
-    unsigned int& rdo0_nb,
-    unsigned int& rdo1_nb,
+    unsigned int& wr0_wk_nb,
+    unsigned int& wr1_wk_nb,
+    unsigned int& rd0_wk_nb,
+    unsigned int& rd1_wk_nb,
+    unsigned int& rdo0_rx_nb,
+    unsigned int& rdo1_rx_nb,
     unsigned int& rd0err_nb,
     unsigned int& rd1err_nb,
 

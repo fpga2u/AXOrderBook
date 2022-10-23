@@ -12,8 +12,12 @@ void dmy_mu_2_2_2_128m_top(
     unsigned int  min_data,
     unsigned int  gap_nb,
 
-    unsigned int& rdo0_nb,
-    unsigned int& rdo1_nb,
+    unsigned int& wr0_wk_nb,
+    unsigned int& wr1_wk_nb,
+    unsigned int& rd0_wk_nb,
+    unsigned int& rd1_wk_nb,
+    unsigned int& rdo0_rx_nb,
+    unsigned int& rdo1_rx_nb,
     unsigned int& rd0err_nb,
     unsigned int& rd1err_nb,
 
@@ -32,9 +36,13 @@ void dmy_mu_2_2_2_128m_top(
 )
 {
 /* register-to-host */
+//guard
 #pragma HLS INTERFACE s_axilite port=reg_guard_bgn  bundle=control
 #pragma HLS INTERFACE s_axilite port=reg_guard_end  bundle=control
+#pragma HLS INTERFACE mode=ap_none port=reg_guard_bgn
+#pragma HLS INTERFACE mode=ap_none port=reg_guard_end
 
+//app
 #pragma HLS INTERFACE s_axilite port=wk_nb  bundle=control
 #pragma HLS INTERFACE s_axilite port=min_addr  bundle=control
 #pragma HLS INTERFACE s_axilite port=max_addr  bundle=control
@@ -44,6 +52,13 @@ void dmy_mu_2_2_2_128m_top(
 #pragma HLS INTERFACE s_axilite port=rdo1_nb  bundle=control
 #pragma HLS INTERFACE s_axilite port=rd0err_nb  bundle=control
 #pragma HLS INTERFACE s_axilite port=rd1err_nb  bundle=control
+
+//app output register
+#pragma HLS INTERFACE mode=ap_none port=rdo0_nb
+#pragma HLS INTERFACE mode=ap_none port=rdo1_nb
+#pragma HLS INTERFACE mode=ap_none port=rd0err_nb
+#pragma HLS INTERFACE mode=ap_none port=rd1err_nb
+
 /* mu0 */
 //rd0
 #pragma HLS INTERFACE axis port=rdi0
@@ -70,8 +85,12 @@ void dmy_mu_2_2_2_128m_top(
         min_data,
         gap_nb,
 
-        rdo0_nb,
-        rdo1_nb,
+        wr0_wk_nb,
+        wr1_wk_nb,
+        rd0_wk_nb,
+        rd1_wk_nb,
+        rdo0_rx_nb,
+        rdo1_rx_nb,
         rd0err_nb,
         rd1err_nb,
 
