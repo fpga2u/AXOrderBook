@@ -22,6 +22,7 @@ void dmy_mu_2_2_2_128m_top(
     unsigned int& rdo1_rx_nb,
     unsigned int& rd0err_nb,
     unsigned int& rd1err_nb,
+    unsigned int& gap_wk_nb,
 
     unsigned int& reg_guard_end,
 

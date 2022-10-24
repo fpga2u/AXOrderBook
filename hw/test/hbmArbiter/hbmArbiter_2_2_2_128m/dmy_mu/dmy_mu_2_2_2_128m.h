@@ -2,6 +2,7 @@
 #define __DMY_MU_2_2_2_128M_H__
 
 #include "hbmArbiter_2_2_2_128m.h"
+#include <bitset>
 
 template<int id>
 class dmy_mu_2_2_2_128m
@@ -36,6 +37,7 @@ void mainRun(
     unsigned int& rdo1_rx_nb,
     unsigned int& rd0err_nb,
     unsigned int& rd1err_nb,
+    unsigned int& gap_wk_nb,
 
     unsigned int& reg_guard_end,
 
@@ -62,6 +64,7 @@ void mainRun(
     static int reg_rdo1_rx_nb = 0;
     static int reg_rd0err_nb = 0;
     static int reg_rd1err_nb = 0;
+    static int reg_gap_wk_nb = 0;
 
     ap_uint<21> addr;
 
@@ -81,10 +84,11 @@ void mainRun(
     loop_write0_gap:
     for (int i=0; i<gap_nb; ++i){
     #pragma HLS PIPELINE II = 16
-        if (!rdo0.empty()){ //TODO: 不合理
-            rdata_st rdo = rdo0.read();
-            reg_rdo0_rx_nb++;
-        }
+        // if (!rdo0.empty()){ //TODO: 不合理
+        //     rdata_st rdo = rdo0.read();
+        //     reg_rdo0_rx_nb++;
+        // }
+        reg_gap_wk_nb++;
     }
 
     loop_write1:
@@ -102,10 +106,11 @@ void mainRun(
     loop_write1_gap:
     for (int i=0; i<gap_nb; ++i){
     #pragma HLS PIPELINE II = 16
-        if (!rdo1.empty()){ //TODO: 不合理
-            rdata_st rdo = rdo1.read();
-            reg_rdo1_rx_nb++;
-        }
+        // if (!rdo1.empty()){ //TODO: 不合理
+        //     rdata_st rdo = rdo1.read();
+        //     reg_rdo1_rx_nb++;
+        // }
+        reg_gap_wk_nb++;
     }
 
 
@@ -124,10 +129,11 @@ void mainRun(
     loop_read0_gap:
     for (int i=0; i<gap_nb; ++i){
     #pragma HLS PIPELINE II = 16
-        if (!rdo1.empty()){ //TODO: 不合理
-            rdata_st rdo = rdo1.read();
-            reg_rdo1_rx_nb++;
-        }
+        // if (!rdo1.empty()){ //TODO: 不合理
+        //     rdata_st rdo = rdo1.read();
+        //     reg_rdo1_rx_nb++;
+        // }
+        reg_gap_wk_nb++;
     }
 
     loop_read0_a:
@@ -135,7 +141,9 @@ void mainRun(
     #pragma HLS PIPELINE II = 1
         // if (!rdo0.empty()){ //TODO: 这里不该用非阻塞，当读写异步时，实机会快速地跳过这里，rdo0的数据就遗留在队列中，使得Arbiter阻塞在write
             rdata_st rdo = rdo0.read();
-            if (--addr_tgt + min_addr != rdo.data){
+            // printf("t=%s r=%s\n", std::bitset<8>(addr_tgt-1 + min_data).to_string().c_str(), rdo.data.to_string(16).c_str());
+            // printf("t=%X r=%s\n", addr_tgt-1 + min_data, rdo.data.to_string(16).c_str());
+            if (--addr_tgt + min_data != rdo.data){
                 reg_rd0err_nb++;
             }
             if (addr_tgt==min_addr) addr_tgt = max_addr;
@@ -158,23 +166,24 @@ void mainRun(
     loop_read1_gap:
     for (int i=0; i<gap_nb; ++i){
     #pragma HLS PIPELINE II = 16
-        if (!rdo0.empty()){ //TODO: 不合理
-            rdata_st rdo = rdo0.read();
-            reg_rdo0_rx_nb++;
-        }
+        // if (!rdo0.empty()){ //TODO: 不合理
+        //     rdata_st rdo = rdo0.read();
+        //     reg_rdo0_rx_nb++;
+        // }
+        reg_gap_wk_nb++;
     }
 
     loop_read1_a:
     for (int i=0; i<wk_nb; ++i){
     #pragma HLS PIPELINE II = 1
-        if (!rdo1.empty()){ //TODO: 这里不该用非阻塞，当读写异步时，实机会快速地跳过这里，rdo0的数据就遗留在队列中，使得Arbiter阻塞在write
+        // if (!rdo1.empty()){ //TODO: 这里不该用非阻塞，当读写异步时，实机会快速地跳过这里，rdo0的数据就遗留在队列中，使得Arbiter阻塞在write
             rdata_st rdo = rdo1.read();
-            if (--addr_tgt + min_addr != rdo.data){
+            if (--addr_tgt + min_data != rdo.data){
                 reg_rd1err_nb++;
             }
             if (addr_tgt==min_addr) addr_tgt = max_addr;
             reg_rdo1_rx_nb++;
-        }
+        // }
     }
 
     wr0_wk_nb = reg_wr0_wk_nb;
@@ -185,6 +194,7 @@ void mainRun(
     rdo1_rx_nb = reg_rdo1_rx_nb;
     rd0err_nb = reg_rd0err_nb;
     rd1err_nb = reg_rd1err_nb;
+    gap_wk_nb = reg_gap_wk_nb;
 
     reg_guard_bgn = guard_bgn; //TODO: 实机会读成0
     reg_guard_end = guard_end;
