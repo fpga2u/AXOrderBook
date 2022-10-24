@@ -52,14 +52,20 @@ int main()
     /* register-to-host */
     unsigned int reg_guard_bgn;
     //mu0
-    unsigned int mu0_rdi_nb;
-    unsigned int mu0_wri_nb;
-    unsigned int mu0_rdo_nb;
+    unsigned int mu0_rdi0_nb;
+    unsigned int mu0_rdi1_nb;
+    unsigned int mu0_wri0_nb;
+    unsigned int mu0_wri1_nb;
+    unsigned int mu0_rdo0_nb;
+    unsigned int mu0_rdo1_nb;
     unsigned int mu0_max_addr;
     //mu1
-    unsigned int mu1_rdi_nb;
-    unsigned int mu1_wri_nb;
-    unsigned int mu1_rdo_nb;
+    unsigned int mu1_rdi0_nb;
+    unsigned int mu1_rdi1_nb;
+    unsigned int mu1_wri0_nb;
+    unsigned int mu1_wri1_nb;
+    unsigned int mu1_rdo0_nb;
+    unsigned int mu1_rdo1_nb;
     unsigned int mu1_max_addr;
     //hbm
     unsigned int hbm_rd_nb;
@@ -110,13 +116,19 @@ int main()
     for (int i=0; i<3; ++i){    //each time process one pair of mu0+mu1
         hbmArbiter_2_2_2_128m_top(
             reg_guard_bgn,
-            mu0_rdi_nb,
-            mu0_wri_nb,
-            mu0_rdo_nb,
+            mu0_rdi0_nb,
+            mu0_rdi1_nb,
+            mu0_wri0_nb,
+            mu0_wri1_nb,
+            mu0_rdo0_nb,
+            mu0_rdo1_nb,
             mu0_max_addr,
-            mu1_rdi_nb,
-            mu1_wri_nb,
-            mu1_rdo_nb,
+            mu1_rdi0_nb,
+            mu1_rdi1_nb,
+            mu1_wri0_nb,
+            mu1_wri1_nb,
+            mu1_rdo0_nb,
+            mu1_rdo1_nb,
             mu1_max_addr,
             hbm_rd_nb,
             hbm_wr_nb,
@@ -143,12 +155,18 @@ int main()
     assert(hbm[arbiter::c_mu_entries]==2);
     assert(hbm[arbiter::c_mu_entries+1]==3);
     assert(hbm[arbiter::c_mu_entries+23].to_string()==ap_uint<256>(-1).to_string());
-    assert(mu0_rdi_nb==0);
-    assert(mu0_wri_nb==3);
-    assert(mu0_rdo_nb==0);
-    assert(mu1_rdi_nb==0);
-    assert(mu1_wri_nb==3);
-    assert(mu1_rdo_nb==0);
+    assert(mu0_rdi0_nb==0);
+    assert(mu0_rdi1_nb==0);
+    assert(mu0_wri0_nb==1);
+    assert(mu0_wri1_nb==2);
+    assert(mu0_rdo0_nb==0);
+    assert(mu0_rdo1_nb==0);
+    assert(mu1_rdi0_nb==0);
+    assert(mu1_rdi1_nb==0);
+    assert(mu1_wri0_nb==2);
+    assert(mu1_wri1_nb==1);
+    assert(mu1_rdo0_nb==0);
+    assert(mu1_rdo1_nb==0);
 
     /* test read */
     MU_RR(0, 1, 0);  //mu0.rd1(0)
@@ -156,13 +174,19 @@ int main()
     for (int i=0; i<2; ++i){
         hbmArbiter_2_2_2_128m_top(
             reg_guard_bgn,
-            mu0_rdi_nb,
-            mu0_wri_nb,
-            mu0_rdo_nb,
+            mu0_rdi0_nb,
+            mu0_rdi1_nb,
+            mu0_wri0_nb,
+            mu0_wri1_nb,
+            mu0_rdo0_nb,
+            mu0_rdo1_nb,
             mu0_max_addr,
-            mu1_rdi_nb,
-            mu1_wri_nb,
-            mu1_rdo_nb,
+            mu1_rdi0_nb,
+            mu1_rdi1_nb,
+            mu1_wri0_nb,
+            mu1_wri1_nb,
+            mu1_rdo0_nb,
+            mu1_rdo1_nb,
             mu1_max_addr,
             hbm_rd_nb,
             hbm_wr_nb,
@@ -202,13 +226,19 @@ int main()
     for (int i=0; i<2; ++i){
         hbmArbiter_2_2_2_128m_top(
             reg_guard_bgn,
-            mu0_rdi_nb,
-            mu0_wri_nb,
-            mu0_rdo_nb,
+            mu0_rdi0_nb,
+            mu0_rdi1_nb,
+            mu0_wri0_nb,
+            mu0_wri1_nb,
+            mu0_rdo0_nb,
+            mu0_rdo1_nb,
             mu0_max_addr,
-            mu1_rdi_nb,
-            mu1_wri_nb,
-            mu1_rdo_nb,
+            mu1_rdi0_nb,
+            mu1_rdi1_nb,
+            mu1_wri0_nb,
+            mu1_wri1_nb,
+            mu1_rdo0_nb,
+            mu1_rdo1_nb,
             mu1_max_addr,
             hbm_rd_nb,
             hbm_wr_nb,
@@ -248,13 +278,19 @@ int main()
     for (int i=0; i<2; ++i){
         hbmArbiter_2_2_2_128m_top(
             reg_guard_bgn,
-            mu0_rdi_nb,
-            mu0_wri_nb,
-            mu0_rdo_nb,
+            mu0_rdi0_nb,
+            mu0_rdi1_nb,
+            mu0_wri0_nb,
+            mu0_wri1_nb,
+            mu0_rdo0_nb,
+            mu0_rdo1_nb,
             mu0_max_addr,
-            mu1_rdi_nb,
-            mu1_wri_nb,
-            mu1_rdo_nb,
+            mu1_rdi0_nb,
+            mu1_rdi1_nb,
+            mu1_wri0_nb,
+            mu1_wri1_nb,
+            mu1_rdo0_nb,
+            mu1_rdo1_nb,
             mu1_max_addr,
             hbm_rd_nb,
             hbm_wr_nb,

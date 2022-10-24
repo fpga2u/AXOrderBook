@@ -86,9 +86,12 @@ void ackUnPack(ack_st* ack_pack, ack_t* ack)
 template<int id>
 static void mum(
     /* register-to-host */
-    unsigned int& rdi_nb,
-    unsigned int& wri_nb,
-    unsigned int& rdo_nb,
+    unsigned int& rdi0_nb,
+    unsigned int& rdi1_nb,
+    unsigned int& wri0_nb,
+    unsigned int& wri1_nb,
+    unsigned int& rdo0_nb,
+    unsigned int& rdo1_nb,
     unsigned int& max_addr,
 
     /* mu */
@@ -110,9 +113,12 @@ static void mum(
 #pragma HLS INLINE off
 
     /* registers */
-    static unsigned int r_rdi_nb=0;
-    static unsigned int r_wri_nb=0;
-    static unsigned int r_rdo_nb=0;
+    static unsigned int r_rdi0_nb=0;
+    static unsigned int r_rdi1_nb=0;
+    static unsigned int r_wri0_nb=0;
+    static unsigned int r_wri1_nb=0;
+    static unsigned int r_rdo0_nb=0;
+    static unsigned int r_rdo1_nb=0;
     static unsigned int r_max_addr=0;
 
 
@@ -125,7 +131,7 @@ static void mum(
         cmd.isRd = false;
         cmd.src = 0;
         cmd_rdy = true;
-        r_wri_nb++;
+        r_wri0_nb++;
     }else 
     if (!wri1.empty()){
         wi_st wi = wri1.read();
@@ -134,7 +140,7 @@ static void mum(
         cmd.isRd = false;
         cmd.src = 1;
         cmd_rdy = true;
-        r_wri_nb++;
+        r_wri1_nb++;
     }else
     if (!rdi0.empty()){
         raddr_st ra = rdi0.read();
@@ -143,7 +149,7 @@ static void mum(
         cmd.isRd = true;
         cmd.src = 0;
         cmd_rdy = true;
-        r_rdi_nb++;
+        r_rdi0_nb++;
     }else
     if (!rdi1.empty()){
         raddr_st ra = rdi1.read();
@@ -152,7 +158,7 @@ static void mum(
         cmd.isRd = true;
         cmd.src = 1;
         cmd_rdy = true;
-        r_rdi_nb++;
+        r_rdi1_nb++;
     }
 
     if (cmd_rdy){
@@ -174,15 +180,19 @@ static void mum(
         wb.last = 1;
         if (ack.src==0){
             rdo0.write(wb);
+            r_rdo0_nb++;
         }else{
             rdo1.write(wb);
+            r_rdo1_nb++;
         }
-        r_rdo_nb++;
     }
 
-    rdi_nb = r_rdi_nb;
-    wri_nb = r_wri_nb;
-    rdo_nb = r_rdo_nb;
+    rdi0_nb = r_rdi0_nb;
+    rdi1_nb = r_rdi1_nb;
+    wri0_nb = r_wri0_nb;
+    wri1_nb = r_wri1_nb;
+    rdo0_nb = r_rdo0_nb;
+    rdo1_nb = r_rdo1_nb;
     max_addr = r_max_addr;
 
 
@@ -292,14 +302,20 @@ static void mainRun(
     /* register-to-host */
     unsigned int& reg_guard_bgn,
     //mu0
-    unsigned int& mu0_rdi_nb,
-    unsigned int& mu0_wri_nb,
-    unsigned int& mu0_rdo_nb,
+    unsigned int& mu0_rdi0_nb,
+    unsigned int& mu0_rdi1_nb,
+    unsigned int& mu0_wri0_nb,
+    unsigned int& mu0_wri1_nb,
+    unsigned int& mu0_rdo0_nb,
+    unsigned int& mu0_rdo1_nb,
     unsigned int& mu0_max_addr,
     //mu1
-    unsigned int& mu1_rdi_nb,
-    unsigned int& mu1_wri_nb,
-    unsigned int& mu1_rdo_nb,
+    unsigned int& mu1_rdi0_nb,
+    unsigned int& mu1_rdi1_nb,
+    unsigned int& mu1_wri0_nb,
+    unsigned int& mu1_wri1_nb,
+    unsigned int& mu1_rdo0_nb,
+    unsigned int& mu1_rdo1_nb,
     unsigned int& mu1_max_addr,
     //hbm
     unsigned int& hbm_rd_nb,
@@ -359,9 +375,12 @@ static void mainRun(
 
 #pragma HLS dataflow
     mum<0>(
-        mu0_rdi_nb,
-        mu0_wri_nb,
-        mu0_rdo_nb,
+        mu0_rdi0_nb,
+        mu0_rdi1_nb,
+        mu0_wri0_nb,
+        mu0_wri1_nb,
+        mu0_rdo0_nb,
+        mu0_rdo1_nb,
         mu0_max_addr,
         mu0_rdi0,
         mu0_rdo0,
@@ -374,9 +393,12 @@ static void mainRun(
     );
 
     mum<1>(
-        mu1_rdi_nb,
-        mu1_wri_nb,
-        mu1_rdo_nb,
+        mu1_rdi0_nb,
+        mu1_rdi1_nb,
+        mu1_wri0_nb,
+        mu1_wri1_nb,
+        mu1_rdo0_nb,
+        mu1_rdo1_nb,
         mu1_max_addr,
         mu1_rdi0,
         mu1_rdo0,

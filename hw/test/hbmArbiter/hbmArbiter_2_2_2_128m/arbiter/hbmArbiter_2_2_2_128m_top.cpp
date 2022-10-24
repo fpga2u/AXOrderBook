@@ -6,14 +6,20 @@ void hbmArbiter_2_2_2_128m_top(
     /* register-to-host */
     unsigned int& reg_guard_bgn,
     //mu0
-    unsigned int& mu0_rdi_nb,
-    unsigned int& mu0_wri_nb,
-    unsigned int& mu0_rdo_nb,
+    unsigned int& mu0_rdi0_nb,
+    unsigned int& mu0_rdi1_nb,
+    unsigned int& mu0_wri0_nb,
+    unsigned int& mu0_wri1_nb,
+    unsigned int& mu0_rdo0_nb,
+    unsigned int& mu0_rdo1_nb,
     unsigned int& mu0_max_addr,
     //mu1
-    unsigned int& mu1_rdi_nb,
-    unsigned int& mu1_wri_nb,
-    unsigned int& mu1_rdo_nb,
+    unsigned int& mu1_rdi0_nb,
+    unsigned int& mu1_rdi1_nb,
+    unsigned int& mu1_wri0_nb,
+    unsigned int& mu1_wri1_nb,
+    unsigned int& mu1_rdo0_nb,
+    unsigned int& mu1_rdo1_nb,
     unsigned int& mu1_max_addr,
     //hbm
     unsigned int& hbm_rd_nb,
@@ -52,16 +58,26 @@ void hbmArbiter_2_2_2_128m_top(
 /* register-to-host */
 #pragma HLS INTERFACE s_axilite port=reg_guard_bgn  bundle=control
 #pragma HLS INTERFACE s_axilite port=reg_guard_end  bundle=control
-#pragma HLS INTERFACE s_axilite port=mu0_rdi_nb  bundle=control
-#pragma HLS INTERFACE s_axilite port=mu0_rdo_nb  bundle=control
-#pragma HLS INTERFACE s_axilite port=mu0_wri_nb  bundle=control
+
+#pragma HLS INTERFACE s_axilite port=mu0_rdi0_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu0_rdi1_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu0_rdo0_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu0_rdo1_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu0_wri0_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu0_wri1_nb  bundle=control
 #pragma HLS INTERFACE s_axilite port=mu0_max_addr  bundle=control
-#pragma HLS INTERFACE s_axilite port=mu1_rdi_nb  bundle=control
-#pragma HLS INTERFACE s_axilite port=mu1_rdo_nb  bundle=control
-#pragma HLS INTERFACE s_axilite port=mu1_wri_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu1_rdi0_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu1_rdi1_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu1_rdo0_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu1_rdo1_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu1_wri0_nb  bundle=control
+#pragma HLS INTERFACE s_axilite port=mu1_wri1_nb  bundle=control
 #pragma HLS INTERFACE s_axilite port=mu1_max_addr  bundle=control
 #pragma HLS INTERFACE s_axilite port=hbm_rd_nb  bundle=control
 #pragma HLS INTERFACE s_axilite port=hbm_wr_nb  bundle=control
+
+
+
 /* mu0 */
 //rd0
 #pragma HLS INTERFACE axis port=mu0_rdi0 depth=8
@@ -106,13 +122,19 @@ void hbmArbiter_2_2_2_128m_top(
 
     arbiter::mainRun<0>(
         reg_guard_bgn,
-        mu0_rdi_nb,
-        mu0_wri_nb,
-        mu0_rdo_nb,
+        mu0_rdi0_nb,
+        mu0_rdi1_nb,
+        mu0_wri0_nb,
+        mu0_wri1_nb,
+        mu0_rdo0_nb,
+        mu0_rdo1_nb,
         mu0_max_addr,
-        mu1_rdi_nb,
-        mu1_wri_nb,
-        mu1_rdo_nb,
+        mu1_rdi0_nb,
+        mu1_rdi1_nb,
+        mu1_wri0_nb,
+        mu1_wri1_nb,
+        mu1_rdo0_nb,
+        mu1_rdo1_nb,
         mu1_max_addr,
         hbm_rd_nb,
         hbm_wr_nb,
