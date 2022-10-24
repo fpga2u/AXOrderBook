@@ -69,6 +69,9 @@ int main()
     rdat = dn_out.read();
     assert(rdat.data==21);
 
+    std::cout << "up_nb=" << up_nb << std::endl;
+    std::cout << "dn_nb=" << dn_nb << std::endl;
+
     assert(up_nb==2);
     assert(dn_nb==2);
 

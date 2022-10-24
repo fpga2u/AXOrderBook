@@ -15,7 +15,7 @@ set EXPORT_XO_ONLY 0
 #COSIM waveform enable:
 set WAVE_DEBUG 1
 #COSIM waveform dump ALL (1=ALL, 0=PORT):
-set TRACE_LEVEL_ALL 0
+set TRACE_LEVEL_ALL 1
 
 set CSIM 1
 set CSYNTH 1

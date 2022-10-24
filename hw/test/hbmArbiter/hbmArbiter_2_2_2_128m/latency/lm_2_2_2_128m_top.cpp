@@ -41,6 +41,7 @@ void lm_2_2_2_128m_top(
 #pragma HLS INTERFACE s_axilite port=reset_reg   bundle=control
 
 //app output register
+#ifndef _C_TEST_
 #pragma HLS INTERFACE mode=ap_none port=free_cnt
 #pragma HLS INTERFACE mode=ap_none port=up_nb
 #pragma HLS INTERFACE mode=ap_none port=dn_nb
@@ -48,6 +49,7 @@ void lm_2_2_2_128m_top(
 #pragma HLS INTERFACE mode=ap_none port=dn_last_tick
 #pragma HLS INTERFACE mode=ap_none port=up_history_tick
 #pragma HLS INTERFACE mode=ap_none port=dn_history_tick
+#endif
 
 /* data flow stream */
 #pragma HLS INTERFACE axis port=up_in
