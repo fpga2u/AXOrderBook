@@ -15,11 +15,11 @@ else:
 
 
 class PPStage(metaclass=abc.ABCMeta):
-    def __init__(self, main_func, prev_stage=None):
+    def __init__(self, main_func, f_prev_stage_stopped=None):
         self.main_func = main_func
-        self.stopped = False
+        self.done = False
         self.t = None
-        self.prev_stage = prev_stage
+        self.f_prev_stage_stopped = f_prev_stage_stopped
 
     # NEED to be override
     @abc.abstractmethod
@@ -33,17 +33,19 @@ class PPStage(metaclass=abc.ABCMeta):
 
     # callback for main() to stop
     def wait_for_stop(self, time_step):
-        if self.prev_stage is not None:
-            while not self.prev_stage.stopped:
+        if self.f_prev_stage_stopped is not None:
+            while not self.f_prev_stage_stopped():
                 time.sleep(time_step)
         assert self.output_pop_over() is not None, "Not Implement output_pop_over()"
         while not self.output_pop_over():
             time.sleep(time_step)
 
+    def stopped(self):
+        return self.done
 
 class PPStageI1E1(PPStage):
-    def __init__(self, main_func, prev_stage=None, queue_size=None):
-        super(PPStageI1E1, self).__init__(main_func, prev_stage)
+    def __init__(self, main_func, f_prev_stage_stopped=None, queue_size=None):
+        super(PPStageI1E1, self).__init__(main_func, f_prev_stage_stopped)
         # initialize the queue used to store data
         if queue_size is not None:
             self.Q = queue.Queue(maxsize=queue_size)

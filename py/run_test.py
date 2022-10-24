@@ -22,4 +22,7 @@ if __name__== '__main__':
     # ##
     # msg.TEST_msg_text("data/lv1szdump20220818.cap.ITsbe.txt", "000997", 0, 35000)
 
+    ####
     pp.test_pipeline_I1E1()
+
+    pp.test_pipeline_id()
