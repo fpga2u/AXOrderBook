@@ -61,15 +61,17 @@ void dmy_mu_2_2_2_128m_top(
 #pragma HLS INTERFACE s_axilite port=gap_wk_nb  bundle=control
 
 //app output register
-#pragma HLS INTERFACE mode=ap_vld port=wr0_wk_nb
-#pragma HLS INTERFACE mode=ap_vld port=wr1_wk_nb
-#pragma HLS INTERFACE mode=ap_vld port=rd0_wk_nb
-#pragma HLS INTERFACE mode=ap_vld port=rd1_wk_nb
-#pragma HLS INTERFACE mode=ap_vld port=rdo0_rx_nb
-#pragma HLS INTERFACE mode=ap_vld port=rdo1_rx_nb
-#pragma HLS INTERFACE mode=ap_vld port=rd0err_nb
-#pragma HLS INTERFACE mode=ap_vld port=rd1err_nb
-#pragma HLS INTERFACE mode=ap_vld port=gap_wk_nb
+#ifndef _C_TEST_
+#pragma HLS INTERFACE mode=ap_none port=wr0_wk_nb
+#pragma HLS INTERFACE mode=ap_none port=wr1_wk_nb
+#pragma HLS INTERFACE mode=ap_none port=rd0_wk_nb
+#pragma HLS INTERFACE mode=ap_none port=rd1_wk_nb
+#pragma HLS INTERFACE mode=ap_none port=rdo0_rx_nb
+#pragma HLS INTERFACE mode=ap_none port=rdo1_rx_nb
+#pragma HLS INTERFACE mode=ap_none port=rd0err_nb
+#pragma HLS INTERFACE mode=ap_none port=rd1err_nb
+#pragma HLS INTERFACE mode=ap_none port=gap_wk_nb
+#endif
 
 /* mu0 */
 //rd0

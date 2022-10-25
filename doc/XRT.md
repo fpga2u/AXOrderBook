@@ -22,6 +22,9 @@
 * 常用命令
   
 ```shell
+#Root privileges are required
+sudo su
+
 #环境变量
 source /opt/xilinx/xrt/setup.sh
 

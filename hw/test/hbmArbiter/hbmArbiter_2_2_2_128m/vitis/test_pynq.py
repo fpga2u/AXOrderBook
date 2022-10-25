@@ -48,25 +48,37 @@ lm_mu1_rd1 = ol.lm_mu1_rd1
 
 #TODO: 可以读出值吗？不行的话只需要一个DMY
 mu0_reg_guard_bgn = pynq.allocate((1, 1), dtype='u4')
-mu0_rdo0_nb = pynq.allocate((1, 1), dtype='u4')
-mu0_rdo1_nb = pynq.allocate((1, 1), dtype='u4')
+mu0_wr0_wk_nb = pynq.allocate((1, 1), dtype='u4')
+mu0_wr1_wk_nb = pynq.allocate((1, 1), dtype='u4')
+mu0_rd0_wk_nb = pynq.allocate((1, 1), dtype='u4')
+mu0_rd1_wk_nb = pynq.allocate((1, 1), dtype='u4')
+mu0_rdo0_rx_nb = pynq.allocate((1, 1), dtype='u4')
+mu0_rdo1_rx_nb = pynq.allocate((1, 1), dtype='u4')
 mu0_rd0err_nb = pynq.allocate((1, 1), dtype='u4')
 mu0_rd1err_nb = pynq.allocate((1, 1), dtype='u4')
+mu0_gap_wk_nb = pynq.allocate((1, 1), dtype='u4')
 mu0_reg_guard_end = pynq.allocate((1, 1), dtype='u4')
 
-mu0_start = mu0.start(
+mu0s = mu0.start(
     reg_guard_bgn = mu0_reg_guard_bgn, 
     wk_nb = 16, 
     min_addr = 0,
     max_addr = 16, 
     min_data = 0,
     gap_nb = 4, 
-    rdo0_nb = mu0_rdo0_nb,
-    rdo1_nb = mu0_rdo1_nb,
+    wr0_wk_nb = mu0_wr0_wk_nb,
+    wr1_wk_nb = mu0_wr1_wk_nb,
+    rd0_wk_nb = mu0_rd0_wk_nb,
+    rd1_wk_nb = mu0_rd1_wk_nb,
+    rdo0_rx_nb = mu0_rdo0_rx_nb,
+    rdo1_rx_nb = mu0_rdo1_rx_nb,
     rd0err_nb = mu0_rd0err_nb,
     rd1err_nb = mu0_rd1err_nb,
+    gap_wk_nb = mu0_gap_wk_nb,
     reg_guard_end = mu0_reg_guard_end
 )
+
+
 
 # mu0_start.waite() #TODO: 当前会卡住
 
@@ -78,9 +90,13 @@ for k in ol.ip_dict:
 
 ###### clean up
 del mu0_reg_guard_bgn
-del mu0_rdo0_nb
-del mu0_rdo1_nb
+del mu0_wr0_wk_nb
+del mu0_wr1_wk_nb
+del mu0_rd0_wk_nb
+del mu0_rd1_wk_nb
+del mu0_rdo0_rx_nb
+del mu0_rdo1_rx_nb
 del mu0_rd0err_nb
 del mu0_rd1err_nb
+del mu0_gap_wk_nb
 del mu0_reg_guard_end
-

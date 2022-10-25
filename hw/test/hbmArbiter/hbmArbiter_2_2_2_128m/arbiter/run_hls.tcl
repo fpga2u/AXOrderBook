@@ -82,7 +82,7 @@ set_part $XPART
 create_clock -period $CLKP -name default
 
 if {$EXPORT_XO_ONLY == 1} {
-    config_sdx -target xocc
+    # config_sdx -target xocc
     csynth_design
     export_design -rtl verilog -format xo -output ${KERNEL_ROOT}/${TOP_NAME}.xo
     exit
