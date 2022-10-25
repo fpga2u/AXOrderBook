@@ -8,6 +8,13 @@ if [ -z "${XILINX_XRT}" ]; then
     source /opt/xilinx/xrt/setup.sh
 fi
 
+if ! [ -x "$(command -v vitis_hls)" ]; then
+  echo 'Error: vitis is not found.' >&2
+  echo "run 'source ~/Xilinx/Vitis_HLS/2022.1/settings64.sh' first."
+  return 1
+fi
+
+
 export PLATFORM_REPO_PATHS='/opt/xilinx/platforms'
 export XILINX_PLATFORM='xilinx_u50_gen3x16_xdma_5_202210_1'
 export DEVICE=${PLATFORM_REPO_PATHS}/${XILINX_PLATFORM}/${XILINX_PLATFORM}.xpfm
@@ -25,3 +32,5 @@ if [ ! -e $DEVICE ];then
    echo "$DEVICE not exists"
    return 1
 fi
+
+echo "Setting environment done."
