@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -z "${XILINX_XRT}" ]; then
-    if [ ! -d /opt/xilinx/xrt/setup.sh ];then
+    if [ ! -f /opt/xilinx/xrt/setup.sh ];then
         echo "XILINX XRT not found!"
         return 1
     fi
