@@ -43,3 +43,39 @@ source /opt/xilinx/xrt/setup.sh
 #强制复位，应用层将与shell断开，所有应用必须重启
 /opt/xilinx/xrt/bin/xbmgmt reset --device 01:00.0
 ```
+
+## build XRT from source
+
+```shell
+git clone https://github.com/Xilinx/XRT.git
+cd XRT
+git submodule update --init
+
+#假设Vitis安装在/data/Xilinx/Vitis/2022.1 :
+export XILINX_VITIS=/data/Xilinx/Vitis/2022.1
+sudo ./src/runtime_src/tools/scripts/xrtdeps.sh
+# 如果 pybind11 安装失败，修改 xrtdeps.sh 中 "pip3 install -U pybind11" 为 "pip3 install -U pybind11 -i https://pypi.tuna.tsinghua.edu.cn/simple"
+
+# 自行下载boost解压，假设解压到/data/cnmdp/boost_1_75_0（即b2可执行文件直接在boost_1_75_0中）
+./src/runtime_src/tools/scripts/boost.sh -srcdir /data/cnmdp/boost_1_75_0 -noclone
+# 或者之前已经安装到/usr/local，尝试按XRT需要重新安装
+# sudo ./src/runtime_src/tools/scripts/boost.sh -srcdir /data/cnmdp/boost_1_75_0 -noclone -install /usr/local
+
+cd build
+./build.sh -with-static-boost $(pwd)/../boost/xrt
+
+cd Release
+make package
+
+sudo yum install xrt_202310.2.15.0_8.5.2111-x86_64-xrt.rpm
+```
+
+## hw_emu
+
+sudo su
+source /opt/xilinx/xrt/setup.sh
+export XCL_EMULATION_MODE=hw_emu
+export EMCONFIG_PATH=$(pwd)
+echo $EMCONFIG_PATH
+source /data/Xilinx/Vitis_HLS/2022.1/settings64.sh
+emconfigutil --platform xilinx_u50_gen3x16_xdma_5_202210_1

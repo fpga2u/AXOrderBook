@@ -81,35 +81,35 @@ int main(int argc, char *argv[])
 
    // create kernel objects
     std::cout << "Create kernels" << std::endl;
-    xrt::kernel hbmArbiter = xrt::kernel(device, xclbin_uuid, "hbmArbiter_2_2_2_128m_top_1", xrt::kernel::cu_access_mode::exclusive);
-    xrt::kernel mu0 = xrt::kernel(device, xclbin_uuid, "mu0", xrt::kernel::cu_access_mode::exclusive);
-    xrt::kernel mu1 = xrt::kernel(device, xclbin_uuid, "mu1", xrt::kernel::cu_access_mode::exclusive);
-    xrt::kernel lm_mu0_rd0 = xrt::kernel(device, xclbin_uuid, "lm_mu0_rd0", xrt::kernel::cu_access_mode::exclusive);
-    xrt::kernel lm_mu0_rd1 = xrt::kernel(device, xclbin_uuid, "lm_mu0_rd1", xrt::kernel::cu_access_mode::exclusive);
-    xrt::kernel lm_mu1_rd0 = xrt::kernel(device, xclbin_uuid, "lm_mu1_rd0", xrt::kernel::cu_access_mode::exclusive);
-    xrt::kernel lm_mu1_rd1 = xrt::kernel(device, xclbin_uuid, "lm_mu1_rd1", xrt::kernel::cu_access_mode::exclusive);
+    // xrt::kernel hbmArbiter = xrt::kernel(device, xclbin_uuid, "hbmArbiter_2_2_2_128m_top", xrt::kernel::cu_access_mode::exclusive);
+    xrt::kernel mu0 = xrt::kernel(device, xclbin_uuid, "dmy_mu_2_2_2_128m_top:{mu0}", xrt::kernel::cu_access_mode::exclusive);
+    // xrt::kernel mu1 = xrt::kernel(device, xclbin_uuid, "dmy_mu_2_2_2_128m_top:{mu1}", xrt::kernel::cu_access_mode::exclusive);
+    // xrt::kernel lm_mu0_rd0 = xrt::kernel(device, xclbin_uuid, "lm_2_2_2_128m_top:{lm_mu0_rd0}", xrt::kernel::cu_access_mode::exclusive);
+    // xrt::kernel lm_mu0_rd1 = xrt::kernel(device, xclbin_uuid, "lm_2_2_2_128m_top:{lm_mu0_rd1}", xrt::kernel::cu_access_mode::exclusive);
+    // xrt::kernel lm_mu1_rd0 = xrt::kernel(device, xclbin_uuid, "lm_2_2_2_128m_top:{lm_mu1_rd0}", xrt::kernel::cu_access_mode::exclusive);
+    // xrt::kernel lm_mu1_rd1 = xrt::kernel(device, xclbin_uuid, "lm_2_2_2_128m_top:{lm_mu1_rd1}", xrt::kernel::cu_access_mode::exclusive);
 
     // define kernel address, TODO: from kernl.xml
     //id | name | offset 
     const std::vector<kernel_reg_t> hbmArbiter_regs = {
-        { 'reg_guard_bgn', 0, 0x10 },
-        { 'mu0_rdi0_nb', 1, 0x20 },
-        { 'mu0_rdi1_nb', 2, 0x30 },
-        { 'mu0_wri0_nb', 3, 0x40 },
-        { 'mu0_wri1_nb', 4, 0x50 },
-        { 'mu0_rdo0_nb', 5, 0x60 },
-        { 'mu0_rdo1_nb', 6, 0x70 },
-        { 'mu0_max_addr', 7, 0x80 },
-        { 'mu1_rdi0_nb', 8, 0x90 },
-        { 'mu1_rdi1_nb', 9, 0xA0 },
-        { 'mu1_wri0_nb', 10, 0xB0 },
-        { 'mu1_wri1_nb', 11, 0xC0 },
-        { 'mu1_rdo0_nb', 12, 0xD0 },
-        { 'mu1_rdo1_nb', 13, 0xE0 },
-        { 'mu1_max_addr', 14, 0xF0 },
-        { 'hbm_rd_nb', 15, 0x100 },
-        { 'hbm_wr_nb', 16, 0x110 },
-        { 'reg_guard_end', 17, 0x120 },
+        { "reg_guard_bgn", 0, 0x10 },
+        { "mu0_rdi0_nb", 1, 0x20 },
+        { "mu0_rdi1_nb", 2, 0x30 },
+        { "mu0_wri0_nb", 3, 0x40 },
+        { "mu0_wri1_nb", 4, 0x50 },
+        { "mu0_rdo0_nb", 5, 0x60 },
+        { "mu0_rdo1_nb", 6, 0x70 },
+        { "mu0_max_addr", 7, 0x80 },
+        { "mu1_rdi0_nb", 8, 0x90 },
+        { "mu1_rdi1_nb", 9, 0xA0 },
+        { "mu1_wri0_nb", 10, 0xB0 },
+        { "mu1_wri1_nb", 11, 0xC0 },
+        { "mu1_rdo0_nb", 12, 0xD0 },
+        { "mu1_rdo1_nb", 13, 0xE0 },
+        { "mu1_max_addr", 14, 0xF0 },
+        { "hbm_rd_nb", 15, 0x100 },
+        { "hbm_wr_nb", 16, 0x110 },
+        { "reg_guard_end", 17, 0x120 },
     };
     const std::vector<kernel_reg_t> mu_regs = {
         { "reg_guard_bgn", 0, 0x10  },
@@ -143,46 +143,46 @@ int main(int argc, char *argv[])
         { "reg_guard_end", 10, 0xA0 },
     };
 
-    std::cout << "hbmArbiter_regs:" << std::endl;
-    for (auto& r : hbmArbiter_regs){
-        uint32_t reg_v = hbmArbiter.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
+    // std::cout << "hbmArbiter_regs:" << std::endl;
+    // for (auto& r : hbmArbiter_regs){
+    //     uint32_t reg_v = hbmArbiter.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
 
     std::cout << "mu0_regs:" << std::endl;
     for (auto& r : mu_regs){
         uint32_t reg_v = mu0.read_register(r.offset);
         std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
     }
-    std::cout << "mu1_regs:" << std::endl;
-    for (auto& r : mu_regs){
-        uint32_t reg_v = mu1.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
+    // std::cout << "mu1_regs:" << std::endl;
+    // for (auto& r : mu_regs){
+    //     uint32_t reg_v = mu1.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
 
-    std::cout << "lm_mu0_rd0:" << std::endl;
-    for (auto& r : lm_regs){
-        uint32_t reg_v = lm_mu0_rd0.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
-    std::cout << "lm_mu0_rd1:" << std::endl;
-    for (auto& r : lm_regs){
-        uint32_t reg_v = lm_mu0_rd1.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
-    std::cout << "lm_mu1_rd0:" << std::endl;
-    for (auto& r : lm_regs){
-        uint32_t reg_v = lm_mu1_rd0.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
-    std::cout << "lm_mu1_rd1:" << std::endl;
-    for (auto& r : lm_regs){
-        uint32_t reg_v = lm_mu1_rd1.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
+    // std::cout << "lm_mu0_rd0:" << std::endl;
+    // for (auto& r : lm_regs){
+    //     uint32_t reg_v = lm_mu0_rd0.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
+    // std::cout << "lm_mu0_rd1:" << std::endl;
+    // for (auto& r : lm_regs){
+    //     uint32_t reg_v = lm_mu0_rd1.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
+    // std::cout << "lm_mu1_rd0:" << std::endl;
+    // for (auto& r : lm_regs){
+    //     uint32_t reg_v = lm_mu1_rd0.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
+    // std::cout << "lm_mu1_rd1:" << std::endl;
+    // for (auto& r : lm_regs){
+    //     uint32_t reg_v = lm_mu1_rd1.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
 
     // get memory bank groups
-    xrtMemoryGroup bank_grp_hbm = hbmArbiter.group_id(30); //kernel.xml: hbm.id=30
+    // xrtMemoryGroup bank_grp_hbm = hbmArbiter.group_id(30); //kernel.xml: hbm.id=30
 
     // create kernel runner instance
     xrt::run run_mu0 = xrt::run(mu0);
@@ -202,43 +202,44 @@ int main(int argc, char *argv[])
 
     sleep(3);
 
-    std::cout << "hbmArbiter_regs:" << std::endl;
-    for (auto& r : hbmArbiter_regs){
-        uint32_t reg_v = hbmArbiter.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
+    // std::cout << "hbmArbiter_regs:" << std::endl;
+    // for (auto& r : hbmArbiter_regs){
+    //     uint32_t reg_v = hbmArbiter.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
 
     std::cout << "mu0_regs:" << std::endl;
     for (auto& r : mu_regs){
         uint32_t reg_v = mu0.read_register(r.offset);
         std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
     }
-    std::cout << "mu1_regs:" << std::endl;
-    for (auto& r : mu_regs){
-        uint32_t reg_v = mu1.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
+    // std::cout << "mu1_regs:" << std::endl;
+    // for (auto& r : mu_regs){
+    //     uint32_t reg_v = mu1.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
 
-    std::cout << "lm_mu0_rd0:" << std::endl;
-    for (auto& r : lm_regs){
-        uint32_t reg_v = lm_mu0_rd0.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
-    std::cout << "lm_mu0_rd1:" << std::endl;
-    for (auto& r : lm_regs){
-        uint32_t reg_v = lm_mu0_rd1.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
-    std::cout << "lm_mu1_rd0:" << std::endl;
-    for (auto& r : lm_regs){
-        uint32_t reg_v = lm_mu1_rd0.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
-    std::cout << "lm_mu1_rd1:" << std::endl;
-    for (auto& r : lm_regs){
-        uint32_t reg_v = lm_mu1_rd1.read_register(r.offset);
-        std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
-    }
+    // std::cout << "lm_mu0_rd0:" << std::endl;
+    // for (auto& r : lm_regs){
+    //     uint32_t reg_v = lm_mu0_rd0.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
+    // std::cout << "lm_mu0_rd1:" << std::endl;
+    // for (auto& r : lm_regs){
+    //     uint32_t reg_v = lm_mu0_rd1.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
+    // std::cout << "lm_mu1_rd0:" << std::endl;
+    // for (auto& r : lm_regs){
+    //     uint32_t reg_v = lm_mu1_rd0.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
+    // std::cout << "lm_mu1_rd1:" << std::endl;
+    // for (auto& r : lm_regs){
+    //     uint32_t reg_v = lm_mu1_rd1.read_register(r.offset);
+    //     std::cout << "  " << r.name << "=0x" << std::hex << reg_v << std::endl;
+    // }
+
    std::cout << "[MESSAGE] Program exit normally." << std::endl;
    return EXIT_SUCCESS;
 }

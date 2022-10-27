@@ -45,6 +45,6 @@ popd
 
 # xilinx binary container (xclbin)
 pushd ${BASE_DIR}
-make binary-container
+make binary-container TARGET=${TARGET}
 popd
 

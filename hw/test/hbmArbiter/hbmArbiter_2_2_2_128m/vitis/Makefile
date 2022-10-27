@@ -35,9 +35,9 @@ LDCLFLAGS += --report system
 endif
 
 # generates profile summary report
-ifeq ($(PROFILE), yes)
-LDCLFLAGS += --profile_kernel data:all:all:all
-endif
+# ifeq ($(PROFILE), yes)
+# LDCLFLAGS += --profile_kernel data:all:all:all
+# endif
 
 # generates debug summary report
 ifeq ($(DEBUG), yes)
@@ -47,6 +47,9 @@ endif
 # hw emu: trace
 ifeq ($(TARGET), hw_emu)
 CLFLAGS += -g
+
+#TODO: independent option?
+LDCLFLAGS += --profile.data all:all:all
 endif
 
 # configuration settings

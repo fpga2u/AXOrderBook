@@ -10,7 +10,7 @@ import numpy as np
 np.set_printoptions(formatter={'int': hex}, threshold=1000)
 
 
-bin_file = 'hbmArbiter_2_2_2_128m_test.xclbin'
+bin_file = 'hbmArbiter_2_2_2_128m_test_emu.xclbin'
 
 ####### 通用信息
 # shell应为 xilinx_u50_gen3x16_xdma_base_5
