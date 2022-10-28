@@ -39,6 +39,8 @@ $(KERNEL): $(SRCS)
 
 .PHONY: clean
 clean:
-	-rm -rf xo_prj
+	-rm -rf _x
+	-rm -rf .Xil
 	-rm -f *.xo
+	-rm -f *.xo.*
 	-rm -f *.log

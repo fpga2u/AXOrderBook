@@ -21,6 +21,10 @@ export DEVICE=${PLATFORM_REPO_PATHS}/${XILINX_PLATFORM}/${XILINX_PLATFORM}.xpfm
 export XPART='xcu50-fsvh2104-2L-e'
 export CLKP='250MHz'
 export TARGET='hw_emu'
+## optiopn for hw_emu ##
+export REPORT='yes'
+export PROFILE='yes'
+export DEBUG='yes'
 
 echo "PLATFORM_REPO_PATHS : $PLATFORM_REPO_PATHS"
 echo "XILINX_PLATFORM     : $XILINX_PLATFORM"
@@ -28,6 +32,11 @@ echo "DEVICE              : $DEVICE"
 echo "XPART               : $XPART"
 echo "CLKP                : $CLKP"
 echo "TARGET              : $TARGET"
+if [ $TARGET = 'hw_emu' ]; then
+  echo "                      REPORT =$REPORT"
+  echo "                      PROFILE=$PROFILE"
+  echo "                      DEBUG  =$DEBUG"
+fi
 
 if [ ! -e $DEVICE ];then
    echo "===== ERROR ====="

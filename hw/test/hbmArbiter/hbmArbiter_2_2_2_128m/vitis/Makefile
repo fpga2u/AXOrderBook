@@ -27,11 +27,10 @@ PROFILE?=no
 DEBUG?=no
 TARGET?=hw
 
-#'estimate' for estimate report generation
-#'system' for system report generation
+#The -Restimate specifcaton forces Vits HLS to generate a design.xml fle if it does not
+#exist and then generates a System Estmate report, as described in System Estmate Report.
 ifneq ($(REPORT), no)
-CLFLAGS += --report estimate
-LDCLFLAGS += --report system
+CLFLAGS += --report_level estimate
 endif
 
 # generates profile summary report
@@ -39,15 +38,18 @@ ifeq ($(PROFILE), yes)
 LDCLFLAGS += --profile.data all:all:all
 endif
 
-# generates debug summary report
+# Adds the AXI Protocol Checker debug core to the design.
 ifeq ($(DEBUG), yes)
-CLFLAGS += --dk protocol:all:all:all
+CLFLAGS += --debug.protocol all
 endif
 
 # hw emu: trace
 ifeq ($(TARGET), hw_emu)
 CLFLAGS += -g
 endif
+
+CLFLAGS += --report_dir _x_$(TARGET)
+
 
 # configuration settings
 VPP := $(XILINX_VITIS)/bin/v++
@@ -86,6 +88,8 @@ XOS = $(ARBITER_XO)\
 
 CLFLAGS += -t $(TARGET) --platform $(DEVICE) --save-temps
 
+CLFLAGS += --kernel_frequency $(subst MHz,,$(CLKP))
+
 $(XODIR):
 	mkdir $@
 
@@ -112,7 +116,7 @@ $(BINARY_CONTAINER): $(BINARY_CONTAINER_XOS)
 .PHONY: clean
 clean:
 	-rm -f $(PROJECT).xclbin* $(PROJECT).ltx
-	-rm -rf _x .Xil
+	-rm -rf _x* .Xil
 	-rm -f *.log
 
 realclean: clean

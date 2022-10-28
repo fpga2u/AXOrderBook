@@ -33,6 +33,7 @@ if { [catch { [ string length $::env(EXPORT_XO_ONLY) ] } conn_handle] } {
     puts "Using XPART=setting(${XPART})"
     puts "Using CLKP=setting(${CLKP})"
     puts "Using EXPORT_XO_ONLY=setting(${EXPORT_XO_ONLY})"
+    puts "Using TARGET=setting(${TARGET})"
 } else {
     # Using environment variable
     set XPART $::env(XPART)
@@ -42,7 +43,9 @@ if { [catch { [ string length $::env(EXPORT_XO_ONLY) ] } conn_handle] } {
     puts "Using CLKP=Env(${CLKP})"
 
     set EXPORT_XO_ONLY $::env(EXPORT_XO_ONLY)
+    set TARGET $::env(TARGET)
     puts "Using EXPORT_XO_ONLY=Env(${EXPORT_XO_ONLY})"
+    puts "Using TARGET=Env(${TARGET})"
 }
 
 set TOP_NAME "dmy_mu_2_2_2_128m_top"

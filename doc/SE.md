@@ -11,6 +11,7 @@
 [深交所L2行情协议](https://www.szse.cn/marketServices/technicalservice/interface/P020220523530959450444.pdf)
 
 [上交所L2行情协议](https://www.sseinfo.com/services/assortment/document/interface/c/5702218.pdf)
+[上交所产品文档](https://www.sseinfo.com/services/assortment/document/)
 
 ### 1.2 L2行情消息分类
 
