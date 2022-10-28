@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
         if (mode == "hw_emu")
         {
             std::cout << "[MESSAGE] Program running in hardware emulation mode" << std::endl;
-            xclbin_file = "hbmArbiter_2_2_2_128m_test_emu.xclbin";
+            xclbin_file = "hbmArbiter_2_2_2_128m_test_hw_emu.xclbin";
         }
         else
         {
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     else
     {
         std::cout << "[MESSAGE] Program running in hardware mode" << std::endl;
-        xclbin_file = "hbmArbiter_2_2_2_128m_test.xclbin";
+        xclbin_file = "hbmArbiter_2_2_2_128m_test_hw.xclbin";
     }
 
     // Load xclbin
@@ -81,6 +81,7 @@ int main(int argc, char *argv[])
 
    // create kernel objects
     std::cout << "Create kernels" << std::endl;
+    //需要用XRT的ip类来对接 ap_ctrl_none 的kernel
     // xrt::kernel hbmArbiter = xrt::kernel(device, xclbin_uuid, "hbmArbiter_2_2_2_128m_top", xrt::kernel::cu_access_mode::exclusive);
     xrt::kernel mu0 = xrt::kernel(device, xclbin_uuid, "dmy_mu_2_2_2_128m_top:{mu0}", xrt::kernel::cu_access_mode::exclusive);
     // xrt::kernel mu1 = xrt::kernel(device, xclbin_uuid, "dmy_mu_2_2_2_128m_top:{mu1}", xrt::kernel::cu_access_mode::exclusive);
@@ -190,17 +191,16 @@ int main(int argc, char *argv[])
 
 
     // set kernel arguments for font load mode and clock initialization                         
-    run_mu0.set_arg(0, 16);     // wk_nb
-    run_mu0.set_arg(1, 0);      // min_addr
-    run_mu0.set_arg(2, 16);     // max_addr
-    run_mu0.set_arg(3, 0);      // min_data
-    run_mu0.set_arg(4, 4);      // gap_nb
+    run_mu0.set_arg(1, 16);     // wk_nb
+    run_mu0.set_arg(2, 0);      // min_addr
+    run_mu0.set_arg(3, 16);     // max_addr
+    run_mu0.set_arg(4, 0);      // min_data
+    run_mu0.set_arg(5, 4);      // gap_nb
 
     run_mu0.start();
-    // run_mu0.wait();
     std::cout << "[MESSAGE] run_mu0.started" << std::endl;      
+    run_mu0.wait(1);
 
-    sleep(3);
 
     // std::cout << "hbmArbiter_regs:" << std::endl;
     // for (auto& r : hbmArbiter_regs){

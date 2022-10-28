@@ -35,6 +35,6 @@ target_link_libraries(hbmArbiter_2_2_2_128m_test
 ${XRT_LIBS}
 )
 
-EXEC_PROGRAM(rm ARGS "-rf ./hbmArbiter_2_2_2_128m_test_emu.xclbin")
+EXEC_PROGRAM(rm ARGS "-rf ./hbmArbiter_2_2_2_128m_test_hw_emu.xclbin")
 
-EXEC_PROGRAM(ln ARGS "-s ../../vitis/hbmArbiter_2_2_2_128m_test_emu.xclbin")
+EXEC_PROGRAM(ln ARGS "-s ../../vitis/hbmArbiter_2_2_2_128m_test_hw_emu.xclbin")

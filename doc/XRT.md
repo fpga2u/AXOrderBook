@@ -1,6 +1,13 @@
 # XRT
 
-开发中使用XRT作为快速的功能实机测试环境。
+XRT是在Alveo加速卡上采用Vitis流程进行FPGA开发和部署时的软硬件中间层。
+
+目前用到XRT提供的功能包括：
+
+* 管理加速卡的静态区域和传感器等外围硬件，用xbmgmt工具。
+* host程序的API
+* 硬件仿真(hardware emulation)，XRT底层用XSIM跑仿真，可以和host的cpp或py程序交换，可以查看波形和模块调度情况。
+* 实机测试
 
 ## 环境与版本
 
@@ -28,7 +35,7 @@ sudo su
 #环境变量
 source /opt/xilinx/xrt/setup.sh
 
-#重烧成golden(需冷启动)，如果已经烧了 U50_revert_to_golden.mcs 应该可以不用执行
+#重烧成golden(需冷启动)，如果已经烧了 U50_revert_to_golden.mcs 可以不用执行
 /opt/xilinx/xrt/bin/xbmgmt program --device 01:00.0 --revert-to-golden
 
 #显示当前U50信息
@@ -72,6 +79,8 @@ sudo yum install xrt_202310.2.15.0_8.5.2111-x86_64-xrt.rpm
 
 ## hw_emu
 
+TODO:放vitis阐述
+
 sudo su
 source /opt/xilinx/xrt/setup.sh
 export XCL_EMULATION_MODE=hw_emu
@@ -79,3 +88,19 @@ export EMCONFIG_PATH=$(pwd)
 echo $EMCONFIG_PATH
 source /data/Xilinx/Vitis_HLS/2022.1/settings64.sh
 emconfigutil --platform xilinx_u50_gen3x16_xdma_5_202210_1
+
+hw_emu 退出时要等很久（半小时?），波形要等完全退出才会在当前目录下看到，在.run目录里的波形都是X。
+hw_emu 期间可以用debug_mode=gui开波形窗口，期间点击窗口上的暂停键可以暂停并加信号，如果kernel卡住，这是目前唯一看波形的方法。
+hw_emu 期间在程序所在的.run目录下会生成临时文件，需要手动删除。
+hw_emu 期间卡住目前只能杀进程。
+
+## 编译加速卡动态区域
+
+TODO:放vitis阐述
+
+1. 从源代码到rtl，以kernel为单位，输出格式为xo，是接口说明和代码的封装
+.cpp -> vitis_hls 或 v++ -> .xo
+.v -> vivado -> .xo
+
+2. link多kernel成动态区域下载文件或hw_emu仿真文件
+.xo, .cfg -> v++ -> .xclbin

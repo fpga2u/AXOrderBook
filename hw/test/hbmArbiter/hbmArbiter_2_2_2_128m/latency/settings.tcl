@@ -11,6 +11,7 @@ set CLKP 330MHz
 
 # do .xo kernel export only:
 set EXPORT_XO_ONLY 0
+set TARGET hw
 
 #COSIM waveform enable:
 set WAVE_DEBUG 1

@@ -19,7 +19,7 @@ CUR_DIR=$(patsubst %/,%,$(dir $(MK_PATH)))
 
 KERNEL_DIR=$(CUR_DIR)
 
-TARGET=dmy_mu_2_2_2_128m_top
+KERNEL=dmy_mu_2_2_2_128m_top
 
 SRCS=$(KERNEL_DIR)/dmy_mu_2_2_2_128m_top.cpp \
      $(KERNEL_DIR)/dmy_mu_2_2_2_128m_top.h \
@@ -28,13 +28,14 @@ SRCS=$(KERNEL_DIR)/dmy_mu_2_2_2_128m_top.cpp \
 # default build parameters
 XPART?=xcu50-fsvh2104-2L-e
 CLKP?=330MHz
+TARGET?=hw
 
 .PHONY: all
-all: $(TARGET)
+all: $(KERNEL)
 
-$(TARGET): $(SRCS)
+$(KERNEL): $(SRCS)
 	-rm -rf xo_prj
-	XPART=$(XPART) CLKP=$(CLKP) EXPORT_XO_ONLY=1 vitis_hls -f run_hls.tcl
+	XPART=$(XPART) CLKP=$(CLKP) TARGET=$(TARGET) EXPORT_XO_ONLY=1 vitis_hls -f run_hls.tcl
 
 .PHONY: clean
 clean:

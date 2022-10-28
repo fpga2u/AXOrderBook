@@ -22,10 +22,10 @@
 # be overridden through the make command line
 #+-------------------------------------------------------------------------------
 
-REPORT := no
-PROFILE := no
-DEBUG := no
-TARGET := hw
+REPORT?=no
+PROFILE?=no
+DEBUG?=no
+TARGET?=hw
 
 #'estimate' for estimate report generation
 #'system' for system report generation
@@ -35,9 +35,9 @@ LDCLFLAGS += --report system
 endif
 
 # generates profile summary report
-# ifeq ($(PROFILE), yes)
-# LDCLFLAGS += --profile_kernel data:all:all:all
-# endif
+ifeq ($(PROFILE), yes)
+LDCLFLAGS += --profile.data all:all:all
+endif
 
 # generates debug summary report
 ifeq ($(DEBUG), yes)
@@ -47,9 +47,6 @@ endif
 # hw emu: trace
 ifeq ($(TARGET), hw_emu)
 CLFLAGS += -g
-
-#TODO: independent option?
-LDCLFLAGS += --profile.data all:all:all
 endif
 
 # configuration settings
@@ -59,25 +56,23 @@ VPP := $(XILINX_VITIS)/bin/v++
 XILINX_PLATFORM=$(basename $(notdir $(DEVICE)))
 
 
-ifeq ($(TARGET), hw_emu)
-PROJECT = hbmArbiter_2_2_2_128m_test_emu
-else
-PROJECT = hbmArbiter_2_2_2_128m_test
-endif
+PROJECT = hbmArbiter_2_2_2_128m_test_$(TARGET)
 
 
-ARBITER_XO := hbmArbiter_2_2_2_128m_top.xo
-DMY_MU_XO := dmy_mu_2_2_2_128m_top.xo
-LATENCY_XO := lm_2_2_2_128m_top.xo
+ARBITER_XO := hbmArbiter_2_2_2_128m_top_$(TARGET).xo
+DMY_MU_XO := dmy_mu_2_2_2_128m_top_$(TARGET).xo
+LATENCY_XO := lm_2_2_2_128m_top_$(TARGET).xo
 
 
 ARBITER_XO_FULLPATH=../arbiter/$(ARBITER_XO)
 DMY_MU_XO_FULLPATH=../dmy_mu/$(DMY_MU_XO)
 LATENCY_XO_FULLPATH=../latency/$(LATENCY_XO)
 
+CFG_FILE=hbmArbiter_2_2_2_128m_test.cfg
+
 # shell specific connectivity
 ifneq (,$(shell echo $(XILINX_PLATFORM) | awk '/_u50_gen.*_xdma_/'))
-VPPLINKFLAGS := --config hbmArbiter_2_2_2_128m_test.cfg
+VPPLINKFLAGS := --config $(CFG_FILE)
 # else ifneq (,$(shell echo $(XILINX_PLATFORM) | awk '/_u250_gen.*_xdma_/'))
 # VPPLINKFLAGS := --config atrd.u250.ini
 else
@@ -109,7 +104,7 @@ BINARY_CONTAINER_XOS = $(addprefix $(XODIR)/,$(XOS))
 gather-xos: $(BINARY_CONTAINER_XOS)
 
 .PHONY: binary-container
-binary-container: $(BINARY_CONTAINER)
+binary-container: $(BINARY_CONTAINER) $(CFG_FILE)
 
 $(BINARY_CONTAINER): $(BINARY_CONTAINER_XOS)
 	$(VPP) $(CLFLAGS) $(LDCLFLAGS) -l -o $@ $^ $(VPPLINKFLAGS)

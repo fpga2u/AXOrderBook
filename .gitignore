@@ -130,3 +130,5 @@ dmypy.json
 
 *.vsd
 *.~vsd
+
+*.backup.*

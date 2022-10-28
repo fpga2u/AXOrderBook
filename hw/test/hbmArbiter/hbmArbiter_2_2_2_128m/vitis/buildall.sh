@@ -32,15 +32,15 @@ fi
 
 # xilinx kernel objects (xo's)
 pushd ${BASE_DIR}/../arbiter
-make DEVICE=${DEVICE} XPART=${XPART} CLKP=${CLKP} all
+make DEVICE=${DEVICE} XPART=${XPART} CLKP=${CLKP} TARGET=${TARGET} all
 popd
 
 pushd ${BASE_DIR}/../dmy_mu
-make DEVICE=${DEVICE} XPART=${XPART} CLKP=${CLKP} all
+make DEVICE=${DEVICE} XPART=${XPART} CLKP=${CLKP} TARGET=${TARGET} all
 popd
 
 pushd ${BASE_DIR}/../latency
-make DEVICE=${DEVICE} XPART=${XPART} CLKP=${CLKP} all
+make DEVICE=${DEVICE} XPART=${XPART} CLKP=${CLKP} TARGET=${TARGET} all
 popd
 
 # xilinx binary container (xclbin)
