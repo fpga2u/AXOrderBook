@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# require python 3.8+
+
 import pynq
 from pynq import Device
 
