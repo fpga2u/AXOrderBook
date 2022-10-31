@@ -45,12 +45,14 @@ FUND_PRICE_PRECISION  = 1000 # 基金价格精度：3位小数，(深圳原始�
 QTY_PRECISION_SZSE   = 100   # 数量精度：深圳2位小数
 QTY_PRECISION_SSE    = 1000  # 数量精度：上海3位小数
 
-SIDE_BID = 0
-SIDE_ASK = 1
+class SIDE(Enum):
+    BID = 0
+    ASK = 1
 
-TYPE_LIMIT  = 0   #限价
-TYPE_MARKET = 1   #市价
-TYPE_SIDE   = 2   #本方最优
+class TYPE(Enum):
+    LIMIT  = 0   #限价
+    MARKET = 1   #市价
+    SIDE   = 2   #本方最优
 
 # 用于将原始精度转换到ob精度
 SZSE_STOCK_PRICE_RD = msg_util.SZSE_PRECISION_PRICE // STOCK_PRICE_PRECISION
@@ -63,6 +65,7 @@ class ob_order():
     def __init__(self, order:axsbe_order, instrument_type:INSTRUMENT_TYPE):
         self.securityID = order.SecurityID
         self.applSeqNum = order.ApplSeqNum
+        self.tradingPhase = order.TradingPhaseMarket #无需存储，目前只需要关注是否是集合竞价
 
         if order.SecurityIDSource==SecurityIDSource_SZSE:
             if instrument_type==INSTRUMENT_TYPE.STOCK:
@@ -78,22 +81,23 @@ class ob_order():
                 axob_logger.error(f'order SSE ApplSeqNum={order.ApplSeqNum} instrument_type={instrument_type} not support!')
         else:
             axob_logger.error(f'order ApplSeqNum={order.ApplSeqNum} SecurityIDSource={order.SecurityIDSource} unknown!')
+        self.traded = False #仅用于市价单，当有成交后，市价单的价格将确定
 
         self.qty = order.OrderQty    # 上海 3位小数
 
         if order.Side_str=='买入':
-            self.side = SIDE_BID
+            self.side = SIDE.BID
         elif order.Side_str=='卖出':
-            self.side = SIDE_ASK
+            self.side = SIDE.ASK
         else:   #TODO: 映射上海
             axob_logger.error(f'order ApplSeqNum={order.ApplSeqNum} side={order.Side}({order.Side_str}) unknown!')
 
         if order.Type_str=='限价':
-            self.type = TYPE_LIMIT
+            self.type = TYPE.LIMIT
         elif order.Type_str=='市价':
-            self.type = TYPE_MARKET
+            self.type = TYPE.MARKET
         elif order.Type_str=='本方最优':
-            self.type = TYPE_SIDE
+            self.type = TYPE.SIDE
         else:   #TODO: 映射上海
             axob_logger.error(f'order ApplSeqNum={order.ApplSeqNum} type={order.OrdType}({order.Type_str}) unknown!')
 
@@ -107,17 +111,21 @@ class ob_order():
         if self.qty >= (1<<QTY_BIT_SIZE):
             axob_logger.error(f'order ApplSeqNum={order.ApplSeqNum} Volumn={order.OrderQty} ovf!')
 
-        if order.SecurityIDSource==SecurityIDSource_SZSE:
-            if instrument_type==INSTRUMENT_TYPE.STOCK and order.Price % SZSE_STOCK_PRICE_RD:
-                axob_logger.error(f'order SZSE STOCK ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')
-            elif instrument_type==INSTRUMENT_TYPE.FUND and order.Price % SZSE_FUND_PRICE_RD:
-                axob_logger.error(f'order SZSE FUND ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')
-        elif order.SecurityIDSource==SecurityIDSource_SSE:
-            if instrument_type==INSTRUMENT_TYPE.STOCK and order.Price % SSE_STOCK_PRICE_RD:
-                axob_logger.error(f'order SSE STOCK ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')
+        if self.type==TYPE.LIMIT:   #检查限价单价格是否溢出；市价单价格是无效值，不可参与检查
+            if order.SecurityIDSource==SecurityIDSource_SZSE:
+                if instrument_type==INSTRUMENT_TYPE.STOCK and order.Price % SZSE_STOCK_PRICE_RD:
+                    axob_logger.error(f'order SZSE STOCK ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')
+                elif instrument_type==INSTRUMENT_TYPE.FUND and order.Price % SZSE_FUND_PRICE_RD:
+                    axob_logger.error(f'order SZSE FUND ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')
+            elif order.SecurityIDSource==SecurityIDSource_SSE:
+                if instrument_type==INSTRUMENT_TYPE.STOCK and order.Price % SSE_STOCK_PRICE_RD:
+                    axob_logger.error(f'order SSE STOCK ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')
+
+    def __str__(self) -> str:
+        return f'{self.applSeqNum}'
 
 class AXOB():
-    def __init__(self, SecurityID:int, instrument_type:INSTRUMENT_TYPE):
+    def __init__(self, SecurityID:int, instrument_type:INSTRUMENT_TYPE, DnLimitPx, UpLimitPx):
         self.SecurityID = SecurityID
         self.instrument_type = instrument_type
 
@@ -129,9 +137,17 @@ class AXOB():
         self.bid_best_level = None
         self.ask_best_level = None
 
-        ## 检查
+        self.DnLimitPx = DnLimitPx  #TODO: cover: 无涨跌停价
+        self.UpLimitPx = UpLimitPx  #TODO: cover: 无涨跌停价
 
-        ##
+        self.holding_order = None
+        self.holding_nb = 0
+
+        ## 检查
+        self.last_msg_timestamp = 0
+        self.lob_snaps = []
+
+        ## 日志
         self.logger = logging.getLogger(f'{self.SecurityID:06d}')
         self.DBG = self.logger.debug
         self.INFO = self.logger.info
@@ -150,29 +166,76 @@ class AXOB():
                 self.onExec(msg)
             else:# isinstance(msg, axsbe_snap_stock):
                 self.onSnap(msg)
+
+            ## 仅用于检查
+            self.last_msg_timestamp = msg.TransactTime
+
         else:
             return
 
     def onOrder(self, order:axsbe_order):
         '''
-        逐笔订单入口
-        需要注意的是价格精度
+        逐笔订单入口，限价单、市价单分开处理
         '''
         self.DBG(f'onOrder:{order}')
         _order = ob_order(order, self.instrument_type)
-        if _order.type==TYPE_LIMIT:
-            pass
-        else:
+        if _order.type==TYPE.MARKET:
             # 市价单，都必须在开盘之后
             if self.bid_best_level is None and self.ask_best_level is None:
-                self.ERR('未定义模式:市价单早于价格档')
-            if order.Type_str=='市价':
+                self.ERR('未定义模式:市价单早于价格档') #TODO: cover
+            #if _order.type==TYPE.MARKET:
                 # 市价单，几种可能：
-                #    * 对手方最优价格申报：最后挂在对方一档或者二档
-                #    * 最优五档即时成交剩余撤销申报：最后撤单
-                #    * 即时成交剩余撤销申报：最后撤单
-                #    * 全额成交或撤销申报：最后撤单
-                pass
+                #    * 对手方最优价格申报：有成交、最后挂在对方一档或者二档
+                #    * 最优五档即时成交剩余撤销申报：最后有撤单
+                #    * 即时成交剩余撤销申报：最后有撤单
+                #    * 全额成交或撤销申报：最后有撤单
+            if _order.type==TYPE.SIDE:
+                # 本方最优价格申报 转限价单
+                if _order.side==SIDE.BID:
+                    if self.bid_best_level and self.bid_best_level.qty:   #本方有量
+                        _order.price = self.bid_best_level.price
+                    else:
+                        _order.price = self.DnLimitPx
+                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!') #TODO: cover
+                else:
+                    if self.ask_best_level and self.ask_best_level.qty:   #本方有量
+                        _order.price = self.ask_best_level.price
+                    else:
+                        _order.price = self.UpLimitPx
+                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover
+        self.onLimit(_order)
+
+    def onLimit(self, order:ob_order):
+        if order.tradingPhase == axsbe_base.TPM.OpenCall or order.tradingPhase == axsbe_base.TPM.CloseCall: #集合竞价期间，直接插入
+            self.insertLimit(order)
+        else:
+            #把此前缓存的订单(市价/限价)插入LOB
+            if self.holding_nb != 0:
+                if self.holding_order.type == TYPE.MARKET and not self.holding_order.traded:
+                    self.ERR(f'市价单 {self.holding_order} 未伴随成交')
+
+                self.insertLimit(self.holding_order)
+                self.holding_nb = 0
+
+                snap = self.genSnap()   #先出一个snap
+
+                ## 仅用于检查
+                self.DBG(snap)
+                self.lob_snaps.append(snap)
+
+            #若是可能成交的限价单，则缓存住，等成交
+            if (order.side == SIDE.BID and (order.price >= self.bid_best_level.price and self.bid_best_level.qty > 0)) or \
+               (order.side == SIDE.ASK and (order.price <= self.ask_best_level.price and self.ask_best_level.qty > 0)):
+                self.holding_order = order
+                self.holding_nb += 1
             else:
-                # 本方最优价格申报 
-                pass
+                self.insertLimit(order)
+
+                snap = self.genSnap()   #再出一个snap
+
+                ## 仅用于检查
+                self.DBG(snap)
+                self.lob_snaps.append(snap)
+
+    def insertLimit(self, order:ob_order):
+        
