@@ -124,6 +124,12 @@ class ob_order():
     def __str__(self) -> str:
         return f'{self.applSeqNum}'
 
+class level_node():
+    def __init__(self, price, qty):
+        self.price = price
+        self.qty = qty
+
+
 class AXOB():
     def __init__(self, SecurityID:int, instrument_type:INSTRUMENT_TYPE, DnLimitPx, UpLimitPx):
         self.SecurityID = SecurityID
@@ -134,11 +140,18 @@ class AXOB():
         self.bid_level_tree = {}
         self.ask_level_tree = {}
 
-        self.bid_best_level = None
-        self.ask_best_level = None
+        self.bid_best_level_price = 0
+        self.bid_best_level_qty = 0
+        self.ask_best_level_price = 0
+        self.ask_best_level_qty = 0
 
         self.DnLimitPx = DnLimitPx  #TODO: cover: 无涨跌停价
         self.UpLimitPx = UpLimitPx  #TODO: cover: 无涨跌停价
+        
+        self.BidWeightSize = 0
+        self.BidWeightValue = 0
+        self.AskWeightSize = 0
+        self.AskWeightValue = 0
 
         self.holding_order = None
         self.holding_nb = 0
@@ -181,7 +194,7 @@ class AXOB():
         _order = ob_order(order, self.instrument_type)
         if _order.type==TYPE.MARKET:
             # 市价单，都必须在开盘之后
-            if self.bid_best_level is None and self.ask_best_level is None:
+            if self.bid_best_level_price==0 and self.ask_best_level_price==0:
                 self.ERR('未定义模式:市价单早于价格档') #TODO: cover
             #if _order.type==TYPE.MARKET:
                 # 市价单，几种可能：
@@ -192,14 +205,14 @@ class AXOB():
             if _order.type==TYPE.SIDE:
                 # 本方最优价格申报 转限价单
                 if _order.side==SIDE.BID:
-                    if self.bid_best_level and self.bid_best_level.qty:   #本方有量
-                        _order.price = self.bid_best_level.price
+                    if self.bid_best_level_price!=0 and self.bid_best_level_qty!=0:   #本方有量
+                        _order.price = self.bid_best_level_price
                     else:
                         _order.price = self.DnLimitPx
                         axob_logger.error(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!') #TODO: cover
                 else:
-                    if self.ask_best_level and self.ask_best_level.qty:   #本方有量
-                        _order.price = self.ask_best_level.price
+                    if self.ask_best_level_price!=0 and self.ask_best_level_qty!=0:   #本方有量
+                        _order.price = self.ask_best_level_price
                     else:
                         _order.price = self.UpLimitPx
                         axob_logger.error(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover
@@ -224,8 +237,8 @@ class AXOB():
                 self.lob_snaps.append(snap)
 
             #若是可能成交的限价单，则缓存住，等成交
-            if (order.side == SIDE.BID and (order.price >= self.bid_best_level.price and self.bid_best_level.qty > 0)) or \
-               (order.side == SIDE.ASK and (order.price <= self.ask_best_level.price and self.ask_best_level.qty > 0)):
+            if (order.side == SIDE.BID and (order.price >= self.bid_best_level_price and self.bid_best_level_qty > 0)) or \
+               (order.side == SIDE.ASK and (order.price <= self.ask_best_level_price and self.ask_best_level_qty > 0)):
                 self.holding_order = order
                 self.holding_nb += 1
             else:
@@ -239,3 +252,31 @@ class AXOB():
 
     def insertLimit(self, order:ob_order):
         
+        if order.side == SIDE.BID:
+            # self.bidPriceCacheHandler.addQty(order.price, order.qty)
+            if order.price in self.bid_level_tree:
+                self.bid_level_tree[order.price].qty += order.qty
+            else:
+                node = level_node(order.price, order.qty)
+                self.bid_level_tree[order.price] = node
+
+                if self.bid_best_level_price==0 or node.price > self.bid_best_level_price:
+                    self.bid_best_level_price = order.price
+                    self.bid_best_level_qty = order.qty
+
+            self.BidWeightSize += order.qty
+            self.BidWeightValue += order.price * order.qty
+        elif order.side == SIDE.ASK:
+            # self.askPriceCacheHandler.addQty(order.price, order.qty)
+            if order.price in self.ask_level_tree:
+                self.ask_level_tree[order.price].qty += order.qty
+            else:
+                node = level_node(order.price, order.qty)
+                self.ask_level_tree[order.price] = node
+
+                if self.ask_best_level_price==0 or node.price < self.ask_best_level_price:
+                    self.ask_best_level_price = order.price
+                    self.ask_best_level_qty = order.qty
+
+            self.AskWeightSize += order.qty
+            self.AskWeightValue += order.price * order.qty
