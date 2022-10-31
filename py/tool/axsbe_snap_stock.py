@@ -54,7 +54,7 @@ class price_level:
             setattr(self, attr, data[attr])
 
 
-class axsbe_snap(axsbe_base.axsbe_base):
+class axsbe_snap_stock(axsbe_base.axsbe_base):
     __slots__ = [
         'SecurityIDSource',
         'MsgType',
@@ -87,7 +87,7 @@ class axsbe_snap(axsbe_base.axsbe_base):
     ]
 
     def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL, source="AXOB"):
-        super(axsbe_snap, self).__init__(axsbe_base.MsgType_snap, SecurityIDSource)
+        super(axsbe_snap_stock, self).__init__(axsbe_base.MsgType_snap, SecurityIDSource)
         self.TradingPhaseCode = 0
         self.NumTrades = 0
         self.TotalVolumeTrade = 0

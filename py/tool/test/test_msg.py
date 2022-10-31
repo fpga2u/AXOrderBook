@@ -8,7 +8,7 @@ def TEST_msg_byte_stream():
     ## test: byte_stream
     print(len(axsbe_order(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
     print(len(axsbe_exe(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
-    print(len(axsbe_snap(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
+    print(len(axsbe_snap_stock(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
 
 def TEST_msg_SL():
     ## test: save/load
@@ -27,9 +27,9 @@ def TEST_msg_SL():
     exe.load(data)
     print(exe)
 
-    data = axsbe_snap(axsbe_base.SecurityIDSource_SZSE).save()
+    data = axsbe_snap_stock(axsbe_base.SecurityIDSource_SZSE).save()
     print(data)
-    snap = axsbe_snap()
+    snap = axsbe_snap_stock()
     data['ask'][0]['Price'] = 22200
     data['ask'][0]['Qty'] = 10000
     data['bid'][1]['Price'] = 111
@@ -77,7 +77,7 @@ def TEST_serial(TEST_NB = 100):
 
     unpack_axsbe_order = axsbe_order()
     unpack_axsbe_execute = axsbe_exe()
-    unpack_axsbe_snap = axsbe_snap()
+    unpack_axsbe_snap_stock = axsbe_snap_stock()
 
     for msg in axsbe_file("data/AX_sbe_szse_000001.log"):
         if msg.MsgType==axsbe_base.MsgType_order:
@@ -94,8 +94,8 @@ def TEST_serial(TEST_NB = 100):
             tested_exe += 1
         else:
             bytes_np = msg.bytes_np
-            unpack_axsbe_snap.unpack_np(bytes_np)
-            if str(msg) != str(unpack_axsbe_snap):
+            unpack_axsbe_snap_stock.unpack_np(bytes_np)
+            if str(msg) != str(unpack_axsbe_snap_stock):
                 raise RuntimeError("TEST_serial tested_snap NG")
             tested_snap += 1
 
