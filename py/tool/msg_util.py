@@ -3,7 +3,46 @@
 import tool.axsbe_base as axsbe_base
 from tool.axsbe_exe import axsbe_exe
 from tool.axsbe_order import axsbe_order
-from tool.axsbe_snap import axsbe_snap, price_level
+from tool.axsbe_snap_stock import axsbe_snap_stock, price_level
+
+
+# CHNL_STOCK = 0
+# CHNL_FUND = 1
+# CHNL_KZZ = 2
+# CHNL_QZ = 3
+# CHNL_OPTION = 4
+
+# def chnl_type(msg):
+#     if msg.SecurityIDSource==axsbe_base.SecurityIDSource_SSE:
+#         if isinstance(msg, axsbe_exe) or isinstance(msg, axsbe_order):
+#             if msg.ChannelNo>=2010 and msg.ChannelNo<=2019:
+#                 return CHNL_STOCK
+#             elif msg.ChannelNo>=2020 and msg.ChannelNo<=2029:
+#                 return CHNL_FUND
+#             elif msg.ChannelNo>=2030 and msg.ChannelNo<=2039:
+#                 return CHNL_KZZ
+#             elif msg.ChannelNo>=2040 and msg.ChannelNo<=2049:
+#                 return CHNL_QZ
+#             elif msg.ChannelNo>=2050 and msg.ChannelNo<=2059:
+#                 return CHNL_OPTION
+#             else:
+#                 return None
+#         elif isinstance(msg, axsbe_snap_stock):
+#                 return CHNL_STOCK
+#         else:
+#             return None
+
+#     if msg.SecurityIDSource==axsbe_base.SecurityIDSource_SZSE:
+#         '''TODO:'''
+#         pass
+#     return None
+    
+#### 原始数据精度 ####
+SZSE_PRECISION_PRICE = 10000 # 股票价格精度：深圳4位小数
+SZSE_PRECISION_QTY   = 100   # 数量精度：深圳2位小数
+
+SSE_PRECISION_PRICE = 1000  # 股票价格精度：上海3位小数
+SSE_PRECISION_QTY   = 1000  # 数量精度：上海3位小数
 
 
 def str_to_dict(s:str):
@@ -25,7 +64,7 @@ def dict_to_axsbe(s:dict):
         execute.load_dict(s)
         return execute
     elif s['MsgType']==axsbe_base.MsgType_snap:   #snap
-        snap = axsbe_snap()
+        snap = axsbe_snap_stock()
         snap.load_dict(s)
         return snap
     else:
