@@ -136,9 +136,9 @@ class AXOB():
         self.instrument_type = instrument_type
 
         ## 结构数据
-        self.order_map = {}
-        self.bid_level_tree = {}
-        self.ask_level_tree = {}
+        self.order_map = {} #订单队列，以applSeqNum作为索引
+        self.bid_level_tree = {} #买方价格档，以价格作为索引
+        self.ask_level_tree = {} #卖方价格档
 
         self.bid_best_level_price = 0
         self.bid_best_level_qty = 0
@@ -194,7 +194,7 @@ class AXOB():
         _order = ob_order(order, self.instrument_type)
         if _order.type==TYPE.MARKET:
             # 市价单，都必须在开盘之后
-            if self.bid_best_level_price==0 and self.ask_best_level_price==0:
+            if self.bid_best_level_qty==0 and self.ask_best_level_qty==0:
                 self.ERR('未定义模式:市价单早于价格档') #TODO: cover
             #if _order.type==TYPE.MARKET:
                 # 市价单，几种可能：
@@ -216,18 +216,18 @@ class AXOB():
                     else:
                         _order.price = self.UpLimitPx
                         axob_logger.error(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover
-        self.onLimit(_order)
+        self.onLimitOrder(_order)
 
-    def onLimit(self, order:ob_order):
+    def onLimitOrder(self, order:ob_order):
         if order.tradingPhase == axsbe_base.TPM.OpenCall or order.tradingPhase == axsbe_base.TPM.CloseCall: #集合竞价期间，直接插入
-            self.insertLimit(order)
+            self.insertOrder(order)
         else:
             #把此前缓存的订单(市价/限价)插入LOB
             if self.holding_nb != 0:
                 if self.holding_order.type == TYPE.MARKET and not self.holding_order.traded:
                     self.ERR(f'市价单 {self.holding_order} 未伴随成交')
 
-                self.insertLimit(self.holding_order)
+                self.insertOrder(self.holding_order)
                 self.holding_nb = 0
 
                 snap = self.genSnap()   #先出一个snap
@@ -242,7 +242,7 @@ class AXOB():
                 self.holding_order = order
                 self.holding_nb += 1
             else:
-                self.insertLimit(order)
+                self.insertOrder(order)
 
                 snap = self.genSnap()   #再出一个snap
 
@@ -250,7 +250,11 @@ class AXOB():
                 self.DBG(snap)
                 self.lob_snaps.append(snap)
 
-    def insertLimit(self, order:ob_order):
+    def insertOrder(self, order:ob_order):
+        '''
+        订单入列，更新对应的价格档位数据
+        '''
+        self.order_map[order.applSeqNum] = order
         
         if order.side == SIDE.BID:
             # self.bidPriceCacheHandler.addQty(order.price, order.qty)
@@ -260,7 +264,7 @@ class AXOB():
                 node = level_node(order.price, order.qty)
                 self.bid_level_tree[order.price] = node
 
-                if self.bid_best_level_price==0 or node.price > self.bid_best_level_price:
+                if self.bid_best_level_price==0 or node.price > self.bid_best_level_price:  #买方出现更高价格
                     self.bid_best_level_price = order.price
                     self.bid_best_level_qty = order.qty
 
@@ -274,9 +278,16 @@ class AXOB():
                 node = level_node(order.price, order.qty)
                 self.ask_level_tree[order.price] = node
 
-                if self.ask_best_level_price==0 or node.price < self.ask_best_level_price:
+                if self.ask_best_level_price==0 or node.price < self.ask_best_level_price: #卖方出现更低价格
                     self.ask_best_level_price = order.price
                     self.ask_best_level_qty = order.qty
 
             self.AskWeightSize += order.qty
             self.AskWeightValue += order.price * order.qty
+
+    def onExec(self, exec:axsbe_exe):
+        pass
+    def onSnap(self, snap):
+        pass
+    def genSnap(self):
+        pass
