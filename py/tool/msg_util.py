@@ -38,11 +38,14 @@ from tool.axsbe_snap_stock import axsbe_snap_stock, price_level
 #     return None
     
 #### 原始数据精度 ####
-SZSE_PRECISION_PRICE = 10000 # 股票价格精度：深圳4位小数
-SZSE_PRECISION_QTY   = 100   # 数量精度：深圳2位小数
+PRICE_SZSE_INCR_PRECISION = 10000 # 股票价格在逐笔消息中的精度：深圳4位小数
+PRICE_SZSE_SNAP_PRECISION = 1000000 # 股票价格在快照消息中的精度：深圳6位小数
+QTY_SZSE_PRECISION   = 100   # 数量精度：深圳2位小数
+TOTALVALUETRADE_SZSE_PRECISION = 10000 # 深圳4位
 
-SSE_PRECISION_PRICE = 1000  # 股票价格精度：上海3位小数
-SSE_PRECISION_QTY   = 1000  # 数量精度：上海3位小数
+PRICE_SSE_PRECISION = 1000  # 股票价格精度：上海3位小数（逐笔消息和快照消息相同）
+QTY_SSE_PRECISION   = 1000  # 数量精度：上海3位小数（逐笔消息和快照消息相同）
+TOTALVALUETRADE_SSE_PRECISION = 100000 # 上海5位
 
 
 def str_to_dict(s:str):
