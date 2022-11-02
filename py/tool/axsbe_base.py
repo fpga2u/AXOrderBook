@@ -170,7 +170,7 @@ class axsbe_base(abc.ABC):
         t = self.HHMMSSms
         if t < 91500000:
             return TPM.Starting
-        elif t < 92500000:
+        elif t < 92500000: #逐笔委托的时戳不会等于925；只有逐笔成交会；而925的逐笔成交代表着开盘集合竞价结束。收盘集合竞价同理。
             return TPM.OpenCall
         elif t < 93000000:
             return TPM.PreTradingBreaking
