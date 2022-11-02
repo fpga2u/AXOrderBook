@@ -214,7 +214,7 @@ struct SBE_SSZ_instrument_snap_t //352B
     int32_t         DnLimitPx;          //跌停价, MDEntryPx,N18(6) **
     struct price_level_t   BidLevel[10];//十档买盘，价格 MDEntryPx,N18(6)，数量 Qty,N15(2)
     struct price_level_t   AskLevel[10];//十档卖盘，价格 MDEntryPx,N18(6)，数量 Qty,N15(2)
-    uint64_t         TransactTime;      //YYYYMMDDHHMMSSsss(毫秒)
+    uint64_t         TransactTime;      //YYYYMMDDHHMMSSsss(毫秒) 实际以3秒为变化单位
     uint8_t          Resv[4];
 };
 // *  涨停价取值为 999999999.9999 表示无涨停价格限制。
@@ -233,7 +233,7 @@ struct SBE_SSZ_ord_t //48B
     int64_t         OrderQty;       //委托数量, Qty,N15(2)
     int8_t          Side;           //买卖方向: '1'=买, '2'=卖, 'G'=借入, 'F'=出借
     int8_t          OrdType;        //订单类别: '1'=市价, '2'=限价, 'U'=本方最优
-    uint64_t        TransactTime;   //YYYYMMDDHHMMSSsss(毫秒)
+    uint64_t        TransactTime;   //YYYYMMDDHHMMSSsss(毫秒) 实际以10ms为变化单位
     uint8_t         Resv[2];
 };
 ```
@@ -251,7 +251,7 @@ struct SBE_SSZ_exe_t //64B
     int32_t         LastPx;         //成交价格, Price,N13(4)
     int64_t         LastQty;        //成交数量, Qty,N15(2)
     int8_t          ExecType;       //成交类别: '4'=撤销, 'F'=成交
-    uint64_t        TransactTime;   //YYYYMMDDHHMMSSsss(毫秒)
+    uint64_t        TransactTime;   //YYYYMMDDHHMMSSsss(毫秒) 实际以10ms为变化单位
     uint8_t         Resv[3];
 };
 // * 委托索引从 1 开始计数， 0 表示无对应委托
