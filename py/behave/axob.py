@@ -20,6 +20,7 @@
 '''
 from enum import Enum
 import logging
+import pstats
 from tool.msg_util import axsbe_base, axsbe_exe, axsbe_order, axsbe_snap_stock, price_level
 import tool.msg_util as msg_util
 from tool.axsbe_base import SecurityIDSource_SSE, SecurityIDSource_SZSE
@@ -28,6 +29,7 @@ axob_logger = logging.getLogger(__name__)
 
 
 #### 内部计算精度 ####
+#TODO: 时戳精度和位宽 [High Priority]
 APPSEQ_BIT_SIZE = 34    # 序列号，34b，约170亿
 PRICE_BIT_SIZE  = 20    # 价格，20b，1048575，股票:10485.75;基金:1048.575。（若统一到3位小数则考虑用24b，则只需深圳//10）
 QTY_BIT_SIZE    = 30    # 数量，30b，(1,073,741,823)，深圳2位小数，上海3位小数
@@ -64,7 +66,7 @@ SSE_STOCK_PRICE_RD = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_STOCK_PRECISION
 class ob_order():
     '''专注于内部使用的字段格式与位宽'''
     def __init__(self, order:axsbe_order, instrument_type:INSTRUMENT_TYPE):
-        self.securityID = order.SecurityID
+        # self.securityID = order.SecurityID
         self.applSeqNum = order.ApplSeqNum
         self.tradingPhase = order.TradingPhaseMarket #无需存储，目前只需要关注是否是集合竞价
 
@@ -125,6 +127,42 @@ class ob_order():
     def __str__(self) -> str:
         return f'{self.applSeqNum}'
 
+
+class ob_cancel():
+    '''专注于内部使用的字段格式与位宽'''
+    def __init__(self, ApplSeqNum, Qty, Price, Side, TradingPhaseMarket, SecurityIDSource, instrument_type):
+        self.applSeqNum = ApplSeqNum
+        self.qty = Qty
+        if SecurityIDSource==SecurityIDSource_SZSE:
+            if instrument_type==INSTRUMENT_TYPE.STOCK:
+                self.price = Price // SZSE_STOCK_PRICE_RD # 深圳 N13(4)，实际股票精度为分
+            elif instrument_type==INSTRUMENT_TYPE.FUND:
+                self.price = Price // SZSE_FUND_PRICE_RD # 深圳 N13(4)，实际基金精度为厘
+            else:
+                axob_logger.error(f'cancel SZSE ApplSeqNum={ApplSeqNum} instrument_type={instrument_type} not support!')
+        elif SecurityIDSource==SecurityIDSource_SSE:
+            if instrument_type==INSTRUMENT_TYPE.STOCK:
+                self.price = Price // SSE_STOCK_PRICE_RD # 上海 原始数据3位小数
+            else:
+                axob_logger.error(f'cancel SSE ApplSeqNum={ApplSeqNum} instrument_type={instrument_type} not support!')
+        else:
+            axob_logger.error(f'cancel ApplSeqNum={ApplSeqNum} SecurityIDSource={SecurityIDSource} unknown!')
+        self.side = Side
+        self.tradingPhase = TradingPhaseMarket #无需存储，目前只需要关注是否是集合竞价
+
+        if self.applSeqNum >= (1<<APPSEQ_BIT_SIZE):
+            axob_logger.error(f'cancel ApplSeqNum={ApplSeqNum} ovf!')
+
+        if self.price >= (1<<PRICE_BIT_SIZE):
+            axob_logger.error(f'cancel ApplSeqNum={ApplSeqNum} Price={Price} ovf!')
+
+        if self.qty >= (1<<QTY_BIT_SIZE):
+            axob_logger.error(f'cancel ApplSeqNum={ApplSeqNum} Volumn={Qty} ovf!')
+
+    def __str__(self) -> str:
+        return f'{self.applSeqNum}'
+
+
 class level_node():
     def __init__(self, price, qty):
         self.price = price
@@ -135,7 +173,7 @@ class AXOB():
     def __init__(self, SecurityID:int, SecurityIDSource, instrument_type:INSTRUMENT_TYPE):
         '''
         '''
-        #TODO:涨跌停价是预先输入还是从快照中获取？ [从快照]
+        #TODO:涨跌停价是预先输入还是从快照中获取？ [从快照] [low priority]
 
         self.SecurityID = SecurityID
         self.SecurityIDSource = SecurityIDSource #"证券代码源101=上交所;102=深交所;103=香港交易所" 在hls中用宏或作为模板参数设置
@@ -211,14 +249,22 @@ class AXOB():
 
     def onOrder(self, order:axsbe_order):
         '''
-        逐笔订单入口，限价单、市价单分开处理
+        逐笔订单入口，统一提取市价单、限价单的关键字段到内部订单格式
+        跳转到处理限价单或处理撤单
+        TODO: SSE的撤单也在order，跳转到onCancel [low priority]
         '''
         self.DBG(f'onOrder:{order}')
-        _order = ob_order(order, self.instrument_type)
+        if self.SecurityIDSource == SecurityIDSource_SZSE:
+            _order = ob_order(order, self.instrument_type)
+        elif self.SecurityIDSource == SecurityIDSource_SSE:
+            pass # TODO: order or cancel [Low Priority]
+        else:
+            return
+
         if _order.type==TYPE.MARKET:
             # 市价单，都必须在开盘之后
             if self.bid_max_level_qty==0 and self.ask_min_level_qty==0:
-                self.ERR('未定义模式:市价单早于价格档') #TODO: cover [High priority]
+                self.ERR('未定义模式:市价单早于价格档') #TODO: cover [Mid priority]
             #if _order.type==TYPE.MARKET:
                 # 市价单，几种可能：
                 #    * 对手方最优价格申报：有成交、最后挂在对方一档或者二档
@@ -232,17 +278,17 @@ class AXOB():
                         _order.price = self.bid_max_level_price
                     else:
                         _order.price = self.DnLimitPx
-                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!') #TODO: cover [High priority]
+                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!') #TODO: cover [Mid priority]
                 else:
                     if self.ask_min_level_price!=0 and self.ask_min_level_qty!=0:   #本方有量
                         _order.price = self.ask_min_level_price
                     else:
                         _order.price = self.UpLimitPx
-                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover [High priority]
+                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover [Mid priority]
         self.onLimitOrder(_order)
 
     def onLimitOrder(self, order:ob_order):
-        if order.tradingPhase == axsbe_base.TPM.OpenCall or order.tradingPhase == axsbe_base.TPM.CloseCall: #集合竞价期间，直接插入；暂时还是用order的TPM，而非自身的
+        if order.tradingPhase == axsbe_base.TPM.OpenCall or order.tradingPhase == axsbe_base.TPM.CloseCall: #集合竞价期间，直接插入；暂时还是用order的TPM，而非自身的； TODO:决定用哪个 [High priority]
             self.insertOrder(order)
         else:
             #把此前缓存的订单(市价/限价)插入LOB
@@ -311,7 +357,90 @@ class AXOB():
             self.AskWeightValue += order.price * order.qty
 
     def onExec(self, exec:axsbe_exe):
+        '''
+        逐笔成交入口
+        跳转到处理成交或处理撤单
+        '''
+        self.DBG(f'onExec:{exec}')
+        if exec.ExecType_str=='成交' or self.SecurityIDSource==SecurityIDSource_SSE:
+            self.onTrade(exec)
+        else:
+            #only SecurityIDSource_SZSE
+            if exec.BidApplSeqNum!=0:  # 撤销bid
+                cancel_seq = exec.BidApplSeqNum
+                Side = SIDE.BID
+            else:   # 撤销ask
+                cancel_seq = exec.OfferApplSeqNum
+                Side = SIDE.ASK
+            _cancel = ob_cancel(cancel_seq, exec.LastQty, exec.LastPx, Side, exec.TradingPhaseMarket, self.SecurityIDSource, self.instrument_type)
+            self.onCancel(_cancel)
+
+    def onTrade(self, exec:axsbe_exe):
         pass
+    
+    def onCancel(self, cancel:ob_cancel):
+        '''
+        处理撤单，来自深交所逐笔成交或上交所逐笔成交
+        撤销此前缓存的订单(市价/限价)，或插入LOB
+        '''
+        if self.holding_nb != 0:    #TODO: 此时不应有holding [high priority]
+            self.holding_nb = 0
+            if self.holding_order.applSeqNum != cancel.applSeqNum: #撤销的不是缓存单，把缓存单插入LOB
+                self.insertOrder(self.holding_order)
+                
+                snap = self.genSnap()   #先出一个snap
+
+                ## 仅用于检查
+                if snap is not None:
+                    self.DBG(snap)
+                    self.lob_snaps.append(snap)
+            else:
+                return  #撤销缓存单，holding_nb清空即可
+
+        order = self.order_map.pop(cancel.applSeqNum)
+
+        if cancel.side == SIDE.BID:
+            self.bid_level_tree[order.price].qty -= cancel.qty
+            if self.bid_level_tree[order.price].qty==0:
+                self.bid_level_tree.pop(order.price)
+
+                if order.price==self.bid_max_level_price:  #买方最高价被cancel光
+                    self.bid_max_level_qty = 0
+                    # locate next lower bid level
+                    for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+                        if p<self.bid_max_level_price:
+                            self.bid_max_level_price = p
+                            self.bid_max_level_qty = l.qty
+                            break
+
+            self.BidWeightSize -= order.qty
+            self.BidWeightValue -= order.price * order.qty
+        elif order.side == SIDE.ASK:
+            self.ask_level_tree[order.price].qty -= order.qty
+            if self.ask_level_tree[order.price].qty==0:
+                self.ask_level_tree.pop(order.price)
+
+                if order.price==self.ask_min_level_price:  #卖方最低价被cancel光
+                    # locate next higher ask level
+                    self.ask_min_level_qty = 0
+                    for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
+                        if p>self.ask_min_level_price:
+                            self.ask_min_level_price = p
+                            self.ask_min_level_qty = l.qty
+                            break
+
+            self.AskWeightSize -= order.qty
+            self.AskWeightValue -= order.price * order.qty
+
+        if cancel.tradingPhase != axsbe_base.TPM.OpenCall and cancel.tradingPhase != axsbe_base.TPM.CloseCall:
+            snap = self.genSnap()   #缓存单成交完
+
+            ## 仅用于检查
+            if snap is not None:
+                self.DBG(snap)
+                self.lob_snaps.append(snap)
+        
+
     def onSnap(self, snap):
         pass
 
