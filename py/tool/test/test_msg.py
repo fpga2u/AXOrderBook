@@ -46,7 +46,7 @@ def TEST_msg_ms(TEST_NB = 100):
     f = open("log/ms.log", "w")
 
     n = 0
-    for msg in axsbe_file("data/AX_sbe_szse_000001.log"):
+    for msg in axsbe_file("data/20220422/AX_sbe_szse_000001.log"):
         # print(msg.ms)
         if msg.MsgType==axsbe_base.MsgType_order:
             f.write(f"{n:6d}\torder {msg.ms}\t{msg.tick}\n")
@@ -79,7 +79,7 @@ def TEST_serial(TEST_NB = 100):
     unpack_axsbe_execute = axsbe_exe()
     unpack_axsbe_snap_stock = axsbe_snap_stock()
 
-    for msg in axsbe_file("data/AX_sbe_szse_000001.log"):
+    for msg in axsbe_file("data/20220422/AX_sbe_szse_000001.log"):
         if msg.MsgType==axsbe_base.MsgType_order:
             bytes_np = msg.bytes_np
             unpack_axsbe_order.unpack_np(bytes_np)

@@ -25,8 +25,7 @@ from tool.msg_util import axsbe_base, axsbe_exe, axsbe_order, axsbe_snap_stock, 
 import tool.msg_util as msg_util
 from tool.axsbe_base import SecurityIDSource_SSE, SecurityIDSource_SZSE
 
-axob_logger = logging.getLogger(__name__)
-
+axob_logger = logging.getLogger(__name__)   #level 固定为 warning
 
 #### 内部计算精度 ####
 #TODO: 时戳精度和位宽 [High Priority]
@@ -219,6 +218,10 @@ class AXOB():
 
         ## 日志
         self.logger = logging.getLogger(f'{self.SecurityID:06d}')
+        g_logger = logging.getLogger('main')
+        self.logger.setLevel(g_logger.getEffectiveLevel())
+        for h in g_logger.handlers:
+            self.logger.addHandler(h)
         self.DBG = self.logger.debug
         self.INFO = self.logger.info
         self.WARN = self.logger.warning
@@ -290,6 +293,12 @@ class AXOB():
     def onLimitOrder(self, order:ob_order):
         if order.tradingPhase == axsbe_base.TPM.OpenCall or order.tradingPhase == axsbe_base.TPM.CloseCall: #集合竞价期间，直接插入；暂时还是用order的TPM，而非自身的； TODO:决定用哪个 [High priority]
             self.insertOrder(order)
+            snap = self.genSnap()   #可出snap
+
+            ## 仅用于检查
+            if snap is not None:
+                self.DBG(snap)
+                self.lob_snaps.append(snap)
         else:
             #把此前缓存的订单(市价/限价)插入LOB
             if self.holding_nb != 0:
@@ -441,10 +450,14 @@ class AXOB():
                 self.lob_snaps.append(snap)
         
 
-    def onSnap(self, snap):
-        pass
+    def onSnap(self, snap:axsbe_snap_stock):
+        self.DBG(f'onSnap:{snap}')
+        self.PrevClosePx = snap.PrevClosePx
+        self.UpLimitPx = snap.UpLimitPx
+        self.DnLimitPx = snap.DnLimitPx
 
     def genSnap(self):
+        assert self.holding_nb==0, 'genSnap but with holding'
         if self.TradingPhaseMarket < axsbe_base.TPM.OpenCall or self.TradingPhaseMarket > axsbe_base.TPM.CloseCall:
             # 无需生成
             return
@@ -613,6 +626,8 @@ class AXOB():
         snap_call.AskWeightSize = 0
 
         snap_call.TransactTime = self.current_msg_timestamp
+
+        #TODO: encode TradingPhaseCode
 
         return snap_call
         
