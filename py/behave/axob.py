@@ -59,7 +59,7 @@ class TYPE(Enum): # 2bit
 SZSE_STOCK_PRICE_RD = msg_util.PRICE_SZSE_INCR_PRECISION // PRICE_INTER_STOCK_PRECISION
 SZSE_FUND_PRICE_RD = msg_util.PRICE_SZSE_INCR_PRECISION // PRICE_INTER_FUND_PRECISION
 SSE_STOCK_PRICE_RD = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_STOCK_PRECISION
-# SSE_FUND_PRICE_RES = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_FUND_PRECISION TODO:确认精度
+# SSE_FUND_PRICE_RES = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_FUND_PRECISION TODO:确认精度 [low priority]
 
 class ob_order():
     '''专注于内部使用的字段格式与位宽'''
@@ -90,7 +90,7 @@ class ob_order():
             self.side = SIDE.BID
         elif order.Side_str=='卖出':
             self.side = SIDE.ASK
-        else:   #TODO: 映射上海
+        else:   #TODO: 映射上海 [low priority]
             axob_logger.error(f'order ApplSeqNum={order.ApplSeqNum} side={order.Side}({order.Side_str}) unknown!')
 
         if order.Type_str=='限价':
@@ -99,7 +99,7 @@ class ob_order():
             self.type = TYPE.MARKET
         elif order.Type_str=='本方最优':
             self.type = TYPE.SIDE
-        else:   #TODO: 映射上海
+        else:   #TODO: 映射上海 [low priority]
             axob_logger.error(f'order ApplSeqNum={order.ApplSeqNum} type={order.OrdType}({order.Type_str}) unknown!')
 
         ## 位宽及精度舍入可行性检查
@@ -134,9 +134,9 @@ class level_node():
 class AXOB():
     def __init__(self, SecurityID:int, SecurityIDSource, instrument_type:INSTRUMENT_TYPE):
         '''
-
-        TODO:涨跌停价是预先输入还是从快照中获取？
         '''
+        #TODO:涨跌停价是预先输入还是从快照中获取？ [从快照]
+
         self.SecurityID = SecurityID
         self.SecurityIDSource = SecurityIDSource #"证券代码源101=上交所;102=深交所;103=香港交易所" 在hls中用宏或作为模板参数设置
         self.instrument_type = instrument_type
@@ -158,8 +158,8 @@ class AXOB():
 
         self.ChannelNo = -1 #来自于消息
         self.PrevClosePx = 0 #来自于快照
-        self.DnLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价
-        self.UpLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价
+        self.DnLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价 [low priority]
+        self.UpLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价 [low priority]
         self.current_msg_timestamp = 0 #来自于消息
         self.last_msg_timestamp = 0 #来自于消息
         
@@ -192,9 +192,10 @@ class AXOB():
             if msg.SecurityID!=self.SecurityID:
                 return
 
-            self.TradingPhaseMarket = msg.TradingPhaseMarket #TODO:是否只区分快照和逐笔？
+            self.TradingPhaseMarket = msg.TradingPhaseMarket #TODO:是否区分快照和逐笔？等测试情况，需要看二者的时间关系 [High priority]
+            self.current_msg_timestamp = msg.TransactTime    #TODO:是否只用逐笔？ [High priority]
+
             self.ChannelNo = msg.ChannelNo
-            self.current_msg_timestamp = msg.TransactTime
 
             if isinstance(msg, axsbe_order):
                 self.onOrder(msg)
@@ -217,7 +218,7 @@ class AXOB():
         if _order.type==TYPE.MARKET:
             # 市价单，都必须在开盘之后
             if self.bid_max_level_qty==0 and self.ask_min_level_qty==0:
-                self.ERR('未定义模式:市价单早于价格档') #TODO: cover
+                self.ERR('未定义模式:市价单早于价格档') #TODO: cover [High priority]
             #if _order.type==TYPE.MARKET:
                 # 市价单，几种可能：
                 #    * 对手方最优价格申报：有成交、最后挂在对方一档或者二档
@@ -231,13 +232,13 @@ class AXOB():
                         _order.price = self.bid_max_level_price
                     else:
                         _order.price = self.DnLimitPx
-                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!') #TODO: cover
+                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!') #TODO: cover [High priority]
                 else:
                     if self.ask_min_level_price!=0 and self.ask_min_level_qty!=0:   #本方有量
                         _order.price = self.ask_min_level_price
                     else:
                         _order.price = self.UpLimitPx
-                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover
+                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover [High priority]
         self.onLimitOrder(_order)
 
     def onLimitOrder(self, order:ob_order):
@@ -370,7 +371,7 @@ class AXOB():
                     ask_Qty -= bid_Qty
                     bid_Qty = 0
 
-                if bid_Qty == 0 and ask_Qty == 0:   # 恰好双方数量相等。 TODO: 不需要？
+                if bid_Qty == 0 and ask_Qty == 0:   # 恰好双方数量相等。 TODO: 不需要？ [High priority]
                     temp_price = _bid_max_level_price + _ask_min_level_price
                     price = (temp_price >> 1) + (temp_price%2) # 四舍五入
 
@@ -398,7 +399,7 @@ class AXOB():
 
             else:
                 if price==0:
-                    # TODO: 如此计算价格是否正确？
+                    # TODO: 如此计算价格是否正确？ [High priority]
                     temp_price = _bid_max_level_price + _ask_min_level_price
                     price = (temp_price >> 1) + (temp_price%2) # 四舍五入
                 break
@@ -455,7 +456,7 @@ class AXOB():
         if self.instrument_type==INSTRUMENT_TYPE.STOCK:
             snap_call = axsbe_snap_stock(SecurityIDSource=self.SecurityIDSource, source=f"genSnap-call")
         else:
-            return None # TODO: not ready
+            return None # TODO: not ready [Mid priority]
         
         # 固定参数
         snap_call.SecurityID = self.SecurityID
@@ -528,7 +529,7 @@ class AXOB():
         for nb in range(nb):
             if _ask_min_level_qty!=0:
                 snap_ask_levels[nb] = price_level(self._fmtPrice_inter2snap(_ask_min_level_price), _ask_min_level_qty)
-                # snap_ask_levels[nb].addQ(ask_min_level.orderList, order_nb) #TODO: order_link
+                # snap_ask_levels[nb].addQ(ask_min_level.orderList, order_nb) #TODO: order_link [Mid priority]
                 # locate next higher ask level
                 _ask_min_level_qty = 0
                 for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
@@ -541,7 +542,7 @@ class AXOB():
 
             if _bid_max_level_qty!=0:
                 snap_bid_levels[nb] = price_level(self._fmtPrice_inter2snap(_bid_max_level_price), _bid_max_level_qty)
-                # snap_bid_levels[nb].addQ(bid_max_level.orderList, order_nb) #TODO: order_link
+                # snap_bid_levels[nb].addQ(bid_max_level.orderList, order_nb) #TODO: order_link [Mid priority]
                 # locate next lower bid level
                 _bid_max_level_qty = 0
                 for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
