@@ -172,13 +172,11 @@ class AXOB():
     def __init__(self, SecurityID:int, SecurityIDSource, instrument_type:INSTRUMENT_TYPE):
         '''
         '''
-        #TODO:涨跌停价是预先输入还是从快照中获取？ [从快照] [low priority]
-
         self.SecurityID = SecurityID
         self.SecurityIDSource = SecurityIDSource #"证券代码源101=上交所;102=深交所;103=香港交易所" 在hls中用宏或作为模板参数设置
         self.instrument_type = instrument_type
 
-        ## 结构数据
+        ## 结构数据：
         self.order_map = {} #订单队列，以applSeqNum作为索引
         self.bid_level_tree = {} #买方价格档，以价格作为索引
         self.ask_level_tree = {} #卖方价格档
@@ -193,12 +191,11 @@ class AXOB():
         self.LowPx = 0
         self.OpenPx = 0
 
-        self.ChannelNo = -1 #来自于消息
+        self.ChannelNo = 0 #来自于快照
         self.PrevClosePx = 0 #来自于快照
         self.DnLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价 [low priority]
         self.UpLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价 [low priority]
-        self.current_msg_timestamp = 0 #来自于消息
-        self.last_msg_timestamp = 0 #来自于消息
+        self.current_inc_timestamp = 0 #来自于逐笔
         
         self.BidWeightSize = 0
         self.BidWeightValue = 0
@@ -213,8 +210,10 @@ class AXOB():
 
         self.TradingPhaseMarket = axsbe_base.TPM.Starting
 
-        ## 检查
+        ## 调试数据，仅用于测试算法是否正确：
+        self.msg_nb = 0
         self.lob_snaps = []
+        self.last_snap = None
 
         ## 日志
         self.logger = logging.getLogger(f'{self.SecurityID:06d}')
@@ -229,30 +228,27 @@ class AXOB():
 
     def onMsg(self, msg):
         '''处理总入口'''
-
         if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe) or isinstance(msg, axsbe_snap_stock):
             if msg.SecurityID!=self.SecurityID:
                 return
 
             self.TradingPhaseMarket = msg.TradingPhaseMarket #TODO:是否区分快照和逐笔？等测试情况，需要看二者的时间关系 [High priority]
-            self.current_msg_timestamp = msg.TransactTime    #TODO:是否只用逐笔？ [High priority]
 
-            self.ChannelNo = msg.ChannelNo
+            if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe):
+                self.current_inc_timestamp = msg.TransactTime    #只用逐笔
 
             if isinstance(msg, axsbe_order):
                 self.onOrder(msg)
             elif isinstance(msg, axsbe_exe):
                 self.onExec(msg)
             else:# isinstance(msg, axsbe_snap_stock):
-                if msg.TradingPhaseSecurity != axsbe_base.TPI.Normal:
-                    self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(msg.TradingPhaseSecurity)}')
-                    return
                 self.onSnap(msg)
 
-            self.last_msg_timestamp = msg.TransactTime
-
         else:
-            return
+            pass
+
+        ## 调试数据，仅用于测试算法是否正确：
+        self.msg_nb += 1
 
     def onOrder(self, order:axsbe_order):
         '''
@@ -294,15 +290,11 @@ class AXOB():
                         axob_logger.error(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover [Mid priority]
         self.onLimitOrder(_order)
 
+
     def onLimitOrder(self, order:ob_order):
         if order.tradingPhase == axsbe_base.TPM.OpenCall or order.tradingPhase == axsbe_base.TPM.CloseCall: #集合竞价期间，直接插入；暂时还是用order的TPM，而非自身的； TODO:决定用哪个 [High priority]
             self.insertOrder(order)
-            snap = self.genSnap()   #可出snap
-
-            ## 仅用于检查
-            if snap is not None:
-                self.DBG(snap)
-                self.lob_snaps.append(snap)
+            self.genSnap()   #可出snap
         else:
             #把此前缓存的订单(市价/限价)插入LOB
             if self.holding_nb != 0:
@@ -312,12 +304,7 @@ class AXOB():
                 self.insertOrder(self.holding_order)
                 self.holding_nb = 0
 
-                snap = self.genSnap()   #先出一个snap
-
-                ## 仅用于检查
-                if snap is not None:
-                    self.DBG(snap)
-                    self.lob_snaps.append(snap)
+                self.genSnap()   #先出一个snap
 
             #若是可能成交的限价单，则缓存住，等成交
             if (order.side == SIDE.BID and (order.price >= self.bid_max_level_price and self.bid_max_level_qty > 0)) or \
@@ -327,12 +314,7 @@ class AXOB():
             else:
                 self.insertOrder(order)
 
-                snap = self.genSnap()   #再出一个snap
-
-                ## 仅用于检查
-                if snap is not None:
-                    self.DBG(snap)
-                    self.lob_snaps.append(snap)
+                self.genSnap()   #再出一个snap
 
     def insertOrder(self, order:ob_order):
         '''
@@ -392,6 +374,8 @@ class AXOB():
             _cancel = ob_cancel(cancel_seq, exec.LastQty, exec.LastPx, Side, exec.TradingPhaseMarket, self.SecurityIDSource, self.instrument_type)
             self.onCancel(_cancel)
 
+
+
     def onTrade(self, exec:axsbe_exe):
         pass
     
@@ -405,12 +389,7 @@ class AXOB():
             if self.holding_order.applSeqNum != cancel.applSeqNum: #撤销的不是缓存单，把缓存单插入LOB
                 self.insertOrder(self.holding_order)
                 
-                snap = self.genSnap()   #先出一个snap
-
-                ## 仅用于检查
-                if snap is not None:
-                    self.DBG(snap)
-                    self.lob_snaps.append(snap)
+                self.genSnap()   #先出一个snap
             else:
                 return  #撤销缓存单，holding_nb清空即可
 
@@ -450,34 +429,52 @@ class AXOB():
             self.AskWeightValue -= order.price * order.qty
 
         if cancel.tradingPhase != axsbe_base.TPM.OpenCall and cancel.tradingPhase != axsbe_base.TPM.CloseCall:
-            snap = self.genSnap()   #缓存单成交完
-
-            ## 仅用于检查
-            if snap is not None:
-                self.DBG(snap)
-                self.lob_snaps.append(snap)
+            self.genSnap()   #缓存单成交完
         
 
     def onSnap(self, snap:axsbe_snap_stock):
         self.DBG(f'onSnap:{snap}')
+        if snap.TradingPhaseSecurity != axsbe_base.TPI.Normal:
+            self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}')
+            return
+
+        ## 更新常量
+        self.ChannelNo = snap.ChannelNo
         self.PrevClosePx = snap.PrevClosePx
         self.UpLimitPx = snap.UpLimitPx
         self.DnLimitPx = snap.DnLimitPx
 
+        ## 检查重建算法
+        if snap.TradingPhaseMarket<axsbe_base.TPM.OpenCall:
+            pass
+        else:
+            # 在重建的快照中检索是否有相同的快照
+            pass
+
+
     def genSnap(self):
         assert self.holding_nb==0, 'genSnap but with holding'
+
+        snap = None
         if self.TradingPhaseMarket < axsbe_base.TPM.OpenCall or self.TradingPhaseMarket > axsbe_base.TPM.CloseCall:
             # 无需生成
-            return
-
-        if self.TradingPhaseMarket==axsbe_base.TPM.OpenCall or self.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
+            pass
+        elif self.TradingPhaseMarket==axsbe_base.TPM.OpenCall or self.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
             # 集合竞价快照
-            return self.genCallSnap()
+            snap = self.genCallSnap()
+        else:
+            # 连续竞价快照
+            snap = self.genTradingSnap()
+            
 
-        # 连续竞价快照
-        return self.genTradingSnap()
+        ## 调试数据，仅用于测试算法是否正确：
+        if snap is not None:
+            self.DBG(snap)
+            snap.ApplSeqNum = self.msg_nb # 用于调试
+            self.last_snap = snap
+            self.lob_snaps.append(snap)
 
-    def genCallSnap(self, show_level_nb=10, show_potential=True):
+    def genCallSnap(self, show_level_nb=10, show_potential=False):
         '''
         show_level_nb:  展示的价格档数
         show_potential: 在无法撮合时展示出双方价格档
@@ -627,15 +624,17 @@ class AXOB():
         snap_call.OpenPx = self.OpenPx
         
 
-        #维护参数
+        # 本地维护参数
         snap_call.BidWeightPx = 0   #开盘撮合时期为0
         snap_call.BidWeightSize = 0
         snap_call.AskWeightPx = 0
         snap_call.AskWeightSize = 0
 
-        snap_call.TransactTime = self.current_msg_timestamp
+        snap_call.TransactTime = self.current_inc_timestamp #最新的一个逐笔消息时戳
 
         snap_call.update_TradingPhaseCode(self.TradingPhaseMarket, axsbe_base.TPI.Normal)
+
+
 
         return snap_call
         

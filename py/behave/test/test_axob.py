@@ -11,6 +11,7 @@ def TEST_axob_SL():
     '''TODO: axob save/load'''
     pass
 
+@timeit
 def TEST_axob_openCall(date, instrument:int, n_max=500):
     md_file = f'data/{date}/AX_sbe_szse_{instrument:06d}.log'
 

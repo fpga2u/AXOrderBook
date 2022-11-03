@@ -2,7 +2,6 @@
 
 import abc
 import numpy as np
-import struct
 from enum import Enum
 
 ## 交易所代码
@@ -104,7 +103,7 @@ class TPI():
         return TPI.TPI_str[tpm]
 
 
-class axsbe_base(abc.ABC):
+class axsbe_base(metaclass=abc.ABCMeta):
     '''
     sbe消息基类：
     目前先按照深交所精度来实现，待需要加入上交所支持时通过SecurityIDSource实现精度切换。
