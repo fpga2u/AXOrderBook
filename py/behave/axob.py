@@ -229,6 +229,14 @@ class AXOB():
 
     def onMsg(self, msg):
         '''处理总入口'''
+        # if self.msg_nb>=2646:
+        #     self.DBG('breakpoint')
+        #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+        #         self.DBG(f'ask\t{p}\t{l.qty}')
+        #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
+        #         self.DBG(f'bid\t{p}\t{l.qty}')
+
+
         if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe) or isinstance(msg, axsbe_snap_stock):
             if msg.SecurityID!=self.SecurityID:
                 return
@@ -250,6 +258,13 @@ class AXOB():
 
         ## 调试数据，仅用于测试算法是否正确：
         self.msg_nb += 1
+
+        if len(self.ask_level_tree):
+            assert self.ask_min_level_price==min(self.ask_level_tree.keys()), 'cache ask-min-price NG'
+            assert self.ask_min_level_qty==min(self.ask_level_tree.items(), key=lambda x: x[0])[1].qty, 'cache ask-min-qty NG'
+        if len(self.bid_level_tree):
+            assert self.bid_max_level_price==max(self.bid_level_tree.keys()), 'cache bid-max-price NG'
+            assert self.bid_max_level_qty==max(self.bid_level_tree.items(), key=lambda x: x[0])[1].qty, 'cache bid-max-qty NG'
 
     def onOrder(self, order:axsbe_order):
         '''
@@ -398,6 +413,9 @@ class AXOB():
 
         if cancel.side == SIDE.BID:
             self.bid_level_tree[order.price].qty -= cancel.qty
+            if order.price==self.bid_max_level_price:
+                self.bid_max_level_qty -= cancel.qty
+
             if self.bid_level_tree[order.price].qty==0:
                 self.bid_level_tree.pop(order.price)
 
@@ -414,6 +432,9 @@ class AXOB():
             self.BidWeightValue -= order.price * order.qty
         elif order.side == SIDE.ASK:
             self.ask_level_tree[order.price].qty -= order.qty
+            if order.price==self.ask_min_level_price:
+                self.ask_min_level_qty -= cancel.qty
+
             if self.ask_level_tree[order.price].qty==0:
                 self.ask_level_tree.pop(order.price)
 
@@ -429,8 +450,7 @@ class AXOB():
             self.AskWeightSize -= order.qty
             self.AskWeightValue -= order.price * order.qty
 
-        if cancel.tradingPhase != axsbe_base.TPM.OpenCall and cancel.tradingPhase != axsbe_base.TPM.CloseCall:
-            self.genSnap()   #缓存单成交完
+        self.genSnap()   #缓存单成交完
         
 
     def onSnap(self, snap:axsbe_snap_stock):
@@ -469,6 +489,12 @@ class AXOB():
                     self.market_snaps.append(snap) #缓存交易所快照
                     self.WARN(f'market snap #{self.msg_nb} not found in history rebuilt snaps!')
 
+        # if self.msg_nb>=2646:
+        #     self.DBG('breakpoint')
+        #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+        #         self.DBG(f'ask\t{p}\t{l.qty}')
+        #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+        #         self.DBG(f'bid\t{p}\t{l.qty}')
 
 
     def genSnap(self):
@@ -515,6 +541,12 @@ class AXOB():
         show_level_nb:  展示的价格档数
         show_potential: 在无法撮合时展示出双方价格档
         '''
+        # if self.msg_nb>=2655:
+        #     self.DBG('breakpoint2')
+        #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+        #         self.DBG(f'ask\t{p}\t{l.qty}')
+        #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+        #         self.DBG(f'bid\t{p}\t{l.qty}')
         #1. 查找 最低卖出价格档、最高买入价格档
         _bid_max_level_price = self.bid_max_level_price
         _bid_max_level_qty = self.bid_max_level_qty
@@ -540,6 +572,9 @@ class AXOB():
         
         #4. 撮合循环：
         while _bid_max_level_qty!=0 and _ask_min_level_qty!=0:  # 双方均有最优委托
+            # if _ask_min_level_price==23539 or _bid_max_level_price==23539:
+            #     self.DBG('breakpoint3')
+
             if _bid_max_level_price >= _ask_min_level_price:    # 双方最优价有交叉
                 if bid_Qty == 0:
                     bid_Qty = _bid_max_level_qty
