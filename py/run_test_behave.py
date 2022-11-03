@@ -18,7 +18,7 @@ if __name__== '__main__':
     fh.setLevel(logging.DEBUG)
 
     ch = logging.StreamHandler()
-    ch.setLevel(logging.ERROR)
+    ch.setLevel(logging.WARNING)
 
     # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
@@ -29,4 +29,4 @@ if __name__== '__main__':
     logger.addHandler(ch)
 
     logger.info('starting TEST_axob_openCall')
-    behave.TEST_axob_openCall(20220422, 1, 3500)
+    behave.TEST_axob_openCall(20220422, 1, 13500)

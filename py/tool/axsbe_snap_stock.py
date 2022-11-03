@@ -142,11 +142,13 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             '''TODO:SSE'''
 
     def is_same(self, another):
+        if not isinstance(another, axsbe_snap_stock):
+            return False
         '''用于比较模拟撮合和历史数据是否一致'''
         MsgType_isSame = self.MsgType == another.MsgType
         SecurityIDSource_isSame = self.SecurityIDSource == another.SecurityIDSource
         ChannelNo_isSame = self.ChannelNo == another.ChannelNo
-        # TradingPhaseCode_isSame = self.TradingPhaseCode == another.TradingPhaseCode   ## TODO:AXOB能构造出TPCode吗？
+        TradingPhaseCode_isSame = self.TradingPhaseCode == another.TradingPhaseCode   ## AXOB能构造出TPCode吗
         SecurityID_isSame = self.SecurityID == another.SecurityID
         NumTrades_isSame = self.NumTrades == another.NumTrades
         TotalVolumeTrade_isSame = self.TotalVolumeTrade == another.TotalVolumeTrade
@@ -177,6 +179,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
         if  MsgType_isSame \
             and SecurityIDSource_isSame \
             and ChannelNo_isSame \
+            and TradingPhaseCode_isSame \
             and PrevClosePx_isSame \
             and SecurityID_isSame \
             and NumTrades_isSame \

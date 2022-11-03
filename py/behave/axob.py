@@ -212,7 +212,8 @@ class AXOB():
 
         ## 调试数据，仅用于测试算法是否正确：
         self.msg_nb = 0
-        self.lob_snaps = []
+        self.rebuilt_snaps = []
+        self.market_snaps = []
         self.last_snap = None
 
         ## 日志
@@ -256,7 +257,7 @@ class AXOB():
         跳转到处理限价单或处理撤单
         TODO: SSE的撤单也在order，跳转到onCancel [low priority]
         '''
-        self.DBG(f'onOrder:{order}')
+        self.DBG(f'msg#{self.msg_nb} onOrder:{order}')
         if self.SecurityIDSource == SecurityIDSource_SZSE:
             _order = ob_order(order, self.instrument_type)
         elif self.SecurityIDSource == SecurityIDSource_SSE:
@@ -360,7 +361,7 @@ class AXOB():
         逐笔成交入口
         跳转到处理成交或处理撤单
         '''
-        self.DBG(f'onExec:{exec}')
+        self.DBG(f'msg#{self.msg_nb} onExec:{exec}')
         if exec.ExecType_str=='成交' or self.SecurityIDSource==SecurityIDSource_SSE:
             self.onTrade(exec)
         else:
@@ -433,7 +434,7 @@ class AXOB():
         
 
     def onSnap(self, snap:axsbe_snap_stock):
-        self.DBG(f'onSnap:{snap}')
+        self.DBG(f'msg#{self.msg_nb} onSnap:{snap}')
         if snap.TradingPhaseSecurity != axsbe_base.TPI.Normal:
             self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}')
             return
@@ -444,12 +445,30 @@ class AXOB():
         self.UpLimitPx = snap.UpLimitPx
         self.DnLimitPx = snap.DnLimitPx
 
-        ## 检查重建算法
+        ## 检查重建算法，仅用于测试算法是否正确：
+        snap.ApplSeqNum = self.msg_nb
         if snap.TradingPhaseMarket<axsbe_base.TPM.OpenCall:
             pass
         else:
             # 在重建的快照中检索是否有相同的快照
-            pass
+            if self.last_snap and snap.is_same(self.last_snap) and self._chkSnapTimestamp(snap.TransactTime, self.last_snap.TransactTime):
+                self.INFO(f'snap #{self.msg_nb} matches last genSnap #{self.last_snap.ApplSeqNum}')
+                #这里不丢弃last_snap，因为可能无逐笔数据而导致快照不更新
+            else:
+                matched = False
+                for match_idx in range(len(self.rebuilt_snaps)):
+                    gen = self.rebuilt_snaps[match_idx]
+                    if snap.is_same(gen) and self._chkSnapTimestamp(snap.TransactTime, gen.TransactTime):
+                        self.INFO(f'market snap #{self.msg_nb} matches history rebuilt snap #{gen.ApplSeqNum}')
+                        matched = True
+                        break
+                
+                if matched: 
+                    self.rebuilt_snaps = self.rebuilt_snaps[match_idx+1:]   #丢弃已匹配的
+                else:
+                    self.market_snaps.append(snap) #缓存交易所快照
+                    self.WARN(f'market snap #{self.msg_nb} not found in history rebuilt snaps!')
+
 
 
     def genSnap(self):
@@ -472,7 +491,24 @@ class AXOB():
             self.DBG(snap)
             snap.ApplSeqNum = self.msg_nb # 用于调试
             self.last_snap = snap
-            self.lob_snaps.append(snap)
+
+            #在收到的交易所快照中查找是否有一样的
+            matched = False
+            for match_idx in range(len(self.market_snaps)):
+                rcv = self.market_snaps[match_idx]
+                if snap.is_same(rcv) and self._chkSnapTimestamp(rcv.TransactTime, snap.TransactTime):
+                    self.WARN(f'rebuilt snap #{self.msg_nb} matches history market snap #{rcv.ApplSeqNum}') # 重建快照在市场快照之后，属于警告
+                    matched = True
+                    break
+            
+            if matched: 
+                self.market_snaps.pop(match_idx)    #丢弃已匹配的
+            else:
+                self.rebuilt_snaps.append(snap)     #无历史的才缓存，有历史的只放进last_snap
+
+
+                
+
 
     def genCallSnap(self, show_level_nb=10, show_potential=False):
         '''
@@ -615,13 +651,13 @@ class AXOB():
         # 本地维护参数
         snap_call.ask = snap_ask_levels
         snap_call.bid = snap_bid_levels
-        snap_call.NumTrades = self.NumTrades
-        snap_call.TotalVolumeTrade = self.TotalVolumeTrade
-        snap_call.TotalValueTrade = self.TotalValueTrade
-        snap_call.LastPx = self.LastPx
-        snap_call.HighPx = self.HighPx
-        snap_call.LowPx = self.LowPx
-        snap_call.OpenPx = self.OpenPx
+        snap_call.NumTrades = 0#self.NumTrades
+        snap_call.TotalVolumeTrade = 0#self.TotalVolumeTrade
+        snap_call.TotalValueTrade = 0#self.TotalValueTrade
+        snap_call.LastPx = 0#self.LastPx
+        snap_call.HighPx = 0#self.HighPx
+        snap_call.LowPx = 0#self.LowPx
+        snap_call.OpenPx = 0#self.OpenPx
         
 
         # 本地维护参数
@@ -705,3 +741,16 @@ class AXOB():
                 snap_bid_levels[nb] = price_level(0,0)
 
         return snap_ask_levels, snap_bid_levels
+
+    def _chkSnapTimestamp(self, se_timestamp, my_timestamp):
+        '''
+        检查交易所快照和本地重建快照的时戳是否符合：
+        深交所本地时戳的秒应小于等交易所快照时戳
+        '''
+
+        if self.SecurityIDSource==SecurityIDSource_SZSE:
+            return my_timestamp//1000 <= se_timestamp//1000
+        elif self.SecurityIDSource==SecurityIDSource_SSE:
+            return False    #TODO: [Low Priority]
+        else:
+            return False
