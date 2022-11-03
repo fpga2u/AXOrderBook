@@ -163,9 +163,10 @@ class ob_cancel():
 
 
 class level_node():
-    def __init__(self, price, qty):
+    def __init__(self, price, qty, ts):
         self.price = price
         self.qty = qty
+        self.ts = ts
 
 
 class AXOB():
@@ -230,7 +231,7 @@ class AXOB():
     def onMsg(self, msg):
         '''处理总入口'''
         # if self.msg_nb>=2646:
-        #     self.DBG('breakpoint')
+        #     self.DBG('breakpoint1')
         #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
         #         self.DBG(f'ask\t{p}\t{l.qty}')
         #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
@@ -342,10 +343,11 @@ class AXOB():
             # self.bidPriceCacheHandler.addQty(order.price, order.qty)
             if order.price in self.bid_level_tree:
                 self.bid_level_tree[order.price].qty += order.qty
+                self.bid_level_tree[order.price].ts = self.msg_nb
                 if order.price==self.bid_max_level_price:
                     self.bid_max_level_qty += order.qty
             else:
-                node = level_node(order.price, order.qty)
+                node = level_node(order.price, order.qty, self.msg_nb)
                 self.bid_level_tree[order.price] = node
 
                 if self.bid_max_level_price==0 or node.price > self.bid_max_level_price:  #买方出现更高价格
@@ -358,10 +360,11 @@ class AXOB():
             # self.askPriceCacheHandler.addQty(order.price, order.qty)
             if order.price in self.ask_level_tree:
                 self.ask_level_tree[order.price].qty += order.qty
+                self.ask_level_tree[order.price].ts = self.msg_nb
                 if order.price==self.ask_min_level_price:
                     self.ask_min_level_qty += order.qty
             else:
-                node = level_node(order.price, order.qty)
+                node = level_node(order.price, order.qty, self.msg_nb)
                 self.ask_level_tree[order.price] = node
 
                 if self.ask_min_level_price==0 or node.price < self.ask_min_level_price: #卖方出现更低价格
@@ -489,8 +492,8 @@ class AXOB():
                     self.market_snaps.append(snap) #缓存交易所快照
                     self.WARN(f'market snap #{self.msg_nb} not found in history rebuilt snaps!')
 
-        # if self.msg_nb>=2646:
-        #     self.DBG('breakpoint')
+        # if self.msg_nb==2900:
+        #     self.DBG('breakpoint0')
         #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
         #         self.DBG(f'ask\t{p}\t{l.qty}')
         #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
@@ -589,9 +592,25 @@ class AXOB():
                     ask_Qty -= bid_Qty
                     bid_Qty = 0
 
-                if bid_Qty == 0 and ask_Qty == 0:   # 恰好双方数量相等。 TODO: 不需要？ [High priority]
-                    temp_price = _bid_max_level_price + _ask_min_level_price
-                    price = (temp_price >> 1) + (temp_price%2) # 四舍五入
+                if bid_Qty == 0 and ask_Qty == 0:   # 恰好双方数量相等。 
+                    # TODO:目前在(20220425, 2594)上测，几种算法都有匹配不上的情况 [High Priority]
+
+                    # #NG=6:2762,2880,2900,3200,3288,3620
+                    # temp_price = _bid_max_level_price + _ask_min_level_price
+                    # price = (temp_price >> 1) + (temp_price%2) # 四舍五入
+
+                    # # use first ts:NG=5(2880,2900,3200,3288,4028); 
+                    # # update ts:NG=4(2900,3200,3288,4028)
+                    # ts_bid = self.bid_level_tree[_bid_max_level_price].ts
+                    # ts_ask = self.ask_level_tree[_ask_min_level_price].ts
+                    # if ts_bid<ts_ask:
+                    #     price = _bid_max_level_price
+                    # else:
+                    #     price = _ask_min_level_price
+
+                    # price = _bid_max_level_price    #NG=5:2762,2880,2900,3200,3288
+                    price = _ask_min_level_price    #NG=3:2900,3620,4028
+
 
                 if bid_Qty == 0:
                     if ask_Qty != 0:
