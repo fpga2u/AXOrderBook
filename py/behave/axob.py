@@ -229,6 +229,7 @@ class AXOB():
 
     def onMsg(self, msg):
         '''处理总入口'''
+
         if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe) or isinstance(msg, axsbe_snap_stock):
             if msg.SecurityID!=self.SecurityID:
                 return
@@ -243,6 +244,9 @@ class AXOB():
             elif isinstance(msg, axsbe_exe):
                 self.onExec(msg)
             else:# isinstance(msg, axsbe_snap_stock):
+                if msg.TradingPhaseSecurity != axsbe_base.TPI.Normal:
+                    self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(msg.TradingPhaseSecurity)}')
+                    return
                 self.onSnap(msg)
 
             self.last_msg_timestamp = msg.TransactTime
@@ -631,7 +635,7 @@ class AXOB():
 
         snap_call.TransactTime = self.current_msg_timestamp
 
-        #TODO: encode TradingPhaseCode
+        snap_call.update_TradingPhaseCode(self.TradingPhaseMarket, axsbe_base.TPI.Normal)
 
         return snap_call
         

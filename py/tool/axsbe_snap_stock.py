@@ -303,6 +303,29 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
         else:
             return TPI.Unknown
 
+    def update_TradingPhaseCode(self, tpm:TPM, tpi:TPI):
+        if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
+            if tpm==TPM.Starting: Code0=0
+            elif tpm==TPM.OpenCall: Code0=1
+            elif tpm==TPM.AMTrading or tpm==TPM.PMTrading: Code0=2
+            elif tpm==TPM.PreTradingBreaking or tpm==TPM.Breaking or tpm==TPM.AfterCloseCallBreaking: Code0=3
+            elif tpm==TPM.CloseCall: Code0=4
+            elif tpm==TPM.Ending: Code0=5
+            elif tpm==TPM.HangingUp: Code0=6
+            elif tpm==TPM.AfterCloseTrading: Code0=7
+            elif tpm==TPM.VolatilityBreaking: Code0=8
+            else:
+                Code0 = 0xf
+                
+            if tpi==TPI.Normal: Code1 = 0
+            elif tpi==TPI.NoTrade: Code1 = 1
+            else:
+                Code1 = 0xf
+
+            self.TradingPhaseCode = (Code1<<4) + Code0
+        else:
+            '''TODO:SSE'''
+
     @property
     def TradingPhase_str(self):
         return TPM.str(self.TradingPhaseMarket) + ";" + TPI.str(self.TradingPhaseSecurity)
