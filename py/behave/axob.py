@@ -340,6 +340,8 @@ class AXOB():
             # self.bidPriceCacheHandler.addQty(order.price, order.qty)
             if order.price in self.bid_level_tree:
                 self.bid_level_tree[order.price].qty += order.qty
+                if order.price==self.bid_max_level_price:
+                    self.bid_max_level_qty += order.qty
             else:
                 node = level_node(order.price, order.qty)
                 self.bid_level_tree[order.price] = node
@@ -354,6 +356,8 @@ class AXOB():
             # self.askPriceCacheHandler.addQty(order.price, order.qty)
             if order.price in self.ask_level_tree:
                 self.ask_level_tree[order.price].qty += order.qty
+                if order.price==self.ask_min_level_price:
+                    self.ask_min_level_qty += order.qty
             else:
                 node = level_node(order.price, order.qty)
                 self.ask_level_tree[order.price] = node
@@ -469,7 +473,7 @@ class AXOB():
         # 连续竞价快照
         return self.genTradingSnap()
 
-    def genCallSnap(self, show_level_nb=10, show_potential=False):
+    def genCallSnap(self, show_level_nb=10, show_potential=True):
         '''
         show_level_nb:  展示的价格档数
         show_potential: 在无法撮合时展示出双方价格档
@@ -670,7 +674,7 @@ class AXOB():
         _ask_min_level_price = self.ask_min_level_price
         _ask_min_level_qty = self.ask_min_level_qty
 
-        for nb in range(nb):
+        for nb in range(level_nb):
             if _ask_min_level_qty!=0:
                 snap_ask_levels[nb] = price_level(self._fmtPrice_inter2snap(_ask_min_level_price), _ask_min_level_qty)
                 # snap_ask_levels[nb].addQ(ask_min_level.orderList, order_nb) #TODO: order_link [Mid priority]

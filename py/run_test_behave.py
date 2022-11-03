@@ -29,4 +29,4 @@ if __name__== '__main__':
     logger.addHandler(ch)
 
     logger.info('starting TEST_axob_openCall')
-    behave.TEST_axob_openCall(20220422, 1, 2500)
+    behave.TEST_axob_openCall(20220422, 1, 3500)
