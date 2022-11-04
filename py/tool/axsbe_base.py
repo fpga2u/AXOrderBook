@@ -14,6 +14,16 @@ MsgType_exe   = 191
 MsgType_order = 192
 MsgType_snap  = 111
 
+    
+class INSTRUMENT_TYPE(Enum): # 3bit
+    STOCK  = 0   #股票
+    FUND   = 1   #基金
+    KZZ    = 2   #可转债
+    OPTION = 3   #期权
+    BOND   = 4   #债券
+    NHG    = 5   #逆回购
+
+    UNKNOWN = -1
 
 # ## TradingPhase 交易阶段代码 Code0
 # TP_Starting = 'S'  #启动（开市前）

@@ -3,8 +3,9 @@
 import tool.axsbe_base as axsbe_base
 from tool.axsbe_exe import axsbe_exe
 from tool.axsbe_order import axsbe_order
+from tool.axsbe_base import INSTRUMENT_TYPE, SecurityIDSource_SSE, SecurityIDSource_SZSE
 from tool.axsbe_snap_stock import axsbe_snap_stock, price_level
-
+from enum import Enum
 
 # CHNL_STOCK = 0
 # CHNL_FUND = 1
@@ -36,7 +37,7 @@ from tool.axsbe_snap_stock import axsbe_snap_stock, price_level
 #         '''TODO:'''
 #         pass
 #     return None
-    
+
 #### 原始数据精度 ####
 PRICE_SZSE_INCR_PRECISION = 10000 # 股票价格在逐笔消息中的精度：深圳4位小数
 PRICE_SZSE_SNAP_PRECISION = 1000000 # 股票价格在快照消息中的精度：深圳6位小数

@@ -183,26 +183,36 @@ def TEST_msg_text(source_log, securityID, read_nb=0, print_nb = 100):
 
 
 @timeit
-def TEST_print_securityID(source_log, read_nb=0):
+def TEST_print_securityID(source_log, read_nb=0, instrument_type=INSTRUMENT_TYPE.UNKNOWN):
     '''
     统计文件内的证券代码
+    instrument_type 统计对象，目前只支持股票或全部；当为股票时只能过滤深圳的股票
     '''
     if not os.path.exists(source_log):
         raise f"{source_log} not exists"
 
-    with open("log/TEST_print_securityID.log", "w+") as f:
+    with open("log/TEST_print_securityID.log", "w") as f:
         f.write(f'{source_log}\n')
         f.flush()
 
         securityIDs = {}
 
-        pn = 0
         rn = 0
         for msg in axsbe_file(source_log):
             rn += 1
             if read_nb>0:
                 if rn >= read_nb:
                     break
+
+            # 当要求只统计股票，且是深圳代码时，去掉非股票的
+            if instrument_type==INSTRUMENT_TYPE.STOCK:
+                if msg.SecurityIDSource==SecurityIDSource_SZSE:
+                    if msg.ChannelNo>=1010 and msg.ChannelNo<=1019: #股票快照
+                        pass
+                    elif msg.ChannelNo>=2010 and msg.ChannelNo<=2019: #股票逐笔
+                        pass
+                    else:
+                        continue #去掉非股票
 
             if msg.SecurityID not in securityIDs:
                 securityIDs[msg.SecurityID] = {
@@ -219,6 +229,71 @@ def TEST_print_securityID(source_log, read_nb=0):
                 securityIDs[msg.SecurityID]['inc_ts'] = msg.TransactTime
 
         f.write(f"{json.dumps(securityIDs, indent=4)}\n")
+
+
+        # 逐笔最少和最多的前100只个股
+        securityIDs = {k:v for k,v in securityIDs.items() if v['inc']!=0} #剔除0逐笔
+        u = sorted(securityIDs.items(),key=lambda x:x[1]['inc'])
+
+        min_inc = [x[0] for x in u[:100]]
+        max_inc = [x[0] for x in u[-100:]]
+
+        f.write(f'min_inc={min_inc}\n')
+        f.write(f'max_inc={max_inc}\n')
+
+    print("TEST_print_securityID done")
+    return
+
+
+@timeit
+def TEST_ApplSeqNum(source_log, read_nb=0):
+    '''
+    统计文件内的证券代码
+    '''
+    if not os.path.exists(source_log):
+        raise f"{source_log} not exists"
+
+    with open("log/TEST_ApplSeqNum.log", "w") as f:
+        f.write(f'{source_log}\n')
+        f.flush()
+
+        channleId = {}
+
+        rn = 0
+        for msg in axsbe_file(source_log):
+            rn += 1
+            if read_nb>0:
+                if rn >= read_nb:
+                    break
+
+            if isinstance(msg, axsbe_exe) or isinstance(msg, axsbe_order):
+                if msg.ChannelNo not in channleId:
+                    channleId[msg.ChannelNo] = {
+                        'min':0,
+                        'max':0,
+                        'last':0,
+                        'miss':[],
+                        'reorder':[],
+                        'dunpliacte':0,
+                    }
+                s = msg.ApplSeqNum
+                if channleId[msg.ChannelNo]['min']==0:
+                    channleId[msg.ChannelNo]['min'] = s
+                    channleId[msg.ChannelNo]['max'] = s
+                    channleId[msg.ChannelNo]['last'] = s
+                else:
+                    channleId[msg.ChannelNo]['min'] = min(channleId[msg.ChannelNo]['min'], s)
+                    channleId[msg.ChannelNo]['max'] = max(channleId[msg.ChannelNo]['max'], s)
+                    if s in channleId[msg.ChannelNo]['miss']:
+                        channleId[msg.ChannelNo]['miss'].remove(s)
+                        channleId[msg.ChannelNo]['reorder'].append(s)
+                    if s != channleId[msg.ChannelNo]['last']+1:
+                        if s==channleId[msg.ChannelNo]['last']:
+                            channleId[msg.ChannelNo]['dunpliacte'] += 1
+                        channleId[msg.ChannelNo]['miss'].extend(range(channleId[msg.ChannelNo]['last']+1, s))
+                    channleId[msg.ChannelNo]['last'] = s
+
+        f.write(f"{json.dumps(channleId, indent=4)}\n")
 
     print("TEST_print_securityID done")
     return
