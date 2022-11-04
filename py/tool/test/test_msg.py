@@ -3,6 +3,7 @@
 from tool.test_util import *
 from tool.msg_util import *
 import os
+import json
 
 def TEST_msg_byte_stream():
     ## test: byte_stream
@@ -151,7 +152,6 @@ def TEST_msg_ms_filt(source_log, securityID, read_nb=0, print_nb = 100):
 def TEST_msg_text(source_log, securityID, read_nb=0, print_nb = 100):
     '''
     打印消息文本，指定证券代码
-    
     '''
     if not os.path.exists(source_log):
         raise f"{source_log} not exists"
@@ -180,3 +180,46 @@ def TEST_msg_text(source_log, securityID, read_nb=0, print_nb = 100):
     f.close()
     print("TEST_msg_text done")
     return
+
+
+@timeit
+def TEST_print_securityID(source_log, read_nb=0):
+    '''
+    统计文件内的证券代码
+    '''
+    if not os.path.exists(source_log):
+        raise f"{source_log} not exists"
+
+    with open("log/TEST_print_securityID.log", "w+") as f:
+        f.write(f'{source_log}\n')
+        f.flush()
+
+        securityIDs = {}
+
+        pn = 0
+        rn = 0
+        for msg in axsbe_file(source_log):
+            rn += 1
+            if read_nb>0:
+                if rn >= read_nb:
+                    break
+
+            if msg.SecurityID not in securityIDs:
+                securityIDs[msg.SecurityID] = {
+                    'snap':0,
+                    'snap_ts':0,
+                    'inc':0,
+                    'inc_ts':0,
+                }
+            if isinstance(msg, axsbe_snap_stock):
+                securityIDs[msg.SecurityID]['snap']+=1
+                securityIDs[msg.SecurityID]['snap_ts'] = msg.TransactTime
+            elif isinstance(msg, axsbe_exe) or isinstance(msg, axsbe_order):
+                securityIDs[msg.SecurityID]['inc']+=1
+                securityIDs[msg.SecurityID]['inc_ts'] = msg.TransactTime
+
+        f.write(f"{json.dumps(securityIDs, indent=4)}\n")
+
+    print("TEST_print_securityID done")
+    return
+

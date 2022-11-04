@@ -544,12 +544,14 @@ class AXOB():
         show_level_nb:  展示的价格档数
         show_potential: 在无法撮合时展示出双方价格档
         '''
-        # if self.msg_nb>=2655:
+        # if self.msg_nb==1268 or self.msg_nb==1364:
         #     self.DBG('breakpoint2')
         #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
         #         self.DBG(f'ask\t{p}\t{l.qty}')
         #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
         #         self.DBG(f'bid\t{p}\t{l.qty}')
+
+
         #1. 查找 最低卖出价格档、最高买入价格档
         _bid_max_level_price = self.bid_max_level_price
         _bid_max_level_qty = self.bid_max_level_qty
@@ -592,25 +594,28 @@ class AXOB():
                     ask_Qty -= bid_Qty
                     bid_Qty = 0
 
+                #dis:NG=5(2880,2900,3200,3620,4028)
                 if bid_Qty == 0 and ask_Qty == 0:   # 恰好双方数量相等。 
-                    # TODO:目前在(20220425, 2594)上测，几种算法都有匹配不上的情况 [High Priority]
+                    # # TODO:目前在(20220425, 2594)上测，几种算法都有匹配不上的情况 [High Priority]
 
-                    # #NG=6:2762,2880,2900,3200,3288,3620
                     # temp_price = _bid_max_level_price + _ask_min_level_price
-                    # price = (temp_price >> 1) + (temp_price%2) # 四舍五入
+                    # # #NG=6:2762,2880,2900,3200,3288,3620
+                    # # price = (temp_price >> 1) + (temp_price%2) # 四舍五入
+                    # price = (temp_price >> 1) # 去尾
 
-                    # # use first ts:NG=5(2880,2900,3200,3288,4028); 
-                    # # update ts:NG=4(2900,3200,3288,4028)
-                    # ts_bid = self.bid_level_tree[_bid_max_level_price].ts
-                    # ts_ask = self.ask_level_tree[_ask_min_level_price].ts
-                    # if ts_bid<ts_ask:
-                    #     price = _bid_max_level_price
-                    # else:
-                    #     price = _ask_min_level_price
+                    # # # use first ts:NG=5(2880,2900,3200,3288,4028); 
+                    # # # update ts:NG=4(2900,3200,3288,4028)
+                    # # ts_bid = self.bid_level_tree[_bid_max_level_price].ts
+                    # # ts_ask = self.ask_level_tree[_ask_min_level_price].ts
+                    # # if ts_bid<ts_ask:
+                    # #     price = _bid_max_level_price
+                    # # else:
+                    # #     price = _ask_min_level_price
 
-                    # price = _bid_max_level_price    #NG=5:2762,2880,2900,3200,3288
-                    price = _ask_min_level_price    #NG=3:2900,3620,4028
+                    # # price = _bid_max_level_price    #NG=5:2762,2880,2900,3200,3288
+                    # # price = _ask_min_level_price    #NG=3:2900,3620,4028
 
+                    price = _bid_max_level_price
 
                 if bid_Qty == 0:
                     if ask_Qty != 0:
@@ -619,6 +624,8 @@ class AXOB():
                     _bid_max_level_qty = 0
                     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                         if p<_bid_max_level_price:
+                            # if price<=p:
+                            #     price = _bid_max_level_price
                             _bid_max_level_price = p
                             _bid_max_level_qty = l.qty
                             break
@@ -630,6 +637,8 @@ class AXOB():
                     _ask_min_level_qty = 0
                     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                         if p>_ask_min_level_price:
+                            if price>=p:
+                                price = p-1
                             _ask_min_level_price = p
                             _ask_min_level_qty = l.qty
                             break
@@ -639,7 +648,14 @@ class AXOB():
                     # TODO: 如此计算价格是否正确？ [High priority]
                     temp_price = _bid_max_level_price + _ask_min_level_price
                     price = (temp_price >> 1) + (temp_price%2) # 四舍五入
+                # else:
+                #     # TODO: 是否在循环之外修正？
+                #     if _ask_min_level_qty and price>=_ask_min_level_price:
+                #         price = _ask_min_level_price-1
+                #     elif _bid_max_level_qty and price<=_bid_max_level_price:
+                #         price = _bid_max_level_price-1
                 break
+
 
         # 填充成交信息
         self.TotalVolumeTrade = volumeTrade
