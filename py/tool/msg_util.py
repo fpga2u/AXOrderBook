@@ -40,7 +40,8 @@ from enum import Enum
 
 #### 原始数据精度 ####
 PRICE_SZSE_INCR_PRECISION = 10000 # 股票价格在逐笔消息中的精度：深圳4位小数
-PRICE_SZSE_SNAP_PRECISION = 1000000 # 股票价格在快照消息中的精度：深圳6位小数
+PRICE_SZSE_SNAP_PRECISION = 1000000 # 股票价格在快照消息中的精度：深圳6位小数(除PreClose外)，4位小数(PreClose)
+PRICE_SZSE_SNAP_PRECLOSE_PRECISION = 10000
 QTY_SZSE_PRECISION   = 100   # 数量精度：深圳2位小数
 TOTALVALUETRADE_SZSE_PRECISION = 10000 # 深圳4位
 

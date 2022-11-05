@@ -9,7 +9,7 @@ def timeit(f):
         ts = time()
         result = f(*args, **kw)
         te = time()
-        print('func:%r args:[%r, %r] took: %2.4f sec' % \
-          (f.__name__, args, kw, te-ts))
+        print('%2.4f sec used by func:%r args:[%r, %r]' % \
+          (te-ts, f.__name__, args, kw))
         return result
     return wrap

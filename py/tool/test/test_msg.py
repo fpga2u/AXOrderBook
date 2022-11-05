@@ -235,9 +235,11 @@ def TEST_print_securityID(source_log, read_nb=0, instrument_type=INSTRUMENT_TYPE
         securityIDs = {k:v for k,v in securityIDs.items() if v['inc']!=0} #剔除0逐笔
         u = sorted(securityIDs.items(),key=lambda x:x[1]['inc'])
 
-        min_inc = [x[0] for x in u[:100]]
-        max_inc = [x[0] for x in u[-100:]]
+        all_inc = [x[0] for x in u]
+        min_inc = all_inc[:100]
+        max_inc = all_inc[-100:]
 
+        f.write(f'all_inc={all_inc}\n')
         f.write(f'min_inc={min_inc}\n')
         f.write(f'max_inc={max_inc}\n')
 

@@ -20,15 +20,22 @@ def TEST_axob_openCall(date, instrument:int, n_max=500, SecurityIDSource=Securit
     axob = AXOB(instrument, SecurityIDSource, INSTRUMENT_TYPE.STOCK)
 
     n = 0
+    boc = 0
     for msg in axsbe_file(md_file):
+        if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
+            boc = 1
+            print('openCall start')
+
         if msg.TradingPhaseMarket>TPM.OpenCall:
             print(f'openCall over, n={n}')
             break
         axob.onMsg(msg)
         n += 1
-        if n>=n_max:
+        if n_max>0 and n>=n_max:
             print(f'nb over, n={n}')
             break
+        
+    axob.are_you_ok()
 
     print("TEST_msg_ms done")
     return
@@ -44,7 +51,11 @@ def TEST_axob_openCall_bat(source_file, instrument_list:list, n_max=500, Securit
         axobs[x] = AXOB(x, SecurityIDSource, INSTRUMENT_TYPE.STOCK)
 
     n = 0 #只计算在 instrument_list 内的消息
+    boc = 0
     for msg in axsbe_file(source_file):
+        if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
+            boc = 1
+            print('openCall start')
         if msg.TradingPhaseMarket>TPM.OpenCall:
             print(f'openCall over, n={n}')
             break
