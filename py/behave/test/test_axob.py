@@ -5,13 +5,15 @@ from tool.test_util import *
 from tool.msg_util import *
 from behave.axob import AXOB
 import os
+import pickle
 
 def TEST_axob_SL(date, instrument:int, 
                 SecurityIDSource=SecurityIDSource_SZSE, 
                 instrument_type=INSTRUMENT_TYPE.STOCK
                 ):
     '''TODO: axob save/load'''
-    n_max=500
+    n_max=31500
+    n_save = 800
 
     md_file = f'data/{date}/AX_sbe_szse_{instrument:06d}.log'
     if not os.path.exists(md_file):
@@ -19,7 +21,6 @@ def TEST_axob_SL(date, instrument:int,
 
     axob_save = AXOB(instrument, SecurityIDSource, instrument_type)
     save_data = None
-    axob_load = AXOB(instrument, SecurityIDSource, instrument_type)
 
     n = 0
     boc = 0
@@ -33,34 +34,60 @@ def TEST_axob_SL(date, instrument:int,
             break
         axob_save.onMsg(msg)
         n += 1
-        if n==n_max//2:
+        if n==n_save:
             save_data = axob_save.save()
             print(f'save at {n}')
         if n>=n_max:
             print(f'nb over, n={n} saved')
             break
-        
     axob_save.are_you_ok()
 
-    axob_load.load(save_data)
+    pickle.dump(save_data,open("log/test.pkl",'wb'))
+    load_data = pickle.load(open("log/test.pkl",'rb'))
+
+    axob_load = AXOB(instrument, SecurityIDSource, instrument_type)
+    axob_load.load(load_data)
     n = 0
     for msg in axsbe_file(md_file):
         if msg.TradingPhaseMarket>TPM.OpenCall:
             print(f'openCall over, n={n}')
             break
         n += 1
-        if n==n_max//2:
+        if n==n_save:
             print(f'load at {n}')
-        if n>n_max//2:
+        if n>n_save:
             axob_load.onMsg(msg)
         if n>=n_max:
             print(f'nb over, n={n} saved')
             break
+    axob_load.are_you_ok()
 
-    f_save = axob_save.last_snap
-    f_load = axob_load.last_snap
+    last_snap_save = axob_save.last_snap
+    last_snap_load = axob_load.last_snap
+    assert str(last_snap_save)==str(last_snap_load)
 
-    assert str(f_save)==str(f_load)
+    print(f'axob_save.rebuilt_snaps={len(axob_save.rebuilt_snaps)}; axob_load.rebuilt_snaps={len(axob_load.rebuilt_snaps)}')
+    assert len(axob_save.rebuilt_snaps)==len(axob_load.rebuilt_snaps)
+    print(f'axob_save.market_snaps={len(axob_save.market_snaps)}; axob_load.market_snaps={len(axob_load.market_snaps)}')
+    assert len(axob_save.market_snaps)==len(axob_load.market_snaps)
+    print(f'axob_save.rebuilt_snaps={len(axob_save.rebuilt_snaps)}; axob_load.rebuilt_snaps={len(axob_load.rebuilt_snaps)}')
+    assert len(axob_save.order_map)==len(axob_load.order_map)
+    assert len(axob_save.bid_level_tree)==len(axob_load.bid_level_tree)
+    assert len(axob_save.ask_level_tree)==len(axob_load.ask_level_tree)
+
+    f_data_save = axob_save.save()
+    pickle.dump(f_data_save,open("log/f_data_save.pkl",'wb'))
+
+    f_data_load = axob_load.save()
+    pickle.dump(f_data_load,open("log/f_data_load.pkl",'wb'))
+    #.pkl should be binary-same.
+
+    # with open('log/f_data_save.json', 'w') as f: # not real json
+    #     f.write(str(f_data_save))
+
+    # with open('log/f_data_load.json', 'w') as f: # not real json
+    #     f.write(str(f_data_load))
+    assert str(f_data_save)==str(f_data_load)
 
     print("TEST_axob_SL done")
     return

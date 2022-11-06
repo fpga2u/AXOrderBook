@@ -576,20 +576,21 @@ class AXOB():
         self.DnLimitPx = snap.DnLimitPx
 
         ## 检查重建算法，仅用于测试算法是否正确：
-        snap.ApplSeqNum = self.msg_nb
+        snap._seq = self.msg_nb
         if snap.TradingPhaseMarket<axsbe_base.TPM.OpenCall:
             pass
         else:
             # 在重建的快照中检索是否有相同的快照
             if self.last_snap and snap.is_same(self.last_snap) and self._chkSnapTimestamp(snap.TransactTime, self.last_snap.TransactTime):
-                self.INFO(f'snap #{self.msg_nb} matches last genSnap #{self.last_snap.ApplSeqNum}')
+                self.INFO(f'snap #{self.msg_nb} matches last genSnap #{self.last_snap._seq}')
+                self.rebuilt_snaps = []
                 #这里不丢弃last_snap，因为可能无逐笔数据而导致快照不更新
             else:
                 matched = False
                 for match_idx in range(len(self.rebuilt_snaps)):
                     gen = self.rebuilt_snaps[match_idx]
                     if snap.is_same(gen) and self._chkSnapTimestamp(snap.TransactTime, gen.TransactTime):
-                        self.INFO(f'market snap #{self.msg_nb} matches history rebuilt snap #{gen.ApplSeqNum}')
+                        self.INFO(f'market snap #{self.msg_nb} matches history rebuilt snap #{gen._seq}')
                         matched = True
                         break
                 
@@ -627,7 +628,7 @@ class AXOB():
         ## 调试数据，仅用于测试算法是否正确：
         if snap is not None:
             self.DBG(snap)
-            snap.ApplSeqNum = self.msg_nb # 用于调试
+            snap._seq = self.msg_nb # 用于调试
             self.last_snap = snap
 
             #在收到的交易所快照中查找是否有一样的
@@ -635,7 +636,7 @@ class AXOB():
             for match_idx in range(len(self.market_snaps)):
                 rcv = self.market_snaps[match_idx]
                 if snap.is_same(rcv) and self._chkSnapTimestamp(rcv.TransactTime, snap.TransactTime):
-                    self.WARN(f'rebuilt snap #{self.msg_nb} matches history market snap #{rcv.ApplSeqNum}') # 重建快照在市场快照之后，属于警告
+                    self.WARN(f'rebuilt snap #{self.msg_nb} matches history market snap #{rcv._seq}') # 重建快照在市场快照之后，属于警告
                     matched = True
                     break
             
@@ -653,7 +654,7 @@ class AXOB():
         show_level_nb:  展示的价格档数
         show_potential: 在无法撮合时展示出双方价格档
         '''
-        # if self.msg_nb==2942:
+        # if self.msg_nb==750:
         #     self.WARN('breakpoint2')
         #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
         #         self.DBG(f'ask\t{p}\t{l.qty}\t{l.ts}')
@@ -950,7 +951,7 @@ class AXOB():
         if len(self.market_snaps):
             self.ERR(f'unmatched market snap size={len(self.market_snaps)}:')
             for s in self.market_snaps:
-                self.ERR(f'#{s.ApplSeqNum}')
+                self.ERR(f'#{s._seq}')
             im_ok = False
         return im_ok
 
@@ -968,6 +969,8 @@ class AXOB():
                     data[attr][i] = value[i].save()
             elif attr == 'rebuilt_snaps' or attr == 'market_snaps':
                 data[attr] = [x.save() for x in value]
+            elif attr == 'last_snap':
+                data[attr] = value.save()
             else:
                 data[attr] = value
         return data
@@ -999,6 +1002,14 @@ class AXOB():
                         raise f'unable to load instrument_type={self.instrument_type}'
                     s.load(d)
                     v.append(s)
+                setattr(self, attr, v)
+            elif attr == 'last_snap':
+                if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+                    v = axsbe_snap_stock()
+                else:
+                    raise f'unable to load instrument_type={self.instrument_type}'
+                v.load(data[attr])
+                setattr(self, attr, v)
             else:
                 setattr(self, attr, data[attr])
         ## 日志
