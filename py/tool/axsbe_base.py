@@ -177,6 +177,8 @@ class axsbe_base(metaclass=abc.ABCMeta):
         对于逐笔委托和逐笔成交，利用时戳判断交易阶段。
         '''
         t = self.HHMMSSms
+        if t is None:
+            return TPM.Starting
         if t < 91500000:
             return TPM.Starting
         elif t < 92500000: #逐笔委托的时戳不会等于925；只有逐笔成交会；而925的逐笔成交代表着开盘集合竞价结束。收盘集合竞价同理。

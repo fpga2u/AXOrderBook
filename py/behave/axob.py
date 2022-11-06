@@ -24,6 +24,7 @@ import pstats
 from tool.msg_util import axsbe_base, axsbe_exe, axsbe_order, axsbe_snap_stock, price_level
 import tool.msg_util as msg_util
 from tool.axsbe_base import SecurityIDSource_SSE, SecurityIDSource_SZSE, INSTRUMENT_TYPE
+from copy import deepcopy
 
 axob_logger = logging.getLogger(__name__)   #level 固定为 warning
 
@@ -44,10 +45,14 @@ class SIDE(Enum): # 2bit
     BID = 0
     ASK = 1
 
+    UNKNOWN = -1    # 仅用于测试
+
 class TYPE(Enum): # 2bit
     LIMIT  = 0   #限价
     MARKET = 1   #市价
     SIDE   = 2   #本方最优
+
+    UNKNOWN = -1    # 仅用于测试
 
 # 用于将原始精度转换到ob精度
 SZSE_STOCK_PRICE_RD = msg_util.PRICE_SZSE_INCR_PRECISION // PRICE_INTER_STOCK_PRECISION
@@ -57,6 +62,18 @@ SSE_STOCK_PRICE_RD = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_STOCK_PRECISION
 
 class ob_order():
     '''专注于内部使用的字段格式与位宽'''
+    __slots__ = [
+        'applSeqNum',
+        'tradingPhase',
+        'price',
+        'qty',
+        'side',
+        'type',
+
+        # for test olny
+        'traded',
+    ]
+
     def __init__(self, order:axsbe_order, instrument_type:INSTRUMENT_TYPE):
         # self.securityID = order.SecurityID
         self.applSeqNum = order.ApplSeqNum
@@ -75,8 +92,8 @@ class ob_order():
             else:
                 axob_logger.error(f'order SSE ApplSeqNum={order.ApplSeqNum} instrument_type={instrument_type} not support!')
         else:
-            axob_logger.error(f'order ApplSeqNum={order.ApplSeqNum} SecurityIDSource={order.SecurityIDSource} unknown!')
-        self.traded = False #仅用于市价单，当有成交后，市价单的价格将确定
+            self.price = 0
+        self.traded = False #仅用于测试：市价单，当有成交后，市价单的价格将确定
 
         self.qty = order.OrderQty    # 上海 3位小数
 
@@ -85,7 +102,7 @@ class ob_order():
         elif order.Side_str=='卖出':
             self.side = SIDE.ASK
         else:   #TODO: 映射上海 [low priority]
-            axob_logger.error(f'order ApplSeqNum={order.ApplSeqNum} side={order.Side}({order.Side_str}) unknown!')
+            self.side = SIDE.UNKNOWN
 
         if order.Type_str=='限价':
             self.type = TYPE.LIMIT
@@ -94,10 +111,10 @@ class ob_order():
         elif order.Type_str=='本方最优':
             self.type = TYPE.SIDE
         else:   #TODO: 映射上海 [low priority]
-            axob_logger.error(f'{order.SecurityID:06d} order ApplSeqNum={order.ApplSeqNum} type={order.OrdType}({order.Type_str}) unknown!')
+            self.type = TYPE.UNKNOWN
 
         ## 位宽及精度舍入可行性检查
-        if self.applSeqNum >= (1<<APPSEQ_BIT_SIZE):
+        if self.applSeqNum >= (1<<APPSEQ_BIT_SIZE) and self.applSeqNum!=0xffffffffffffffff:
             axob_logger.error(f'{order.SecurityID:06d} order ApplSeqNum={order.ApplSeqNum} ovf!')
 
         if self.price >= (1<<PRICE_BIT_SIZE):
@@ -118,6 +135,19 @@ class ob_order():
 
     def __str__(self) -> str:
         return f'{self.applSeqNum}'
+
+    def save(self):
+        '''save/load 用于保存/加载测试时刻'''
+        data = {}
+        for attr in self.__slots__:
+            value = getattr(self, attr)
+            data[attr] = value
+        return data
+
+    def load(self, data):
+        for attr in self.__slots__:
+            setattr(self, attr, data[attr])
+
 
 
 class ob_cancel():
@@ -156,6 +186,13 @@ class ob_cancel():
 
 
 class level_node():
+    __slots__ = [
+        'price',
+        'qty',
+
+        # for test olny
+        'ts',
+    ]
     def __init__(self, price, qty, ts):
         self.price = price
         self.qty = qty
@@ -163,8 +200,73 @@ class level_node():
         # 目前没用，仅供调试
         self.ts = [ts]
 
+    def save(self):
+        '''save/load 用于保存/加载测试时刻'''
+        data = {}
+        for attr in self.__slots__:
+            value = getattr(self, attr)
+            if attr=='ts':
+                data[attr] = deepcopy(value)
+            else:
+                data[attr] = value
+        return data
+
+    def load(self, data):
+        for attr in self.__slots__:
+            setattr(self, attr, data[attr])
+
 
 class AXOB():
+    __slots__ = [
+        'SecurityID',
+        'SecurityIDSource',
+        'instrument_type',
+
+        'order_map',    # map of ob_order
+        'bid_level_tree', # map of level_node
+        'ask_level_tree', # map of level_node
+
+        'NumTrades',
+        'bid_max_level_price',
+        'bid_max_level_qty',
+        'ask_min_level_price',
+        'ask_min_level_qty',
+        'LastPx',
+        'HighPx',
+        'LowPx',
+        'OpenPx',
+
+        'ChannelNo',
+        'PrevClosePx',
+        'DnLimitPx',
+        'UpLimitPx',
+        'current_inc_timestamp',
+        'BidWeightSize',
+        'BidWeightValue',
+        'AskWeightSize',
+        'AskWeightValue',
+
+        'TotalVolumeTrade',
+        'TotalValueTrade',
+
+        'holding_order',
+        'holding_nb',
+
+        'TradingPhaseMarket',
+
+        # for test olny
+        'msg_nb',
+        'rebuilt_snaps',    # list of snap
+        'market_snaps',     # list of snap
+        'last_snap',
+        'last_inc_applSeqNum',
+
+        'logger',
+        'DBG',
+        'INFO',
+        'WARN',
+        'ERR',
+    ]
     def __init__(self, SecurityID:int, SecurityIDSource, instrument_type:INSTRUMENT_TYPE):
         '''
         '''
@@ -211,6 +313,7 @@ class AXOB():
         self.rebuilt_snaps = []
         self.market_snaps = []
         self.last_snap = None
+        self.last_inc_applSeqNum = 0
 
         ## 日志
         self.logger = logging.getLogger(f'{self.SecurityID:06d}')
@@ -243,6 +346,8 @@ class AXOB():
             else:# isinstance(msg, axsbe_snap_stock):
                 self.onSnap(msg)
 
+            if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe):
+                self.last_inc_applSeqNum = msg.ApplSeqNum
         else:
             pass
 
@@ -841,7 +946,70 @@ class AXOB():
             return False
 
     def are_you_ok(self):
+        im_ok = True
         if len(self.market_snaps):
             self.ERR(f'unmatched market snap size={len(self.market_snaps)}:')
             for s in self.market_snaps:
                 self.ERR(f'#{s.ApplSeqNum}')
+            im_ok = False
+        return im_ok
+
+    def save(self):
+        '''save/load 用于保存/加载测试时刻'''
+        data = {}
+        for attr in self.__slots__:
+            if attr in ['logger', 'DBG', 'INFO', 'WARN', 'ERR']:
+                continue
+
+            value = getattr(self, attr)
+            if attr == 'order_map' or attr == 'bid_level_tree' or attr == 'ask_level_tree':
+                data[attr] = {}
+                for i in value:
+                    data[attr][i] = value[i].save()
+            elif attr == 'rebuilt_snaps' or attr == 'market_snaps':
+                data[attr] = [x.save() for x in value]
+            else:
+                data[attr] = value
+        return data
+
+    def load(self, data):
+        setattr(self, 'instrument_type', data['instrument_type'])
+        for attr in self.__slots__:
+            if attr in ['logger', 'DBG', 'INFO', 'WARN', 'ERR']:
+                continue
+
+            if attr == 'order_map':
+                v = {}
+                for i in data[attr]:
+                    v[i] = ob_order(axsbe_order(), INSTRUMENT_TYPE.UNKNOWN)
+                    v[i].load(data[attr][i])
+                setattr(self, attr, v)
+            elif attr == 'bid_level_tree' or attr == 'ask_level_tree':
+                v = {}
+                for i in data[attr]:
+                    v[i] = level_node(-1, -1, -1)
+                    v[i].load(data[attr][i])
+                setattr(self, attr, v)
+            elif attr == 'rebuilt_snaps' or attr == 'market_snaps':
+                v = []
+                for d in data[attr]:
+                    if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+                        s = axsbe_snap_stock()
+                    else:
+                        raise f'unable to load instrument_type={self.instrument_type}'
+                    s.load(d)
+                    v.append(s)
+            else:
+                setattr(self, attr, data[attr])
+        ## 日志
+        self.logger = logging.getLogger(f'{self.SecurityID:06d}')
+        g_logger = logging.getLogger('main')
+        self.logger.setLevel(g_logger.getEffectiveLevel())
+        for h in g_logger.handlers:
+            self.logger.addHandler(h)
+            axob_logger.addHandler(h) #这里补上模块日志的handler，有点ugly TODO: better way [low prioryty]
+
+        self.DBG = self.logger.debug
+        self.INFO = self.logger.info
+        self.WARN = self.logger.warning
+        self.ERR = self.logger.error
