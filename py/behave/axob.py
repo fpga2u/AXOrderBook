@@ -26,7 +26,7 @@ import tool.msg_util as msg_util
 from tool.axsbe_base import SecurityIDSource_SSE, SecurityIDSource_SZSE, INSTRUMENT_TYPE
 from copy import deepcopy
 
-axob_logger = logging.getLogger(__name__)   #level 固定为 warning
+axob_logger = logging.getLogger(__name__)
 
 #### 内部计算精度 ####
 APPSEQ_BIT_SIZE = 34    # 序列号，34b，约170亿
@@ -60,7 +60,7 @@ class TYPE(Enum): # 2bit
 SZSE_STOCK_PRICE_RD = msg_util.PRICE_SZSE_INCR_PRECISION // PRICE_INTER_STOCK_PRECISION
 SZSE_FUND_PRICE_RD = msg_util.PRICE_SZSE_INCR_PRECISION // PRICE_INTER_FUND_PRECISION
 SSE_STOCK_PRICE_RD = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_STOCK_PRECISION
-# SSE_FUND_PRICE_RES = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_FUND_PRECISION TODO:确认精度 [low priority]
+# SSE_FUND_PRICE_RD = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_FUND_PRECISION TODO:确认精度 [low priority]
 
 class ob_order():
     '''专注于内部使用的字段格式与位宽'''
