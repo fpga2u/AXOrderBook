@@ -29,10 +29,10 @@ from copy import deepcopy
 axob_logger = logging.getLogger(__name__)   #level 固定为 warning
 
 #### 内部计算精度 ####
-#TODO: 时戳精度和位宽 [High Priority]
 APPSEQ_BIT_SIZE = 34    # 序列号，34b，约170亿
 PRICE_BIT_SIZE  = 20    # 价格，20b，1048575，股票:10485.75;基金:1048.575。（若统一到3位小数则考虑用24b，则只需深圳//10）
 QTY_BIT_SIZE    = 30    # 数量，30b，(1,073,741,823)，深圳2位小数，上海3位小数
+TIMESTAMP_BIT_SIZE = 24 # 时戳精度 时-分-秒-10ms 最大15000000=24b
 
 PRICE_INTER_STOCK_PRECISION = 100  # 股票价格精度：2位小数，(深圳原始数据4位，上海3位)
 PRICE_INTER_FUND_PRECISION  = 1000 # 基金价格精度：3位小数，(深圳原始数据4位，上海3位)
@@ -40,6 +40,8 @@ PRICE_INTER_FUND_PRECISION  = 1000 # 基金价格精度：3位小数，(深圳�
 QTY_INTER_SZSE_PRECISION   = 100   # 数量精度：深圳2位小数
 QTY_INTER_SSE_PRECISION    = 1000  # 数量精度：上海3位小数
 
+SZSE_TICK_CUT = 1000000000 # 深交所时戳，日期以下精度
+SZSE_TICK_MS_TAIL = 10 # 深交所时戳，尾部毫秒精度，以10ms为单位
 
 class SIDE(Enum): # 2bit
     BID = 0
@@ -240,7 +242,8 @@ class AXOB():
         'PrevClosePx',
         'DnLimitPx',
         'UpLimitPx',
-        'current_inc_timestamp',
+        'YYMMDD',
+        'current_inc_tick',
         'BidWeightSize',
         'BidWeightValue',
         'AskWeightSize',
@@ -293,7 +296,8 @@ class AXOB():
         self.PrevClosePx = 0 #来自于快照 深圳要处理到内部精度，用于在还原快照时比较
         self.DnLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价 [low priority]
         self.UpLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价 [low priority]
-        self.current_inc_timestamp = 0 #来自于逐笔
+        self.YYMMDD = 0     #来自于快照
+        self.current_inc_tick = 0 #来自于逐笔 时-分-秒-10ms
         
         self.BidWeightSize = 0
         self.BidWeightValue = 0
@@ -337,7 +341,13 @@ class AXOB():
             self.TradingPhaseMarket = msg.TradingPhaseMarket #TODO:是否区分快照和逐笔？等测试情况，需要看二者的时间关系 [High priority]
 
             if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe):
-                self.current_inc_timestamp = msg.TransactTime    #只用逐笔
+                if self.SecurityIDSource == SecurityIDSource_SZSE:
+                    self.current_inc_tick = msg.TransactTime // SZSE_TICK_MS_TAIL % (SZSE_TICK_CUT // SZSE_TICK_MS_TAIL)    #只用逐笔 15000000 24b
+                else:
+                    self.current_inc_tick = msg.TransactTime
+                if self.current_inc_tick >= (1<<TIMESTAMP_BIT_SIZE):
+                    self.ERR(f'msg.TransactTime={msg.TransactTime} ovf!')
+
 
             if isinstance(msg, axsbe_order):
                 self.onOrder(msg)
@@ -575,6 +585,11 @@ class AXOB():
         self.UpLimitPx = snap.UpLimitPx
         self.DnLimitPx = snap.DnLimitPx
 
+        if self.SecurityIDSource==SecurityIDSource_SZSE:
+            self.YYMMDD = snap.TransactTime // SZSE_TICK_CUT # 深交所带日期
+        else:
+            self.YYMMDD = 0                               # 上交所不带日期
+
         ## 检查重建算法，仅用于测试算法是否正确：
         snap._seq = self.msg_nb
         if snap.TradingPhaseMarket<axsbe_base.TPM.OpenCall:
@@ -582,7 +597,8 @@ class AXOB():
         else:
             # 在重建的快照中检索是否有相同的快照
             if self.last_snap and snap.is_same(self.last_snap) and self._chkSnapTimestamp(snap.TransactTime, self.last_snap.TransactTime):
-                self.INFO(f'snap #{self.msg_nb} matches last genSnap #{self.last_snap._seq}')
+                self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
+                          f' matches last rebuilt snap #{self.last_snap._seq}({self.last_snap.TransactTime})')
                 self.rebuilt_snaps = []
                 #这里不丢弃last_snap，因为可能无逐笔数据而导致快照不更新
             else:
@@ -590,7 +606,8 @@ class AXOB():
                 for match_idx in range(len(self.rebuilt_snaps)):
                     gen = self.rebuilt_snaps[match_idx]
                     if snap.is_same(gen) and self._chkSnapTimestamp(snap.TransactTime, gen.TransactTime):
-                        self.INFO(f'market snap #{self.msg_nb} matches history rebuilt snap #{gen._seq}')
+                        self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
+                                  f' matches history rebuilt snap #{gen._seq}({gen.TransactTime})')
                         matched = True
                         break
                 
@@ -598,7 +615,7 @@ class AXOB():
                     self.rebuilt_snaps = self.rebuilt_snaps[match_idx+1:]   #丢弃已匹配的
                 else:
                     self.market_snaps.append(snap) #缓存交易所快照
-                    self.WARN(f'market snap #{self.msg_nb} not found in history rebuilt snaps!')
+                    self.WARN(f'market snap #{self.msg_nb}({snap.TransactTime}) not found in history rebuilt snaps!')
 
                     # self.WARN('breakpoint4')
                     # for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
@@ -636,7 +653,7 @@ class AXOB():
             for match_idx in range(len(self.market_snaps)):
                 rcv = self.market_snaps[match_idx]
                 if snap.is_same(rcv) and self._chkSnapTimestamp(rcv.TransactTime, snap.TransactTime):
-                    self.WARN(f'rebuilt snap #{self.msg_nb} matches history market snap #{rcv._seq}') # 重建快照在市场快照之后，属于警告
+                    self.WARN(f'rebuilt snap #{snap._seq}({snap.TransactTime}) matches history market snap #{rcv._seq}({rcv.TransactTime})') # 重建快照在市场快照之后，属于警告
                     matched = True
                     break
             
@@ -859,7 +876,11 @@ class AXOB():
         snap_call.AskWeightPx = 0
         snap_call.AskWeightSize = 0
 
-        snap_call.TransactTime = self.current_inc_timestamp #最新的一个逐笔消息时戳
+        #最新的一个逐笔消息时戳
+        if self.SecurityIDSource==SecurityIDSource_SZSE:
+            snap_call.TransactTime = self.YYMMDD * SZSE_TICK_CUT + (self.current_inc_tick*SZSE_TICK_MS_TAIL) #深交所显示精度到ms，多补1位
+        else:
+            snap_call.TransactTime = self.current_inc_tick // 100 #上交所只显示到秒，去掉10ms和100ms两位
 
         snap_call.update_TradingPhaseCode(self.TradingPhaseMarket, axsbe_base.TPI.Normal)
 
