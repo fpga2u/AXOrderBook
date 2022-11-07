@@ -626,12 +626,12 @@ class AXOB():
                 self.INFO('openCall trade over')
                 self.genSnap()   #集合竞价所有成交完成
 
-            self.DBG('breakpoint4')
-            for _, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-                self.DBG(f'ask\t{l}')
-            self.DBG('--------------------------avb')
-            for _, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-                self.DBG(f'bid\t{l}')
+            # self.DBG('breakpoint5')
+            # for _, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+            #     self.DBG(f'ask\t{l}')
+            # self.DBG('--------------------------avb')
+            # for _, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+            #     self.DBG(f'bid\t{l}')
 
     def tradeLimit(self, side:SIDE, Qty, appSeqNum):
         order = self.order_map[appSeqNum]
@@ -736,7 +736,7 @@ class AXOB():
             pass
         else:
             # 在重建的快照中检索是否有相同的快照
-            if self.last_snap and snap.is_same(self.last_snap) and self._chkSnapTimestamp(snap.TransactTime, self.last_snap.TransactTime):
+            if self.last_snap and snap.is_same(self.last_snap) and self._chkSnapTimestamp(snap, self.last_snap):
                 self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
                           f' matches last rebuilt snap #{self.last_snap._seq}({self.last_snap.TransactTime})')
                 self.rebuilt_snaps = []
@@ -745,7 +745,7 @@ class AXOB():
                 matched = False
                 for match_idx in range(len(self.rebuilt_snaps)):
                     gen = self.rebuilt_snaps[match_idx]
-                    if snap.is_same(gen) and self._chkSnapTimestamp(snap.TransactTime, gen.TransactTime):
+                    if snap.is_same(gen) and self._chkSnapTimestamp(snap, gen):
                         self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
                                   f' matches history rebuilt snap #{gen._seq}({gen.TransactTime})')
                         matched = True
@@ -792,7 +792,7 @@ class AXOB():
             matched = False
             for match_idx in range(len(self.market_snaps)):
                 rcv = self.market_snaps[match_idx]
-                if snap.is_same(rcv) and self._chkSnapTimestamp(rcv.TransactTime, snap.TransactTime):
+                if snap.is_same(rcv) and self._chkSnapTimestamp(rcv, snap):
                     self.WARN(f'rebuilt snap #{snap._seq}({snap.TransactTime}) matches history market snap #{rcv._seq}({rcv.TransactTime})') # 重建快照在市场快照之后，属于警告
                     matched = True
                     break
@@ -803,7 +803,28 @@ class AXOB():
                 self.rebuilt_snaps.append(snap)     #无历史的才缓存，有历史的只放进last_snap
 
 
-                
+    def _setSnapFixParam(self, snap):
+        '''固定参数'''
+        snap.SecurityID = self.SecurityID
+        if self.SecurityIDSource==SecurityIDSource_SZSE:
+            if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+                snap.PrevClosePx = self.PrevClosePx * (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_STOCK_PRECISION)
+            elif self.instrument_type==INSTRUMENT_TYPE.FUND:
+                snap.PrevClosePx = self.PrevClosePx * (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_FUND_PRECISION)
+            else:
+                snap.PrevClosePx = self.PrevClosePx    #TODO:
+        else:
+            snap.PrevClosePx = self.PrevClosePx    #TODO:
+            
+        snap.UpLimitPx = self.UpLimitPx
+        snap.DnLimitPx = self.DnLimitPx
+        snap.ChannelNo = self.ChannelNo
+
+    def _setSnapTimestamp(self, snap):
+        if self.SecurityIDSource==SecurityIDSource_SZSE:
+            snap.TransactTime = self.YYMMDD * SZSE_TICK_CUT + (self.current_inc_tick*SZSE_TICK_MS_TAIL) #深交所显示精度到ms，多补1位
+        else:
+            snap.TransactTime = self.current_inc_tick // 100 #上交所只显示到秒，去掉10ms和100ms两位
 
 
     def genCallSnap(self, show_level_nb=10, show_potential=False):
@@ -983,21 +1004,7 @@ class AXOB():
         else:
             return None # TODO: not ready [Mid priority]
         
-        # 固定参数
-        snap_call.SecurityID = self.SecurityID
-        if self.SecurityIDSource==SecurityIDSource_SZSE:
-            if self.instrument_type==INSTRUMENT_TYPE.STOCK:
-                snap_call.PrevClosePx = self.PrevClosePx * (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_STOCK_PRECISION)
-            elif self.instrument_type==INSTRUMENT_TYPE.FUND:
-                snap_call.PrevClosePx = self.PrevClosePx * (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_FUND_PRECISION)
-            else:
-                snap_call.PrevClosePx = self.PrevClosePx    #TODO:
-        else:
-            snap_call.PrevClosePx = self.PrevClosePx    #TODO:
-            
-        snap_call.UpLimitPx = self.UpLimitPx
-        snap_call.DnLimitPx = self.DnLimitPx
-        snap_call.ChannelNo = self.ChannelNo
+        self._setSnapFixParam(snap_call)
 
         # 本地维护参数
         snap_call.ask = snap_ask_levels
@@ -1018,18 +1025,77 @@ class AXOB():
         snap_call.AskWeightSize = 0
 
         #最新的一个逐笔消息时戳
-        if self.SecurityIDSource==SecurityIDSource_SZSE:
-            snap_call.TransactTime = self.YYMMDD * SZSE_TICK_CUT + (self.current_inc_tick*SZSE_TICK_MS_TAIL) #深交所显示精度到ms，多补1位
-        else:
-            snap_call.TransactTime = self.current_inc_tick // 100 #上交所只显示到秒，去掉10ms和100ms两位
+        self._setSnapTimestamp(snap_call)
 
         snap_call.update_TradingPhaseCode(self.TradingPhaseMarket, axsbe_base.TPI.Normal)
 
         return snap_call
         
 
-    def genTradingSnap(self):
-        return
+    def genTradingSnap(self, level_nb=10):
+        '''
+        生成连续竞价期间快照
+        level_nb: 快照单边档数
+        '''
+        snap_bid_levels = {}
+        lv = 0
+        for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+            snap_bid_levels[lv] = price_level(self._fmtPrice_inter2snap(p), l.qty)
+            lv += 1
+        for i in range(lv, level_nb):
+            snap_bid_levels[i] = price_level(0, 0)
+            
+        snap_ask_levels = {}
+        lv = 0
+        for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
+            snap_ask_levels[lv] = price_level(self._fmtPrice_inter2snap(p), l.qty)
+            lv += 1
+        for i in range(lv, level_nb):
+            snap_ask_levels[i] = price_level(0, 0)
+
+
+        if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+            snap = axsbe_snap_stock(SecurityIDSource=self.SecurityIDSource, source=f"AXOB-{level_nb}")
+        else:
+            return None # TODO: not ready [Mid priority]
+        snap.ask = snap_ask_levels
+        snap.bid = snap_bid_levels
+        
+        # 固定参数
+        self._setSnapFixParam(snap)
+
+
+        # 本地维护参数
+        snap.NumTrades = self.NumTrades
+        snap.TotalVolumeTrade = self.TotalVolumeTrade
+        snap.TotalValueTrade = self.TotalValueTrade
+        snap.LastPx = self._fmtPrice_inter2snap(self.LastPx)
+        snap.HighPx = self._fmtPrice_inter2snap(self.HighPx)
+        snap.LowPx = self._fmtPrice_inter2snap(self.LowPx)
+        snap.OpenPx = self._fmtPrice_inter2snap(self.OpenPx)
+        
+
+        #维护参数
+        if self.BidWeightSize != 0:
+            snap.BidWeightPx = (int((self.BidWeightValue<<1) / self.BidWeightSize) + 1) >> 1 # 四舍五入
+            snap.BidWeightPx = self._fmtPrice_inter2snap(snap.BidWeightPx)
+        else:
+            snap.BidWeightPx = 0
+        snap.BidWeightSize = self.BidWeightSize
+        
+        if self.AskWeightSize != 0:
+            snap.AskWeightPx = (int((self.AskWeightValue<<1) / self.AskWeightSize) + 1) >> 1 # 四舍五入
+            snap.AskWeightPx = self._fmtPrice_inter2snap(snap.AskWeightPx)
+        else:
+            snap.AskWeightPx = 0
+        snap.AskWeightSize = self.AskWeightSize
+
+        #最新的一个逐笔消息时戳
+        self._setSnapTimestamp(snap)
+
+        snap.update_TradingPhaseCode(self.TradingPhaseMarket, axsbe_base.TPI.Normal)
+
+        return snap
 
     def _fmtPrice_inter2snap(self, price):
         # price 小数位数扩展
@@ -1095,14 +1161,27 @@ class AXOB():
 
         return snap_ask_levels, snap_bid_levels
 
-    def _chkSnapTimestamp(self, se_timestamp, my_timestamp):
+    def _chkSnapTimestamp(self, se_snap, ax_snap):
         '''
+        return True: 双方时戳合法
         检查交易所快照和本地重建快照的时戳是否符合：
         深交所本地时戳的秒应小于等交易所快照时戳
         '''
 
+        # 休市阶段，忽略时戳检查
+        if se_snap.TradingPhaseMarket==ax_snap.TradingPhaseMarket and \
+            (se_snap.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking or \
+             se_snap.TradingPhaseMarket==axsbe_base.TPM.Breaking or \
+             se_snap.TradingPhaseMarket==axsbe_base.TPM.AfterCloseCallBreaking or \
+             se_snap.TradingPhaseMarket>=axsbe_base.TPM.Ending \
+            ):
+            return True
+
+        se_timestamp = se_snap.TransactTime
+        ax_timestamp = ax_snap.TransactTime
+
         if self.SecurityIDSource==SecurityIDSource_SZSE:
-            return my_timestamp//1000 <= se_timestamp//1000 +1
+            return ax_timestamp//1000 <= se_timestamp//1000 +1
         elif self.SecurityIDSource==SecurityIDSource_SSE:
             return False    #TODO: [Low Priority]
         else:

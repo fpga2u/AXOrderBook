@@ -120,9 +120,9 @@ def TEST_axob_openCall(date, instrument:int, n_max=500,
             print(f'nb over, n={n}')
             break
         
-    axob.are_you_ok()
+    assert axob.are_you_ok()
 
-    print("TEST_axob_openCall done")
+    print("TEST_axob_openCall PASS")
     return
 
 
@@ -144,7 +144,7 @@ def TEST_axob_openCall_bat(source_file, instrument_list:list, n_max=500,
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
             print('openCall start')
-        if msg.TradingPhaseMarket>TPM.OpenCall:
+        if msg.TradingPhaseMarket>TPM.PreTradingBreaking:
             print(f'openCall over, n={n}')
             break
         x = msg.SecurityID
@@ -157,9 +157,11 @@ def TEST_axob_openCall_bat(source_file, instrument_list:list, n_max=500,
             print(f'nb over, n={n}')
             break
 
+    ok_nb = 0
     for x in instrument_list:
-        axobs[x].are_you_ok()
+        ok_nb += axobs[x].are_you_ok()
 
-    print("TEST_axob_openCall_bat done")
+    assert ok_nb==len(axobs)
+    print("TEST_axob_openCall_bat PASS")
     return
 

@@ -28,8 +28,8 @@ if __name__== '__main__':
     logger.addHandler(fh)
     logger.addHandler(sh)
 
-    logger.info('starting TEST_axob_openCall')
-    behave.TEST_axob_openCall(20220422, 1, 0)
+    # logger.info('starting TEST_axob_openCall')
+    # behave.TEST_axob_openCall(20220422, 1, 0)
 
     # logger.info('starting TEST_axob_openCall')
     # behave.TEST_axob_openCall(20220425, 2594, 0)
@@ -57,10 +57,6 @@ if __name__== '__main__':
 
     # logger.info('starting TEST_axob_openCall')
     # behave.TEST_axob_openCall(20220817, 300177, 0)
-
-    # logger.info('starting TEST_axob_openCall_bat')
-    # data_source = "data/20220817/sbe_2022_11_04__11_58_45.txt"
-    # behave.TEST_axob_openCall_bat(data_source, [300635], 0)
     
     # logger.info('starting TEST_axob_openCall_bat')
     # data_source = "data/20220817/sbe_2022_11_04__11_58_45.txt"
@@ -74,12 +70,12 @@ if __name__== '__main__':
     # e = [2231, 300024, 300274, 591, 728, 2460, 2185, 2426, 2308, 300059]
     # behave.TEST_axob_openCall_bat(data_source, e, 0) #  58.0129 sec
 
-    # fh.setLevel(logging.INFO)
-    # sh.setLevel(logging.ERROR)
-    # logger.info('starting TEST_axob_openCall_bat')
-    # data_source = "data/20220817/sbe_2022_11_04__11_58_45.txt"
-    # max_inc=[2231, 2709, 2351, 300024, 333, 619, 2600, 2119, 300274, 591, 2506, 2621, 2199, 630, 301269, 899, 2202, 656, 2047, 2514, 709, 3012, 2451, 2369, 2480, 3816, 2337, 728, 2162, 2113, 2460, 2185, 2547, 58, 2405, 2161, 2204, 858, 2346, 2347, 2610, 2129, 2426, 792, 9, 425, 100, 2, 821, 2045, 2475, 2340, 651, 530, 2594, 564, 536, 2685, 868, 2079, 2537, 2241, 2842, 2334, 2329, 2536, 2411, 2308, 2825, 957, 1, 2350, 2375, 2415, 55, 2466, 2689, 2654, 1339, 2553, 2156, 2903, 300059, 2665, 301330, 671, 3035, 2471, 725, 2031, 40, 2077, 625, 2579, 1236, 595, 1258, 629, 2272, 2630]
-    # behave.TEST_axob_openCall_bat(data_source, max_inc, 0)    # 452.8572 sec
+    fh.setLevel(logging.INFO)
+    sh.setLevel(logging.ERROR)
+    logger.info('starting TEST_axob_openCall_bat')
+    data_source = "data/20220817/sbe_2022_11_04__11_58_45.txt"
+    max_inc=[2231, 2709, 2351, 300024, 333, 619, 2600, 2119, 300274, 591, 2506, 2621, 2199, 630, 301269, 899, 2202, 656, 2047, 2514, 709, 3012, 2451, 2369, 2480, 3816, 2337, 728, 2162, 2113, 2460, 2185, 2547, 58, 2405, 2161, 2204, 858, 2346, 2347, 2610, 2129, 2426, 792, 9, 425, 100, 2, 821, 2045, 2475, 2340, 651, 530, 2594, 564, 536, 2685, 868, 2079, 2537, 2241, 2842, 2334, 2329, 2536, 2411, 2308, 2825, 957, 1, 2350, 2375, 2415, 55, 2466, 2689, 2654, 1339, 2553, 2156, 2903, 300059, 2665, 301330, 671, 3035, 2471, 725, 2031, 40, 2077, 625, 2579, 1236, 595, 1258, 629, 2272, 2630]
+    behave.TEST_axob_openCall_bat(data_source, max_inc, 0)    # 452.8572 sec
 
 
     # fh.setLevel(logging.INFO)
