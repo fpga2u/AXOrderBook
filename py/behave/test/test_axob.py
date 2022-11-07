@@ -111,7 +111,7 @@ def TEST_axob_openCall(date, instrument:int, n_max=500,
             boc = 1
             print('openCall start')
 
-        if msg.TradingPhaseMarket>TPM.OpenCall:
+        if msg.TradingPhaseMarket>TPM.PreTradingBreaking:
             print(f'openCall over, n={n}')
             break
         axob.onMsg(msg)

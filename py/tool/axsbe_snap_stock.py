@@ -86,7 +86,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
 
     ]
 
-    def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL, source="AXOB"):
+    def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL, source="MD"):
         super(axsbe_snap_stock, self).__init__(axsbe_base.MsgType_snap, SecurityIDSource)
         self.TradingPhaseCode = 0
         self.NumTrades = 0
