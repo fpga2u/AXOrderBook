@@ -220,12 +220,16 @@ def TEST_print_securityID(source_log, read_nb=0, instrument_type=INSTRUMENT_TYPE
                     'snap_ts':0,
                     'inc':0,
                     'inc_ts':0,
+                    'UpLimitPx':0,
+                    'DnLimitPx':0,
                 }
             if isinstance(msg, axsbe_snap_stock):
-                securityIDs[msg.SecurityID]['snap']+=1
+                securityIDs[msg.SecurityID]['snap'] += 1
                 securityIDs[msg.SecurityID]['snap_ts'] = msg.TransactTime
+                securityIDs[msg.SecurityID]['UpLimitPx'] = msg.UpLimitPx
+                securityIDs[msg.SecurityID]['DnLimitPx'] = msg.DnLimitPx
             elif isinstance(msg, axsbe_exe) or isinstance(msg, axsbe_order):
-                securityIDs[msg.SecurityID]['inc']+=1
+                securityIDs[msg.SecurityID]['inc'] += 1
                 securityIDs[msg.SecurityID]['inc_ts'] = msg.TransactTime
 
         f.write(f"{json.dumps(securityIDs, indent=4)}\n")

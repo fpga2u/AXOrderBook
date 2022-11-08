@@ -117,6 +117,7 @@ class ob_order():
 
         ## 位宽及精度舍入可行性检查
         if self.applSeqNum >= (1<<APPSEQ_BIT_SIZE) and self.applSeqNum!=0xffffffffffffffff:
+            self.price = (1<<APPSEQ_BIT_SIZE)-1
             axob_logger.error(f'{order.SecurityID:06d} order ApplSeqNum={order.ApplSeqNum} ovf!')
 
         if self.price >= (1<<PRICE_BIT_SIZE):
@@ -271,6 +272,11 @@ class level_node():
     def __str__(self) -> str:
         return f'{self.price}\t{self.qty}'
 
+class AX_SIGNAL(Enum):  # 发送给AXOB的信号
+    OPENCALL_END  = 0  # 开盘集合竞价结束
+    AMTRADING_END = 1  # 上午连续竞价结束
+    ALL_END = 2        # TODO: 盘后几个阶段处理
+
 class AXOB():
     __slots__ = [
         'SecurityID',
@@ -411,6 +417,20 @@ class AXOB():
 
             if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe):
                 self.last_inc_applSeqNum = msg.ApplSeqNum
+        
+        elif isinstance(msg, AX_SIGNAL):
+            if msg==AX_SIGNAL.OPENCALL_END:
+                if self.bid_max_level_price<self.ask_min_level_price and self.TradingPhaseMarket==axsbe_base.TPM.OpenCall: #双方最优价无法成交
+                    self.TradingPhaseMarket = axsbe_base.TPM.PreTradingBreaking #自行修改交易阶段，使生成的快照为交易快照
+                    self.genSnap()
+            elif msg==AX_SIGNAL.AMTRADING_END:
+                if self.holding_nb==0 and self.TradingPhaseMarket==axsbe_base.TPM.AMTrading: #不再有缓存单
+                    self.TradingPhaseMarket = axsbe_base.TPM.Breaking #自行修改交易阶段，使生成的快照为交易快照
+                    self.genSnap()
+            elif msg==AX_SIGNAL.ALL_END:
+                if self.bid_max_level_price<self.ask_min_level_price and self.TradingPhaseMarket==axsbe_base.TPM.CloseCall: #双方最优价无法成交
+                    self.TradingPhaseMarket = axsbe_base.TPM.Ending #自行修改交易阶段，使生成的快照为交易快照
+                    self.genSnap()
         else:
             pass
 
@@ -448,25 +468,29 @@ class AXOB():
                 #    * 最优五档即时成交剩余撤销申报：最后有撤单
                 #    * 即时成交剩余撤销申报：最后有撤单
                 #    * 全额成交或撤销申报：最后有撤单
-            if _order.type==TYPE.SIDE:
-                # 本方最优价格申报 转限价单
-                if _order.side==SIDE.BID:
-                    if self.bid_max_level_price!=0 and self.bid_max_level_qty!=0:   #本方有量
-                        _order.price = self.bid_max_level_price
-                    else:
-                        _order.price = self.DnLimitPx
-                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!') #TODO: cover [Mid priority]
+        elif _order.type==TYPE.SIDE:
+            # 本方最优价格申报 转限价单
+            if _order.side==SIDE.BID:
+                if self.bid_max_level_price!=0 and self.bid_max_level_qty!=0:   #本方有量
+                    _order.price = self.bid_max_level_price
                 else:
-                    if self.ask_min_level_price!=0 and self.ask_min_level_qty!=0:   #本方有量
-                        _order.price = self.ask_min_level_price
-                    else:
-                        _order.price = self.UpLimitPx
-                        axob_logger.error(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover [Mid priority]
+                    _order.price = self.DnLimitPx
+                    self.ERR(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!') #TODO: cover [Mid priority]
+            else:
+                if self.ask_min_level_price!=0 and self.ask_min_level_qty!=0:   #本方有量
+                    _order.price = self.ask_min_level_price
+                else:
+                    _order.price = self.UpLimitPx
+                    self.ERR(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover [Mid priority]
         self.onLimitOrder(_order)
 
 
     def onLimitOrder(self, order:ob_order):
         if order.tradingPhase == axsbe_base.TPM.OpenCall or order.tradingPhase == axsbe_base.TPM.CloseCall: #集合竞价期间，直接插入；暂时还是用order的TPM，而非自身的； TODO:决定用哪个 [High priority]
+            if order.tradingPhase==axsbe_base.TPM.CloseCall and self.holding_nb!=0:
+                self.insertOrder(self.holding_order)
+                self.holding_nb = 0
+
             self.insertOrder(order)
             self.genSnap()   #可出snap
         else:
@@ -480,9 +504,12 @@ class AXOB():
 
                 self.genSnap()   #先出一个snap
 
-            #若是可能成交的限价单，则缓存住，等成交
-            if (order.side == SIDE.BID and (order.price >= self.bid_max_level_price and self.bid_max_level_qty > 0)) or \
-               (order.side == SIDE.ASK and (order.price <= self.ask_min_level_price and self.ask_min_level_qty > 0)):
+            #若是市价单或可能成交的限价单，则缓存住，等成交
+            if order.type==TYPE.MARKET:
+                self.holding_order = order
+                self.holding_nb += 1
+            elif (order.side==SIDE.BID and (order.price >= self.ask_min_level_price and self.ask_min_level_qty > 0)) or \
+               (order.side==SIDE.ASK and (order.price <= self.bid_max_level_price and self.bid_max_level_qty > 0)):
                 self.holding_order = order
                 self.holding_nb += 1
             else:
@@ -528,8 +555,9 @@ class AXOB():
                     self.ask_min_level_price = order.price
                     self.ask_min_level_qty = order.qty
 
-            self.AskWeightSize += order.qty
-            self.AskWeightValue += order.price * order.qty
+            if order.price<self.PrevClosePx*10 or order.price==(1<<PRICE_BIT_SIZE)-1:   #从深交所数据上看，超过昨收(新股时为上市价)10倍的委托不会参与统计
+                self.AskWeightSize += order.qty
+                self.AskWeightValue += order.price * order.qty
 
     def onExec(self, exec:axsbe_exe):
         '''
@@ -599,6 +627,7 @@ class AXOB():
 
                 if self.holding_order.type==TYPE.MARKET:   #修改市价单的价格
                     self.holding_order.price = exec.LastPx
+                    self.holding_order.traded = True
 
             if exec.BidApplSeqNum==self.holding_order.applSeqNum:
                 self.tradeLimit(SIDE.ASK, exec.LastQty, exec.OfferApplSeqNum)
@@ -616,9 +645,9 @@ class AXOB():
                 self.genSnap()   #缓存单成交完
         
         else:
-            #应该只有集合竞价之后才会到这来
+            #应该只有开盘/收盘集合竞价之后才会到这来
             assert self.holding_nb==0
-            assert exec.TransactTime%SZSE_TICK_CUT==92500000 if self.SecurityIDSource==SecurityIDSource_SZSE else exec.TransactTime==9250000
+            assert (exec.TransactTime%SZSE_TICK_CUT==92500000)or(exec.TransactTime%SZSE_TICK_CUT==150000000) if self.SecurityIDSource==SecurityIDSource_SZSE else (exec.TransactTime==9250000)or(exec.TransactTime==15000000)
             self.tradeLimit(SIDE.ASK, exec.LastQty, exec.OfferApplSeqNum)
             self.tradeLimit(SIDE.BID, exec.LastQty, exec.BidApplSeqNum)
 
@@ -656,7 +685,7 @@ class AXOB():
 
         self.levelDequeue(cancel.side, order.price, cancel.qty, cancel.applSeqNum)
 
-        self.genSnap()   #
+        self.genSnap()
         
     def levelDequeue(self, side, price, qty, applSeqNum):
         '''买/卖方价格档出列（撤单或成交时）'''
@@ -698,8 +727,9 @@ class AXOB():
                             self.ask_min_level_qty = l.qty
                             break
 
-            self.AskWeightSize -= qty
-            self.AskWeightValue -= price * qty
+            if price<self.PrevClosePx*10 or price==(1<<PRICE_BIT_SIZE)-1:   #从深交所数据上看，超过昨收(新股时为上市价)10倍的委托不会参与统计
+                self.AskWeightSize -= qty
+                self.AskWeightValue -= price * qty
 
     def onSnap(self, snap:axsbe_snap_stock):
         self.DBG(f'msg#{self.msg_nb} onSnap:{snap}')
@@ -739,7 +769,7 @@ class AXOB():
             if self.last_snap and snap.is_same(self.last_snap) and self._chkSnapTimestamp(snap, self.last_snap):
                 self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
                           f' matches last rebuilt snap #{self.last_snap._seq}({self.last_snap.TransactTime})')
-                self.rebuilt_snaps = []
+                self.rebuilt_snaps = self.rebuilt_snaps[-1:]
                 #这里不丢弃last_snap，因为可能无逐笔数据而导致快照不更新
             else:
                 matched = False
@@ -759,11 +789,11 @@ class AXOB():
 
                     # self.WARN('breakpoint4')
                     # for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-                    #     # self.DBG(f'ask\t{p}\t{l.qty}\t{l.ts}')
-                    #     self.DBG(f'ask\t{p}\t{l.qty}')
+                    #     # self.DBG(f'ask\t{l}')
+                    #     self.DBG(f'ask\t{l}')
                     # for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-                    #     # self.DBG(f'bid\t{p}\t{l.qty}\t{l.ts}')
-                    #     self.DBG(f'bid\t{p}\t{l.qty}')
+                    #     # self.DBG(f'bid\t{l}')
+                    #     self.DBG(f'bid\t{l}')
 
 
 
@@ -835,9 +865,9 @@ class AXOB():
         # if self.msg_nb==750:
         #     self.WARN('breakpoint2')
         #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-        #         self.DBG(f'ask\t{p}\t{l.qty}\t{l.ts}')
+        #         self.DBG(f'ask\t{l}')
         #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-        #         self.DBG(f'bid\t{p}\t{l.qty}\t{l.ts}')
+        #         self.DBG(f'bid\t{l}')
 
 
         #1. 查找 最低卖出价格档、最高买入价格档
@@ -1006,16 +1036,17 @@ class AXOB():
         
         self._setSnapFixParam(snap_call)
 
-        # 本地维护参数
+        ## 本地维护参数
         snap_call.ask = snap_ask_levels
         snap_call.bid = snap_bid_levels
-        snap_call.NumTrades = 0#self.NumTrades
-        snap_call.TotalVolumeTrade = 0#self.TotalVolumeTrade
-        snap_call.TotalValueTrade = 0#self.TotalValueTrade
-        snap_call.LastPx = 0#self.LastPx
-        snap_call.HighPx = 0#self.HighPx
-        snap_call.LowPx = 0#self.LowPx
-        snap_call.OpenPx = 0#self.OpenPx
+		# 以下参数开盘集合竞价期间为0，收盘集合竞价期间有值
+        snap_call.NumTrades = self.NumTrades
+        snap_call.TotalVolumeTrade = self.TotalVolumeTrade
+        snap_call.TotalValueTrade = self.TotalValueTrade
+        snap_call.LastPx = self._fmtPrice_inter2snap(self.LastPx)
+        snap_call.HighPx = self._fmtPrice_inter2snap(self.HighPx)
+        snap_call.LowPx = self._fmtPrice_inter2snap(self.LowPx)
+        snap_call.OpenPx = self._fmtPrice_inter2snap(self.OpenPx)
         
 
         # 本地维护参数
@@ -1194,6 +1225,12 @@ class AXOB():
             for s in self.market_snaps:
                 self.ERR(f'#{s._seq}')
             im_ok = False
+            # self.DBG('breakpoint5')
+            # for _, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+            #     self.DBG(f'ask\t{l}')
+            # self.DBG('--------------------------avb')
+            # for _, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+            #     self.DBG(f'bid\t{l}')
         return im_ok
 
     def save(self):

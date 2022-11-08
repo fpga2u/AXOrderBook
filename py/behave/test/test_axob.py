@@ -3,7 +3,7 @@
 from tool.axsbe_base import SecurityIDSource_SZSE, TPM, INSTRUMENT_TYPE
 from tool.test_util import *
 from tool.msg_util import *
-from behave.axob import AXOB
+from behave.axob import AXOB, AX_SIGNAL
 import os
 import pickle
 
@@ -94,10 +94,11 @@ def TEST_axob_SL(date, instrument:int,
 
 
 @timeit
-def TEST_axob_openCall(date, instrument:int, n_max=500, 
-                        SecurityIDSource=SecurityIDSource_SZSE, 
-                        instrument_type=INSTRUMENT_TYPE.STOCK
-                    ):
+def TEST_axob(date, instrument:int, n_max=500, 
+                openCall_only=False,
+                SecurityIDSource=SecurityIDSource_SZSE, 
+                instrument_type=INSTRUMENT_TYPE.STOCK
+            ):
     md_file = f'data/{date}/AX_sbe_szse_{instrument:06d}.log'
     if not os.path.exists(md_file):
         raise f"{md_file} not exists"
@@ -106,23 +107,44 @@ def TEST_axob_openCall(date, instrument:int, n_max=500,
 
     n = 0
     boc = 0
+    signal_oce = 0
+    signal_amte = 0
     for msg in axsbe_file(md_file):
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
             print('openCall start')
 
-        if msg.TradingPhaseMarket>TPM.PreTradingBreaking:
-            print(f'openCall over, n={n}')
-            break
+        if msg.TradingPhaseMarket==TPM.PreTradingBreaking and signal_oce==0:    # 消息状态切换，触发信号
+            signal_oce = 1
+            axob.onMsg(AX_SIGNAL.OPENCALL_END)
+        if msg.TradingPhaseMarket==TPM.Breaking and signal_amte==0:    # 消息状态切换，触发信号
+            signal_amte = 1
+            axob.onMsg(AX_SIGNAL.AMTRADING_END)
+
+        if openCall_only:
+            if msg.TradingPhaseMarket>TPM.PreTradingBreaking:
+                print(f'openCall over, n={n}')
+                break
+        
+        if msg.TradingPhaseMarket>=TPM.AfterCloseCallBreaking:
+            axob.onMsg(AX_SIGNAL.ALL_END)
+
         axob.onMsg(msg)
         n += 1
         if n_max>0 and n>=n_max:
             print(f'nb over, n={n}')
             break
         
-    assert axob.are_you_ok()
+        if msg.TradingPhaseMarket>=TPM.AfterCloseCallBreaking:
+            print(f'AfterCloseCallBreaking: over, n={n}')
+            break
+    #TODO:ugly
+    if axob.TradingPhaseMarket==TPM.PreTradingBreaking or axob.TradingPhaseMarket==TPM.Breaking or axob.TradingPhaseMarket==TPM.AfterCloseCallBreaking or axob.TradingPhaseMarket>=TPM.Ending:
+        assert axob.are_you_ok()
+    else:
+        axob.are_you_ok()
 
-    print("TEST_axob_openCall PASS")
+    print("TEST_axob PASS")
     return
 
 
@@ -140,13 +162,22 @@ def TEST_axob_openCall_bat(source_file, instrument_list:list, n_max=500,
 
     n = 0 #只计算在 instrument_list 内的消息
     boc = 0
+    signal_oce = 0
     for msg in axsbe_file(source_file):
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
             print('openCall start')
+
+        if msg.TradingPhaseMarket==TPM.PreTradingBreaking and signal_oce==0:    # 消息状态切换，群发信号
+            signal_oce = 1
+            for x in instrument_list:
+                axobs[x].onMsg(AX_SIGNAL.OPENCALL_END)
+
         if msg.TradingPhaseMarket>TPM.PreTradingBreaking:
             print(f'openCall over, n={n}')
             break
+
+
         x = msg.SecurityID
         if x not in axobs:
             continue
@@ -159,9 +190,95 @@ def TEST_axob_openCall_bat(source_file, instrument_list:list, n_max=500,
 
     ok_nb = 0
     for x in instrument_list:
-        ok_nb += axobs[x].are_you_ok()
+        if axobs[x].TradingPhaseMarket==TPM.PreTradingBreaking or axobs[x].TradingPhaseMarket==TPM.Breaking or axobs[x].TradingPhaseMarket==TPM.AfterCloseCallBreaking or axobs[x].TradingPhaseMarket>=TPM.Ending:
+            ok_nb += axobs[x].are_you_ok()
+        else:
+            ok_nb += 1
 
     assert ok_nb==len(axobs)
     print("TEST_axob_openCall_bat PASS")
     return
 
+
+@timeit
+def TEST_axob_rolling(date, instrument:int, n_max=500, rolling_gap=5,
+                        begin_section=None,
+                        SecurityIDSource=SecurityIDSource_SZSE, 
+                        instrument_type=INSTRUMENT_TYPE.STOCK
+                    ):
+    '''
+    begin_section=None:滚动保存现场，现场名称将打印在终端
+    begin_section='现场名称':装载保存的现场并继续测试
+	rolling_gap:保存间隔，以分钟为单位
+    '''
+    md_file = f'data/{date}/AX_sbe_szse_{instrument:06d}.log'
+    if not os.path.exists(md_file):
+        raise f"{md_file} not exists"
+
+    axob = AXOB(instrument, SecurityIDSource, instrument_type)
+
+    if begin_section is None:
+        boc = 0
+        signal_oce = 0
+        HHMMSSms = 0
+        section = None
+    else:
+        section = pickle.load(open(f"log/rolling/{begin_section}.pkl",'rb'))
+        axob.load(section['save_data'])
+        boc = section['boc']
+        signal_oce = section['signal_oce']
+        HHMMSSms = section['HHMMSSms']
+        assert date==section['date'] and instrument==section['instrument'] and (n_max==0 or n_max>section['n'])
+
+    n = 0
+    for msg in axsbe_file(md_file):
+        if section is not None and n<section['n']:
+            n += 1
+            continue
+
+        if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
+            boc = 1
+            print('openCall start')
+
+        if msg.TradingPhaseMarket==TPM.PreTradingBreaking and signal_oce==0:    # 消息状态切换，触发信号
+            signal_oce = 1
+            axob.onMsg(AX_SIGNAL.OPENCALL_END)
+
+        if msg.TradingPhaseMarket>=TPM.AfterCloseCallBreaking:
+            print(f'AfterCloseCallBreaking: over, n={n}')
+            break
+
+        axob.onMsg(msg)
+        n += 1
+        if n_max>0 and n>=n_max:
+            print(f'nb over, n={n}')
+            break
+
+        if HHMMSSms==0 or boc==0:
+            HHMMSSms=msg.HHMMSSms
+        else:
+            if msg.HHMMSSms > HHMMSSms + rolling_gap*100000:    # step = gap * 1min
+                HHMMSSms = msg.HHMMSSms
+                save_data = axob.save()
+                section = {
+                    'save_data':save_data,
+                    'date':date,
+                    'instrument':instrument,
+                    'n_max':n_max,
+                    'boc':boc,
+                    'signal_oce':signal_oce,
+                    'n':n,
+                    'HHMMSSms':HHMMSSms,
+                }
+                section_name = f'{date}_{instrument:06d}_{n_max}_{rolling_gap}_{HHMMSSms}'
+                pickle.dump(section, open(f"log/rolling/{section_name}.pkl",'wb'))
+                print(f'saved section={section_name}')
+    
+    #TODO: ugly..
+    if axob.TradingPhaseMarket==TPM.PreTradingBreaking or axob.TradingPhaseMarket==TPM.Breaking or axob.TradingPhaseMarket==TPM.AfterCloseCallBreaking or axob.TradingPhaseMarket>=TPM.Ending:
+        assert axob.are_you_ok()
+    else:
+        axob.are_you_ok()
+
+    print("TEST_axob_rolling PASS")
+    return
