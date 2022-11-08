@@ -325,6 +325,7 @@ class AXOB():
         'ask_cage_min_level_qty',
         'bid_cage_ref_px',
         'ask_cage_ref_px',
+        'waiting_for_cate',
 
         # for test olny
         'msg_nb',
@@ -394,6 +395,7 @@ class AXOB():
         self.ask_cage_min_level_qty = 0
         self.bid_cage_ref_px = 0 #价格笼子基准价格 对手方一档价格 -> 本方一档价格 -> 最近成交价 -> 前收盘价
         self.ask_cage_ref_px = 0 #价格笼子基准价格 对手方一档价格 -> 本方一档价格 -> 最近成交价 -> 前收盘价
+        self.waiting_for_cate = False
 
         ## 调试数据，仅用于测试算法是否正确：
         self.msg_nb = 0
@@ -595,6 +597,7 @@ class AXOB():
         '''
         订单进入价格笼子，更新对应的价格档位数据
         '''
+        self.DBG('insertCage')
         self.order_map[order.applSeqNum] = order
         
         if order.side == SIDE.BID:
@@ -1330,7 +1333,7 @@ class AXOB():
                 continue
 
             value = getattr(self, attr)
-            if attr == 'order_map' or attr == 'bid_level_tree' or attr == 'ask_level_tree':
+            if attr in ['order_map', 'bid_level_tree', 'ask_level_tree', 'bid_cage_level_tree', 'ask_cage_level_tree']:
                 data[attr] = {}
                 for i in value:
                     data[attr][i] = value[i].save()
@@ -1354,7 +1357,7 @@ class AXOB():
                     v[i] = ob_order(axsbe_order(), INSTRUMENT_TYPE.UNKNOWN)
                     v[i].load(data[attr][i])
                 setattr(self, attr, v)
-            elif attr == 'bid_level_tree' or attr == 'ask_level_tree':
+            elif attr in ['bid_level_tree', 'ask_level_tree', 'bid_cage_level_tree', 'ask_cage_level_tree']:
                 v = {}
                 for i in data[attr]:
                     v[i] = level_node(-1, -1, -1)

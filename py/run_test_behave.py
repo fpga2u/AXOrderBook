@@ -38,7 +38,8 @@ if __name__== '__main__':
     # behave.TEST_axob(20220425, 2594, 0) # 580 sec
 
     logger.info('starting TEST_axob')
-    behave.TEST_axob(20220426, 300750, 0)
+    behave.TEST_axob_rolling(date=20220426, instrument=300750, n_max=15120, rolling_gap=1, begin_section=None) # 240 sec
+    # behave.TEST_axob(20220426, 300750, 0)
 
     # logger.info('starting TEST_axob')
     # behave.TEST_axob(20220817, 301035, 0)
