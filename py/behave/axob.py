@@ -366,8 +366,8 @@ class AXOB():
 
         self.ChannelNo = 0 #来自于快照
         self.PrevClosePx = 0 #来自于快照 深圳要处理到内部精度，用于在还原快照时比较
-        self.DnLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价 [low priority]
-        self.UpLimitPx = 0  # #来自于快照 TODO: cover: 无涨跌停价 [low priority]
+        self.DnLimitPx = 0  # #来自于快照 无涨跌停价时为0x7fffffff
+        self.UpLimitPx = 0  # #来自于快照 无涨跌停价时为100
         self.YYMMDD = 0     #来自于快照
         self.current_inc_tick = 0 #来自于逐笔 时-分-秒-10ms
         
