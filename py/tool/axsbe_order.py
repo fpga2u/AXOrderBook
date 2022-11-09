@@ -47,7 +47,7 @@ class axsbe_order(axsbe_base.axsbe_base):
             self.TransactTime = dict['TransactTime']
             self.OrdType = dict['OrdType']
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
 
     @property
@@ -64,7 +64,7 @@ class axsbe_order(axsbe_base.axsbe_base):
                 return '出借'
             raise RuntimeError(f"非法委托方向:{self.Side}")
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
     @property
     def Type_str(self):
@@ -78,7 +78,7 @@ class axsbe_order(axsbe_base.axsbe_base):
                 return '本方最优'
             raise RuntimeError(f"非法委托类型:{self.OrdType}")
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
     def setSide(self, s):
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
@@ -93,7 +93,7 @@ class axsbe_order(axsbe_base.axsbe_base):
             else:
                 raise RuntimeError(f"非法委托方向:{s}")
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
     def setType(self, t):
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
@@ -106,7 +106,7 @@ class axsbe_order(axsbe_base.axsbe_base):
             else:
                 raise RuntimeError(f"非法委托类型:{t}")
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
 
     def __str__(self):
@@ -145,7 +145,7 @@ class axsbe_order(axsbe_base.axsbe_base):
             #resv=
             bin += struct.pack("<2B", 0, 0)
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
         return bin
 
     def unpack_stream(self, bytes_i:bytes):
@@ -161,7 +161,7 @@ class axsbe_order(axsbe_base.axsbe_base):
             self.OrdType,\
             self.TransactTime, _, _ = struct.unpack("<iqBBQ2B", bytes_i[24:])
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
         
     @property
     def ccode(self):
@@ -183,7 +183,7 @@ class axsbe_order(axsbe_base.axsbe_base):
     order.Resv2 = 0;
         '''
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
         return s
         
 

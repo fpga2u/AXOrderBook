@@ -139,7 +139,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
                 self.bid[i] = price_level(dict['BidLevel[%d].Price'%i], dict['BidLevel[%d].Qty'%i])
                 self.ask[i] = price_level(dict['AskLevel[%d].Price'%i], dict['AskLevel[%d].Qty'%i])
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
     def is_same(self, another):
         if not isinstance(another, axsbe_snap_stock):
@@ -327,7 +327,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
 
             self.TradingPhaseCode = (Code1<<4) + Code0
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
     @property
     def TradingPhase_str(self):
@@ -367,7 +367,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
     @{self.TransactTime} ({self.TradingPhase_str})
 '''
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
         return s
 
@@ -471,7 +471,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             #resv=
             bin += struct.pack("<i", 0)
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
         return bin
 
 
@@ -546,7 +546,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             self.ask[9].Qty, \
             self.TransactTime, _ =  struct.unpack(unpack_token, bytes_i[24:])
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
     @property
     def ccode(self):
@@ -588,7 +588,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
     snap.Resv4 = 0;
         '''
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
         return s
         
     def save(self):

@@ -138,11 +138,10 @@ def TEST_axob(date, instrument:int, n_max=500,
         if msg.TradingPhaseMarket>=TPM.AfterCloseCallBreaking:
             print(f'AfterCloseCallBreaking: over, n={n}')
             break
-    #TODO:ugly
-    if axob.TradingPhaseMarket==TPM.PreTradingBreaking or axob.TradingPhaseMarket==TPM.Breaking or axob.TradingPhaseMarket==TPM.AfterCloseCallBreaking or axob.TradingPhaseMarket>=TPM.Ending:
+
+    print(axob)
+    if isTPMfreeze(axob):
         assert axob.are_you_ok()
-    else:
-        axob.are_you_ok()
 
     print("TEST_axob PASS")
     return
@@ -274,11 +273,9 @@ def TEST_axob_rolling(date, instrument:int, n_max=500, rolling_gap=5,
                 pickle.dump(section, open(f"log/rolling/{section_name}.pkl",'wb'))
                 print(f'saved section={section_name}')
     
-    #TODO: ugly..
-    if axob.TradingPhaseMarket==TPM.PreTradingBreaking or axob.TradingPhaseMarket==TPM.Breaking or axob.TradingPhaseMarket==TPM.AfterCloseCallBreaking or axob.TradingPhaseMarket>=TPM.Ending:
+    print(axob)
+    if isTPMfreeze(axob):
         assert axob.are_you_ok()
-    else:
-        axob.are_you_ok()
 
     print("TEST_axob_rolling PASS")
     return
