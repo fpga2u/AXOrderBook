@@ -103,7 +103,8 @@ class ob_order():
             self.side = SIDE.BID
         elif order.Side_str=='卖出':
             self.side = SIDE.ASK
-        else:   #TODO: 映射上海 [low priority]
+        else:
+            '''TODO-SSE'''
             self.side = SIDE.UNKNOWN
 
         if order.Type_str=='限价':
@@ -112,7 +113,8 @@ class ob_order():
             self.type = TYPE.MARKET
         elif order.Type_str=='本方最优':
             self.type = TYPE.SIDE
-        else:   #TODO: 映射上海 [low priority]
+        else:
+            '''TODO-SSE'''
             self.type = TYPE.UNKNOWN
 
         ## 位宽及精度舍入可行性检查
@@ -448,13 +450,13 @@ class AXOB():
         '''
         逐笔订单入口，统一提取市价单、限价单的关键字段到内部订单格式
         跳转到处理限价单或处理撤单
-        TODO: SSE的撤单也在order，跳转到onCancel [low priority]
         '''
         self.DBG(f'msg#{self.msg_nb} onOrder:{order}')
         if self.SecurityIDSource == SecurityIDSource_SZSE:
             _order = ob_order(order, self.instrument_type)
         elif self.SecurityIDSource == SecurityIDSource_SSE:
-            pass # TODO: order or cancel [Low Priority]
+            '''TODO-SSE'''
+            # order or cancel
         else:
             return
 
@@ -750,7 +752,7 @@ class AXOB():
             else:
                 pass    # TODO:
         else:
-            pass #TODO:
+            '''TODO-SSE'''
 
         self.UpLimitPx = snap.UpLimitPx
         self.DnLimitPx = snap.DnLimitPx
@@ -844,7 +846,7 @@ class AXOB():
             else:
                 snap.PrevClosePx = self.PrevClosePx    #TODO:
         else:
-            snap.PrevClosePx = self.PrevClosePx    #TODO:
+            '''TODO-SSE'''
             
         snap.UpLimitPx = self.UpLimitPx
         snap.DnLimitPx = self.DnLimitPx
@@ -1166,7 +1168,6 @@ class AXOB():
         for nb in range(level_nb):
             if _ask_min_level_qty!=0:
                 snap_ask_levels[nb] = price_level(self._fmtPrice_inter2snap(_ask_min_level_price), _ask_min_level_qty)
-                # snap_ask_levels[nb].addQ(ask_min_level.orderList, order_nb) #TODO: order_link [Mid priority]
                 # locate next higher ask level
                 _ask_min_level_qty = 0
                 for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
@@ -1179,7 +1180,6 @@ class AXOB():
 
             if _bid_max_level_qty!=0:
                 snap_bid_levels[nb] = price_level(self._fmtPrice_inter2snap(_bid_max_level_price), _bid_max_level_qty)
-                # snap_bid_levels[nb].addQ(bid_max_level.orderList, order_nb) #TODO: order_link [Mid priority]
                 # locate next lower bid level
                 _bid_max_level_qty = 0
                 for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
@@ -1214,7 +1214,7 @@ class AXOB():
         if self.SecurityIDSource==SecurityIDSource_SZSE:
             return ax_timestamp//1000 <= se_timestamp//1000 +1
         elif self.SecurityIDSource==SecurityIDSource_SSE:
-            return False    #TODO: [Low Priority]
+            '''TODO-SSE'''
         else:
             return False
 
@@ -1232,6 +1232,15 @@ class AXOB():
             # for _, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
             #     self.DBG(f'bid\t{l}')
         return im_ok
+
+    def __str__(self) -> str:
+        s = f'axob-behave {self.SecurityID:06d} {self.YYMMDD}-{self.current_inc_tick} msg_nb={self.msg_nb}\n'
+        s+= f'  order_map={len(self.order_map)} bid_level_tree={len(self.bid_level_tree)} ask_level_tree={len(self.ask_level_tree)}\n'
+        s+= f'  bid_max_level_price={self.bid_max_level_price} bid_max_level_qty={self.bid_max_level_qty}\n'
+        s+= f'  ask_min_level_price={self.ask_min_level_price} ask_min_level_qty={self.ask_min_level_qty}\n'
+        s+= f'  rebuilt_snaps={len(self.rebuilt_snaps)} market_snaps={len(self.market_snaps)}\n'
+
+        return s
 
     def save(self):
         '''save/load 用于保存/加载测试时刻'''

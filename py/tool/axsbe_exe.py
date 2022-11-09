@@ -50,7 +50,7 @@ class axsbe_exe(axsbe_base.axsbe_base):
             self.ExecType = dict['ExecType']
             self.TransactTime = dict['TransactTime']
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
     def is_same(self, another):
         '''用于比较模拟撮合和历史数据是否一致'''
@@ -83,14 +83,14 @@ class axsbe_exe(axsbe_base.axsbe_base):
                 return '撤单'
             raise RuntimeError(f"非法执行类型:{self.ExecType}")
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
     def __str__(self):
         '''打印log，只有合法的SecurityIDSource才能被打印'''
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             return f'{"%06d"%self.SecurityID} T={self.ExecType_str}, Px={self.LastPx}, Qty={self.LastQty}, Seq={self.ApplSeqNum}, BidSeq={self.BidApplSeqNum}, AskSeq={self.OfferApplSeqNum}, @{self.TransactTime}'
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
     @property
     def bytes_stream(self):
@@ -125,7 +125,7 @@ class axsbe_exe(axsbe_base.axsbe_base):
             #resv=
             bin += struct.pack("<3B", 0, 0, 0)
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
         return bin
 
     def unpack_stream(self, bytes_i:bytes):
@@ -143,7 +143,7 @@ class axsbe_exe(axsbe_base.axsbe_base):
             self.ExecType, \
             self.TransactTime, _, _, _, = struct.unpack("<QQiqBQ3B", bytes_i[24:])
         else:
-            '''TODO:SSE'''
+            '''TODO-SSE'''
 
 
     @property

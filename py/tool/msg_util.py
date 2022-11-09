@@ -49,6 +49,11 @@ PRICE_SSE_PRECISION = 1000  # 股票价格精度：上海3位小数（逐笔消�
 QTY_SSE_PRECISION   = 1000  # 数量精度：上海3位小数（逐笔消息和快照消息相同）
 TOTALVALUETRADE_SSE_PRECISION = 100000 # 上海5位
 
+isTPMfreeze = lambda x:x.TradingPhaseMarket==axsbe_base.TPM.Starting\
+                     or x.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking\
+                     or x.TradingPhaseMarket==axsbe_base.TPM.Breaking\
+                     or x.TradingPhaseMarket==axsbe_base.TPM.AfterCloseCallBreaking\
+                     or x.TradingPhaseMarket>=axsbe_base.TPM.Ending
 
 def str_to_dict(s:str):
     if s[:2] != "//":

@@ -28,17 +28,17 @@ if __name__== '__main__':
     logger.addHandler(fh)
     logger.addHandler(sh)
 
-    # logger.info('starting TEST_axob')
+    logger.info('starting TEST_axob')
     # behave.TEST_axob_rolling(date=20220422, instrument=1, n_max=0, rolling_gap=5, begin_section=None) # 240 sec
     # behave.TEST_axob_rolling(date=20220422, instrument=1, n_max=0, rolling_gap=5, begin_section='20220422_000001_0_5_145501880')
-    # behave.TEST_axob(20220422, 1, 0) # 100 sec
+    behave.TEST_axob(20220422, 1, 0) # 100 sec
 
     # logger.info('starting TEST_axob')
     # behave.TEST_axob_rolling(date=20220425, instrument=2594, n_max=0, rolling_gap=10, begin_section=None) # 849 sec
     # behave.TEST_axob(20220425, 2594, 0) # 580 sec
 
-    logger.info('starting TEST_axob')
-    behave.TEST_axob(20220426, 300750, 0)
+    # logger.info('starting TEST_axob')
+    # behave.TEST_axob(20220426, 300750, 0)
 
     # logger.info('starting TEST_axob')
     # behave.TEST_axob(20220817, 301035, 0)

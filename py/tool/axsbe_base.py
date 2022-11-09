@@ -145,7 +145,7 @@ class axsbe_base(metaclass=abc.ABCMeta):
             if self.SecurityIDSource == SecurityIDSource_SZSE:
                 self._HHMMSSms = self.TransactTime % 1000000000
             else:
-                '''TODO:SSE'''
+                '''TODO-SSE'''
         return self._HHMMSSms
 
     @property
