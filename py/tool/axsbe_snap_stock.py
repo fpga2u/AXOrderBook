@@ -274,10 +274,8 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             elif Code0==3:
                 if self.HHMMSSms < 93100000:
                     return TPM.PreTradingBreaking
-                elif self.HHMMSSms < 133100000:
-                    return TPM.Breaking
                 else:
-                    return TPM.AfterCloseCallBreaking
+                    return TPM.Breaking
             elif Code0==4:
                 return TPM.CloseCall
             elif Code0==5:
@@ -311,7 +309,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             if tpm==TPM.Starting: Code0=0
             elif tpm==TPM.OpenCall: Code0=1
             elif tpm==TPM.AMTrading or tpm==TPM.PMTrading: Code0=2
-            elif tpm==TPM.PreTradingBreaking or tpm==TPM.Breaking or tpm==TPM.AfterCloseCallBreaking: Code0=3
+            elif tpm==TPM.PreTradingBreaking or tpm==TPM.Breaking: Code0=3
             elif tpm==TPM.CloseCall: Code0=4
             elif tpm==TPM.Ending: Code0=5
             elif tpm==TPM.HangingUp: Code0=6

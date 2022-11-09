@@ -68,12 +68,11 @@ class TPM():
     Breaking = 4
     PMTrading = 5
     CloseCall = 6
-    AfterCloseCallBreaking = 7
-    AfterCloseTrading = 8
-    Ending = 9
-    VolatilityBreaking = 10
-    HangingUp = 11
-    Fusing = 12
+    AfterCloseTrading = 7 # 虽然我们编码这个交易阶段，但在111/192/191消息中不会碰到，其用于300611/303711消息
+    Ending = 8
+    VolatilityBreaking = 9
+    HangingUp = 10
+    Fusing = 11
 
     Unknown = -1
 
@@ -85,7 +84,6 @@ class TPM():
         Breaking : '中午休市',
         PMTrading : '连续竞价[下午]',
         CloseCall : '收盘集合竞价',
-        AfterCloseCallBreaking : '收盘集合竞价后休市',
         AfterCloseTrading : '盘后交易',
         Ending : '已闭市',
         VolatilityBreaking : '波动性中断',
@@ -194,15 +192,7 @@ class axsbe_base(metaclass=abc.ABCMeta):
         elif t < 150000000:
             return TPM.CloseCall
         else:
-            if self.SecurityIDSource == SecurityIDSource_SZSE and self.SecurityID>=300000 and self.SecurityID<=309999:
-                if t < 150500000:
-                    return TPM.AfterCloseCallBreaking
-                elif t < 153000000:
-                    return TPM.AfterCloseTrading
-                else:
-                    return TPM.Ending
-            else:
-                return TPM.Ending
+            return TPM.Ending
 
     @property
     def TradingPhase_str(self):

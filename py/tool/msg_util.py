@@ -52,7 +52,6 @@ TOTALVALUETRADE_SSE_PRECISION = 100000 # 上海5位
 isTPMfreeze = lambda x:x.TradingPhaseMarket==axsbe_base.TPM.Starting\
                      or x.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking\
                      or x.TradingPhaseMarket==axsbe_base.TPM.Breaking\
-                     or x.TradingPhaseMarket==axsbe_base.TPM.AfterCloseCallBreaking\
                      or x.TradingPhaseMarket>=axsbe_base.TPM.Ending
 
 def str_to_dict(s:str):
