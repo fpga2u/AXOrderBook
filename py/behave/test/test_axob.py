@@ -3,7 +3,7 @@
 from tool.axsbe_base import SecurityIDSource_SZSE, TPM, INSTRUMENT_TYPE
 from tool.test_util import *
 from tool.msg_util import *
-from behave.axob import AXOB, AX_SIGNAL
+from behave.mu import *
 import os
 import pickle
 
@@ -152,53 +152,38 @@ def TEST_axob(date, instrument:int, n_max=500,
 
 
 @timeit
-def TEST_axob_openCall_bat(source_file, instrument_list:list, n_max=500, 
+def TEST_axob_bat(source_file, instrument_list:list, n_max=500, 
                             SecurityIDSource=SecurityIDSource_SZSE, 
                             instrument_type=INSTRUMENT_TYPE.STOCK
                             ):
     if not os.path.exists(source_file):
         raise f"{source_file} not exists"
 
-    axobs = {}
-    for x in instrument_list:
-        axobs[x] = AXOB(x, SecurityIDSource, instrument_type)
+    mu = MU(instrument_list, SecurityIDSource, instrument_type)
 
     n = 0 #只计算在 instrument_list 内的消息
     boc = 0
-    signal_oce = 0
+    ecc = 0
     for msg in axsbe_file(source_file):
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
             print('openCall start')
 
-        if msg.TradingPhaseMarket==TPM.PreTradingBreaking and signal_oce==0:    # 消息状态切换，群发信号
-            signal_oce = 1
-            for x in instrument_list:
-                axobs[x].onMsg(AX_SIGNAL.OPENCALL_END)
+        if msg.TradingPhaseMarket==TPM.Ending and ecc==0:
+            ecc = 1
+            print(f'closeCall over')
 
-        if msg.TradingPhaseMarket>TPM.PreTradingBreaking:
-            print(f'openCall over, n={n}')
-            break
-
-
-        x = msg.SecurityID
-        if x not in axobs:
-            continue
-
-        axobs[x].onMsg(msg)
+        mu.onMsg(msg)
         n += 1
         if n_max>0 and n>=n_max:
             print(f'nb over, n={n}')
             break
 
-    ok_nb = 0
-    for x in instrument_list:
-        if isTPMfreeze(axobs[x]):
-            ok_nb += axobs[x].are_you_ok()
-        else:
-            ok_nb += 1
+        if msg.HHMMSSms>92515000:#150100000:
+            print(f'Ending: over, n={n}')
+            break
 
-    assert ok_nb==len(axobs)
+    assert mu.are_you_ok()
     print("TEST_axob_openCall_bat PASS")
     return
 

@@ -20,7 +20,6 @@
 '''
 from enum import Enum
 import logging
-import pstats
 from tool.msg_util import axsbe_base, axsbe_exe, axsbe_order, axsbe_snap_stock, price_level
 import tool.msg_util as msg_util
 from tool.axsbe_base import SecurityIDSource_SSE, SecurityIDSource_SZSE, INSTRUMENT_TYPE
@@ -270,10 +269,15 @@ class level_node():
         return f'{self.price}\t{self.qty}'
 
 class AX_SIGNAL(Enum):  # 发送给AXOB的信号
-    OPENCALL_END  = 0  # 开盘集合竞价结束
-    AMTRADING_END = 1  # 上午连续竞价结束
-    PMTRADING_END = 2  # 下午连续竞价结束
-    ALL_END = 3        # TODO: 盘后几个阶段处理
+    OPENCALL_BGN  = 0  # 开盘集合竞价开始
+    OPENCALL_END  = 1  # 开盘集合竞价结束
+    AMTRADING_BGN = 2  # 上午连续竞价开始
+    AMTRADING_END = 3  # 上午连续竞价结束
+    PMTRADING_BGN = 4  # 下午连续竞价开始
+    PMTRADING_END = 5  # 下午连续竞价结束
+    ALL_END = 6        # 闭市
+    VB_BGN = 7         # 进入波动性中断
+    VB_END = 8         # 退出波动性中断
 
 class CAGE(Enum):
     NONE = 0
