@@ -109,6 +109,7 @@ def TEST_axob(date, instrument:int, n_max=500,
     boc = 0
     signal_oce = 0
     signal_amte = 0
+    signal_pmte = 0
     for msg in axsbe_file(md_file):
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
@@ -120,13 +121,16 @@ def TEST_axob(date, instrument:int, n_max=500,
         if msg.TradingPhaseMarket==TPM.Breaking and signal_amte==0:    # 消息状态切换，触发信号
             signal_amte = 1
             axob.onMsg(AX_SIGNAL.AMTRADING_END)
+        if msg.TradingPhaseMarket==TPM.CloseCall and signal_pmte==0:    # 消息状态切换，触发信号
+            signal_pmte = 1
+            axob.onMsg(AX_SIGNAL.PMTRADING_END)
 
         if openCall_only:
             if msg.TradingPhaseMarket>TPM.PreTradingBreaking:
                 print(f'openCall over, n={n}')
                 break
         
-        if msg.TradingPhaseMarket>=TPM.AfterCloseCallBreaking:
+        if msg.TradingPhaseMarket>=TPM.Ending:
             axob.onMsg(AX_SIGNAL.ALL_END)
 
         axob.onMsg(msg)
@@ -135,8 +139,8 @@ def TEST_axob(date, instrument:int, n_max=500,
             print(f'nb over, n={n}')
             break
         
-        if msg.TradingPhaseMarket>=TPM.AfterCloseCallBreaking:
-            print(f'AfterCloseCallBreaking: over, n={n}')
+        if msg.TradingPhaseMarket>=TPM.Ending:
+            print(f'Ending: over, n={n}')
             break
 
     print(axob)
@@ -189,7 +193,7 @@ def TEST_axob_openCall_bat(source_file, instrument_list:list, n_max=500,
 
     ok_nb = 0
     for x in instrument_list:
-        if axobs[x].TradingPhaseMarket==TPM.PreTradingBreaking or axobs[x].TradingPhaseMarket==TPM.Breaking or axobs[x].TradingPhaseMarket==TPM.AfterCloseCallBreaking or axobs[x].TradingPhaseMarket>=TPM.Ending:
+        if isTPMfreeze(axobs[x]):
             ok_nb += axobs[x].are_you_ok()
         else:
             ok_nb += 1
@@ -219,6 +223,7 @@ def TEST_axob_rolling(date, instrument:int, n_max=500, rolling_gap=5,
     if begin_section is None:
         boc = 0
         signal_oce = 0
+        signal_amte = 0
         HHMMSSms = 0
         section = None
     else:
@@ -226,9 +231,12 @@ def TEST_axob_rolling(date, instrument:int, n_max=500, rolling_gap=5,
         axob.load(section['save_data'])
         boc = section['boc']
         signal_oce = section['signal_oce']
+        signal_amte = section['signal_amte']
+        signal_pmte = section['signal_pmte']
         HHMMSSms = section['HHMMSSms']
         assert date==section['date'] and instrument==section['instrument'] and (n_max==0 or n_max>section['n'])
 
+    signal_pmte = 0
     n = 0
     for msg in axsbe_file(md_file):
         if section is not None and n<section['n']:
@@ -242,10 +250,14 @@ def TEST_axob_rolling(date, instrument:int, n_max=500, rolling_gap=5,
         if msg.TradingPhaseMarket==TPM.PreTradingBreaking and signal_oce==0:    # 消息状态切换，触发信号
             signal_oce = 1
             axob.onMsg(AX_SIGNAL.OPENCALL_END)
-
-        if msg.TradingPhaseMarket>=TPM.AfterCloseCallBreaking:
-            print(f'AfterCloseCallBreaking: over, n={n}')
-            break
+        if msg.TradingPhaseMarket==TPM.Breaking and signal_amte==0:    # 消息状态切换，触发信号
+            signal_amte = 1
+            axob.onMsg(AX_SIGNAL.AMTRADING_END)
+        if msg.TradingPhaseMarket==TPM.CloseCall and signal_pmte==0:    # 消息状态切换，触发信号
+            signal_pmte = 1
+            axob.onMsg(AX_SIGNAL.PMTRADING_END)
+        if msg.TradingPhaseMarket==TPM.Ending:
+            axob.onMsg(AX_SIGNAL.ALL_END)
 
         axob.onMsg(msg)
         n += 1
@@ -266,13 +278,18 @@ def TEST_axob_rolling(date, instrument:int, n_max=500, rolling_gap=5,
                     'n_max':n_max,
                     'boc':boc,
                     'signal_oce':signal_oce,
+                    'signal_amte':signal_amte,
+                    'signal_pmte':signal_pmte,
                     'n':n,
                     'HHMMSSms':HHMMSSms,
                 }
                 section_name = f'{date}_{instrument:06d}_{n_max}_{rolling_gap}_{HHMMSSms}'
                 pickle.dump(section, open(f"log/rolling/{section_name}.pkl",'wb'))
                 print(f'saved section={section_name}')
-    
+
+        if msg.TradingPhaseMarket==TPM.Ending and msg.HHMMSSms>150100000:
+            print(f'Ending: over, n={n}')
+            break
     print(axob)
     if isTPMfreeze(axob):
         assert axob.are_you_ok()
