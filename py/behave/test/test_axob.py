@@ -93,63 +93,6 @@ def TEST_axob_SL(date, instrument:int,
     return
 
 
-@timeit
-def TEST_axob(date, instrument:int, n_max=500, 
-                openCall_only=False,
-                SecurityIDSource=SecurityIDSource_SZSE, 
-                instrument_type=INSTRUMENT_TYPE.STOCK
-            ):
-    md_file = f'data/{date}/AX_sbe_szse_{instrument:06d}.log'
-    if not os.path.exists(md_file):
-        raise f"{md_file} not exists"
-
-    axob = AXOB(instrument, SecurityIDSource, instrument_type)
-
-    n = 0
-    boc = 0
-    signal_oce = 0
-    signal_amte = 0
-    signal_pmte = 0
-    for msg in axsbe_file(md_file):
-        if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
-            boc = 1
-            print('openCall start')
-
-        if msg.TradingPhaseMarket==TPM.PreTradingBreaking and signal_oce==0:    # 消息状态切换，触发信号
-            signal_oce = 1
-            axob.onMsg(AX_SIGNAL.OPENCALL_END)
-        if msg.TradingPhaseMarket==TPM.Breaking and signal_amte==0:    # 消息状态切换，触发信号
-            signal_amte = 1
-            axob.onMsg(AX_SIGNAL.AMTRADING_END)
-        if msg.TradingPhaseMarket==TPM.CloseCall and signal_pmte==0:    # 消息状态切换，触发信号
-            signal_pmte = 1
-            axob.onMsg(AX_SIGNAL.PMTRADING_END)
-
-        if openCall_only:
-            if msg.TradingPhaseMarket>TPM.PreTradingBreaking:
-                print(f'openCall over, n={n}')
-                break
-        
-        if msg.TradingPhaseMarket>=TPM.Ending:
-            axob.onMsg(AX_SIGNAL.ALL_END)
-
-        axob.onMsg(msg)
-        n += 1
-        if n_max>0 and n>=n_max:
-            print(f'nb over, n={n}')
-            break
-        
-        if msg.TradingPhaseMarket>=TPM.Ending:
-            print(f'Ending: over, n={n}')
-            break
-
-    print(axob)
-    if isTPMfreeze(axob):
-        assert axob.are_you_ok()
-
-    print("TEST_axob PASS")
-    return
-
 
 @timeit
 def TEST_axob_bat(source_file, instrument_list:list, n_max=500, 
@@ -187,6 +130,20 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
 
     assert mu.are_you_ok()
     print("TEST_axob_bat PASS")
+    return
+
+
+def TEST_axob(date, instrument:int, n_max=500, 
+                openCall_only=False,
+                SecurityIDSource=SecurityIDSource_SZSE, 
+                instrument_type=INSTRUMENT_TYPE.STOCK
+            ):
+    md_file = f'data/{date}/AX_sbe_szse_{instrument:06d}.log'
+    if not os.path.exists(md_file):
+        raise f"{md_file} not exists"
+
+    TEST_axob_bat(md_file, [instrument], n_max, openCall_only, SecurityIDSource, instrument_type)
+
     return
 
 
