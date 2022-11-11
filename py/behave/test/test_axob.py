@@ -153,9 +153,10 @@ def TEST_axob(date, instrument:int, n_max=500,
 
 @timeit
 def TEST_axob_bat(source_file, instrument_list:list, n_max=500, 
-                            SecurityIDSource=SecurityIDSource_SZSE, 
-                            instrument_type=INSTRUMENT_TYPE.STOCK
-                            ):
+                    openCall_only=False,
+                    SecurityIDSource=SecurityIDSource_SZSE, 
+                    instrument_type=INSTRUMENT_TYPE.STOCK
+                ):
     if not os.path.exists(source_file):
         raise f"{source_file} not exists"
 
@@ -179,12 +180,13 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
             print(f'nb over, n={n}')
             break
 
-        if msg.HHMMSSms>92515000:#150100000:
+        if (openCall_only and msg.HHMMSSms>92600000) or \
+           (msg.HHMMSSms>150100000):
             print(f'Ending: over, n={n}')
             break
 
     assert mu.are_you_ok()
-    print("TEST_axob_openCall_bat PASS")
+    print("TEST_axob_bat PASS")
     return
 
 

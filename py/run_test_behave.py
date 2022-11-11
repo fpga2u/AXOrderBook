@@ -75,7 +75,7 @@ if __name__== '__main__':
     logger.info('starting TEST_axob_bat')
     data_source = "data/20220817/sbe_2022_11_04__11_58_45.txt"
     new_stock=[301192, 301338, 301336, 301330]
-    behave.TEST_axob_bat(data_source, new_stock, 0)
+    behave.TEST_axob_bat(data_source, new_stock, 0, openCall_only=True)
     
     ###测试委托数最少的100只股票，开盘集合竞价到连续竞价前休市
     # logger.info('starting TEST_axob_bat')
