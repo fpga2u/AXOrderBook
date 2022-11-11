@@ -395,14 +395,14 @@ class AXOB():
 
         self.TradingPhaseMarket = axsbe_base.TPM.Starting
 
-        ## 创业板价格笼子
+        ## 创业板价格笼子 http://docs.static.szse.cn/www/disclosure/notice/general/W020200612831351578076.pdf
         if SecurityIDSource==SecurityIDSource_SZSE and SecurityID>=300000 and SecurityID<309999:    #创业板
             self.cage_type = CAGE.CYB
         else:
             self.cage_type = CAGE.NONE
-        self.bid_cage_upper_ex_min_level_price = 0 #买方价格笼子上沿之外的最低价
+        self.bid_cage_upper_ex_min_level_price = 0 #买方价格笼子上沿之外的最低价，超过买入基准价的102%
         self.bid_cage_upper_ex_min_level_qty = 0
-        self.ask_cage_lower_ex_max_level_price = 0 #卖方价格笼子下沿之外的最高价
+        self.ask_cage_lower_ex_max_level_price = 0 #卖方价格笼子下沿之外的最高价，低于卖出基准价的98%
         self.ask_cage_lower_ex_max_level_qty = 0
         self.bid_cage_ref_px = 0 #价格笼子基准价格 对手方一档价格 -> 本方一档价格 -> 最近成交价 -> 前收盘价
         self.ask_cage_ref_px = 0 #价格笼子基准价格 对手方一档价格 -> 本方一档价格 -> 最近成交价 -> 前收盘价
@@ -489,6 +489,17 @@ class AXOB():
                     self.genSnap()
         else:
             pass
+
+
+        if self.msg_nb>=215:
+            self.WARN('breakpoint4')
+            for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+                # self.DBG(f'ask\t{l}')
+                self.DBG(f'ask\t{l}')
+            for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+                # self.DBG(f'bid\t{l}')
+                self.DBG(f'bid\t{l}')
+
 
         ## 调试数据，仅用于测试算法是否正确：
         self.msg_nb += 1
@@ -748,7 +759,7 @@ class AXOB():
             if self.waiting_for_cage==CAGE_SIDE.BID: #买方笼子里的订单被放出来
                 if self.bid_cage_upper_ex_min_level_qty and self.bid_cage_upper_ex_min_level_price<=CYB_cage_upper(self.bid_cage_ref_px):
                     self.waiting_for_cage = CAGE_SIDE.BID
-                    self.DBG('Keep waiting for BID order to get out of cage')
+                    self.DBG('Keep waiting for BID order to get out of cage') #可能本方的笼子外订单放出来后也无法跟对方成交
                 else:
                     self.waiting_for_cage = CAGE_SIDE.NONE
                 

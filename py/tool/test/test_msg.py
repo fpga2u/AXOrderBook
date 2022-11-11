@@ -198,6 +198,8 @@ def TEST_print_securityID(source_log, read_nb=0, instrument_type=INSTRUMENT_TYPE
         securityIDs = {}
 
         rn = 0
+        soc = 0
+        eoc = 0
         for msg in axsbe_file(source_log):
             rn += 1
             if read_nb>0:
@@ -213,6 +215,15 @@ def TEST_print_securityID(source_log, read_nb=0, instrument_type=INSTRUMENT_TYPE
                         pass
                     else:
                         continue #去掉非股票
+
+            if msg.HHMMSSms<91500000:
+                soc = 1
+
+            if msg.HHMMSSms>92800000:
+                eoc = 1
+
+            if soc and eoc:
+                break
 
             if msg.SecurityID not in securityIDs:
                 securityIDs[msg.SecurityID] = {

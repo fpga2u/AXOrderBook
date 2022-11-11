@@ -29,7 +29,7 @@ if __name__== '__main__':
     # pp.test_pipeline_id()
 
     # # 198.0328 sec
-    msg.TEST_print_securityID("data/20221010/sbe_2022_11_10__09_58_04.txt", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
+    msg.TEST_print_securityID("data/20221010/sbe_2022_11_11__16_22_25.txt", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
 
     # msg.TEST_ApplSeqNum("data/20220817/sbe_2022_11_04__11_58_45.txt", 0)
 
