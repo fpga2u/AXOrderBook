@@ -19,12 +19,12 @@
     * save/load
 '''
 from enum import Enum
-import logging
 from tool.msg_util import axsbe_base, axsbe_exe, axsbe_order, axsbe_snap_stock, price_level
 import tool.msg_util as msg_util
 from tool.axsbe_base import SecurityIDSource_SSE, SecurityIDSource_SZSE, INSTRUMENT_TYPE
 from copy import deepcopy
 
+import logging
 axob_logger = logging.getLogger(__name__)
 
 #### 内部计算精度 ####
@@ -122,10 +122,10 @@ class ob_order():
 
         ## 位宽及精度舍入可行性检查
         if self.applSeqNum >= (1<<APPSEQ_BIT_SIZE) and self.applSeqNum!=0xffffffffffffffff:
-            self.price = (1<<APPSEQ_BIT_SIZE)-1
             axob_logger.error(f'{order.SecurityID:06d} order ApplSeqNum={order.ApplSeqNum} ovf!')
 
         if self.price >= (1<<PRICE_BIT_SIZE):
+            self.price = (1<<PRICE_BIT_SIZE)-1
             axob_logger.error(f'{order.SecurityID:06d} order ApplSeqNum={order.ApplSeqNum} Price={order.Price} ovf!')  # 无涨跌停价时可能，即使限价单也可能溢出，且会被前端处理成0x7fff_ffff
 
         if self.qty >= (1<<QTY_BIT_SIZE):
@@ -662,7 +662,7 @@ class AXOB():
                         self.INFO(f'Refresh ask_cage_lower_ex_max_level_price={self.ask_cage_lower_ex_max_level_price}.')
 
             if not inCage:
-                if order.price<self.PrevClosePx*10 or order.price==(1<<PRICE_BIT_SIZE)-1:   #从深交所数据上看，超过昨收(新股时为上市价)10倍的委托不会参与统计
+                if order.price<self.PrevClosePx*10 and order.price!=(1<<PRICE_BIT_SIZE)-1:   #从深交所数据上看，超过昨收(新股时为上市价)10倍的委托不会参与统计
                     self.AskWeightSize += order.qty
                     self.AskWeightValue += order.price * order.qty
 
@@ -879,8 +879,8 @@ class AXOB():
             if price==self.ask_min_level_price:
                 self.ask_min_level_qty -= qty
 
-            if self.ask_cage_lower_ex_max_level_qty==0 or price>self.ask_cage_lower_ex_max_level_price and\
-                (price<self.PrevClosePx*10 or price==(1<<PRICE_BIT_SIZE)-1):   #从深交所数据上看，超过昨收(新股时为上市价)10倍的委托不会参与统计
+            if (self.ask_cage_lower_ex_max_level_qty==0 or price>self.ask_cage_lower_ex_max_level_price) and\
+               (price<self.PrevClosePx*10 and price!=(1<<PRICE_BIT_SIZE)-1):   #从深交所数据上看，超过昨收(新股时为上市价)10倍的委托不会参与统计
                 self.AskWeightSize -= qty
                 self.AskWeightValue -= price * qty
 
