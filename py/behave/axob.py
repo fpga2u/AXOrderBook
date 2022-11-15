@@ -862,11 +862,9 @@ class AXOB():
             #     self.DBG(f'bid\t{l}')
     def enterCage(self):
         '''判断订单是否可进入笼子，若进入笼子，判断是否可以成交'''
-        if self.msg_nb==214:
-            self.DBG('breakpoint')
         while True:
             if self.bid_cage_upper_ex_min_level_qty and self.bid_cage_upper_ex_min_level_price<=CYB_cage_upper(self.bid_cage_ref_px): #买方隐藏订单可以进入笼子
-                if self.ask_min_level_qty and self.bid_cage_upper_ex_min_level_price>self.ask_min_level_price: #可与卖方最优成交
+                if self.ask_min_level_qty and self.bid_cage_upper_ex_min_level_price>=self.ask_min_level_price: #可与卖方最优成交
                     self.DBG('ASK px may changed: waiting for BID order to enter cage & exec')
                     break
                 else:   #无法成交，将隐藏订单加到买方队列
@@ -892,7 +890,7 @@ class AXOB():
                 self.bid_waiting_for_cage = False
 
             if self.ask_cage_lower_ex_max_level_qty and self.ask_cage_lower_ex_max_level_price>=CYB_cage_lower(self.ask_cage_ref_px): #卖方隐藏订单可以进入笼子
-                if self.bid_max_level_qty and self.ask_cage_lower_ex_max_level_price<self.bid_max_level_price: #可与买方最优成交
+                if self.bid_max_level_qty and self.ask_cage_lower_ex_max_level_price<=self.bid_max_level_price: #可与买方最优成交
                     self.DBG('BID px may changed: waiting for ASK order to enter cage & exec')
                     break
                 else:   #无法成交，将隐藏订单加到买方队列
@@ -1085,12 +1083,13 @@ class AXOB():
                 #这里不丢弃last_snap，因为可能无逐笔数据而导致快照不更新
             else:
                 matched = False
-                for gen in self.rebuilt_snaps[snap.NumTrades]:
-                    if snap.is_same(gen) and self._chkSnapTimestamp(snap, gen):
-                        self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
-                                  f' matches history rebuilt snap #{gen._seq}({gen.TransactTime})')
-                        matched = True
-                        break
+                if snap.NumTrades in self.rebuilt_snaps:
+                    for gen in self.rebuilt_snaps[snap.NumTrades]:
+                        if snap.is_same(gen) and self._chkSnapTimestamp(snap, gen):
+                            self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
+                                    f' matches history rebuilt snap #{gen._seq}({gen.TransactTime})')
+                            matched = True
+                            break
                 
                 if matched:
                     ks = list(self.rebuilt_snaps.keys())
@@ -1127,9 +1126,6 @@ class AXOB():
         else:
             # 连续竞价快照
             snap = self.genTradingSnap()
-            
-        if snap.NumTrades==2:
-            self.DBG('breakpoint')
 
         ## 调试数据，仅用于测试算法是否正确：
         if snap is not None:
