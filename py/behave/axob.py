@@ -675,6 +675,8 @@ class AXOB():
                 self.bid_level_tree[order.price].qty += order.qty
                 if order.price==self.bid_max_level_price:
                     self.bid_max_level_qty += order.qty
+                if self.bid_cage_upper_ex_min_level_qty and order.price==self.bid_cage_upper_ex_min_level_price:
+                    self.bid_cage_upper_ex_min_level_qty += order.qty
             else:
                 node = level_node(order.price, order.qty, order.applSeqNum)
                 self.bid_level_tree[order.price] = node
@@ -704,6 +706,8 @@ class AXOB():
                 self.ask_level_tree[order.price].qty += order.qty
                 if order.price==self.ask_min_level_price:
                     self.ask_min_level_qty += order.qty
+                if self.ask_cage_lower_ex_max_level_qty and order.price==self.ask_cage_lower_ex_max_level_price:
+                    self.ask_cage_lower_ex_max_level_qty += order.qty
             else:
                 node = level_node(order.price, order.qty, order.applSeqNum)
                 self.ask_level_tree[order.price] = node
@@ -947,6 +951,8 @@ class AXOB():
         
     def levelDequeue(self, side, price, qty, applSeqNum):
         '''买/卖方价格档出列（撤单或成交时）'''
+        if self.msg_nb==801:
+            self.WARN('breakpoint2')
         if side == SIDE.BID:
             self.bid_level_tree[price].qty -= qty
             # self.bid_level_tree[price].ts.remove(applSeqNum)
