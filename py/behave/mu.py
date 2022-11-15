@@ -121,10 +121,11 @@ class MU():
         return ok_nb==len(self.axobs)
 
     def __str__(self) -> str:
-        s = '--------\n'
+        s = '========================\n'
         for _, x in self.axobs.items():
             s += str(x)
-        s += '--------\n'
+            s += '--------\n'
+        s += '========================\n'
         return s
 
     def save(self):

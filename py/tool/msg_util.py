@@ -80,15 +80,21 @@ def dict_to_axsbe(s:dict):
         return None
 
 
-def axsbe_file(fileName):
+def axsbe_file(fileName, skip_nb=0):
     with open(fileName, "r") as f:
+        nb = 0
         while True:
             l = f.readline()
             if not l:
                 break
-            if l.find("//") >= 0:
+            if l.find("//") == 0:
+                nb += 1
+                if nb<=skip_nb:
+                    continue
                 msg = dict_to_axsbe(str_to_dict(l.lstrip()))
                 if msg is not None:
                     yield msg
-
+                else:
+                    pass
+                    # 11, 12
 

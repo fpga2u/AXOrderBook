@@ -306,3 +306,79 @@ def TEST_axob_rolling(date, instrument:int, n_max=500, rolling_gap=5,
 
     print("TEST_axob_rolling PASS")
     return
+
+
+
+@timeit
+def TEST_mu_rolling(source_file, instrument_list, n_max=500, rolling_gap=5,
+                        begin_section=None,
+                        SecurityIDSource=SecurityIDSource_SZSE, 
+                        instrument_type=INSTRUMENT_TYPE.STOCK
+                    ):
+    '''
+    begin_section=None:滚动保存现场，现场名称将打印在终端
+    begin_section='现场名称':装载保存的现场并继续测试
+	rolling_gap:保存间隔，以分钟为单位
+    '''
+    if not os.path.exists(source_file):
+        raise f"{source_file} not exists"
+
+    mu = MU(instrument_list, SecurityIDSource, instrument_type)
+
+    if begin_section is None:
+        boc = 0
+        HHMMSSms = 0
+        section = None
+        skip_nb = 0
+    else:
+        section = pickle.load(open(f"log/rolling/{begin_section}.pkl",'rb'))
+        mu.load(section['save_data'])
+        boc = section['boc']
+        HHMMSSms = section['HHMMSSms']
+        skip_nb = section['n']
+        assert source_file==section['source_file'] and instrument_list==section['instrument_list'] and (n_max==0 or n_max>section['n'])
+
+    n = 0
+    for msg in axsbe_file(source_file, 0):
+        if section is not None and n<section['n']:
+            n += 1
+            continue
+
+        if msg.TradingPhaseMarket>=TPM.OpenCall and boc==0:
+            boc = 1
+            print('openCall start')
+
+        mu.onMsg(msg)
+        n += 1
+        if n_max>0 and n>=n_max:
+            print(f'nb over, n={n}')
+            break
+
+        if HHMMSSms==0 or boc==0:
+            HHMMSSms=msg.HHMMSSms
+        else:
+            if msg.HHMMSSms > HHMMSSms + rolling_gap*100000:    # step = gap * 1min
+                HHMMSSms = msg.HHMMSSms
+                save_data = mu.save()
+                section = {
+                    'save_data':save_data,
+                    'source_file':source_file,
+                    'instrument_list':instrument_list,
+                    'n_max':n_max,
+                    'boc':boc,
+                    'n':n,
+                    'HHMMSSms':HHMMSSms,
+                }
+                section_name = f'mu_{rolling_gap}_{HHMMSSms}'
+                pickle.dump(section, open(f"log/rolling/{section_name}.pkl",'wb'))
+                print(f'saved section={section_name}')
+
+        if msg.TradingPhaseMarket==TPM.Ending and msg.HHMMSSms>150100000:
+            print(f'Ending: over, n={n}')
+            break
+    print(mu)
+    if isTPMfreeze(mu):
+        assert mu.are_you_ok()
+
+    print("TEST_axob_rolling PASS")
+    return

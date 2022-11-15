@@ -426,8 +426,8 @@ class AXOB():
 
             ## 调试数据，仅用于测试算法是否正确：
             self.msg_nb = 0
-            self.rebuilt_snaps = []
-            self.market_snaps = []
+            self.rebuilt_snaps = {}
+            self.market_snaps = {}
             self.last_snap = None
             self.last_inc_applSeqNum = 0
 
@@ -507,14 +507,8 @@ class AXOB():
             pass
 
 
-        # if self.msg_nb>=215:
-        #     self.WARN('breakpoint4')
-        #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-        #         # self.DBG(f'ask\t{l}')
-        #         self.DBG(f'ask\t{l}')
-        #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-        #         # self.DBG(f'bid\t{l}')
-        #         self.DBG(f'bid\t{l}')
+        # if self.msg_nb>=212:
+        #     self._print_levels()
 
 
         ## 调试数据，仅用于测试算法是否正确：
@@ -542,7 +536,7 @@ class AXOB():
             if l.price<self.PrevClosePx*10 and (self.ask_cage_lower_ex_max_level_qty==0 or l.price>self.ask_cage_lower_ex_max_level_price):
                 static_AskWeightSize += l.qty
                 static_AskWeightValue += l.price * l.qty
-        assert static_AskWeightSize==self.AskWeightSize + self.AskWeightSizeEx
+        assert static_AskWeightSize==self.AskWeightSize + self.AskWeightSizeEx, f'static AskWeightSize={static_AskWeightSize}, dynamic AskWeightSize={self.AskWeightSize}+{self.AskWeightSizeEx}'
         assert static_AskWeightValue==self.AskWeightValue + self.AskWeightValueEx
 
         static_BidWeightSize = 0
@@ -551,8 +545,11 @@ class AXOB():
             if self.bid_cage_upper_ex_min_level_qty==0 or l.price<self.bid_cage_upper_ex_min_level_price:
                 static_BidWeightSize += l.qty
                 static_BidWeightValue += l.price * l.qty
-        assert static_BidWeightSize==self.BidWeightSize
+        assert static_BidWeightSize==self.BidWeightSize, f'static BidWeightSize={static_BidWeightSize}, dynamic BidWeightSize={self.BidWeightSize}'
         assert static_BidWeightValue==self.BidWeightValue
+
+        for _,ls in self.market_snaps.items():
+            assert len(ls)!=0
 
     def openCage(self):
         if self.ask_cage_lower_ex_max_level_qty:
@@ -689,7 +686,7 @@ class AXOB():
 
                         self.ask_cage_ref_px = order.price
                         self.DBG(f'Ask cage ref px={self.ask_cage_ref_px}')
-                        self.ask_waiting_for_cage = True
+                        self.ask_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
                 else:
                     self.DBG('Bid order out of cage.')
                     if order.price>self.bid_cage_ref_px and\
@@ -718,7 +715,7 @@ class AXOB():
 
                         self.bid_cage_ref_px = order.price
                         self.DBG(f'Bid cage ref px={self.bid_cage_ref_px}')
-                        self.bid_waiting_for_cage = True
+                        self.bid_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
                 else:
                     self.DBG('Ask order out of cage.')
                     if order.price<self.ask_cage_ref_px and\
@@ -881,7 +878,7 @@ class AXOB():
                     
                     self.ask_cage_ref_px = self.bid_max_level_price
                     self.DBG(f'ASK cage ref px={self.ask_cage_ref_px}')
-                    self.ask_waiting_for_cage = True   #买方最优价被修改，则判断卖方隐藏订单
+                    self.ask_waiting_for_cage = True if self.cage_type==CAGE.CYB else False   #买方最优价被修改，则判断卖方隐藏订单
 
                     #下一个隐藏订单，继续循环，直到无隐藏订单、隐藏订单可成交
                     self.bid_cage_upper_ex_min_level_qty = 0
@@ -907,7 +904,7 @@ class AXOB():
                     
                     self.bid_cage_ref_px = self.ask_min_level_price
                     self.DBG(f'BID cage ref px={self.bid_cage_ref_px}')
-                    self.bid_waiting_for_cage = True   #卖方最优价被修改，则判断买方隐藏订单
+                    self.bid_waiting_for_cage = True if self.cage_type==CAGE.CYB else False   #卖方最优价被修改，则判断买方隐藏订单
 
                     self.ask_cage_lower_ex_max_level_qty = 0
                     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
@@ -961,8 +958,16 @@ class AXOB():
             if self.bid_cage_upper_ex_min_level_qty==0 or price<self.bid_cage_upper_ex_min_level_price:
                 self.BidWeightSize -= qty
                 self.BidWeightValue -= price * qty
-            else:
+            elif self.bid_cage_upper_ex_min_level_qty and price==self.bid_cage_upper_ex_min_level_price:
                 self.bid_cage_upper_ex_min_level_qty -= qty
+                if self.bid_cage_upper_ex_min_level_qty==0: #买方价格笼子外最低价被cancel/trade光
+                    # locate next high bid level
+                    for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历，TODO:可以先判断是否存在
+                        if p>self.bid_cage_upper_ex_min_level_price:
+                            self.bid_cage_upper_ex_min_level_price = p
+                            self.bid_cage_upper_ex_min_level_qty = l.qty
+                            self.DBG(f'Refresh bid_cage_upper_ex_min_level_price={self.bid_cage_upper_ex_min_level_price} by canceled/traded all')
+                            break
 
             if self.bid_level_tree[price].qty==0:
                 self.bid_level_tree.pop(price)
@@ -983,17 +988,7 @@ class AXOB():
                     else:
                         self.ask_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
                     self.DBG(f'Ask cage ref px={self.ask_cage_ref_px}')
-                    self.ask_waiting_for_cage = True
-
-                if price==self.bid_cage_upper_ex_min_level_price: #买方价格笼子上方最低价被cancel/trade光
-                    self.bid_cage_upper_ex_min_level_qty = 0
-                    # locate next high bid level
-                    for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
-                        if p>self.bid_cage_upper_ex_min_level_price:
-                            self.bid_cage_upper_ex_min_level_price = p
-                            self.bid_cage_upper_ex_min_level_qty = l.qty
-                            self.DBG(f'Refresh bid_cage_upper_ex_min_level_price={self.bid_cage_upper_ex_min_level_price} by canceled/traded all')
-                            break
+                    self.ask_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
 
         else:## side == SIDE.ASK:
             self.ask_level_tree[price].qty -= qty
@@ -1008,8 +1003,17 @@ class AXOB():
                 else:
                     self.AskWeightSize -= qty
                     self.AskWeightValue -= price * qty
-            else:
+            elif self.ask_cage_lower_ex_max_level_qty and price==self.ask_cage_lower_ex_max_level_price:
                 self.ask_cage_lower_ex_max_level_qty -= qty
+                if self.ask_cage_lower_ex_max_level_qty==0: #卖方价格笼子外最高价被cancel/trade光
+                    # locate next high bid level
+                    for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从小到大遍历，TODO:可以先判断是否存在
+                        if p<self.ask_cage_lower_ex_max_level_price:
+                            self.ask_cage_lower_ex_max_level_price = p
+                            self.ask_cage_lower_ex_max_level_qty = l.qty
+                            self.DBG(f'Refresh ask_cage_lower_ex_max_level_price={self.ask_cage_lower_ex_max_level_price} by canceled/traded all')
+                            break
+
 
             if self.ask_level_tree[price].qty==0:
                 self.ask_level_tree.pop(price)
@@ -1030,17 +1034,7 @@ class AXOB():
                     else:
                         self.bid_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
                     self.DBG(f'Bid cage ref px={self.bid_cage_ref_px}')
-                    self.bid_waiting_for_cage = True
-
-                if price==self.ask_cage_lower_ex_max_level_price: #卖方价格笼子外最高价被cancel/trade光
-                    self.ask_cage_lower_ex_max_level_qty = 0
-                    # locate next high bid level
-                    for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从小到大遍历
-                        if p<self.ask_cage_lower_ex_max_level_price:
-                            self.ask_cage_lower_ex_max_level_price = p
-                            self.ask_cage_lower_ex_max_level_qty = l.qty
-                            self.DBG(f'Refresh ask_cage_lower_ex_max_level_price={self.ask_cage_lower_ex_max_level_price} by canceled/traded all')
-                            break
+                    self.bid_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
 
     def onSnap(self, snap:axsbe_snap_stock):
         self.DBG(f'msg#{self.msg_nb} onSnap:{snap}')
@@ -1084,22 +1078,30 @@ class AXOB():
             if self.last_snap and snap.is_same(self.last_snap) and self._chkSnapTimestamp(snap, self.last_snap):
                 self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
                           f' matches last rebuilt snap #{self.last_snap._seq}({self.last_snap.TransactTime})')
-                self.rebuilt_snaps = self.rebuilt_snaps[-1:]
+                ks = list(self.rebuilt_snaps.keys())
+                for k in ks:
+                    if k < snap.NumTrades:
+                        self.rebuilt_snaps.pop(k)
                 #这里不丢弃last_snap，因为可能无逐笔数据而导致快照不更新
             else:
                 matched = False
-                for match_idx in range(len(self.rebuilt_snaps)):
-                    gen = self.rebuilt_snaps[match_idx]
+                for gen in self.rebuilt_snaps[snap.NumTrades]:
                     if snap.is_same(gen) and self._chkSnapTimestamp(snap, gen):
                         self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
                                   f' matches history rebuilt snap #{gen._seq}({gen.TransactTime})')
                         matched = True
                         break
                 
-                if matched: 
-                    self.rebuilt_snaps = self.rebuilt_snaps[match_idx+1:]   #丢弃已匹配的
+                if matched:
+                    ks = list(self.rebuilt_snaps.keys())
+                    for k in ks:
+                        if k < snap.NumTrades:
+                            self.rebuilt_snaps.pop(k)
                 else:
-                    self.market_snaps.append(snap) #缓存交易所快照
+                    if snap.NumTrades not in self.market_snaps:
+                        self.market_snaps[snap.NumTrades] = [snap]
+                    else:
+                        self.market_snaps[snap.NumTrades].append(snap) #缓存交易所快照
                     self.WARN(f'market snap #{self.msg_nb}({snap.TransactTime}) not found in history rebuilt snaps!')
 
                     # self.WARN('breakpoint4')
@@ -1126,6 +1128,8 @@ class AXOB():
             # 连续竞价快照
             snap = self.genTradingSnap()
             
+        if snap.NumTrades==2:
+            self.DBG('breakpoint')
 
         ## 调试数据，仅用于测试算法是否正确：
         if snap is not None:
@@ -1140,17 +1144,23 @@ class AXOB():
 
             #在收到的交易所快照中查找是否有一样的
             matched = False
-            for match_idx in range(len(self.market_snaps)):
-                rcv = self.market_snaps[match_idx]
-                if snap.is_same(rcv) and self._chkSnapTimestamp(rcv, snap):
-                    self.WARN(f'rebuilt snap #{snap._seq}({snap.TransactTime}) matches history market snap #{rcv._seq}({rcv.TransactTime})') # 重建快照在市场快照之后，属于警告
-                    matched = True
-                    break
+            if snap.NumTrades in self.market_snaps:
+                for match_idx in range(len(self.market_snaps[snap.NumTrades])):
+                    rcv = self.market_snaps[snap.NumTrades][match_idx]
+                    if snap.is_same(rcv) and self._chkSnapTimestamp(rcv, snap):
+                        self.WARN(f'rebuilt snap #{snap._seq}({snap.TransactTime}) matches history market snap #{rcv._seq}({rcv.TransactTime})') # 重建快照在市场快照之后，属于警告
+                        matched = True
+                        break
             
             if matched: 
-                self.market_snaps.pop(match_idx)    #丢弃已匹配的
+                self.market_snaps[snap.NumTrades].pop(match_idx)    #丢弃已匹配的
+                if len(self.market_snaps[snap.NumTrades])==0:
+                    self.market_snaps.pop(snap.NumTrades)
             else:
-                self.rebuilt_snaps.append(snap)     #无历史的才缓存，有历史的只放进last_snap
+                if snap.NumTrades not in self.rebuilt_snaps:
+                    self.rebuilt_snaps[snap.NumTrades] = [snap]     #无历史的才缓存，有历史的只放进last_snap
+                else:
+                    self.rebuilt_snaps[snap.NumTrades].append(snap)     #无历史的才缓存，有历史的只放进last_snap
 
 
     def _setSnapFixParam(self, snap):
@@ -1541,8 +1551,10 @@ class AXOB():
         im_ok = True
         if len(self.market_snaps):
             self.ERR(f'unmatched market snap size={len(self.market_snaps)}:')
-            for s in self.market_snaps:
-                self.ERR(f'#{s._seq}')
+            for s,ls in self.market_snaps.items():
+                self.ERR(f'\tNumTrades={s}')
+                for ss in ls:
+                    self.ERR(f'\t\t#{ss._seq}')
             im_ok = False
             # self.DBG('breakpoint5')
             # for _, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
@@ -1552,21 +1564,29 @@ class AXOB():
             #     self.DBG(f'bid\t{l}')
         return im_ok
 
+    def _describe_px(self, p):
+        s = ''
+        if p==self.bid_max_level_price:
+            s += '\tbid_max'
+        if p==self.ask_min_level_price:
+            s += '\task_min'
+        if p==self.ask_cage_ref_px:
+            s += '\task_cage_ref'
+        if p==self.bid_cage_ref_px:
+            s += '\tbid_cage_ref'
+        if self.ask_cage_lower_ex_max_level_qty and p==self.ask_cage_lower_ex_max_level_price:
+            s += '\task_cage_lower_ex_max'
+        if self.bid_cage_upper_ex_min_level_qty and p==self.bid_cage_upper_ex_min_level_price:
+            s += '\tbid_cage_upper_ex_min'
+        return s
+
     def _print_levels(self):
         for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-            if p==self.bid_cage_upper_ex_min_level_price:
-                self.DBG(f'ask\t{l}\tbid_cage_upper_ex_min')
-            elif p==self.ask_min_level_price:
-                self.DBG(f'ask\t{l}\task_min')
-            else:
-                self.DBG(f'ask\t{l}')
+            s = f'ask\t{l}{self._describe_px(l.price)}'
+            self.DBG(s)
         for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-            if p==self.ask_cage_lower_ex_max_level_price:
-                self.DBG(f'bid\t{l}\task_cage_lower_ex_max')
-            elif p==self.bid_max_level_price:
-                self.DBG(f'bid\t{l}\tbid_max')
-            else:
-                self.DBG(f'bid\t{l}')
+            s = f'bid\t{l}{self._describe_px(l.price)}'
+            self.DBG(s)
 
     def __str__(self) -> str:
         s = f'axob-behave {self.SecurityID:06d} {self.YYMMDD}-{self.current_inc_tick} msg_nb={self.msg_nb}\n'
@@ -1590,7 +1610,9 @@ class AXOB():
                 for i in value:
                     data[attr][i] = value[i].save()
             elif attr == 'rebuilt_snaps' or attr == 'market_snaps':
-                data[attr] = [x.save() for x in value]
+                data[attr] = {}
+                for i in value:
+                    data[attr][i] = [x.save() for x in value[i]]
             elif attr == 'last_snap':
                 if value is None:
                     data[attr] = None
@@ -1619,14 +1641,17 @@ class AXOB():
                     v[i].load(data[attr][i])
                 setattr(self, attr, v)
             elif attr == 'rebuilt_snaps' or attr == 'market_snaps':
-                v = []
-                for d in data[attr]:
-                    if self.instrument_type==INSTRUMENT_TYPE.STOCK:
-                        s = axsbe_snap_stock()
-                    else:
-                        raise f'unable to load instrument_type={self.instrument_type}'
-                    s.load(d)
-                    v.append(s)
+                v = {}
+                for i in data[attr]:
+                    vv = []
+                    for d in data[attr][i]:
+                        if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+                            s = axsbe_snap_stock()
+                        else:
+                            raise f'unable to load instrument_type={self.instrument_type}'
+                        s.load(d)
+                        vv.append(s)
+                    v[i] = vv
                 setattr(self, attr, v)
             elif attr == 'last_snap':
                 if data[attr] is None:
