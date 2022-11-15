@@ -13,20 +13,40 @@ class MU():
       FPGA的AB:分发消息给MU
       FPGA的MU:交易阶段管理【使MU接口符合统一格式，与AB解耦，AB可能由RTL实现。】【MU内部的消息格式重构需要放在最前端，可能要移到AB。】
     '''
-    def __init__(self, SecurityID_list, SecurityIDSource, instrument_type:INSTRUMENT_TYPE ) -> None:
-        self.TradingPhaseMarket = TPM.Starting
-        self.axobs = dict(zip(SecurityID_list, [AXOB(x, SecurityIDSource, instrument_type) for x in SecurityID_list]))
-        
-        self.logger = logging.getLogger(f'mu-{SecurityID_list[0]:06d}...')
-        g_logger = logging.getLogger('main')
-        self.logger.setLevel(g_logger.getEffectiveLevel())
-        for h in g_logger.handlers:
-            self.logger.addHandler(h)
+    __slots__ = [
+        'TradingPhaseMarket',
+        'axobs',
 
-        self.DBG = self.logger.debug
-        self.INFO = self.logger.info
-        self.WARN = self.logger.warning
-        self.ERR = self.logger.error
+
+        'msg_nb',
+
+        'logger',
+        'DBG',
+        'INFO',
+        'WARN',
+        'ERR',
+    ]
+    def __init__(self, SecurityID_list, SecurityIDSource, instrument_type:INSTRUMENT_TYPE, load_data=None) -> None:
+        if load_data is not None:
+            self.load(load_data)
+        else:
+            self.TradingPhaseMarket = TPM.Starting
+            self.axobs = dict(zip(SecurityID_list, [AXOB(x, SecurityIDSource, instrument_type) for x in SecurityID_list]))
+
+            # for test
+            self.msg_nb = 0
+            
+            # for debug
+            self.logger = logging.getLogger(f'mu-{SecurityID_list[0]:06d}...')
+            g_logger = logging.getLogger('main')
+            self.logger.setLevel(g_logger.getEffectiveLevel())
+            for h in g_logger.handlers:
+                self.logger.addHandler(h)
+
+            self.DBG = self.logger.debug
+            self.INFO = self.logger.info
+            self.WARN = self.logger.warning
+            self.ERR = self.logger.error
 
     def onMsg(self, msg):
         '''
@@ -89,6 +109,8 @@ class MU():
         # TODO: 重构消息给axob？
         self.axobs[msg.SecurityID].onMsg(msg)
 
+        self.msg_nb += 1
+
     def are_you_ok(self):
         ok_nb = 0
         for _, x in self.axobs.items():
@@ -97,3 +119,51 @@ class MU():
             else:
                 ok_nb += 1
         return ok_nb==len(self.axobs)
+
+    def __str__(self) -> str:
+        s = '--------\n'
+        for _, x in self.axobs.items():
+            s += str(x)
+        s += '--------\n'
+        return s
+
+    def save(self):
+        '''save/load 用于保存/加载测试时刻'''
+        data = {}
+        for attr in self.__slots__:
+            if attr in ['logger', 'DBG', 'INFO', 'WARN', 'ERR']:
+                continue
+
+            value = getattr(self, attr)
+            if attr in ['axobs']:
+                data[attr] = {}
+                for i in value:
+                    data[attr][i] = value[i].save()
+            else:
+                data[attr] = value
+        return data
+
+    def load(self, data):
+        for attr in self.__slots__:
+            if attr in ['logger', 'DBG', 'INFO', 'WARN', 'ERR']:
+                continue
+
+            if attr in ['axobs']:
+                v = {}
+                for i in data[attr]:
+                    v[i] = AXOB(-1, -1, INSTRUMENT_TYPE.UNKNOWN, load_data=data[attr][i])
+                setattr(self, attr, v)
+            else:
+                setattr(self, attr, data[attr])
+        ## 日志
+        SecurityID_list = list(data['axobs'].keys())
+        self.logger = logging.getLogger(f'mu-{SecurityID_list[0]:06d}...')
+        g_logger = logging.getLogger('main')
+        self.logger.setLevel(g_logger.getEffectiveLevel())
+        for h in g_logger.handlers:
+            self.logger.addHandler(h)
+
+        self.DBG = self.logger.debug
+        self.INFO = self.logger.info
+        self.WARN = self.logger.warning
+        self.ERR = self.logger.error

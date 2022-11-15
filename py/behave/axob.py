@@ -54,6 +54,15 @@ class SIDE(Enum): # 2bit
 
     UNKNOWN = -1    # 仅用于测试
 
+    def __str__(self):
+        if self.value==0:
+            return 'BID'
+        elif self.value==1:
+            return 'ASK'
+        else:
+            return 'UNKNOWN'
+
+
 class TYPE(Enum): # 2bit
     LIMIT  = 0   #限价
     MARKET = 1   #市价
@@ -338,7 +347,8 @@ class AXOB():
         'ask_cage_lower_ex_max_level_qty',
         'bid_cage_ref_px',
         'ask_cage_ref_px',
-        'waiting_for_cage',
+        'bid_waiting_for_cage',
+        'ask_waiting_for_cage',
 
         # for test olny
         'msg_nb',
@@ -353,82 +363,86 @@ class AXOB():
         'WARN',
         'ERR',
     ]
-    def __init__(self, SecurityID:int, SecurityIDSource, instrument_type:INSTRUMENT_TYPE):
+    def __init__(self, SecurityID:int, SecurityIDSource, instrument_type:INSTRUMENT_TYPE, load_data=None):
         '''
         '''
-        self.SecurityID = SecurityID
-        self.SecurityIDSource = SecurityIDSource #"证券代码源101=上交所;102=深交所;103=香港交易所" 在hls中用宏或作为模板参数设置
-        self.instrument_type = instrument_type
-
-        ## 结构数据：
-        self.order_map = {} #订单队列，以applSeqNum作为索引
-        self.bid_level_tree = {} #买方价格档，以价格作为索引
-        self.ask_level_tree = {} #卖方价格档
-
-        self.NumTrades = 0
-        self.bid_max_level_price = 0
-        self.bid_max_level_qty = 0
-        self.ask_min_level_price = 0
-        self.ask_min_level_qty = 0
-        self.LastPx = 0
-        self.HighPx = 0
-        self.LowPx = 0
-        self.OpenPx = 0
-
-        self.ChannelNo = 0 #来自于快照
-        self.PrevClosePx = 0 #来自于快照 深圳要处理到内部精度，用于在还原快照时比较
-        self.DnLimitPx = 0  # #来自于快照 无涨跌停价时为0x7fffffff
-        self.UpLimitPx = 0  # #来自于快照 无涨跌停价时为100
-        self.YYMMDD = 0     #来自于快照
-        self.current_inc_tick = 0 #来自于逐笔 时-分-秒-10ms
-        
-        self.BidWeightSize = 0
-        self.BidWeightValue = 0
-        self.AskWeightSize = 0
-        self.AskWeightValue = 0
-        self.AskWeightSizeEx = 0
-        self.AskWeightValueEx = 0
-
-        self.TotalVolumeTrade = 0
-        self.TotalValueTrade = 0
-
-        self.holding_order = None
-        self.holding_nb = 0
-
-        self.TradingPhaseMarket = axsbe_base.TPM.Starting
-
-        ## 创业板价格笼子 http://docs.static.szse.cn/www/disclosure/notice/general/W020200612831351578076.pdf
-        if SecurityIDSource==SecurityIDSource_SZSE and SecurityID>=300000 and SecurityID<309999:    #创业板
-            self.cage_type = CAGE.CYB
+        if load_data:
+            self.load(load_data)
         else:
-            self.cage_type = CAGE.NONE
-        self.bid_cage_upper_ex_min_level_price = 0 #买方价格笼子上沿之外的最低价，超过买入基准价的102%
-        self.bid_cage_upper_ex_min_level_qty = 0
-        self.ask_cage_lower_ex_max_level_price = 0 #卖方价格笼子下沿之外的最高价，低于卖出基准价的98%
-        self.ask_cage_lower_ex_max_level_qty = 0
-        self.bid_cage_ref_px = 0 #买方价格笼子基准价格 卖方一档价格 -> 买方一档价格 -> 最近成交价 -> 前收盘价，小于等于基准价的102%的在笼子内，大于的在笼子外（被隐藏）
-        self.ask_cage_ref_px = 0 #卖方价格笼子基准价格 买方一档价格 -> 卖方一档价格 -> 最近成交价 -> 前收盘价，大于等于基准价的98%的在笼子内，小于的在笼子外（被隐藏）
-        self.waiting_for_cage = CAGE_SIDE.NONE
+            self.SecurityID = SecurityID
+            self.SecurityIDSource = SecurityIDSource #"证券代码源101=上交所;102=深交所;103=香港交易所" 在hls中用宏或作为模板参数设置
+            self.instrument_type = instrument_type
 
-        ## 调试数据，仅用于测试算法是否正确：
-        self.msg_nb = 0
-        self.rebuilt_snaps = []
-        self.market_snaps = []
-        self.last_snap = None
-        self.last_inc_applSeqNum = 0
+            ## 结构数据：
+            self.order_map = {} #订单队列，以applSeqNum作为索引
+            self.bid_level_tree = {} #买方价格档，以价格作为索引
+            self.ask_level_tree = {} #卖方价格档
 
-        ## 日志
-        self.logger = logging.getLogger(f'{self.SecurityID:06d}')
-        g_logger = logging.getLogger('main')
-        self.logger.setLevel(g_logger.getEffectiveLevel())
-        for h in g_logger.handlers:
-            self.logger.addHandler(h)
-            axob_logger.addHandler(h) #这里补上模块日志的handler，有点ugly TODO: better way [low prioryty]
+            self.NumTrades = 0
+            self.bid_max_level_price = 0
+            self.bid_max_level_qty = 0
+            self.ask_min_level_price = 0
+            self.ask_min_level_qty = 0
+            self.LastPx = 0
+            self.HighPx = 0
+            self.LowPx = 0
+            self.OpenPx = 0
 
-        self.DBG = self.logger.debug
-        self.INFO = self.logger.info
-        self.WARN = self.logger.warning
-        self.ERR = self.logger.error
+            self.ChannelNo = 0 #来自于快照
+            self.PrevClosePx = 0 #来自于快照 深圳要处理到内部精度，用于在还原快照时比较
+            self.DnLimitPx = 0  # #来自于快照 无涨跌停价时为0x7fffffff
+            self.UpLimitPx = 0  # #来自于快照 无涨跌停价时为100
+            self.YYMMDD = 0     #来自于快照
+            self.current_inc_tick = 0 #来自于逐笔 时-分-秒-10ms
+            
+            self.BidWeightSize = 0
+            self.BidWeightValue = 0
+            self.AskWeightSize = 0
+            self.AskWeightValue = 0
+            self.AskWeightSizeEx = 0
+            self.AskWeightValueEx = 0
+
+            self.TotalVolumeTrade = 0
+            self.TotalValueTrade = 0
+
+            self.holding_order = None
+            self.holding_nb = 0
+
+            self.TradingPhaseMarket = axsbe_base.TPM.Starting
+
+            ## 创业板价格笼子 http://docs.static.szse.cn/www/disclosure/notice/general/W020200612831351578076.pdf
+            if SecurityIDSource==SecurityIDSource_SZSE and SecurityID>=300000 and SecurityID<309999:    #创业板
+                self.cage_type = CAGE.CYB
+            else:
+                self.cage_type = CAGE.NONE
+            self.bid_cage_upper_ex_min_level_price = 0 #买方价格笼子上沿之外的最低价，超过买入基准价的102%
+            self.bid_cage_upper_ex_min_level_qty = 0
+            self.ask_cage_lower_ex_max_level_price = 0 #卖方价格笼子下沿之外的最高价，低于卖出基准价的98%
+            self.ask_cage_lower_ex_max_level_qty = 0
+            self.bid_cage_ref_px = 0 #买方价格笼子基准价格 卖方一档价格 -> 买方一档价格 -> 最近成交价 -> 前收盘价，小于等于基准价的102%的在笼子内，大于的在笼子外（被隐藏）
+            self.ask_cage_ref_px = 0 #卖方价格笼子基准价格 买方一档价格 -> 卖方一档价格 -> 最近成交价 -> 前收盘价，大于等于基准价的98%的在笼子内，小于的在笼子外（被隐藏）
+            self.bid_waiting_for_cage = False
+            self.ask_waiting_for_cage = False
+
+            ## 调试数据，仅用于测试算法是否正确：
+            self.msg_nb = 0
+            self.rebuilt_snaps = []
+            self.market_snaps = []
+            self.last_snap = None
+            self.last_inc_applSeqNum = 0
+
+            ## 日志
+            self.logger = logging.getLogger(f'{self.SecurityID:06d}')
+            g_logger = logging.getLogger('main')
+            self.logger.setLevel(g_logger.getEffectiveLevel())
+            for h in g_logger.handlers:
+                self.logger.addHandler(h)
+                axob_logger.addHandler(h) #这里补上模块日志的handler，有点ugly TODO: better way [low prioryty]
+
+            self.DBG = self.logger.debug
+            self.INFO = self.logger.info
+            self.WARN = self.logger.warning
+            self.ERR = self.logger.error
 
     def onMsg(self, msg):
         '''处理总入口'''
@@ -493,14 +507,14 @@ class AXOB():
             pass
 
 
-        if self.msg_nb>=215:
-            self.WARN('breakpoint4')
-            for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-                # self.DBG(f'ask\t{l}')
-                self.DBG(f'ask\t{l}')
-            for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-                # self.DBG(f'bid\t{l}')
-                self.DBG(f'bid\t{l}')
+        # if self.msg_nb>=215:
+        #     self.WARN('breakpoint4')
+        #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+        #         # self.DBG(f'ask\t{l}')
+        #         self.DBG(f'ask\t{l}')
+        #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+        #         # self.DBG(f'bid\t{l}')
+        #         self.DBG(f'bid\t{l}')
 
 
         ## 调试数据，仅用于测试算法是否正确：
@@ -522,6 +536,23 @@ class AXOB():
         if (self.TradingPhaseMarket==axsbe_base.TPM.AMTrading or self.TradingPhaseMarket==axsbe_base.TPM.PMTrading) and self.bid_max_level_qty and self.ask_min_level_qty:
             assert self.bid_max_level_price<self.ask_min_level_price, f'{self.SecurityID} bid.max({self.bid_max_level_price})/ask.min({self.ask_min_level_price}) NG'
 
+        static_AskWeightSize = 0
+        static_AskWeightValue = 0
+        for _,l in self.ask_level_tree.items():
+            if l.price<self.PrevClosePx*10 and (self.ask_cage_lower_ex_max_level_qty==0 or l.price>self.ask_cage_lower_ex_max_level_price):
+                static_AskWeightSize += l.qty
+                static_AskWeightValue += l.price * l.qty
+        assert static_AskWeightSize==self.AskWeightSize + self.AskWeightSizeEx
+        assert static_AskWeightValue==self.AskWeightValue + self.AskWeightValueEx
+
+        static_BidWeightSize = 0
+        static_BidWeightValue = 0
+        for _,l in self.bid_level_tree.items():
+            if self.bid_cage_upper_ex_min_level_qty==0 or l.price<self.bid_cage_upper_ex_min_level_price:
+                static_BidWeightSize += l.qty
+                static_BidWeightValue += l.price * l.qty
+        assert static_BidWeightSize==self.BidWeightSize
+        assert static_BidWeightValue==self.BidWeightValue
 
     def openCage(self):
         if self.ask_cage_lower_ex_max_level_qty:
@@ -598,6 +629,9 @@ class AXOB():
                 self.holding_nb = 0
 
             self.insertOrder(order)
+            self.bid_waiting_for_cage = False
+            self.ask_waiting_for_cage = False
+
             self.genSnap()   #可出snap
         elif self.cage_type==CAGE.CYB and order.type==TYPE.LIMIT and\
              (order.side==SIDE.BID and (order.price>CYB_cage_upper(self.bid_cage_ref_px)) or
@@ -619,19 +653,23 @@ class AXOB():
             if order.type==TYPE.MARKET:
                 self.holding_order = order
                 self.holding_nb += 1
+                self.DBG('hold MARET-order')
             elif (order.side==SIDE.BID and (order.price >= self.ask_min_level_price and self.ask_min_level_qty > 0)) or \
                (order.side==SIDE.ASK and (order.price <= self.bid_max_level_price and self.bid_max_level_qty > 0)):
                 self.holding_order = order
                 self.holding_nb += 1
+                self.DBG('hold LIMIT-order')
             else:
                 self.insertOrder(order)
+                if self.cage_type==CAGE.CYB:
+                    self.enterCage()
 
                 self.genSnap()   #再出一个snap
 
     def insertOrder(self, order:ob_order, outOfCage=False):
         '''
         订单入列，更新对应的价格档位数据
-        outOfCage: 不在价格笼子内，服务器将隐藏订单，不影响当前最优档
+        outOfCage:入列的订单不在价格笼子内（服务器将隐藏订单，不影响当前最优档）
         '''
         self.order_map[order.applSeqNum] = order
         
@@ -650,6 +688,8 @@ class AXOB():
                         self.bid_max_level_qty = order.qty
 
                         self.ask_cage_ref_px = order.price
+                        self.DBG(f'Ask cage ref px={self.ask_cage_ref_px}')
+                        self.ask_waiting_for_cage = True
                 else:
                     self.DBG('Bid order out of cage.')
                     if order.price>self.bid_cage_ref_px and\
@@ -678,6 +718,7 @@ class AXOB():
 
                         self.bid_cage_ref_px = order.price
                         self.DBG(f'Bid cage ref px={self.bid_cage_ref_px}')
+                        self.bid_waiting_for_cage = True
                 else:
                     self.DBG('Ask order out of cage.')
                     if order.price<self.ask_cage_ref_px and\
@@ -753,28 +794,17 @@ class AXOB():
             if self.LowPx > exec.LastPx:
                 self.LowPx = exec.LastPx
 
-        # 紧跟缓存单的成交
-        if self.waiting_for_cage!=CAGE_SIDE.NONE:
+        if self.bid_waiting_for_cage or self.ask_waiting_for_cage:
             self.DBG("Order entered cage & exec.")
             self.tradeLimit(SIDE.ASK, exec.LastQty, exec.OfferApplSeqNum)
             self.tradeLimit(SIDE.BID, exec.LastQty, exec.BidApplSeqNum)
-            if self.waiting_for_cage==CAGE_SIDE.BID: #买方隐藏的订单被放进来与卖方最优成交，变动的是买方基准价，继续判断买方隐藏
-                if self.bid_cage_upper_ex_min_level_qty and self.bid_cage_upper_ex_min_level_price<=CYB_cage_upper(self.bid_cage_ref_px):
-                    self.waiting_for_cage = CAGE_SIDE.BID
-                    self.enterCage()
-                else:
-                    self.waiting_for_cage = CAGE_SIDE.NONE
-                
-            else:                    #买方最优价格（即卖方基准价）可能被修改
-                if self.ask_cage_lower_ex_max_level_qty and self.ask_cage_lower_ex_max_level_price>=CYB_cage_lower(self.ask_cage_ref_px):
-                    self.waiting_for_cage = CAGE_SIDE.ASK
-                    # self.DBG('Keep waiting for ASK order to enter of cage')
-                    self.enterCage()
-                else:
-                    self.waiting_for_cage = CAGE_SIDE.NONE
+            if self.cage_type==CAGE.CYB:
+                self.enterCage()
             self.genSnap()   #出一个snap
         elif self.holding_nb!=0:
+            # 紧跟缓存单的成交
             level_side = SIDE.ASK if exec.BidApplSeqNum==self.holding_order.applSeqNum else SIDE.BID #level_side:缓存单的对手盘
+            self.DBG(f'level_side={level_side}')
             assert self.holding_order.qty>=exec.LastQty, "holding order Qty unmatch"
             if self.holding_order.qty==exec.LastQty:
                 self.holding_nb = 0
@@ -797,14 +827,10 @@ class AXOB():
                     self.insertOrder(self.holding_order)
                     self.holding_nb = 0
 
+            if self.cage_type==CAGE.CYB:
+                self.enterCage()
+
             if self.holding_nb==0:
-                if self.cage_type==CAGE.CYB:
-                    if level_side==SIDE.ASK: #卖方最优价格可能被修改
-                        self.waiting_for_cage = CAGE_SIDE.BID #放出买方笼子外的隐藏订单
-                        self.enterCage()
-                    else:                    #买方最优价格可能被修改
-                        self.waiting_for_cage = CAGE_SIDE.ASK
-                        self.enterCage()
 
                 self.genSnap()   #缓存单成交完
         
@@ -839,51 +865,62 @@ class AXOB():
             #     self.DBG(f'bid\t{l}')
     def enterCage(self):
         '''判断订单是否可进入笼子，若进入笼子，判断是否可以成交'''
+        if self.msg_nb==214:
+            self.DBG('breakpoint')
         while True:
-            if self.waiting_for_cage==CAGE_SIDE.BID: # 判断买方隐藏订单
-                if self.bid_cage_upper_ex_min_level_qty and self.bid_cage_upper_ex_min_level_price<=CYB_cage_upper(self.bid_cage_ref_px): #买方隐藏订单可以进入笼子
-                    if self.ask_min_level_qty and self.bid_cage_upper_ex_min_level_price>self.ask_min_level_price: #可与卖方最优成交
-                        self.DBG('ASK px may changed: waiting for BID order to enter cage & exec')
-                        break
-                    else:   #无法成交，将隐藏订单加到买方队列
-                        self.bid_max_level_price = self.bid_cage_upper_ex_min_level_price
-                        self.bid_max_level_qty = self.bid_cage_upper_ex_min_level_qty
-                        
-                        self.ask_cage_ref_px = self.bid_max_level_price
-
-                        self.bid_cage_upper_ex_min_level_qty = 0
-                        for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
-                            if p>self.bid_cage_upper_ex_min_level_price:
-                                self.bid_cage_upper_ex_min_level_price = p
-                                self.bid_cage_upper_ex_min_level_qty = l.qty
-                                self.DBG(f'Refresh bid_cage_upper_ex_min_level_price={self.bid_cage_upper_ex_min_level_price} by prev bid order enter cage')
-                                break
-                        self.waiting_for_cage = CAGE_SIDE.ASK   #买方最优价被修改，则判断卖方隐藏订单
-                else:
-                    self.waiting_for_cage = CAGE_SIDE.NONE
+            if self.bid_cage_upper_ex_min_level_qty and self.bid_cage_upper_ex_min_level_price<=CYB_cage_upper(self.bid_cage_ref_px): #买方隐藏订单可以进入笼子
+                if self.ask_min_level_qty and self.bid_cage_upper_ex_min_level_price>self.ask_min_level_price: #可与卖方最优成交
+                    self.DBG('ASK px may changed: waiting for BID order to enter cage & exec')
                     break
-            else:   #判断卖方隐藏订单
-                if self.ask_cage_lower_ex_max_level_qty and self.ask_cage_lower_ex_max_level_price>=CYB_cage_upper(self.bid_cage_ref_px): #卖方隐藏订单可以进入笼子
-                    if self.bid_max_level_qty and self.ask_cage_lower_ex_max_level_price<self.bid_max_level_price: #可与买方最优成交
-                        self.DBG('BID px may changed: waiting for ASK order to enter cage & exec')
-                        break
-                    else:   #无法成交，将隐藏订单加到买方队列
-                        self.ask_min_level_price = self.ask_cage_lower_ex_max_level_price
-                        self.ask_min_level_qty = self.ask_cage_lower_ex_max_level_qty
-                        
-                        self.bid_cage_ref_px = self.ask_min_level_price
+                else:   #无法成交，将隐藏订单加到买方队列
+                    self.bid_max_level_price = self.bid_cage_upper_ex_min_level_price
+                    self.bid_max_level_qty = self.bid_cage_upper_ex_min_level_qty
+                    self.BidWeightSize += self.bid_cage_upper_ex_min_level_qty
+                    self.BidWeightValue += self.bid_cage_upper_ex_min_level_price * self.bid_cage_upper_ex_min_level_qty
+                    self.DBG('BID order enter cage and became max level')
+                    
+                    self.ask_cage_ref_px = self.bid_max_level_price
+                    self.DBG(f'ASK cage ref px={self.ask_cage_ref_px}')
+                    self.ask_waiting_for_cage = True   #买方最优价被修改，则判断卖方隐藏订单
 
-                        self.ask_cage_lower_ex_max_level_qty = 0
-                        for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-                            if p<self.ask_cage_lower_ex_max_level_price:
-                                self.ask_cage_lower_ex_max_level_price = p
-                                self.ask_cage_lower_ex_max_level_qty = l.qty
-                                self.DBG(f'Refresh ask_cage_lower_ex_max_level_price={self.ask_cage_lower_ex_max_level_price} by prev ask order enter cage')
-                                break
-                        self.waiting_for_cage = CAGE_SIDE.BID   #卖方最优价被修改，则判断买方隐藏订单
-                else:
-                    self.waiting_for_cage = CAGE_SIDE.NONE
+                    #下一个隐藏订单，继续循环，直到无隐藏订单、隐藏订单可成交
+                    self.bid_cage_upper_ex_min_level_qty = 0
+                    for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
+                        if p>self.bid_cage_upper_ex_min_level_price:
+                            self.bid_cage_upper_ex_min_level_price = p
+                            self.bid_cage_upper_ex_min_level_qty = l.qty
+                            self.DBG(f'Refresh bid_cage_upper_ex_min_level_price={self.bid_cage_upper_ex_min_level_price} by prev bid level enter cage')
+                            break
+            else:
+                self.bid_waiting_for_cage = False
+
+            if self.ask_cage_lower_ex_max_level_qty and self.ask_cage_lower_ex_max_level_price>=CYB_cage_lower(self.ask_cage_ref_px): #卖方隐藏订单可以进入笼子
+                if self.bid_max_level_qty and self.ask_cage_lower_ex_max_level_price<self.bid_max_level_price: #可与买方最优成交
+                    self.DBG('BID px may changed: waiting for ASK order to enter cage & exec')
                     break
+                else:   #无法成交，将隐藏订单加到买方队列
+                    self.ask_min_level_price = self.ask_cage_lower_ex_max_level_price
+                    self.ask_min_level_qty = self.ask_cage_lower_ex_max_level_qty
+                    self.AskWeightSize += self.ask_cage_lower_ex_max_level_qty
+                    self.AskWeightValue += self.ask_cage_lower_ex_max_level_price * self.ask_cage_lower_ex_max_level_qty
+                    self.DBG('ASK order enter cage and became min level')
+                    
+                    self.bid_cage_ref_px = self.ask_min_level_price
+                    self.DBG(f'BID cage ref px={self.bid_cage_ref_px}')
+                    self.bid_waiting_for_cage = True   #卖方最优价被修改，则判断买方隐藏订单
+
+                    self.ask_cage_lower_ex_max_level_qty = 0
+                    for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+                        if p<self.ask_cage_lower_ex_max_level_price:
+                            self.ask_cage_lower_ex_max_level_price = p
+                            self.ask_cage_lower_ex_max_level_qty = l.qty
+                            self.DBG(f'Refresh ask_cage_lower_ex_max_level_price={self.ask_cage_lower_ex_max_level_price} by prev ask level enter cage')
+                            break
+            else:
+                self.ask_waiting_for_cage = False
+
+            if not self.bid_waiting_for_cage and not self.ask_waiting_for_cage:
+                break
 
 
     def tradeLimit(self, side:SIDE, Qty, appSeqNum):
@@ -908,6 +945,8 @@ class AXOB():
         order = self.order_map.pop(cancel.applSeqNum)   # 注意order.qty是旧值
 
         self.levelDequeue(cancel.side, order.price, cancel.qty, cancel.applSeqNum)
+        if self.cage_type==CAGE.CYB:
+            self.enterCage()
 
         self.genSnap()
         
@@ -922,6 +961,8 @@ class AXOB():
             if self.bid_cage_upper_ex_min_level_qty==0 or price<self.bid_cage_upper_ex_min_level_price:
                 self.BidWeightSize -= qty
                 self.BidWeightValue -= price * qty
+            else:
+                self.bid_cage_upper_ex_min_level_qty -= qty
 
             if self.bid_level_tree[price].qty==0:
                 self.bid_level_tree.pop(price)
@@ -941,8 +982,10 @@ class AXOB():
                         self.ask_cage_ref_px = self.ask_min_level_price
                     else:
                         self.ask_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
+                    self.DBG(f'Ask cage ref px={self.ask_cage_ref_px}')
+                    self.ask_waiting_for_cage = True
 
-                if price==self.bid_cage_upper_ex_min_level_price: #买方价格笼子外最低价被cancel/trade光
+                if price==self.bid_cage_upper_ex_min_level_price: #买方价格笼子上方最低价被cancel/trade光
                     self.bid_cage_upper_ex_min_level_qty = 0
                     # locate next high bid level
                     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
@@ -965,6 +1008,8 @@ class AXOB():
                 else:
                     self.AskWeightSize -= qty
                     self.AskWeightValue -= price * qty
+            else:
+                self.ask_cage_lower_ex_max_level_qty -= qty
 
             if self.ask_level_tree[price].qty==0:
                 self.ask_level_tree.pop(price)
@@ -985,6 +1030,7 @@ class AXOB():
                     else:
                         self.bid_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
                     self.DBG(f'Bid cage ref px={self.bid_cage_ref_px}')
+                    self.bid_waiting_for_cage = True
 
                 if price==self.ask_cage_lower_ex_max_level_price: #卖方价格笼子外最高价被cancel/trade光
                     self.ask_cage_lower_ex_max_level_qty = 0
@@ -1506,6 +1552,22 @@ class AXOB():
             #     self.DBG(f'bid\t{l}')
         return im_ok
 
+    def _print_levels(self):
+        for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+            if p==self.bid_cage_upper_ex_min_level_price:
+                self.DBG(f'ask\t{l}\tbid_cage_upper_ex_min')
+            elif p==self.ask_min_level_price:
+                self.DBG(f'ask\t{l}\task_min')
+            else:
+                self.DBG(f'ask\t{l}')
+        for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+            if p==self.ask_cage_lower_ex_max_level_price:
+                self.DBG(f'bid\t{l}\task_cage_lower_ex_max')
+            elif p==self.bid_max_level_price:
+                self.DBG(f'bid\t{l}\tbid_max')
+            else:
+                self.DBG(f'bid\t{l}')
+
     def __str__(self) -> str:
         s = f'axob-behave {self.SecurityID:06d} {self.YYMMDD}-{self.current_inc_tick} msg_nb={self.msg_nb}\n'
         s+= f'  order_map={len(self.order_map)} bid_level_tree={len(self.bid_level_tree)} ask_level_tree={len(self.ask_level_tree)}\n'
@@ -1530,7 +1592,10 @@ class AXOB():
             elif attr == 'rebuilt_snaps' or attr == 'market_snaps':
                 data[attr] = [x.save() for x in value]
             elif attr == 'last_snap':
-                data[attr] = value.save()
+                if value is None:
+                    data[attr] = None
+                else:
+                    data[attr] = value.save()
             else:
                 data[attr] = value
         return data
@@ -1564,11 +1629,14 @@ class AXOB():
                     v.append(s)
                 setattr(self, attr, v)
             elif attr == 'last_snap':
-                if self.instrument_type==INSTRUMENT_TYPE.STOCK:
-                    v = axsbe_snap_stock()
+                if data[attr] is None:
+                    v = None
                 else:
-                    raise f'unable to load instrument_type={self.instrument_type}'
-                v.load(data[attr])
+                    if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+                        v = axsbe_snap_stock()
+                    else:
+                        raise f'unable to load instrument_type={self.instrument_type}'
+                    v.load(data[attr])
                 setattr(self, attr, v)
             else:
                 setattr(self, attr, data[attr])
