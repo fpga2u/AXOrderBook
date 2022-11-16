@@ -532,19 +532,19 @@ class AXOB():
 
         if len(self.ask_level_tree):
             if self.cage_type==CAGE.CYB and self.ask_cage_lower_ex_max_level_qty:
-                assert self.ask_min_level_price>self.ask_cage_lower_ex_max_level_price, f'{self.SecurityID} cache ask-min-price/cage-max NG'
+                assert self.ask_min_level_price>self.ask_cage_lower_ex_max_level_price, f'{self.SecurityID:06d} cache ask-min-price/cage-max NG'
             else:
-                assert self.ask_min_level_price==min(self.ask_level_tree.keys()), f'{self.SecurityID} cache ask-min-price NG'
-                assert self.ask_min_level_qty==min(self.ask_level_tree.items(), key=lambda x: x[0])[1].qty, f'{self.SecurityID} cache ask-min-qty NG'
+                assert self.ask_min_level_price==min(self.ask_level_tree.keys()), f'{self.SecurityID:06d} cache ask-min-price NG'
+                assert self.ask_min_level_qty==min(self.ask_level_tree.items(), key=lambda x: x[0])[1].qty, f'{self.SecurityID:06d} cache ask-min-qty NG'
         if len(self.bid_level_tree):
             if self.cage_type==CAGE.CYB and self.bid_cage_upper_ex_min_level_qty:
-                assert self.bid_max_level_price<self.bid_cage_upper_ex_min_level_price, f'{self.SecurityID} cache bid-max-price/cage-min NG'
+                assert self.bid_max_level_price<self.bid_cage_upper_ex_min_level_price, f'{self.SecurityID:06d} cache bid-max-price/cage-min NG'
             else:
-                assert self.bid_max_level_price==max(self.bid_level_tree.keys()), f'{self.SecurityID} cache bid-max-price NG'
-                assert self.bid_max_level_qty==max(self.bid_level_tree.items(), key=lambda x: x[0])[1].qty, f'{self.SecurityID} ache bid-max-qty NG'
+                assert self.bid_max_level_price==max(self.bid_level_tree.keys()), f'{self.SecurityID:06d} cache bid-max-price NG'
+                assert self.bid_max_level_qty==max(self.bid_level_tree.items(), key=lambda x: x[0])[1].qty, f'{self.SecurityID:06d} ache bid-max-qty NG'
 
         if (self.TradingPhaseMarket==axsbe_base.TPM.AMTrading or self.TradingPhaseMarket==axsbe_base.TPM.PMTrading) and self.bid_max_level_qty and self.ask_min_level_qty:
-            assert self.bid_max_level_price<self.ask_min_level_price, f'{self.SecurityID} bid.max({self.bid_max_level_price})/ask.min({self.ask_min_level_price}) NG'
+            assert self.bid_max_level_price<self.ask_min_level_price, f'{self.SecurityID:06d} bid.max({self.bid_max_level_price})/ask.min({self.ask_min_level_price}) NG'
 
         static_AskWeightSize = 0
         static_AskWeightValue = 0
@@ -552,8 +552,8 @@ class AXOB():
             if l.price<self.PrevClosePx*10 and (self.ask_cage_lower_ex_max_level_qty==0 or l.price>self.ask_cage_lower_ex_max_level_price):
                 static_AskWeightSize += l.qty
                 static_AskWeightValue += l.price * l.qty
-        assert static_AskWeightSize==self.AskWeightSize + self.AskWeightSizeEx, f'static AskWeightSize={static_AskWeightSize}, dynamic AskWeightSize={self.AskWeightSize}+{self.AskWeightSizeEx}'
-        assert static_AskWeightValue==self.AskWeightValue + self.AskWeightValueEx
+        assert static_AskWeightSize==self.AskWeightSize + self.AskWeightSizeEx, f'{self.SecurityID:06d} static AskWeightSize={static_AskWeightSize}, dynamic AskWeightSize={self.AskWeightSize}+{self.AskWeightSizeEx}'
+        assert static_AskWeightValue==self.AskWeightValue + self.AskWeightValueEx, f'{self.SecurityID:06d} static AskWeightSize={static_AskWeightValue}, dynamic AskWeightValue={self.AskWeightValue}+{self.AskWeightValueEx}'
 
         static_BidWeightSize = 0
         static_BidWeightValue = 0
@@ -561,11 +561,11 @@ class AXOB():
             if self.bid_cage_upper_ex_min_level_qty==0 or l.price<self.bid_cage_upper_ex_min_level_price:
                 static_BidWeightSize += l.qty
                 static_BidWeightValue += l.price * l.qty
-        assert static_BidWeightSize==self.BidWeightSize, f'static BidWeightSize={static_BidWeightSize}, dynamic BidWeightSize={self.BidWeightSize}'
-        assert static_BidWeightValue==self.BidWeightValue
+        assert static_BidWeightSize==self.BidWeightSize, f'{self.SecurityID:06d} static BidWeightSize={static_BidWeightSize}, dynamic BidWeightSize={self.BidWeightSize}'
+        assert static_BidWeightValue==self.BidWeightValue, f'{self.SecurityID:06d} static BidWeightValue={self.BidWeightValue}, dynamic BidWeightValue={self.BidWeightValue}'
 
         for _,ls in self.market_snaps.items():
-            assert len(ls)!=0
+            assert len(ls)!=0, f'{self.SecurityID:06d} market snap not pop clean'
 
 
 
@@ -819,11 +819,24 @@ class AXOB():
             if self.LowPx > exec.LastPx:
                 self.LowPx = exec.LastPx
 
+        #有可能市价单剩余部分进队列，后续成交是由价格笼子外的订单造成的
+        if self.holding_nb and self.holding_order.type==TYPE.MARKET:
+            if self.holding_order.applSeqNum!=exec.BidApplSeqNum and self.holding_order.applSeqNum!=exec.OfferApplSeqNum:
+                self.WARN('MARKET order followed by unmatch exec, take as traded over!')
+                assert self.cage_type==CAGE.CYB, f'{self.SecurityID:06d} not CYB'
+                self.insertOrder(self.holding_order)
+                self.holding_nb = 0
+
+                self._useTimestamp(self.holding_order.TransactTime)
+                self.genSnap()   #先出一个snap，时戳用市价单的
+                self._useTimestamp(exec.TransactTime)
+                
+
         if self.holding_nb!=0:
             # 紧跟缓存单的成交
             level_side = SIDE.ASK if exec.BidApplSeqNum==self.holding_order.applSeqNum else SIDE.BID #level_side:缓存单的对手盘
             self.DBG(f'level_side={level_side}')
-            assert self.holding_order.qty>=exec.LastQty, "holding order Qty unmatch"
+            assert self.holding_order.qty>=exec.LastQty, f"{self.SecurityID:06d} holding order Qty unmatch"
             if self.holding_order.qty==exec.LastQty:
                 self.holding_nb = 0
             else:
@@ -858,7 +871,7 @@ class AXOB():
                 self.enterCage()
             self.genSnap()   #出一个snap
         else:
-            assert self.holding_nb==0
+            assert self.holding_nb==0, f'{self.SecurityID:06d} unexpected exec while holding_nb!=0'
             #20221010 300654  碰到深交所订单乱序：先发送2档以上的逐笔成交，再发送1档的撤单（卖方1档撤单导致买方订单进入价格笼子，吃掉卖方2档及以上）；目前直接应用成交可以正常继续重建:
             if not ((exec.TransactTime%SZSE_TICK_CUT==92500000)or(exec.TransactTime%SZSE_TICK_CUT==150000000) if self.SecurityIDSource==SecurityIDSource_SZSE else (exec.TransactTime==9250000)or(exec.TransactTime==15000000)):
                 self.WARN(f'unexpected exec @{exec.TransactTime}!')
@@ -1144,7 +1157,7 @@ class AXOB():
 
 
     def genSnap(self):
-        assert self.holding_nb==0, 'genSnap but with holding'
+        assert self.holding_nb==0, f'{self.SecurityID:06d} genSnap but with holding'
 
         # if self.msg_nb==20729:
         #     self.DBG('breakpoint')
@@ -1169,7 +1182,7 @@ class AXOB():
 
             if (snap.TradingPhaseMarket==axsbe_base.TPM.AMTrading or snap.TradingPhaseMarket==axsbe_base.TPM.PMTrading) and\
                 len(snap.ask)>0 and snap.ask[0].Qty and len(snap.bid) and snap.bid[0].Qty:
-                assert snap.ask[0].Price>snap.bid[0].Price, f'{self.SecurityID} bid.max({snap.bid[0].Price})/ask.min({snap.ask[0].Price}) NG'
+                assert snap.ask[0].Price>snap.bid[0].Price, f'{self.SecurityID:06d} bid.max({snap.bid[0].Price})/ask.min({snap.ask[0].Price}) NG'
 
             snap._seq = self.msg_nb # 用于调试
             self.last_snap = snap

@@ -233,7 +233,9 @@ def TEST_print_securityID(source_log, read_nb=0, instrument_type=INSTRUMENT_TYPE
                     'inc_ts':0,
                     'UpLimitPx':0,
                     'DnLimitPx':0,
+                    'ChannelNo':0,
                 }
+            securityIDs[msg.SecurityID]['ChannelNo'] = msg.ChannelNo
             if isinstance(msg, axsbe_snap_stock):
                 securityIDs[msg.SecurityID]['snap'] += 1
                 securityIDs[msg.SecurityID]['snap_ts'] = msg.TransactTime

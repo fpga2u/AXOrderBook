@@ -29,8 +29,8 @@ if __name__== '__main__':
     # pp.test_pipeline_id()
 
     # # 198.0328 sec
-    # msg.TEST_print_securityID("data/20221010/sbe_20221010_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
+    # msg.TEST_print_securityID("data/20220812/sbe_20220812_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
 
-    # msg.TEST_ApplSeqNum("data/20221010/sbe_20221010_all.log", 0)
-    msg_util.extract_security("data/20221010/sbe_20221010_all.log", "data/20221010/min_test2.log", [300916, 300833, 300550, 300426, 300816, 300982, 301012, 301182])
+    # msg.TEST_ApplSeqNum("data/20220812/sbe_20220812_all.log", 0)
+    msg_util.extract_security("data/20220812/sbe_20220812_all.log", "data/20220812/AX_sbe_szse_301336.log", [301336])
 
