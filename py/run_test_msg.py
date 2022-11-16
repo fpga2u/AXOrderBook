@@ -32,5 +32,5 @@ if __name__== '__main__':
     # msg.TEST_print_securityID("data/20221010/sbe_2022_11_11__16_22_25.txt", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
 
     # msg.TEST_ApplSeqNum("data/20221010/sbe_2022_11_11__16_22_25.txt", 0)
-    msg_util.extract_security("data/20221010/sbe_2022_11_11__16_22_25.txt", "data/20221010/AX_sbe_szse_300816.log", [300816])
+    msg_util.extract_security("data/20221010/sbe_2022_11_11__16_22_25.txt", "data/20221010/min_test.log", [200054, 200706, 300354, 301066, 200019])
 

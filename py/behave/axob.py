@@ -88,6 +88,7 @@ class ob_order():
 
         # for test olny
         'traded',
+        'TransactTime',
     ]
 
     def __init__(self, order:axsbe_order, instrument_type:INSTRUMENT_TYPE):
@@ -110,6 +111,7 @@ class ob_order():
         else:
             self.price = 0
         self.traded = False #仅用于测试：市价单，当有成交后，市价单的价格将确定
+        self.TransactTime = order.TransactTime #仅用于测试：市价单，当有后续消息来而导致插入订单簿时，生成的订单簿用此时戳
 
         self.qty = order.OrderQty    # 深圳2位小数;上海3位小数
 
@@ -319,6 +321,8 @@ class AXOB():
         'LowPx',
         'OpenPx',
 
+        'closePx_ready',
+
         'ChannelNo',
         'PrevClosePx',
         'DnLimitPx',
@@ -365,6 +369,7 @@ class AXOB():
     ]
     def __init__(self, SecurityID:int, SecurityIDSource, instrument_type:INSTRUMENT_TYPE, load_data=None):
         '''
+        TODO: holding_order的处理是否统一到一处？并增加时戳输入，用于提前结算市价单
         '''
         if load_data:
             self.load(load_data)
@@ -387,6 +392,8 @@ class AXOB():
             self.HighPx = 0
             self.LowPx = 0
             self.OpenPx = 0
+
+            self.closePx_ready = False
 
             self.ChannelNo = 0 #来自于快照
             self.PrevClosePx = 0 #来自于快照 深圳要处理到内部精度，用于在还原快照时比较
@@ -461,12 +468,7 @@ class AXOB():
                                                                  #   在开盘集合竞价结束时可能没有成交；在进入中午休市时，没有逐笔。
                                                                  # 此时由更高层触发SIGNAL。
 
-                if self.SecurityIDSource == SecurityIDSource_SZSE:
-                    self.current_inc_tick = msg.TransactTime // SZSE_TICK_MS_TAIL % (SZSE_TICK_CUT // SZSE_TICK_MS_TAIL)    #只用逐笔 15000000 24b
-                else:
-                    self.current_inc_tick = msg.TransactTime
-                if self.current_inc_tick >= (1<<TIMESTAMP_BIT_SIZE):
-                    self.ERR(f'msg.TransactTime={msg.TransactTime} ovf!')
+                self._useTimestamp(msg.TransactTime)
                 
 
             if isinstance(msg, axsbe_order):
@@ -500,15 +502,26 @@ class AXOB():
                     self.genSnap()
                     self.openCage()
             elif msg==AX_SIGNAL.ALL_END:
-                if self.bid_max_level_price<self.ask_min_level_price and self.TradingPhaseMarket==axsbe_base.TPM.CloseCall: #双方最优价无法成交，否则等成交
-                    self.TradingPhaseMarket = axsbe_base.TPM.Ending #自行修改交易阶段，使生成的快照为交易快照
-                    self.genSnap()
+                # 收盘集合竞价结束，收盘价：
+                #  沪市收盘价为当日该证券最后一笔交易前一分钟所有交易的成交量加权平均价（含最后一笔交易）。当日无成交的，以前收盘价为当日收盘价。
+                #  深市的收盘价通过集合竞价的方式产生。收盘集合竞价不能产生收盘价的，以当日该证券最后一笔交易前一分钟所有交易的成交量加权平均价(含最后一笔交易)为收盘价。当日无成交的，以前收盘价为当日收盘价。 
+                if self.SecurityIDSource==SecurityIDSource_SZSE:
+                    if self.bid_max_level_price<self.ask_min_level_price and self.TradingPhaseMarket==axsbe_base.TPM.CloseCall: #双方最优价无法成交，否则等成交
+                        self.TradingPhaseMarket = axsbe_base.TPM.Ending #自行修改交易阶段，使生成的快照为交易快照
+                        self.closePx_ready = False  #等快照的价格作为最后价格
+                    else:
+                        self.closePx_ready = True   #直接生成快照
+                        self.genSnap()
+                else:
+                    if self.bid_max_level_price<self.ask_min_level_price and self.TradingPhaseMarket==axsbe_base.TPM.CloseCall: #双方最优价无法成交，否则等成交
+                        self.TradingPhaseMarket = axsbe_base.TPM.Ending #自行修改交易阶段，使生成的快照为交易快照
+                    self.closePx_ready = False  #等快照的价格作为最后价格
         else:
             pass
 
 
-        # if self.msg_nb>=212:
-        #     self._print_levels()
+        if self.TradingPhaseMarket>=axsbe_base.TPM.CloseCall:
+            self._print_levels()
 
 
         ## 调试数据，仅用于测试算法是否正确：
@@ -550,6 +563,8 @@ class AXOB():
 
         for _,ls in self.market_snaps.items():
             assert len(ls)!=0
+
+
 
     def openCage(self):
         if self.ask_cage_lower_ex_max_level_qty:
@@ -593,13 +608,14 @@ class AXOB():
         if _order.type==TYPE.MARKET:
             # 市价单，都必须在开盘之后
             if self.bid_max_level_qty==0 and self.ask_min_level_qty==0:
-                self.ERR('未定义模式:市价单早于价格档') #TODO: cover [Mid priority]
-            #if _order.type==TYPE.MARKET:
-                # 市价单，几种可能：
-                #    * 对手方最优价格申报：有成交、最后挂在对方一档或者二档
-                #    * 最优五档即时成交剩余撤销申报：最后有撤单
-                #    * 即时成交剩余撤销申报：最后有撤单
-                #    * 全额成交或撤销申报：最后有撤单
+                raise '未定义模式:市价单早于价格档' #TODO: cover [Mid priority]
+
+            # 市价单，几种可能：
+            #    * 对手方最优价格申报：有成交、最后挂在对方一档或者二档，需要等时戳切换、新委托、新撤单到来的时候插入快照
+            #    * 最优五档即时成交剩余撤销申报：最后有撤单
+            #    * 即时成交剩余撤销申报：最后有撤单
+            #    * 全额成交或撤销申报：最后有撤单
+
         elif _order.type==TYPE.SIDE:
             # 本方最优价格申报 转限价单
             if _order.side==SIDE.BID:
@@ -621,7 +637,7 @@ class AXOB():
 
     def onLimitOrder(self, order:ob_order):
         if order.tradingPhase == axsbe_base.TPM.OpenCall or order.tradingPhase == axsbe_base.TPM.CloseCall: #集合竞价期间，直接插入；暂时还是用order的TPM，而非自身的； TODO:决定用哪个 [High priority]
-            if order.tradingPhase==axsbe_base.TPM.CloseCall and self.holding_nb!=0:
+            if order.tradingPhase==axsbe_base.TPM.CloseCall and self.holding_nb!=0: #进入收盘集合竞价，但可能有市价单还在确认
                 self.insertOrder(self.holding_order)
                 self.holding_nb = 0
 
@@ -644,7 +660,9 @@ class AXOB():
                 self.insertOrder(self.holding_order)
                 self.holding_nb = 0
 
-                self.genSnap()   #先出一个snap
+                self._useTimestamp(self.holding_order.TransactTime)
+                self.genSnap()   #先出一个snap，时戳用市价单的
+                self._useTimestamp(order.TransactTime)
 
             #若是市价单或可能成交的限价单，则缓存住，等成交
             if order.type==TYPE.MARKET:
@@ -836,12 +854,11 @@ class AXOB():
                 self.enterCage()
             self.genSnap()   #出一个snap
         else:
-            #应该只有开盘/收盘集合竞价之后才会到这来
             assert self.holding_nb==0
-
             #20221010 300654  碰到深交所订单乱序：先发送2档以上的逐笔成交，再发送1档的撤单（卖方1档撤单导致买方订单进入价格笼子，吃掉卖方2档及以上）；目前直接应用成交可以正常继续重建:
             if not ((exec.TransactTime%SZSE_TICK_CUT==92500000)or(exec.TransactTime%SZSE_TICK_CUT==150000000) if self.SecurityIDSource==SecurityIDSource_SZSE else (exec.TransactTime==9250000)or(exec.TransactTime==15000000)):
                 self.WARN(f'unexpected exec @{exec.TransactTime}!')
+
             self.tradeLimit(SIDE.ASK, exec.LastQty, exec.OfferApplSeqNum)
             self.tradeLimit(SIDE.BID, exec.LastQty, exec.BidApplSeqNum)
 
@@ -849,24 +866,6 @@ class AXOB():
                 self.INFO('openCall/closeCall trade over')
                 self.genSnap()   #集合竞价所有成交完成
 
-            # self.DBG('breakpoint5')
-            # for _, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-            #     self.DBG(f'ask\t{l}')
-            # self.DBG('--------------------------avb')
-            # for _, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-            #     self.DBG(f'bid\t{l}')
-
-        # if self.NumTrades==652:
-            # self.DBG(f'bid_cage_ref_px={self.bid_cage_ref_px} ask_cage_ref_px={self.ask_cage_ref_px}')
-            # self.DBG(f'ask_cage_lower_ex_max_level_qty={self.ask_cage_lower_ex_max_level_qty} ask_cage_lower_ex_max_level_price={self.ask_cage_lower_ex_max_level_price}')
-            # self.DBG(f'CYB_cage_lower={CYB_cage_lower(self.ask_cage_ref_px)}')
-
-            # self.WARN('breakpoint5')
-            # for _, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-            #     self.DBG(f'ask\t{l}')
-            # self.DBG('--------------------------avb')
-            # for _, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-            #     self.DBG(f'bid\t{l}')
     def enterCage(self):
         '''判断订单是否可进入笼子，若进入笼子，判断是否可以成交'''
         while True:
@@ -1076,6 +1075,20 @@ class AXOB():
             else:
                 self.YYMMDD = 0                               # 上交所不带日期
 
+        if self.TradingPhaseMarket==axsbe_base.TPM.Ending and not self.closePx_ready:
+            if self.SecurityIDSource==SecurityIDSource_SZSE:
+                if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+                    self.LastPx = snap.LastPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_STOCK_PRECISION)
+                elif self.instrument_type==INSTRUMENT_TYPE.FUND:
+                    self.LastPx = snap.LastPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
+                else:
+                    pass    # TODO:
+            else:
+                '''TODO-SSE'''
+
+            self.closePx_ready = True
+            self.genSnap()
+
         ## 检查重建算法，仅用于测试算法是否正确：
         snap._seq = self.msg_nb
         if snap.TradingPhaseMarket<axsbe_base.TPM.OpenCall:
@@ -1132,6 +1145,9 @@ class AXOB():
         elif self.TradingPhaseMarket==axsbe_base.TPM.OpenCall or self.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
             # 集合竞价快照
             snap = self.genCallSnap()
+        elif self.TradingPhaseMarket==axsbe_base.TPM.Ending:
+            if self.closePx_ready: #收盘价已经ready
+                snap = self.genTradingSnap()
         else:
             # 连续竞价快照
             snap = self.genTradingSnap()
@@ -1185,6 +1201,15 @@ class AXOB():
         snap.DnLimitPx = self.DnLimitPx
         snap.ChannelNo = self.ChannelNo
 
+    def _useTimestamp(self, TransactTime):
+        if self.SecurityIDSource == SecurityIDSource_SZSE:
+            self.current_inc_tick = TransactTime // SZSE_TICK_MS_TAIL % (SZSE_TICK_CUT // SZSE_TICK_MS_TAIL)    #只用逐笔 15000000 24b
+        else:
+            self.current_inc_tick = TransactTime
+        if self.current_inc_tick >= (1<<TIMESTAMP_BIT_SIZE):
+            self.ERR(f'msg.TransactTime={TransactTime} ovf!')
+
+
     def _setSnapTimestamp(self, snap):
         if self.SecurityIDSource==SecurityIDSource_SZSE:
             snap.TransactTime = self.YYMMDD * SZSE_TICK_CUT + (self.current_inc_tick*SZSE_TICK_MS_TAIL) #深交所显示精度到ms，多补1位
@@ -1197,12 +1222,8 @@ class AXOB():
         show_level_nb:  展示的价格档数
         show_potential: 在无法撮合时展示出双方价格档
         '''
-        # if self.msg_nb==750:
+        # if self.msg_nb==20494:
         #     self.WARN('breakpoint2')
-        #     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-        #         self.DBG(f'ask\t{l}')
-        #     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-        #         self.DBG(f'bid\t{l}')
 
 
         #1. 查找 最低卖出价格档、最高买入价格档
@@ -1231,6 +1252,7 @@ class AXOB():
         ask_trade_level_nb = 0
         
         #4. 撮合循环：
+        _ref_px = self.PrevClosePx if self.NumTrades==0 else self.LastPx
         while _bid_max_level_qty!=0 and _ask_min_level_qty!=0:  # 双方均有最优委托
             if _bid_max_level_price >= _ask_min_level_price:    # 双方最优价有交叉
                 if bid_Qty == 0:
@@ -1253,10 +1275,10 @@ class AXOB():
                     bid_trade_level_nb += 1
 
                 if bid_Qty == 0 and ask_Qty == 0:   # 恰好双方数量相等。 
-                    if _bid_max_level_price>=self.PrevClosePx and _ask_min_level_price<=self.PrevClosePx:   #
-                        price = self.PrevClosePx
+                    if _bid_max_level_price>=_ref_px and _ask_min_level_price<=_ref_px:   #
+                        price = _ref_px
                     else:
-                        if abs(_bid_max_level_price-self.PrevClosePx) < abs(_ask_min_level_price-self.PrevClosePx):
+                        if abs(_bid_max_level_price-_ref_px) < abs(_ask_min_level_price-_ref_px):
                             price = _bid_max_level_price
                         else:
                             price = _ask_min_level_price
@@ -1559,7 +1581,7 @@ class AXOB():
             for s,ls in self.market_snaps.items():
                 self.ERR(f'\tNumTrades={s}')
                 for ss in ls:
-                    self.ERR(f'\t\t#{ss._seq}')
+                    self.ERR(f'\t\t#{ss._seq}\t@{ss.TransactTime}')
             im_ok = False
             # self.DBG('breakpoint5')
             # for _, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
