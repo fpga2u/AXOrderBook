@@ -330,6 +330,8 @@ class AXOB():
         'PrevClosePx',
         'DnLimitPx',
         'UpLimitPx',
+        'DnLimitPrice',
+        'UpLimitPrice',
         'YYMMDD',
         'current_inc_tick',
         'BidWeightSize',
@@ -402,6 +404,8 @@ class AXOB():
             self.PrevClosePx = 0 #来自于快照 深圳要处理到内部精度，用于在还原快照时比较
             self.DnLimitPx = 0  # #来自于快照 无涨跌停价时为0x7fffffff
             self.UpLimitPx = 0  # #来自于快照 无涨跌停价时为100
+            self.DnLimitPrice = 0  
+            self.UpLimitPrice = 0  
             self.YYMMDD = 0     #来自于快照
             self.current_inc_tick = 0 #来自于逐笔 时-分-秒-10ms
             
@@ -626,14 +630,14 @@ class AXOB():
                 if self.bid_max_level_price!=0 and self.bid_max_level_qty!=0:   #本方有量
                     _order.price = self.bid_max_level_price
                 else:
-                    _order.price = self.DnLimitPx
-                    self.ERR(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!') #TODO: cover [Mid priority]
+                    _order.price = self.DnLimitPrice
+                    self.WARN(f'order #{_order.applSeqNum} 本方最优买单 但无本方价格!')
             else:
                 if self.ask_min_level_price!=0 and self.ask_min_level_qty!=0:   #本方有量
                     _order.price = self.ask_min_level_price
                 else:
-                    _order.price = self.UpLimitPx
-                    self.ERR(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!') #TODO: cover [Mid priority]
+                    _order.price = self.UpLimitPrice
+                    self.WARN(f'order #{_order.applSeqNum} 本方最优卖单 但无本方价格!')
         else:
             pass
         self.onLimitOrder(_order)
@@ -1090,6 +1094,18 @@ class AXOB():
 
             self.UpLimitPx = snap.UpLimitPx
             self.DnLimitPx = snap.DnLimitPx
+            
+            if self.SecurityIDSource==SecurityIDSource_SZSE:
+                if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+                    self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_STOCK_PRECISION)
+                    self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_STOCK_PRECISION)
+                elif self.instrument_type==INSTRUMENT_TYPE.FUND:
+                    self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
+                    self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
+                else:
+                    pass    # TODO:
+            else:
+                '''TODO-SSE'''
 
             if self.SecurityIDSource==SecurityIDSource_SZSE:
                 self.YYMMDD = snap.TransactTime // SZSE_TICK_CUT # 深交所带日期

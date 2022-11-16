@@ -32,5 +32,6 @@ if __name__== '__main__':
     # msg.TEST_print_securityID("data/20220812/sbe_20220812_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
 
     # msg.TEST_ApplSeqNum("data/20220812/sbe_20220812_all.log", 0)
-    msg_util.extract_security("data/20220812/sbe_20220812_all.log", "data/20220812/AX_sbe_szse_301336.log", [301336])
+    msg_util.extract_security("data/20221010/sbe_20221010_all.log", "data/20221010/AX_sbe_szse_000407.log", [407])
+    # msg_util.extract_security("data/20220812/sbe_20220812_all.log", "data/20220812/AX_sbe_szse_301336.log", [301336])
 
