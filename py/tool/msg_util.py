@@ -87,7 +87,7 @@ def axsbe_file(fileName, skip_nb=0):
             l = f.readline()
             if not l:
                 break
-            if l.find("//") == 0:
+            if l[:2] == '//':
                 nb += 1
                 if nb<=skip_nb:
                     continue
@@ -97,4 +97,15 @@ def axsbe_file(fileName, skip_nb=0):
                 else:
                     pass
                     # 11, 12
+
+def extract_security(src_file, dst_file, security_list:list):
+    with open(src_file, "r") as s, open(dst_file, 'w') as d:
+        while True:
+            l = s.readline()
+            if not l:
+                break
+            if l[:2] == '//':
+                msg = str_to_dict(l.lstrip())
+                if msg['SecurityID'] in security_list:
+                    d.write(l)
 

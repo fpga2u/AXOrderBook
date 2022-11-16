@@ -566,13 +566,13 @@ class AXOB():
         if self.bid_cage_upper_ex_min_level_qty:
             for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                 if p>=self.bid_cage_upper_ex_min_level_price:
-                    self.AskWeightSize += l.qty
-                    self.AskWeightValue += p * l.qty
+                    self.BidWeightSize += l.qty
+                    self.BidWeightValue += p * l.qty
                 else:
                     break
 
             self.bid_cage_upper_ex_min_level_qty = 0
-            self.bid_max_level_price = min(self.bid_level_tree.keys())
+            self.bid_max_level_price = max(self.bid_level_tree.keys())
             self.bid_max_level_qty = self.bid_level_tree[self.bid_max_level_price].qty
 
 
@@ -656,6 +656,8 @@ class AXOB():
                 self.holding_order = order
                 self.holding_nb += 1
                 self.DBG('hold LIMIT-order')
+                self.bid_waiting_for_cage = False
+                self.ask_waiting_for_cage = False
             else:
                 self.insertOrder(order)
                 if self.cage_type==CAGE.CYB:
@@ -795,14 +797,7 @@ class AXOB():
             if self.LowPx > exec.LastPx:
                 self.LowPx = exec.LastPx
 
-        if self.bid_waiting_for_cage or self.ask_waiting_for_cage:
-            self.DBG("Order entered cage & exec.")
-            self.tradeLimit(SIDE.ASK, exec.LastQty, exec.OfferApplSeqNum)
-            self.tradeLimit(SIDE.BID, exec.LastQty, exec.BidApplSeqNum)
-            if self.cage_type==CAGE.CYB:
-                self.enterCage()
-            self.genSnap()   #出一个snap
-        elif self.holding_nb!=0:
+        if self.holding_nb!=0:
             # 紧跟缓存单的成交
             level_side = SIDE.ASK if exec.BidApplSeqNum==self.holding_order.applSeqNum else SIDE.BID #level_side:缓存单的对手盘
             self.DBG(f'level_side={level_side}')
@@ -832,13 +827,21 @@ class AXOB():
                 self.enterCage()
 
             if self.holding_nb==0:
-
                 self.genSnap()   #缓存单成交完
-        
+        elif self.bid_waiting_for_cage or self.ask_waiting_for_cage:
+            self.DBG("Order entered cage & exec.")
+            self.tradeLimit(SIDE.ASK, exec.LastQty, exec.OfferApplSeqNum)
+            self.tradeLimit(SIDE.BID, exec.LastQty, exec.BidApplSeqNum)
+            if self.cage_type==CAGE.CYB:
+                self.enterCage()
+            self.genSnap()   #出一个snap
         else:
             #应该只有开盘/收盘集合竞价之后才会到这来
             assert self.holding_nb==0
-            assert (exec.TransactTime%SZSE_TICK_CUT==92500000)or(exec.TransactTime%SZSE_TICK_CUT==150000000) if self.SecurityIDSource==SecurityIDSource_SZSE else (exec.TransactTime==9250000)or(exec.TransactTime==15000000)
+
+            #20221010 300654  碰到深交所订单乱序：先发送2档以上的逐笔成交，再发送1档的撤单（卖方1档撤单导致买方订单进入价格笼子，吃掉卖方2档及以上）；目前直接应用成交可以正常继续重建:
+            if not ((exec.TransactTime%SZSE_TICK_CUT==92500000)or(exec.TransactTime%SZSE_TICK_CUT==150000000) if self.SecurityIDSource==SecurityIDSource_SZSE else (exec.TransactTime==9250000)or(exec.TransactTime==15000000)):
+                self.WARN(f'unexpected exec @{exec.TransactTime}!')
             self.tradeLimit(SIDE.ASK, exec.LastQty, exec.OfferApplSeqNum)
             self.tradeLimit(SIDE.BID, exec.LastQty, exec.BidApplSeqNum)
 
@@ -923,6 +926,8 @@ class AXOB():
 
 
     def tradeLimit(self, side:SIDE, Qty, appSeqNum):
+        if appSeqNum not in self.order_map:
+            self.ERR(f'traded order #{appSeqNum} not found!')
         order = self.order_map[appSeqNum]
         # order.qty -= Qty
         self.levelDequeue(side, order.price, Qty, appSeqNum)
@@ -951,8 +956,6 @@ class AXOB():
         
     def levelDequeue(self, side, price, qty, applSeqNum):
         '''买/卖方价格档出列（撤单或成交时）'''
-        if self.msg_nb==801:
-            self.WARN('breakpoint2')
         if side == SIDE.BID:
             self.bid_level_tree[price].qty -= qty
             # self.bid_level_tree[price].ts.remove(applSeqNum)
