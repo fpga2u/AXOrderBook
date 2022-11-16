@@ -222,8 +222,9 @@ class ob_cancel():
         'side',
 
         # for test olny
+        'TransactTime',
     ]
-    def __init__(self, ApplSeqNum, Qty, Price, Side, TradingPhaseMarket, SecurityIDSource, instrument_type, SecurityID):
+    def __init__(self, ApplSeqNum, Qty, Price, Side, TransactTime, SecurityIDSource, instrument_type, SecurityID):
         self.applSeqNum = ApplSeqNum    #
         self.qty = Qty
         if SecurityIDSource==SecurityIDSource_SZSE:
@@ -236,6 +237,8 @@ class ob_cancel():
         else:
             axob_logger.error(f'{SecurityID:06d} cancel ApplSeqNum={ApplSeqNum} SecurityIDSource={SecurityIDSource} unknown!')
         self.side = Side
+
+        self.TransactTime = TransactTime
 
         if self.applSeqNum >= (1<<APPSEQ_BIT_SIZE):
             axob_logger.error(f'{SecurityID:06d} cancel ApplSeqNum={ApplSeqNum} ovf!')
@@ -499,8 +502,8 @@ class AXOB():
             elif msg==AX_SIGNAL.PMTRADING_END:
                 if self.holding_nb==0 and self.TradingPhaseMarket==axsbe_base.TPM.PMTrading: #不再有缓存单
                     self.TradingPhaseMarket = axsbe_base.TPM.CloseCall #自行修改交易阶段，使生成的快照为交易快照
+                    self.openCage() #先打开笼子，再生成快照
                     self.genSnap()
-                    self.openCage()
             elif msg==AX_SIGNAL.ALL_END:
                 # 收盘集合竞价结束，收盘价：
                 #  沪市收盘价为当日该证券最后一笔交易前一分钟所有交易的成交量加权平均价（含最后一笔交易）。当日无成交的，以前收盘价为当日收盘价。
@@ -520,8 +523,8 @@ class AXOB():
             pass
 
 
-        if self.TradingPhaseMarket>=axsbe_base.TPM.CloseCall:
-            self._print_levels()
+        # if self.TradingPhaseMarket>=axsbe_base.TPM.CloseCall:
+        #     self._print_levels()
 
 
         ## 调试数据，仅用于测试算法是否正确：
@@ -567,6 +570,7 @@ class AXOB():
 
 
     def openCage(self):
+        self.DBG('openCage')
         if self.ask_cage_lower_ex_max_level_qty:
             for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                 if p<=self.ask_cage_lower_ex_max_level_price:
@@ -774,7 +778,7 @@ class AXOB():
             else:   # 撤销ask
                 cancel_seq = exec.OfferApplSeqNum
                 Side = SIDE.ASK
-            _cancel = ob_cancel(cancel_seq, exec.LastQty, exec.LastPx, Side, exec.TradingPhaseMarket, self.SecurityIDSource, self.instrument_type, self.SecurityID)
+            _cancel = ob_cancel(cancel_seq, exec.LastQty, exec.LastPx, Side, exec.TransactTime, self.SecurityIDSource, self.instrument_type, self.SecurityID)
             self.onCancel(_cancel)
 
 
@@ -941,7 +945,9 @@ class AXOB():
             if self.holding_order.applSeqNum != cancel.applSeqNum: #撤销的不是缓存单，把缓存单插入LOB
                 self.insertOrder(self.holding_order)
                 
-                self.genSnap()   #先出一个snap
+                self._useTimestamp(self.holding_order.TransactTime)
+                self.genSnap()   #先出一个snap，时戳用市价单的
+                self._useTimestamp(cancel.TransactTime)
             else:
                 return  #撤销缓存单，holding_nb清空即可
 
@@ -1044,6 +1050,8 @@ class AXOB():
 
     def onSnap(self, snap:axsbe_snap_stock):
         self.DBG(f'msg#{self.msg_nb} onSnap:{snap}')
+        # if self.msg_nb==20842:
+        #     self.DBG('breakpoint')
         if snap.TradingPhaseSecurity != axsbe_base.TPI.Normal:
             self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}')
             return
@@ -1138,6 +1146,9 @@ class AXOB():
     def genSnap(self):
         assert self.holding_nb==0, 'genSnap but with holding'
 
+        # if self.msg_nb==20729:
+        #     self.DBG('breakpoint')
+
         snap = None
         if self.TradingPhaseMarket < axsbe_base.TPM.OpenCall or self.TradingPhaseMarket > axsbe_base.TPM.Ending:
             # 无需生成
@@ -1177,11 +1188,13 @@ class AXOB():
                 self.market_snaps[snap.NumTrades].pop(match_idx)    #丢弃已匹配的
                 if len(self.market_snaps[snap.NumTrades])==0:
                     self.market_snaps.pop(snap.NumTrades)
-            else:
+
+            # 没找到匹配的交易所历史快照，或者是交易阶段切换导致生成的快照，都要缓存住，后者可能会在下一个交易阶段切换处被使用
+            if not matched or snap.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking or snap.TradingPhaseMarket==axsbe_base.TPM.Breaking:
                 if snap.NumTrades not in self.rebuilt_snaps:
-                    self.rebuilt_snaps[snap.NumTrades] = [snap]     #无历史的才缓存，有历史的只放进last_snap
+                    self.rebuilt_snaps[snap.NumTrades] = [snap]
                 else:
-                    self.rebuilt_snaps[snap.NumTrades].append(snap)     #无历史的才缓存，有历史的只放进last_snap
+                    self.rebuilt_snaps[snap.NumTrades].append(snap)
 
 
     def _setSnapFixParam(self, snap):

@@ -173,7 +173,8 @@ def TEST_mu_SL(source_file, instrument_list,
 def TEST_axob_bat(source_file, instrument_list:list, n_max=500, 
                     openCall_only=False,
                     SecurityIDSource=SecurityIDSource_SZSE, 
-                    instrument_type=INSTRUMENT_TYPE.STOCK
+                    instrument_type=INSTRUMENT_TYPE.STOCK,
+                    HHMMSSms_max=None
                 ):
     if not os.path.exists(source_file):
         raise f"{source_file} not exists"
@@ -203,6 +204,11 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
             print(f'Ending: over, n={n}')
             break
 
+        if HHMMSSms_max is not None and HHMMSSms_max>0 and msg.HHMMSSms>HHMMSSms_max:
+            print(f'HHMMSSms_max: over, n={n}, msg @({msg.TransactTime})')
+            break
+
+    # print(mu)
     assert mu.are_you_ok()
     print("TEST_axob_bat PASS")
     return
@@ -313,7 +319,8 @@ def TEST_axob_rolling(date, instrument:int, n_max=500, rolling_gap=5,
 def TEST_mu_rolling(source_file, instrument_list, n_max=500, rolling_gap=5,
                         begin_section=None,
                         SecurityIDSource=SecurityIDSource_SZSE, 
-                        instrument_type=INSTRUMENT_TYPE.STOCK
+                        instrument_type=INSTRUMENT_TYPE.STOCK,
+                        HHMMSSms_max=None
                     ):
     '''
     begin_section=None:滚动保存现场，现场名称将打印在终端
@@ -376,6 +383,12 @@ def TEST_mu_rolling(source_file, instrument_list, n_max=500, rolling_gap=5,
         if msg.TradingPhaseMarket==TPM.Ending and msg.HHMMSSms>150100000:
             print(f'Ending: over, n={n}')
             break
+
+        if HHMMSSms_max is not None and HHMMSSms_max>0 and HHMMSSms>HHMMSSms_max:
+            print(f'HHMMSSms_max: over, n={n}, msg @({msg.TransactTime})')
+            break
+
+
     print(mu)
     if isTPMfreeze(mu):
         assert mu.are_you_ok()
