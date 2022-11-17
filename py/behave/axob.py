@@ -19,7 +19,7 @@
     * save/load
 '''
 from enum import Enum
-from tool.msg_util import axsbe_base, axsbe_exe, axsbe_order, axsbe_snap_stock, price_level
+from tool.msg_util import axsbe_base, axsbe_exe, axsbe_order, axsbe_snap_stock, price_level, CYB_cage_upper, CYB_cage_lower
 import tool.msg_util as msg_util
 from tool.axsbe_base import SecurityIDSource_SSE, SecurityIDSource_SZSE, INSTRUMENT_TYPE
 from copy import deepcopy
@@ -29,7 +29,7 @@ axob_logger = logging.getLogger(__name__)
 
 #### 内部计算精度 ####
 APPSEQ_BIT_SIZE = 34    # 序列号，34b，约170亿
-PRICE_BIT_SIZE  = 24    # 价格，20b，1048575，股票:10485.75;基金:1048.575。（若统一到3位小数则考虑用24b，则只需深圳//10）
+PRICE_BIT_SIZE  = 25    # 价格，20b，1048575，股票:10485.75;基金:1048.575。（若统一到3位小数则考虑用24b，则只需深圳//10）
 QTY_BIT_SIZE    = 30    # 数量，30b，(1,073,741,823)，深圳2位小数，上海3位小数
 TIMESTAMP_BIT_SIZE = 24 # 时戳精度 时-分-秒-10ms 最大15000000=24b
 
@@ -42,10 +42,6 @@ QTY_INTER_SSE_PRECISION    = 1000  # 数量精度：上海3位小数
 SZSE_TICK_CUT = 1000000000 # 深交所时戳，日期以下精度
 SZSE_TICK_MS_TAIL = 10 # 深交所时戳，尾部毫秒精度，以10ms为单位
 
-#有效竞价范围的计算结果按照四舍五入原则取至价格最小变动单位。 
-#有效竞价范围上限或下限与基准价格之差的绝对值低于价格最小变动单位的，以基准价格增减一个价格最小变动单位为有效竞价范围。
-CYB_cage_upper = lambda x: x+1 if x<=24 else (x*102 + 50) // 100   #创业板价格笼子上限计算，大于时被隐藏
-CYB_cage_lower = lambda x: x-1 if x<=25 else (x*98 + 50) // 100    #创业板价格笼子下限计算，小于时被隐藏
 
 
 class SIDE(Enum): # 2bit
@@ -348,6 +344,7 @@ class AXOB():
         'holding_nb',
 
         'TradingPhaseMarket',
+        'VolatilityBreaking_end_tick',
 
         'cage_type',
         'bid_cage_upper_ex_min_level_price',
@@ -423,6 +420,7 @@ class AXOB():
             self.holding_nb = 0
 
             self.TradingPhaseMarket = axsbe_base.TPM.Starting
+            self.VolatilityBreaking_end_tick = 0
 
             ## 创业板价格笼子 http://docs.static.szse.cn/www/disclosure/notice/general/W020200612831351578076.pdf
             if SecurityIDSource==SecurityIDSource_SZSE and SecurityID>=300000 and SecurityID<309999:    #创业板
@@ -460,22 +458,31 @@ class AXOB():
 
     def onMsg(self, msg):
         '''处理总入口'''
-        if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe) or isinstance(msg, axsbe_snap_stock):
+        if isinstance(msg, (axsbe_order, axsbe_exe, axsbe_snap_stock)):
             if msg.SecurityID!=self.SecurityID:
                 return
 
-            if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe):
+            if isinstance(msg, (axsbe_order, axsbe_exe)):
                 if self.cage_type==CAGE.CYB and self.TradingPhaseMarket==axsbe_base.TPM.PMTrading and msg.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
                     # 创业板进入收盘集合竞价，敞开价格笼子，将外面的隐藏订单放进来
                     self.openCage()
 
-                self.TradingPhaseMarket = msg.TradingPhaseMarket # 只用逐笔，在阶段切换期间，逐笔和快照的速率不同，可能快照切了逐笔没切，或反过来，
-                                                                 # 由于我们重建完全基于逐笔，快照仅用来做检查，故阶段切换基于逐笔。
-                                                                 # 几个例外情况：
-                                                                 #   在开盘集合竞价结束时可能没有成交；在进入中午休市时，没有逐笔。
-                                                                 # 此时由更高层触发SIGNAL。
-
                 self._useTimestamp(msg.TransactTime)
+
+                if self.TradingPhaseMarket!=axsbe_base.TPM.VolatilityBreaking:
+                    self.TradingPhaseMarket = msg.TradingPhaseMarket # 只用逐笔，在阶段切换期间，逐笔和快照的速率不同，可能快照切了逐笔没切，或反过来，
+                                                                    # 由于我们重建完全基于逐笔，快照仅用来做检查，故阶段切换基于逐笔。
+                                                                    # 几个例外情况：
+                                                                    #   在开盘集合竞价结束时可能没有成交；在进入中午休市时，没有逐笔。
+                                                                    # 此时由更高层触发SIGNAL。
+                # else:
+                #     if self.VolatilityBreaking_end_tick==0: #波动性中断期间，逐笔成交到来说明中断结束
+                #         if isinstance(msg, axsbe_exe) and msg.ExecType_str=='成交':
+                #             self.VolatilityBreaking_end_tick = self.current_inc_tick
+                #     else:
+                #         if not(isinstance(msg, axsbe_exe) and msg.ExecType_str=='成交'): #中断结束后，有非逐笔成交
+                #             self.TradingPhaseMarket = msg.TradingPhaseMarket
+
                 
 
             if isinstance(msg, axsbe_order):
@@ -485,7 +492,7 @@ class AXOB():
             else:# isinstance(msg, axsbe_snap_stock):
                 self.onSnap(msg)
 
-            if isinstance(msg, axsbe_order) or isinstance(msg, axsbe_exe):
+            if isinstance(msg, (axsbe_order, axsbe_exe)):
                 self.last_inc_applSeqNum = msg.ApplSeqNum
         
         elif isinstance(msg, AX_SIGNAL):
@@ -527,8 +534,9 @@ class AXOB():
             pass
 
 
-        # if self.TradingPhaseMarket>=axsbe_base.TPM.CloseCall:
-        #     self._print_levels()
+        #if self.TradingPhaseMarket>=axsbe_base.TPM.Ending:
+        # if self.msg_nb==143198:
+        #    self._print_levels()
 
 
         ## 调试数据，仅用于测试算法是否正确：
@@ -553,11 +561,15 @@ class AXOB():
         static_AskWeightSize = 0
         static_AskWeightValue = 0
         for _,l in self.ask_level_tree.items():
-            if l.price<self.PrevClosePx*10 and (self.ask_cage_lower_ex_max_level_qty==0 or l.price>self.ask_cage_lower_ex_max_level_price):
+            if (self.ask_cage_lower_ex_max_level_qty==0 or l.price>self.ask_cage_lower_ex_max_level_price):
                 static_AskWeightSize += l.qty
                 static_AskWeightValue += l.price * l.qty
-        assert static_AskWeightSize==self.AskWeightSize + self.AskWeightSizeEx, f'{self.SecurityID:06d} static AskWeightSize={static_AskWeightSize}, dynamic AskWeightSize={self.AskWeightSize}+{self.AskWeightSizeEx}'
-        assert static_AskWeightValue==self.AskWeightValue + self.AskWeightValueEx, f'{self.SecurityID:06d} static AskWeightSize={static_AskWeightValue}, dynamic AskWeightValue={self.AskWeightValue}+{self.AskWeightValueEx}'
+        if self.TradingPhaseMarket>=axsbe_base.TPM.AMTrading:
+            assert static_AskWeightSize==self.AskWeightSize, f'{self.SecurityID:06d} static AskWeightSize={static_AskWeightSize}, dynamic AskWeightSize={self.AskWeightSize}'
+            assert static_AskWeightValue==self.AskWeightValue, f'{self.SecurityID:06d} static AskWeightSize={static_AskWeightValue}, dynamic AskWeightValue={self.AskWeightValue}'
+        else:
+            assert static_AskWeightSize==self.AskWeightSize + self.AskWeightSizeEx, f'{self.SecurityID:06d} static AskWeightSize={static_AskWeightSize}, dynamic AskWeightSize={self.AskWeightSize}+{self.AskWeightSizeEx}'
+            assert static_AskWeightValue==self.AskWeightValue + self.AskWeightValueEx, f'{self.SecurityID:06d} static AskWeightSize={static_AskWeightValue}, dynamic AskWeightValue={self.AskWeightValue}+{self.AskWeightValueEx}'
 
         static_BidWeightSize = 0
         static_BidWeightValue = 0
@@ -575,6 +587,32 @@ class AXOB():
 
     def openCage(self):
         self.DBG('openCage')
+        # self._print_levels()
+
+        ## 创业板上市头5日连续竞价、复牌集合竞价、收盘集合竞价的有效竞价范围是最近成交价的上下10%
+        if self.UpLimitPx==2147483647: #无涨跌停限制=创业板上市头5日 TODO: 更精确
+            ex_p = []
+            for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
+                if p>msg_util.CYB_match_upper(self.LastPx) or p<msg_util.CYB_match_lower(self.LastPx):
+                    ex_p.append(p)
+                    if p>self.ask_cage_lower_ex_max_level_price:
+                        self.AskWeightSize -= l.qty
+                        self.AskWeightValue -= p * l.qty
+
+            for p in ex_p:
+                self.ask_level_tree.pop(p)
+
+            ex_p = []
+            for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+                if p>msg_util.CYB_match_upper(self.LastPx) or p<msg_util.CYB_match_lower(self.LastPx):
+                    ex_p.append(p)
+                    if p<self.bid_cage_upper_ex_min_level_price:
+                        self.BidWeightSize -= l.qty
+                        self.BidWeightValue -= p * l.qty
+            for p in ex_p:
+                self.bid_level_tree.pop(p)
+
+
         if self.ask_cage_lower_ex_max_level_qty:
             for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                 if p<=self.ask_cage_lower_ex_max_level_price:
@@ -597,6 +635,7 @@ class AXOB():
             self.bid_cage_upper_ex_min_level_qty = 0
             self.bid_max_level_price = max(self.bid_level_tree.keys())
             self.bid_max_level_qty = self.bid_level_tree[self.bid_max_level_price].qty
+        # self._print_levels()
 
 
     def onOrder(self, order:axsbe_order):
@@ -644,14 +683,19 @@ class AXOB():
 
 
     def onLimitOrder(self, order:ob_order):
-        if order.tradingPhase == axsbe_base.TPM.OpenCall or order.tradingPhase == axsbe_base.TPM.CloseCall: #集合竞价期间，直接插入；暂时还是用order的TPM，而非自身的； TODO:决定用哪个 [High priority]
-            if order.tradingPhase==axsbe_base.TPM.CloseCall and self.holding_nb!=0: #进入收盘集合竞价，但可能有市价单还在确认
+        if self.TradingPhaseMarket==axsbe_base.TPM.OpenCall or self.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
+            #集合竞价期间，直接插入
+            if self.TradingPhaseMarket==axsbe_base.TPM.CloseCall and self.holding_nb!=0: #进入收盘集合竞价，但可能有市价单还在确认
                 self.insertOrder(self.holding_order)
                 self.holding_nb = 0
 
-            self.insertOrder(order)
-            self.bid_waiting_for_cage = False
-            self.ask_waiting_for_cage = False
+            if self.TradingPhaseMarket==axsbe_base.TPM.CloseCall and self.UpLimitPx==2147483647 and\
+               (order.price>msg_util.CYB_match_upper(self.LastPx) or order.price<msg_util.CYB_match_lower(self.LastPx)):
+               pass # 创业板上市头5日超出范围则丢弃
+            else:
+                self.insertOrder(order)
+                self.bid_waiting_for_cage = False
+                self.ask_waiting_for_cage = False
 
             self.genSnap()   #可出snap
         elif self.cage_type==CAGE.CYB and order.type==TYPE.LIMIT and\
@@ -659,6 +703,14 @@ class AXOB():
               order.side==SIDE.ASK and (order.price<CYB_cage_lower(self.ask_cage_ref_px))):
             self.insertOrder(order, outOfCage=True)
             self.genSnap()   #出一个snap
+        elif self.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking:
+            #波动性中断(有新order表示临停结束，正在集合竞价)，直接插入
+            if self.holding_nb!=0: #可能是一笔大单打到临停位置
+                self.insertOrder(self.holding_order)
+                self.holding_nb = 0
+            self.insertOrder(order)
+
+            self.genSnap()   #可出snap
         else:
             #把此前缓存的订单(市价/限价)插入LOB
             if self.holding_nb != 0:
@@ -877,7 +929,8 @@ class AXOB():
         else:
             assert self.holding_nb==0, f'{self.SecurityID:06d} unexpected exec while holding_nb!=0'
             #20221010 300654  碰到深交所订单乱序：先发送2档以上的逐笔成交，再发送1档的撤单（卖方1档撤单导致买方订单进入价格笼子，吃掉卖方2档及以上）；目前直接应用成交可以正常继续重建:
-            if not ((exec.TransactTime%SZSE_TICK_CUT==92500000)or(exec.TransactTime%SZSE_TICK_CUT==150000000) if self.SecurityIDSource==SecurityIDSource_SZSE else (exec.TransactTime==9250000)or(exec.TransactTime==15000000)):
+            if not ((exec.TransactTime%SZSE_TICK_CUT==92500000)or(exec.TransactTime%SZSE_TICK_CUT==150000000) if self.SecurityIDSource==SecurityIDSource_SZSE else (exec.TransactTime==9250000)or(exec.TransactTime==15000000)) and\
+               self.TradingPhaseMarket!=axsbe_base.TPM.VolatilityBreaking:
                 self.WARN(f'unexpected exec @{exec.TransactTime}!')
 
             self.tradeLimit(SIDE.ASK, exec.LastQty, exec.OfferApplSeqNum)
@@ -885,6 +938,8 @@ class AXOB():
 
             if self.ask_min_level_qty==0 or self.bid_max_level_qty==0 or self.ask_min_level_price>self.bid_max_level_price:
                 self.INFO('openCall/closeCall trade over')
+                if self.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking:
+                    self.TradingPhaseMarket = exec.TransactTime
                 self.genSnap()   #集合竞价所有成交完成
 
     def enterCage(self):
@@ -1017,7 +1072,11 @@ class AXOB():
                     else:
                         self.ask_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
                     self.DBG(f'Ask cage ref px={self.ask_cage_ref_px}')
-                    self.ask_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
+                    
+                    if self.TradingPhaseMarket==axsbe_base.TPM.AMTrading or self.TradingPhaseMarket==axsbe_base.TPM.PMTrading:
+                        self.ask_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
+                    else:
+                        self.ask_waiting_for_cage = False
 
         else:## side == SIDE.ASK:
             self.ask_level_tree[price].qty -= qty
@@ -1063,7 +1122,11 @@ class AXOB():
                     else:
                         self.bid_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
                     self.DBG(f'Bid cage ref px={self.bid_cage_ref_px}')
-                    self.bid_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
+
+                    if self.TradingPhaseMarket==axsbe_base.TPM.AMTrading or self.TradingPhaseMarket==axsbe_base.TPM.PMTrading:
+                        self.bid_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
+                    else:
+                        self.bid_waiting_for_cage = False
 
     def onSnap(self, snap:axsbe_snap_stock):
         self.DBG(f'msg#{self.msg_nb} onSnap:{snap}')
@@ -1126,6 +1189,12 @@ class AXOB():
             self.closePx_ready = True
             self.genSnap()
 
+        if snap.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking and self.TradingPhaseMarket!=axsbe_base.TPM.VolatilityBreaking:  #进入波动性中断
+            self.WARN(f'Enter VolatilityBreaking @{snap.TransactTime}')
+            self.VolatilityBreaking_end_tick = 0
+            self.TradingPhaseMarket = axsbe_base.TPM.VolatilityBreaking
+            self.genSnap()
+
         ## 检查重建算法，仅用于测试算法是否正确：
         snap._seq = self.msg_nb
         if snap.TradingPhaseMarket<axsbe_base.TPM.OpenCall:
@@ -1173,7 +1242,7 @@ class AXOB():
 
 
     def genSnap(self):
-        assert self.holding_nb==0, f'{self.SecurityID:06d} genSnap but with holding'
+        assert self.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking or self.holding_nb==0, f'{self.SecurityID:06d} genSnap but with holding'
 
         # if self.msg_nb==20729:
         #     self.DBG('breakpoint')
@@ -1185,6 +1254,8 @@ class AXOB():
         elif self.TradingPhaseMarket==axsbe_base.TPM.OpenCall or self.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
             # 集合竞价快照
             snap = self.genCallSnap()
+        elif self.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking:
+            snap = self.genTradingSnap(isVolatilityBreaking=True)
         elif self.TradingPhaseMarket==axsbe_base.TPM.Ending:
             if self.closePx_ready: #收盘价已经ready
                 snap = self.genTradingSnap()
@@ -1379,28 +1450,6 @@ class AXOB():
 
 
         ## 集中竞价期间不需要统计成交信息(TotalVolumeTrade & TotalValueTrade)
-        # # 填充成交信息
-        # self.TotalVolumeTrade = volumeTrade
-
-        # # TotalValueTrade 计算与小数位数扩展
-        # if self.SecurityIDSource==SecurityIDSource_SZSE:
-        #     # 乘法输入：深圳(Qty精度2位、price精度2位or3位小数)；输出TotalValueTrade深圳(精度4位小数)
-        #     if self.instrument_type==INSTRUMENT_TYPE.STOCK:
-        #         self.TotalValueTrade = int(volumeTrade * price/(QTY_INTER_SZSE_PRECISION*PRICE_INTER_STOCK_PRECISION // msg_util.TOTALVALUETRADE_SZSE_PRECISION)) # 2x2->4
-        #     elif self.instrument_type==INSTRUMENT_TYPE.FUND:
-        #         self.TotalValueTrade = int(volumeTrade * price/(QTY_INTER_SZSE_PRECISION*PRICE_INTER_FUND_PRECISION // msg_util.TOTALVALUETRADE_SZSE_PRECISION)) # 2x3->4
-        #     else:
-        #         self.TotalValueTrade = None
-        # elif self.SecurityIDSource==SecurityIDSource_SSE:
-        #     # 乘法输入：上海(Qty精度3位、price精度2位or3位小数)；输出TotalValueTrade上海(精度5位小数)
-        #     if self.instrument_type==INSTRUMENT_TYPE.STOCK:
-        #         self.TotalValueTrade = int(volumeTrade * price/(QTY_INTER_SSE_PRECISION*PRICE_INTER_STOCK_PRECISION // msg_util.TOTALVALUETRADE_SSE_PRECISION)) # 3x2 -> 5
-        #     elif self.instrument_type==INSTRUMENT_TYPE.FUND:
-        #         self.TotalValueTrade = int(volumeTrade * price/(QTY_INTER_SSE_PRECISION*PRICE_INTER_FUND_PRECISION // msg_util.TOTALVALUETRADE_SZSE_PRECISION)) # 3x3->5
-        #     else:
-        #         self.TotalValueTrade = None
-        # else:
-        #     self.TotalValueTrade = None
 
         # price 小数位数扩展
         price = self._fmtPrice_inter2snap(price)
@@ -1462,26 +1511,28 @@ class AXOB():
         return snap_call
         
 
-    def genTradingSnap(self, level_nb=10):
+    def genTradingSnap(self, isVolatilityBreaking=False, level_nb=10):
         '''
         生成连续竞价期间快照
         level_nb: 快照单边档数
         '''
         snap_bid_levels = {}
         lv = 0
-        for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-            if self.bid_cage_upper_ex_min_level_qty==0 or p<self.bid_cage_upper_ex_min_level_price:
-                snap_bid_levels[lv] = price_level(self._fmtPrice_inter2snap(p), l.qty)
-                lv += 1
+        if not isVolatilityBreaking: #临停期间，各档均填0；非临停期间才从价格档中取值
+            for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
+                if self.bid_cage_upper_ex_min_level_qty==0 or p<self.bid_cage_upper_ex_min_level_price:
+                    snap_bid_levels[lv] = price_level(self._fmtPrice_inter2snap(p), l.qty)
+                    lv += 1
         for i in range(lv, level_nb):
             snap_bid_levels[i] = price_level(0, 0)
             
         snap_ask_levels = {}
         lv = 0
-        for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
-            if self.ask_cage_lower_ex_max_level_qty==0 or p>self.ask_cage_lower_ex_max_level_price:
-                snap_ask_levels[lv] = price_level(self._fmtPrice_inter2snap(p), l.qty)
-                lv += 1
+        if not isVolatilityBreaking: #临停期间，各档均填0；非临停期间才从价格档中取值
+            for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
+                if self.ask_cage_lower_ex_max_level_qty==0 or p>self.ask_cage_lower_ex_max_level_price:
+                    snap_ask_levels[lv] = price_level(self._fmtPrice_inter2snap(p), l.qty)
+                    lv += 1
         for i in range(lv, level_nb):
             snap_ask_levels[i] = price_level(0, 0)
 
@@ -1508,19 +1559,25 @@ class AXOB():
         
 
         #维护参数
-        if self.BidWeightSize != 0:
-            snap.BidWeightPx = (int((self.BidWeightValue<<1) / self.BidWeightSize) + 1) >> 1 # 四舍五入
-            snap.BidWeightPx = self._fmtPrice_inter2snap(snap.BidWeightPx)
-        else:
+        if isVolatilityBreaking: #临停期间填0
             snap.BidWeightPx = 0
-        snap.BidWeightSize = self.BidWeightSize
-        
-        if self.AskWeightSize != 0:
-            snap.AskWeightPx = (int((self.AskWeightValue<<1) / self.AskWeightSize) + 1) >> 1 # 四舍五入
-            snap.AskWeightPx = self._fmtPrice_inter2snap(snap.AskWeightPx)
-        else:
+            snap.BidWeightSize = 0
             snap.AskWeightPx = 0
-        snap.AskWeightSize = self.AskWeightSize
+            snap.AskWeightSize = 0
+        else:
+            if self.BidWeightSize != 0:
+                snap.BidWeightPx = (int((self.BidWeightValue<<1) / self.BidWeightSize) + 1) >> 1 # 四舍五入
+                snap.BidWeightPx = self._fmtPrice_inter2snap(snap.BidWeightPx)
+            else:
+                snap.BidWeightPx = 0
+            snap.BidWeightSize = self.BidWeightSize
+            
+            if self.AskWeightSize != 0:
+                snap.AskWeightPx = (int((self.AskWeightValue<<1) / self.AskWeightSize) + 1) >> 1 # 四舍五入
+                snap.AskWeightPx = self._fmtPrice_inter2snap(snap.AskWeightPx)
+            else:
+                snap.AskWeightPx = 0
+            snap.AskWeightSize = self.AskWeightSize
 
         #最新的一个逐笔消息时戳
         self._setSnapTimestamp(snap)
@@ -1529,6 +1586,9 @@ class AXOB():
 
         return snap
 
+
+
+    
     def _fmtPrice_inter2snap(self, price):
         # price 小数位数扩展
         if self.SecurityIDSource==SecurityIDSource_SZSE:
@@ -1550,7 +1610,6 @@ class AXOB():
         else:
             price = None
         return price
-
 
     def _getLevels(self, level_nb):
         '''
@@ -1734,6 +1793,13 @@ class AXOB():
                 setattr(self, attr, v)
             else:
                 setattr(self, attr, data[attr])
+
+            # elif attr in data:
+            #     setattr(self, attr, data[attr])
+            # else:
+            #     print(f'AXOB.{attr} not in load data!')
+            #     setattr(self, attr, 0)
+
         ## 日志
         self.logger = logging.getLogger(f'{self.SecurityID:06d}')
         g_logger = logging.getLogger('main')

@@ -49,6 +49,16 @@ PRICE_SSE_PRECISION = 1000  # 股票价格精度：上海3位小数（逐笔消�
 QTY_SSE_PRECISION   = 1000  # 数量精度：上海3位小数（逐笔消息和快照消息相同）
 TOTALVALUETRADE_SSE_PRECISION = 100000 # 上海5位
 
+## 创业板价格笼子范围
+#有效竞价范围的计算结果按照四舍五入原则取至价格最小变动单位。 
+#有效竞价范围上限或下限与基准价格之差的绝对值低于价格最小变动单位的，以基准价格增减一个价格最小变动单位为有效竞价范围。
+CYB_cage_upper = lambda x: x+1 if x<=24 else (x*102 + 50) // 100   #创业板价格笼子上限计算，大于时被隐藏
+CYB_cage_lower = lambda x: x-1 if x<=25 else (x*98 + 50) // 100    #创业板价格笼子下限计算，小于时被隐藏
+
+## 创业板有效竞价范围
+CYB_match_upper = lambda x: (x*110 + 50) // 100
+CYB_match_lower = lambda x: (x*90 + 50) // 100
+
 isTPMfreeze = lambda x:x.TradingPhaseMarket==axsbe_base.TPM.Starting\
                      or x.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking\
                      or x.TradingPhaseMarket==axsbe_base.TPM.Breaking\

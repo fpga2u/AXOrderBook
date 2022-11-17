@@ -69,8 +69,8 @@ class TPM():
     PMTrading = 5
     CloseCall = 6
     AfterCloseTrading = 7 # 虽然我们编码这个交易阶段，但在111/192/191消息中不会碰到，其用于300611/303711消息
-    Ending = 8
-    VolatilityBreaking = 9
+    VolatilityBreaking = 8
+    Ending = 9
     HangingUp = 10
     Fusing = 11
 
