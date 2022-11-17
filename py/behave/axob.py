@@ -698,25 +698,10 @@ class AXOB():
                 self.ask_waiting_for_cage = False
 
             self.genSnap()   #可出snap
-        elif self.cage_type==CAGE.CYB and order.type==TYPE.LIMIT and\
-             (order.side==SIDE.BID and (order.price>CYB_cage_upper(self.bid_cage_ref_px)) or
-              order.side==SIDE.ASK and (order.price<CYB_cage_lower(self.ask_cage_ref_px))):
-            self.insertOrder(order, outOfCage=True)
-            self.genSnap()   #出一个snap
-        elif self.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking:
-            #波动性中断(有新order表示临停结束，正在集合竞价)，直接插入
-            if self.holding_nb!=0: #可能是一笔大单打到临停位置
-                self.insertOrder(self.holding_order)
-                self.holding_nb = 0
-            self.insertOrder(order)
-
-            self.genSnap()   #可出snap
         else:
-            #把此前缓存的订单(市价/限价)插入LOB
-            if self.holding_nb != 0:
+            if self.holding_nb!=0: #把此前缓存的订单(市价/限价)插入LOB
                 if self.holding_order.type == TYPE.MARKET and not self.holding_order.traded:
                     self.ERR(f'市价单 {self.holding_order} 未伴随成交')
-
                 self.insertOrder(self.holding_order)
                 self.holding_nb = 0
 
@@ -724,24 +709,35 @@ class AXOB():
                 self.genSnap()   #先出一个snap，时戳用市价单的
                 self._useTimestamp(order.TransactTime)
 
-            #若是市价单或可能成交的限价单，则缓存住，等成交
-            if order.type==TYPE.MARKET:
-                self.holding_order = order
-                self.holding_nb += 1
-                self.DBG('hold MARET-order')
-            elif (order.side==SIDE.BID and (order.price >= self.ask_min_level_price and self.ask_min_level_qty > 0)) or \
-               (order.side==SIDE.ASK and (order.price <= self.bid_max_level_price and self.bid_max_level_qty > 0)):
-                self.holding_order = order
-                self.holding_nb += 1
-                self.DBG('hold LIMIT-order')
-                self.bid_waiting_for_cage = False
-                self.ask_waiting_for_cage = False
-            else:
+            if self.cage_type==CAGE.CYB and order.type==TYPE.LIMIT and\
+                (order.side==SIDE.BID and (order.price>CYB_cage_upper(self.bid_cage_ref_px)) or
+                order.side==SIDE.ASK and (order.price<CYB_cage_lower(self.ask_cage_ref_px))):
+                self.insertOrder(order, outOfCage=True)
+                self.genSnap()   #出一个snap
+            elif self.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking:
+                #波动性中断(有新order表示临停结束，正在集合竞价)，直接插入
                 self.insertOrder(order)
-                if self.cage_type==CAGE.CYB:
-                    self.enterCage()
 
-                self.genSnap()   #再出一个snap
+                self.genSnap()   #可出snap
+            else:
+                #若是市价单或可能成交的限价单，则缓存住，等成交
+                if order.type==TYPE.MARKET:
+                    self.holding_order = order
+                    self.holding_nb += 1
+                    self.DBG('hold MARET-order')
+                elif (order.side==SIDE.BID and (order.price >= self.ask_min_level_price and self.ask_min_level_qty > 0)) or \
+                (order.side==SIDE.ASK and (order.price <= self.bid_max_level_price and self.bid_max_level_qty > 0)):
+                    self.holding_order = order
+                    self.holding_nb += 1
+                    self.DBG('hold LIMIT-order')
+                    self.bid_waiting_for_cage = False
+                    self.ask_waiting_for_cage = False
+                else:
+                    self.insertOrder(order)
+                    if self.cage_type==CAGE.CYB:
+                        self.enterCage()
+
+                    self.genSnap()   #再出一个snap
 
     def insertOrder(self, order:ob_order, outOfCage=False):
         '''
