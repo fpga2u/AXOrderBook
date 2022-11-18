@@ -505,6 +505,7 @@ class AXOB():
                     self.AskWeightSize += self.AskWeightSizeEx
                     self.AskWeightValue += self.AskWeightValueEx
                     self.TradingPhaseMarket = axsbe_base.TPM.AMTrading
+                    self.genSnap()
             elif msg==AX_SIGNAL.AMTRADING_END:
                 if self.TradingPhaseMarket==axsbe_base.TPM.AMTrading:
                     if self.holding_nb==0: #不再有缓存单
@@ -1010,14 +1011,14 @@ class AXOB():
         '''
         if self.holding_nb != 0:    #TODO: 此时不应有holding [high priority]
             self.holding_nb = 0
-            if self.holding_order.applSeqNum != cancel.applSeqNum: #撤销的不是缓存单，把缓存单插入LOB
+            if self.holding_order.applSeqNum!=cancel.applSeqNum: #撤销的不是缓存单，把缓存单插入LOB
                 self.insertOrder(self.holding_order)
                 
-                self._useTimestamp(self.holding_order.TransactTime)
-                self.genSnap()   #先出一个snap，时戳用市价单的
-                self._useTimestamp(cancel.TransactTime)
-            else:
-                return  #撤销缓存单，holding_nb清空即可
+            self._useTimestamp(self.holding_order.TransactTime)
+            self.genSnap()   #先出一个snap，时戳用市价单的
+            self._useTimestamp(cancel.TransactTime)
+            if self.holding_order.applSeqNum==cancel.applSeqNum: #撤销缓存单，holding_nb清空即可
+                return  
 
         order = self.order_map.pop(cancel.applSeqNum)   # 注意order.qty是旧值
 
@@ -1270,23 +1271,22 @@ class AXOB():
             snap._seq = self.msg_nb # 用于调试
             self.last_snap = snap
 
-            #在收到的交易所快照中查找是否有一样的
-            matched = False
+            #在收到的交易所快照中查找是否有一样的,允许匹配多个快照
+            matched = []
             if snap.NumTrades in self.market_snaps:
-                for match_idx in range(len(self.market_snaps[snap.NumTrades])):
-                    rcv = self.market_snaps[snap.NumTrades][match_idx]
+                for rcv in self.market_snaps[snap.NumTrades]:
                     if snap.is_same(rcv) and self._chkSnapTimestamp(rcv, snap):
                         self.WARN(f'rebuilt snap #{snap._seq}({snap.TransactTime}) matches history market snap #{rcv._seq}({rcv.TransactTime})') # 重建快照在市场快照之后，属于警告
-                        matched = True
-                        break
+                        matched.append(rcv)
             
-            if matched: 
-                self.market_snaps[snap.NumTrades].pop(match_idx)    #丢弃已匹配的
+            if len(matched): 
+                for rcv in matched:
+                    self.market_snaps[snap.NumTrades].remove(rcv)    #丢弃已匹配的
                 if len(self.market_snaps[snap.NumTrades])==0:
                     self.market_snaps.pop(snap.NumTrades)
 
             # 没找到匹配的交易所历史快照，或者是交易阶段切换导致生成的快照，都要缓存住，后者可能会在下一个交易阶段切换处被使用
-            if not matched or snap.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking or snap.TradingPhaseMarket==axsbe_base.TPM.Breaking:
+            if len(matched)==0 or snap.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking or snap.TradingPhaseMarket==axsbe_base.TPM.Breaking:
                 if snap.NumTrades not in self.rebuilt_snaps:
                     self.rebuilt_snaps[snap.NumTrades] = [snap]
                 else:

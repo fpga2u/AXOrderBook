@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+from time import sleep
 from tool.axsbe_base import SecurityIDSource_SZSE, TPM, INSTRUMENT_TYPE
 from tool.test_util import *
 from tool.msg_util import *
 from behave.mu import *
 import os
 import pickle
+
 
 def TEST_axob_SL(date, instrument:int, 
                 SecurityIDSource=SecurityIDSource_SZSE, 
@@ -180,10 +183,13 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
         raise f"{source_file} not exists"
 
     mu = MU(instrument_list, SecurityIDSource, instrument_type)
+    print(f'{datetime.today()} instrumen_nb={len(instrument_list)}, current memory usage={getMemUsageGB():.3f} GB')
 
     n = 0 #只计算在 instrument_list 内的消息
     boc = 0
     ecc = 0
+    t_bgn = time()
+    profile_memUsage = 0
     for msg in axsbe_file(source_file):
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
@@ -208,9 +214,17 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
             print(f'HHMMSSms_max: over, n={n}, msg @({msg.TransactTime})')
             break
 
+        memUsage = getMemUsageGB()
+        if memUsage>profile_memUsage:
+            profile_memUsage = memUsage
+        if time()>t_bgn+60*10:
+            t_bgn = time()
+            print(f'{datetime.today()} current memory usage={memUsage:.3f} GB (peak={profile_memUsage:.3f} GB), msg @{msg.HHMMSSms}')
+    print(f'{datetime.today()} main-loop done.')
+
     # print(mu)
     assert mu.are_you_ok()
-    print("TEST_axob_bat PASS")
+    print(f'== TEST_axob_bat PASS ==')
     return
 
 
@@ -395,3 +409,27 @@ def TEST_mu_rolling(source_file, instrument_list, n_max=500, rolling_gap=5,
 
     print("TEST_axob_rolling PASS")
     return
+
+
+@timeit
+def TEST_mu_bat(source_file, instrument_list:list,
+                batch_nb,
+                SecurityIDSource=SecurityIDSource_SZSE, 
+                instrument_type=INSTRUMENT_TYPE.STOCK,
+                ):
+    '''
+    将instrument_list分组到多个mu进行测试，减少内存占用。
+    instrument_list: 分组前的标的列表，输入时尽量按照逐笔数目排序，有利于分组均衡
+    batch_nb:分成几组。 若分为n组，则每组序号为：[0, n, 2n...], [1, n+1, 2n+1...] ... [n-1, 2n-1, 3n-1...]
+    '''
+    for i in range(batch_nb):
+        current_list = instrument_list[i::batch_nb]
+        freeGB = getMemFreeGB()
+        print(f'{datetime.today()} Working on batch {i}/{batch_nb}, current system free memory={freeGB:.3f} GB...')
+        while freeGB*168<len(current_list)*20:  #168只个股最大约占30G
+            print(f'{datetime.today()} sleep for not enough free memory...')
+            sleep(180)
+            freeGB = getMemFreeGB()
+            print(f'{datetime.today()} current system free memory={freeGB:.3f} GB' 
+                  f'(each instrument={freeGB/len(current_list):.4f}, require={20/168*len(current_list):.4f})')
+        TEST_axob_bat(source_file, current_list, n_max=0, openCall_only=False, SecurityIDSource=SecurityIDSource, instrument_type=instrument_type) #
