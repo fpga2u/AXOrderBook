@@ -189,10 +189,13 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
     print(f'{datetime.today()} instrumen_nb={len(instrument_list)}, current memory usage={getMemUsageGB():.3f} GB')
 
     n = 0 #只计算在 instrument_list 内的消息
+    n_bgn = 0
     boc = 0
     ecc = 0
     t_bgn = time()
+    t_pf = t_bgn
     profile_memUsage = 0
+    profile_memFree = getMemFreeGB()
     for msg in axsbe_file(source_file):
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
@@ -217,17 +220,24 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
             print(f'{datetime.today()} HHMMSSms_max: over, n={n}, msg @({msg.TransactTime})')
             break
 
-        memUsage = getMemUsageGB()
-        if memUsage>profile_memUsage:
-            profile_memUsage = memUsage
-        
-        if time()>t_bgn+60*10:
+        now = time()
+
+        if now > t_pf+30: #内存占用采样周期30s
+            memUsage = getMemUsageGB()
+            if memUsage>profile_memUsage:
+                profile_memUsage = memUsage
             memFree = getMemFreeGB()
-            print(f'{datetime.today()} current memory usage={memUsage:.3f} GB free={memFree:.3f} GB'
-                  f'(epoch peak={profile_memUsage:.3f} GB),' 
-                  f' @{msg.HHMMSSms}')
-            t_bgn = time()
-            profile_memUsage = 0
+            if memFree<profile_memFree:
+                profile_memFree = memFree
+            t_pf = now
+
+            if now>t_bgn+60*10:#内存情况，报告周期10min
+                print(f'{datetime.today()} current memory usage={memUsage:.3f} GB free={memFree:.3f} GB'
+                    f'(epoch peak={profile_memUsage:.3f} GB, minFree={profile_memFree}),' 
+                    f' @{msg.HHMMSSms}')
+                t_bgn = now
+                profile_memUsage = 0
+                profile_memFree = memFree
 
     if WARN is not None:
         WARN(mu) #保证能记录到文件中
