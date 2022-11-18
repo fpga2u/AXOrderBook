@@ -193,7 +193,6 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
     ecc = 0
     t_bgn = time()
     profile_memUsage = 0
-    profile_memFree = getMemFreeGB()
     for msg in axsbe_file(source_file):
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
@@ -221,16 +220,14 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
         memUsage = getMemUsageGB()
         if memUsage>profile_memUsage:
             profile_memUsage = memUsage
-        memFree = getMemFreeGB()
-        if memFree<profile_memFree:
-            profile_memFree = memFree
+        
         if time()>t_bgn+60*10:
+            memFree = getMemFreeGB()
             print(f'{datetime.today()} current memory usage={memUsage:.3f} GB free={memFree:.3f} GB'
-                  f'(epoch peak={profile_memUsage:.3f} GB, minFree={profile_memFree}),' 
+                  f'(epoch peak={profile_memUsage:.3f} GB),' 
                   f' @{msg.HHMMSSms}')
             t_bgn = time()
             profile_memUsage = 0
-            profile_memFree = memFree
 
     if WARN is not None:
         WARN(mu) #保证能记录到文件中
@@ -425,6 +422,7 @@ def TEST_mu_rolling(source_file, instrument_list, n_max=500, rolling_gap=5,
 @timeit
 def TEST_mu_bat(source_file, instrument_list:list,
                 batch_nb,
+                bgn_batch=0,
                 SecurityIDSource=SecurityIDSource_SZSE, 
                 instrument_type=INSTRUMENT_TYPE.STOCK,
                 logPack=(print, print, print, print)
@@ -433,8 +431,9 @@ def TEST_mu_bat(source_file, instrument_list:list,
     将instrument_list分组到多个mu进行测试，减少内存占用。
     instrument_list: 分组前的标的列表，输入时尽量按照逐笔数目排序，有利于分组均衡
     batch_nb:分成几组。 若分为n组，则每组序号为：[0, n, 2n...], [1, n+1, 2n+1...] ... [n-1, 2n-1, 3n-1...]
+    bgn_batch:从第几分组开始运行，取值范围:[0, batch_nb-1].
     '''
-    for i in range(batch_nb):
+    for i in range(bgn_batch, batch_nb):
         current_list = instrument_list[i::batch_nb]
         freeGB = getMemFreeGB()
         print(f'{datetime.today()} Working on batch {i}/{batch_nb}, current system free memory={freeGB:.3f} GB...')

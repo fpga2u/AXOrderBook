@@ -154,12 +154,18 @@ if __name__== '__main__':
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20221010, 300365, 0)
 
-    ### 20220812测试错误
+    ### 20220617测试错误
     logger.info('starting TEST_axob_bat')
-    data_source = "data/20220812/bat_test.log"
-    ptn=[200539, 698, 300657]
-    # ptn=[300657]
+    data_source = "data/20220617/bat_test2.log"
+    ptn=[301129]
     behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
+
+    ### 20220812测试错误
+    # logger.info('starting TEST_axob_bat')
+    # data_source = "data/20220812/bat_test.log"
+    # ptn=[200539, 698, 300657]
+    # # ptn=[300657]
+    # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
     #########
     # logger.info('starting TEST_axob_SL')

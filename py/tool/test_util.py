@@ -22,4 +22,5 @@ def getMemUsageGB():
 
 #系统空闲内存，GB
 def getMemFreeGB():
+    '''WARN: very slow!'''
     return psutil.virtual_memory().free / (1024**3)

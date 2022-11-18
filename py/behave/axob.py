@@ -31,6 +31,7 @@ axob_logger = logging.getLogger(__name__)
 APPSEQ_BIT_SIZE = 32    # 序列号，34b，约40亿，因为不同channel的序列号各自独立，所以单channel整形就够
 PRICE_BIT_SIZE  = 25    # 价格，20b，33554431，股票:335544.31;基金:33554.431。（创业板上市首日有委托价格为￥188888.00的，若忽略这种特殊情况，则20b(10485.75)足够了）
 QTY_BIT_SIZE    = 30    # 数量，30b，(1,073,741,823)，深圳2位小数，上海3位小数
+LEVEL_QTY_BIT_SIZE    = QTY_BIT_SIZE+7    # 价格档位上的数量位宽
 TIMESTAMP_BIT_SIZE = 24 # 时戳精度 时-分-秒-10ms 最大15000000=24b
 
 PRICE_INTER_STOCK_PRECISION = 100  # 股票价格精度：2位小数，(深圳原始数据4位，上海3位)
@@ -573,6 +574,7 @@ class AXOB():
         static_AskWeightSize = 0
         static_AskWeightValue = 0
         for _,l in self.ask_level_tree.items():
+            assert l.qty<(1<<LEVEL_QTY_BIT_SIZE), f'{self.SecurityID:06d} ask level qty={l.qty} ovf @{self.current_inc_tick}'
             if (self.ask_cage_lower_ex_max_level_qty==0 or l.price>self.ask_cage_lower_ex_max_level_price):
                 static_AskWeightSize += l.qty
                 static_AskWeightValue += l.price * l.qty
@@ -586,6 +588,7 @@ class AXOB():
         static_BidWeightSize = 0
         static_BidWeightValue = 0
         for _,l in self.bid_level_tree.items():
+            assert l.qty<(1<<LEVEL_QTY_BIT_SIZE), f'{self.SecurityID:06d} bid level qty={l.qty} ovf @{self.current_inc_tick}'
             if self.bid_cage_upper_ex_min_level_qty==0 or l.price<self.bid_cage_upper_ex_min_level_price:
                 static_BidWeightSize += l.qty
                 static_BidWeightValue += l.price * l.qty
@@ -594,7 +597,6 @@ class AXOB():
 
         for _,ls in self.market_snaps.items():
             assert len(ls)!=0, f'{self.SecurityID:06d} market snap not pop clean'
-
 
 
     def openCage(self):
@@ -1022,14 +1024,24 @@ class AXOB():
         '''
         if self.holding_nb!=0:    #此处缓存的应该都是市价单
             self.holding_nb = 0
-            if self.holding_order.applSeqNum!=cancel.applSeqNum: #撤销的不是缓存单，把缓存单插入LOB
+
+            if True:
+                ## 仅测试：不论撤销的是不是缓存单，都将缓存单插入OB并生成快照用于比较
+                ##  因为市场快照可能是缓存单插入后的快照
                 self.insertOrder(self.holding_order)
-                
-            self._useTimestamp(self.holding_order.TransactTime)
-            self.genSnap()   #先出一个snap，时戳用缓存单(市价单)的
-            self._useTimestamp(cancel.TransactTime)
-            if self.holding_order.applSeqNum==cancel.applSeqNum: #撤销缓存单，holding_nb清空即可
-                return  
+                self._useTimestamp(self.holding_order.TransactTime)
+                self.genSnap()   #先出一个snap，时戳用缓存单(市价单)的
+                self._useTimestamp(cancel.TransactTime)
+
+            else:
+                ## 实际操作，如果撤销的是缓存单，则不需要插入OB：
+                if self.holding_order.applSeqNum!=cancel.applSeqNum: #撤销的不是缓存单，把缓存单插入LOB
+                    self.insertOrder(self.holding_order)
+                self._useTimestamp(self.holding_order.TransactTime)
+                self.genSnap()   #先出一个snap，时戳用缓存单(市价单)的
+                self._useTimestamp(cancel.TransactTime)
+                if self.holding_order.applSeqNum==cancel.applSeqNum: #撤销缓存单，holding_nb清空即可
+                    return  
 
         order = self.order_map.pop(cancel.applSeqNum)   # 注意order.qty是旧值
 
