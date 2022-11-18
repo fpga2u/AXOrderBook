@@ -28,8 +28,8 @@ import logging
 axob_logger = logging.getLogger(__name__)
 
 #### 内部计算精度 ####
-APPSEQ_BIT_SIZE = 34    # 序列号，34b，约170亿
-PRICE_BIT_SIZE  = 25    # 价格，20b，1048575，股票:10485.75;基金:1048.575。（若统一到3位小数则考虑用24b，则只需深圳//10）
+APPSEQ_BIT_SIZE = 32    # 序列号，34b，约40亿，因为不同channel的序列号各自独立，所以单channel整形就够
+PRICE_BIT_SIZE  = 25    # 价格，20b，33554431，股票:335544.31;基金:33554.431。（创业板上市首日有委托价格为￥188888.00的，若忽略这种特殊情况，则20b(10485.75)足够了）
 QTY_BIT_SIZE    = 30    # 数量，30b，(1,073,741,823)，深圳2位小数，上海3位小数
 TIMESTAMP_BIT_SIZE = 24 # 时戳精度 时-分-秒-10ms 最大15000000=24b
 
@@ -76,7 +76,6 @@ class ob_order():
     '''专注于内部使用的字段格式与位宽'''
     __slots__ = [
         'applSeqNum',
-        'tradingPhase',
         'price',
         'qty',
         'side',
@@ -90,7 +89,6 @@ class ob_order():
     def __init__(self, order:axsbe_order, instrument_type:INSTRUMENT_TYPE):
         # self.securityID = order.SecurityID
         self.applSeqNum = order.ApplSeqNum
-        self.tradingPhase = order.TradingPhaseMarket #无需存储，目前只需要关注是否是集合竞价
 
         if order.SecurityIDSource==SecurityIDSource_SZSE:
             if instrument_type==INSTRUMENT_TYPE.STOCK:
@@ -356,6 +354,12 @@ class AXOB():
         'bid_waiting_for_cage',
         'ask_waiting_for_cage',
 
+        # profile
+        'pf_order_map_maxSize',
+        'pf_level_tree_maxSize',
+        'pf_bid_level_tree_maxSize',
+        'pf_ask_level_tree_maxSize',
+
         # for test olny
         'msg_nb',
         'rebuilt_snaps',    # list of snap
@@ -371,7 +375,8 @@ class AXOB():
     ]
     def __init__(self, SecurityID:int, SecurityIDSource, instrument_type:INSTRUMENT_TYPE, load_data=None):
         '''
-        TODO: holding_order的处理是否统一到一处？并增加时戳输入，用于提前结算市价单
+        TODO: holding_order的处理是否统一到一处？
+        TODO: 增加时戳输入，用于结算各自缓存，如市价单
         '''
         if load_data:
             self.load(load_data)
@@ -437,6 +442,11 @@ class AXOB():
             self.ask_waiting_for_cage = False
 
             ## 调试数据，仅用于测试算法是否正确：
+            self.pf_order_map_maxSize = 0
+            self.pf_level_tree_maxSize = 0
+            self.pf_bid_level_tree_maxSize = 0
+            self.pf_ask_level_tree_maxSize = 0
+
             self.msg_nb = 0
             self.rebuilt_snaps = {}
             self.market_snaps = {}
@@ -542,6 +552,7 @@ class AXOB():
 
         ## 调试数据，仅用于测试算法是否正确：
         self.msg_nb += 1
+        self.profile()
 
         if len(self.ask_level_tree):
             if self.cage_type==CAGE.CYB and self.ask_cage_lower_ex_max_level_qty:
@@ -1009,13 +1020,13 @@ class AXOB():
         处理撤单，来自深交所逐笔成交或上交所逐笔成交
         撤销此前缓存的订单(市价/限价)，或插入LOB
         '''
-        if self.holding_nb != 0:    #TODO: 此时不应有holding [high priority]
+        if self.holding_nb!=0:    #此处缓存的应该都是市价单
             self.holding_nb = 0
             if self.holding_order.applSeqNum!=cancel.applSeqNum: #撤销的不是缓存单，把缓存单插入LOB
                 self.insertOrder(self.holding_order)
                 
             self._useTimestamp(self.holding_order.TransactTime)
-            self.genSnap()   #先出一个snap，时戳用市价单的
+            self.genSnap()   #先出一个snap，时戳用缓存单(市价单)的
             self._useTimestamp(cancel.TransactTime)
             if self.holding_order.applSeqNum==cancel.applSeqNum: #撤销缓存单，holding_nb清空即可
                 return  
@@ -1688,6 +1699,28 @@ class AXOB():
             #     self.DBG(f'bid\t{l}')
         return im_ok
 
+    @property
+    def order_map_size(self):
+        return len(self.order_map)
+
+    @property
+    def level_tree_size(self):
+        return len(self.bid_level_tree) + len(self.ask_level_tree)
+
+    @property
+    def bid_level_tree_size(self):
+        return len(self.bid_level_tree)
+
+    @property
+    def ask_level_tree_size(self):
+        return len(self.ask_level_tree)
+
+    def profile(self):
+        if self.order_map_size>self.pf_order_map_maxSize: self.pf_order_map_maxSize = self.order_map_size
+        if self.level_tree_size>self.pf_level_tree_maxSize: self.pf_level_tree_maxSize = self.level_tree_size
+        if self.bid_level_tree_size>self.pf_bid_level_tree_maxSize: self.pf_bid_level_tree_maxSize = self.bid_level_tree_size
+        if self.ask_level_tree_size>self.pf_ask_level_tree_maxSize: self.pf_ask_level_tree_maxSize = self.ask_level_tree_size
+
     def _describe_px(self, p):
         s = ''
         if p==self.bid_max_level_price:
@@ -1718,6 +1751,10 @@ class AXOB():
         s+= f'  bid_max_level_price={self.bid_max_level_price} bid_max_level_qty={self.bid_max_level_qty}\n'
         s+= f'  ask_min_level_price={self.ask_min_level_price} ask_min_level_qty={self.ask_min_level_qty}\n'
         s+= f'  rebuilt_snaps={len(self.rebuilt_snaps)} market_snaps={len(self.market_snaps)}\n'
+        s+= '\n'
+        s+= f'  pf_order_map_maxSize={self.pf_order_map_maxSize}\n'
+        s+= f'  pf_level_tree_maxSize={self.pf_level_tree_maxSize}\n'
+        s+= f'  pf_bid_level_tree_maxSize={self.pf_bid_level_tree_maxSize} pf_ask_level_tree_maxSize={self.pf_ask_level_tree_maxSize}\n'
 
         return s
 

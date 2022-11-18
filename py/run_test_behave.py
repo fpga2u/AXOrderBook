@@ -27,6 +27,7 @@ if __name__== '__main__':
 
     logger.addHandler(fh)
     logger.addHandler(sh)
+    logPack = logger.debug, logger.info, logger.warn, logger.error
 
     # logger.info('starting TEST_axob')
     # behave.TEST_axob_rolling(date=20220422, instrument=1, n_max=0, rolling_gap=5, begin_section=None) # 240 sec
@@ -158,7 +159,7 @@ if __name__== '__main__':
     data_source = "data/20220812/bat_test.log"
     ptn=[200539, 698, 300657]
     # ptn=[300657]
-    behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False) #
+    behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
     #########
     # logger.info('starting TEST_axob_SL')

@@ -177,10 +177,13 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
                     openCall_only=False,
                     SecurityIDSource=SecurityIDSource_SZSE, 
                     instrument_type=INSTRUMENT_TYPE.STOCK,
-                    HHMMSSms_max=None
+                    HHMMSSms_max=None,
+                    logPack=(print, print, print, print)
                 ):
     if not os.path.exists(source_file):
         raise f"{source_file} not exists"
+
+    DBG, INFO, WARN, ERR = logPack
 
     mu = MU(instrument_list, SecurityIDSource, instrument_type)
     print(f'{datetime.today()} instrumen_nb={len(instrument_list)}, current memory usage={getMemUsageGB():.3f} GB')
@@ -190,39 +193,47 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
     ecc = 0
     t_bgn = time()
     profile_memUsage = 0
+    profile_memFree = getMemFreeGB()
     for msg in axsbe_file(source_file):
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
-            print('openCall start')
+            print(f'{datetime.today()} openCall start')
 
         if msg.TradingPhaseMarket==TPM.Ending and ecc==0:
             ecc = 1
-            print(f'closeCall over')
+            print(f'{datetime.today()} closeCall over')
 
         mu.onMsg(msg)
         n += 1
         if n_max>0 and n>=n_max:
-            print(f'nb over, n={n}')
+            print(f'{datetime.today()} nb over, n={n}')
             break
 
         if (openCall_only and msg.HHMMSSms>92600000) or \
            (msg.HHMMSSms>150100000):
-            print(f'Ending: over, n={n}')
+            print(f'{datetime.today()} Ending: over, n={n}')
             break
 
         if HHMMSSms_max is not None and HHMMSSms_max>0 and msg.HHMMSSms>HHMMSSms_max:
-            print(f'HHMMSSms_max: over, n={n}, msg @({msg.TransactTime})')
+            print(f'{datetime.today()} HHMMSSms_max: over, n={n}, msg @({msg.TransactTime})')
             break
 
         memUsage = getMemUsageGB()
         if memUsage>profile_memUsage:
             profile_memUsage = memUsage
+        memFree = getMemFreeGB()
+        if memFree<profile_memFree:
+            profile_memFree = memFree
         if time()>t_bgn+60*10:
+            print(f'{datetime.today()} current memory usage={memUsage:.3f} GB free={memFree:.3f} GB'
+                  f'(epoch peak={profile_memUsage:.3f} GB, minFree={profile_memFree}),' 
+                  f' @{msg.HHMMSSms}')
             t_bgn = time()
-            print(f'{datetime.today()} current memory usage={memUsage:.3f} GB (peak={profile_memUsage:.3f} GB), msg @{msg.HHMMSSms}')
-    print(f'{datetime.today()} main-loop done.')
+            profile_memUsage = 0
+            profile_memFree = memFree
 
-    # print(mu)
+    if WARN is not None:
+        WARN(mu) #保证能记录到文件中
     assert mu.are_you_ok()
     print(f'== TEST_axob_bat PASS ==')
     return
@@ -416,6 +427,7 @@ def TEST_mu_bat(source_file, instrument_list:list,
                 batch_nb,
                 SecurityIDSource=SecurityIDSource_SZSE, 
                 instrument_type=INSTRUMENT_TYPE.STOCK,
+                logPack=(print, print, print, print)
                 ):
     '''
     将instrument_list分组到多个mu进行测试，减少内存占用。
@@ -432,4 +444,4 @@ def TEST_mu_bat(source_file, instrument_list:list,
             freeGB = getMemFreeGB()
             print(f'{datetime.today()} current system free memory={freeGB:.3f} GB' 
                   f'(each instrument={freeGB/len(current_list):.4f}, require={20/168*len(current_list):.4f})')
-        TEST_axob_bat(source_file, current_list, n_max=0, openCall_only=False, SecurityIDSource=SecurityIDSource, instrument_type=instrument_type) #
+        TEST_axob_bat(source_file, current_list, n_max=0, openCall_only=False, SecurityIDSource=SecurityIDSource, instrument_type=instrument_type, logPack=logPack) #

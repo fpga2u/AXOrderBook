@@ -20,6 +20,12 @@ class MU():
 
         'msg_nb',
 
+        # profile
+        'pf_order_map_maxSize',
+        'pf_level_tree_maxSize',
+        'pf_bid_level_tree_maxSize',
+        'pf_ask_level_tree_maxSize',
+
         'logger',
         'DBG',
         'INFO',
@@ -35,6 +41,10 @@ class MU():
 
             # for test
             self.msg_nb = 0
+            self.pf_order_map_maxSize = 0
+            self.pf_level_tree_maxSize = 0
+            self.pf_bid_level_tree_maxSize = 0
+            self.pf_ask_level_tree_maxSize = 0
             
             # for debug
             self.logger = logging.getLogger(f'mu-{SecurityID_list[0]:06d}...')
@@ -51,7 +61,6 @@ class MU():
     def onMsg(self, msg):
         '''
         交易阶段管理
-        TODO: 波动性中断
         '''
         
         if self.TradingPhaseMarket==TPM.Starting: # Starting -> OpenCall
@@ -110,6 +119,7 @@ class MU():
         self.axobs[msg.SecurityID].onMsg(msg)
 
         self.msg_nb += 1
+        self.profile()
 
     def are_you_ok(self):
         ok_nb = 0
@@ -120,12 +130,34 @@ class MU():
                 ok_nb += 1
         return ok_nb==len(self.axobs)
 
+    def profile(self):
+        k = [x.order_map_size for _, x in self.axobs.items()]
+        k = sum(k)
+        if k>self.pf_order_map_maxSize:self.pf_order_map_maxSize=k
+
+        k = [x.level_tree_size for _, x in self.axobs.items()]
+        k = sum(k)
+        if k>self.pf_level_tree_maxSize:self.pf_level_tree_maxSize=k
+
+        k = [x.bid_level_tree_size for _, x in self.axobs.items()]
+        k = sum(k)
+        if k>self.pf_bid_level_tree_maxSize:self.pf_bid_level_tree_maxSize=k
+
+        k = [x.ask_level_tree_size for _, x in self.axobs.items()]
+        k = sum(k)
+        if k>self.pf_ask_level_tree_maxSize:self.pf_ask_level_tree_maxSize=k
+
     def __str__(self) -> str:
         s = '========================\n'
         for _, x in self.axobs.items():
             s += str(x)
             s += '--------\n'
         s += '========================\n'
+        s += f'MU-{len(self.axobs)}:'
+        s += f'  pf_order_map_maxSize={self.pf_order_map_maxSize}\n'
+        s += f'  pf_level_tree_maxSize={self.pf_level_tree_maxSize}\n'
+        s += f'  pf_bid_level_tree_maxSize={self.pf_bid_level_tree_maxSize} pf_ask_level_tree_maxSize={self.pf_ask_level_tree_maxSize}\n'
+
         return s
 
     def save(self):
