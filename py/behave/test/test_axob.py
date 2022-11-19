@@ -433,6 +433,7 @@ def TEST_mu_rolling(source_file, instrument_list, n_max=500, rolling_gap=5,
 def TEST_mu_bat(source_file, instrument_list:list,
                 batch_nb,
                 bgn_batch=0,
+                end_batch=-1,
                 SecurityIDSource=SecurityIDSource_SZSE, 
                 instrument_type=INSTRUMENT_TYPE.STOCK,
                 logPack=(print, print, print, print)
@@ -442,11 +443,16 @@ def TEST_mu_bat(source_file, instrument_list:list,
     instrument_list: 分组前的标的列表，输入时尽量按照逐笔数目排序，有利于分组均衡
     batch_nb:分成几组。 若分为n组，则每组序号为：[0, n, 2n...], [1, n+1, 2n+1...] ... [n-1, 2n-1, 3n-1...]
     bgn_batch:从第几分组开始运行，取值范围:[0, batch_nb-1].
+    bgn_batch:到第几分组结束运行，小于bgn_batch则运行到最末尾.
     '''
-    for i in range(bgn_batch, batch_nb):
+    _end_batch = end_batch
+    if _end_batch<bgn_batch or _end_batch>=batch_nb: _end_batch=batch_nb-1
+
+    print(f'{datetime.today()} Test mu batch nb={batch_nb}, work from #{bgn_batch} to #{_end_batch}:')
+    for i in range(bgn_batch, _end_batch+1):
         current_list = instrument_list[i::batch_nb]
         freeGB = getMemFreeGB()
-        print(f'{datetime.today()} Working on batch {i}/{batch_nb}, current system free memory={freeGB:.3f} GB...')
+        print(f'{datetime.today()} Working on batch #{i}/{batch_nb}, current system free memory={freeGB:.3f} GB...')
         while freeGB*168<len(current_list)*30:  #168只个股最大约占30G
             print(f'{datetime.today()} sleep for not enough free memory...')
             sleep(180)
