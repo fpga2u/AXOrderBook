@@ -40,7 +40,7 @@ from enum import Enum
 
 #### 原始数据精度 ####
 PRICE_SZSE_INCR_PRECISION = 10000 # 股票价格在逐笔消息中的精度：深圳4位小数
-PRICE_SZSE_SNAP_PRECISION = 1000000 # 股票价格在快照消息中的精度：深圳6位小数(除PreClose外)，4位小数(PreClose)
+PRICE_SZSE_SNAP_PRECISION = 10000 # 股票价格在快照消息中的精度：深圳4位小数
 PRICE_SZSE_SNAP_PRECLOSE_PRECISION = 10000
 QTY_SZSE_PRECISION   = 100   # 数量精度：深圳2位小数
 TOTALVALUETRADE_SZSE_PRECISION = 10000 # 深圳4位
@@ -48,6 +48,9 @@ TOTALVALUETRADE_SZSE_PRECISION = 10000 # 深圳4位
 PRICE_SSE_PRECISION = 1000  # 股票价格精度：上海3位小数（逐笔消息和快照消息相同）
 QTY_SSE_PRECISION   = 1000  # 数量精度：上海3位小数（逐笔消息和快照消息相同）
 TOTALVALUETRADE_SSE_PRECISION = 100000 # 上海5位
+
+
+ORDER_PRICE_OVERFLOW = 0x7fffffff   #委托价格越界，将被钳位到32位有符号数的最大值【越界表示价格超过(2147483647 / 10^小数位数)】
 
 ## 创业板价格笼子范围
 #有效竞价范围的计算结果按照四舍五入原则取至价格最小变动单位。 

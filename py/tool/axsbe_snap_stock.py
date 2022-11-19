@@ -81,6 +81,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
         'ask',
 
         # for debug
+        'AskWeightPx_uncertain', #加权价无法确定
         '_seq',
         '_source',  # MD=from MarketData; AXOB=AXOrderBook rebuild
 
@@ -106,6 +107,9 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
 
         self.bid = dict(zip(range(0, 10), [price_level(0, 0)] * 10))
         self.ask = dict(zip(range(0, 10), [price_level(0, 0)] * 10))
+
+        self.AskWeightPx_uncertain = False
+
         self._seq = -1
         self._source = source
 
@@ -160,7 +164,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
         LowPx_isSame = self.LowPx == another.LowPx
         BidWeightPx_isSame = self.BidWeightPx == another.BidWeightPx
         BidWeightSize_isSame = self.BidWeightSize == another.BidWeightSize
-        AskWeightPx_isSame = self.AskWeightPx == another.AskWeightPx
+        AskWeightPx_isSame = self.AskWeightPx == another.AskWeightPx if not self.AskWeightPx_uncertain and not another.AskWeightPx_uncertain else True  #任意一方加权价无法确定，则跳过
         AskWeightSize_isSame = self.AskWeightSize == another.AskWeightSize
         UpLimitPx_isSame = self.UpLimitPx == another.UpLimitPx
         DnLimitPx_isSame = self.DnLimitPx == another.DnLimitPx
@@ -362,7 +366,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
     Bid[7]={self.bid[7]}
     Bid[8]={self.bid[8]}
     Bid[9]={self.bid[9]}
-    @{self.TransactTime} ({self.TradingPhase_str})
+    @{self.TransactTime} ({self.TradingPhase_str})(AskWP={self.AskWeightPx_uncertain})
 '''
         else:
             '''TODO-SSE'''

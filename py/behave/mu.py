@@ -25,6 +25,10 @@ class MU():
         'pf_level_tree_maxSize',
         'pf_bid_level_tree_maxSize',
         'pf_ask_level_tree_maxSize',
+        'pf_AskWeightSize_max',
+        'pf_AskWeightValue_max',
+        'pf_BidWeightSize_max',
+        'pf_BidWeightValue_max',
 
         'logger',
         'DBG',
@@ -45,6 +49,10 @@ class MU():
             self.pf_level_tree_maxSize = 0
             self.pf_bid_level_tree_maxSize = 0
             self.pf_ask_level_tree_maxSize = 0
+            self.pf_AskWeightSize_max = 0
+            self.pf_AskWeightValue_max = 0
+            self.pf_BidWeightSize_max = 0
+            self.pf_BidWeightValue_max = 0
             
             # for debug
             self.logger = logging.getLogger(f'mu-{SecurityID_list[0]:06d}...')
@@ -147,16 +155,34 @@ class MU():
         k = sum(k)
         if k>self.pf_ask_level_tree_maxSize:self.pf_ask_level_tree_maxSize=k
 
+        k = [x.pf_AskWeightSize_max for _, x in self.axobs.items()]
+        k = max(k)
+        if k>self.pf_AskWeightSize_max:self.pf_AskWeightSize_max=k
+        k = [x.pf_AskWeightValue_max for _, x in self.axobs.items()]
+        k = max(k)
+        if k>self.pf_AskWeightValue_max:self.pf_AskWeightValue_max=k
+        
+        k = [x.pf_BidWeightSize_max for _, x in self.axobs.items()]
+        k = max(k)
+        if k>self.pf_BidWeightSize_max:self.pf_BidWeightSize_max=k
+        k = [x.pf_BidWeightValue_max for _, x in self.axobs.items()]
+        k = max(k)
+        if k>self.pf_BidWeightValue_max:self.pf_BidWeightValue_max=k
+
     def __str__(self) -> str:
         s = '========================\n'
         for _, x in self.axobs.items():
             s += str(x)
             s += '--------\n'
-        s += '========================\n'
-        s += f'MU-{len(self.axobs)}:'
-        s += f'  pf_order_map_maxSize={self.pf_order_map_maxSize}\n'
-        s += f'  pf_level_tree_maxSize={self.pf_level_tree_maxSize}\n'
-        s += f'  pf_bid_level_tree_maxSize={self.pf_bid_level_tree_maxSize} pf_ask_level_tree_maxSize={self.pf_ask_level_tree_maxSize}\n'
+        s+= '========================\n'
+        s+= f'MU-{len(self.axobs)}:'
+        s+= f'  pf_order_map_maxSize={self.pf_order_map_maxSize}\n'
+        s+= f'  pf_level_tree_maxSize={self.pf_level_tree_maxSize}\n'
+        s+= f'  pf_bid_level_tree_maxSize={self.pf_bid_level_tree_maxSize} pf_ask_level_tree_maxSize={self.pf_ask_level_tree_maxSize}\n'
+        s+= f'  pf_AskWeightSize_max={self.pf_AskWeightSize_max}\n'
+        s+= f'  pf_AskWeightValue_max={self.pf_AskWeightValue_max}\n'
+        s+= f'  pf_BidWeightSize_max={self.pf_BidWeightSize_max}\n'
+        s+= f'  pf_BidWeightValue_max={self.pf_BidWeightValue_max}\n'
 
         return s
 

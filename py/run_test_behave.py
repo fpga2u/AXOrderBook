@@ -168,11 +168,15 @@ if __name__== '__main__':
     # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
     ### 20221010测试错误
+    # logger.info('starting TEST_axob_bat')
+    # data_source = "data/20221010/bat_test.log"
+    # ptn=[2417, 300909, 301079, 300607, 300911, 301220, 301318, 2889, 300799, 3020, 300718, 2623, 3002, 2955, 3013, 2791, 300699, 301176, 2805, 300872, 301285, 301319, 2738, 301313]
+    # ptn=[301313]
+    # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack, HHMMSSms_max=20221010095212000) #
+
+    #新精度
     logger.info('starting TEST_axob_bat')
-    data_source = "data/20221010/bat_test.log"
-    ptn=[2417, 300909, 301079, 300607, 300911, 301220, 301318, 2889, 300799, 3020, 300718, 2623, 3002, 2955, 3013, 2791, 300699, 301176, 2805, 300872, 301285, 301319, 2738, 301313]
-    ptn=[301313]
-    behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack, HHMMSSms_max=20221010095212000) #
+    behave.TEST_axob(20221010, 301313, 0)
 
     #########
     # logger.info('starting TEST_axob_SL')

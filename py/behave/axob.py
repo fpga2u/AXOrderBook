@@ -43,6 +43,7 @@ QTY_INTER_SSE_PRECISION    = 1000  # 数量精度：上海3位小数
 SZSE_TICK_CUT = 1000000000 # 深交所时戳，日期以下精度
 SZSE_TICK_MS_TAIL = 10 # 深交所时戳，尾部毫秒精度，以10ms为单位
 
+PRICE_MAXIMUM = (1<<PRICE_BIT_SIZE)-1
 
 
 class SIDE(Enum): # 2bit
@@ -91,25 +92,6 @@ class ob_order():
         # self.securityID = order.SecurityID
         self.applSeqNum = order.ApplSeqNum
 
-        if order.SecurityIDSource==SecurityIDSource_SZSE:
-            if instrument_type==INSTRUMENT_TYPE.STOCK:
-                self.price = order.Price // SZSE_STOCK_PRICE_RD # 深圳 N13(4)，实际股票精度为分
-            elif instrument_type==INSTRUMENT_TYPE.FUND:
-                self.price = order.Price // SZSE_FUND_PRICE_RD # 深圳 N13(4)，实际基金精度为厘
-            else:
-                axob_logger.error(f'order SZSE ApplSeqNum={order.ApplSeqNum} instrument_type={instrument_type} not support!')
-        elif order.SecurityIDSource==SecurityIDSource_SSE:
-            if instrument_type==INSTRUMENT_TYPE.STOCK:
-                self.price = order.Price // SSE_STOCK_PRICE_RD # 上海 原始数据3位小数
-            else:
-                axob_logger.error(f'order SSE ApplSeqNum={order.ApplSeqNum} instrument_type={instrument_type} not support!')
-        else:
-            self.price = 0
-        self.traded = False #仅用于测试：市价单，当有成交后，市价单的价格将确定
-        self.TransactTime = order.TransactTime #仅用于测试：市价单，当有后续消息来而导致插入订单簿时，生成的订单簿用此时戳
-
-        self.qty = order.OrderQty    # 深圳2位小数;上海3位小数
-
         if order.Side_str=='买入':
             self.side = SIDE.BID
         elif order.Side_str=='卖出':
@@ -128,6 +110,30 @@ class ob_order():
             '''TODO-SSE'''
             self.type = TYPE.UNKNOWN
 
+        if order.Price==msg_util.ORDER_PRICE_OVERFLOW: #原始价格越界 (不用管是否是LIMIT)
+            self.price = PRICE_MAXIMUM  #本地也按越界处理，本地越界最终只影响到卖出加权价的计算
+            axob_logger.warn(f'{order.SecurityID:06d} order Price Price over the maximum!')
+            assert not(self.side==SIDE.BID and self.type==TYPE.LIMIT), f'{order.SecurityID:06d} BID order price overflow' #限价买单不应溢出
+        else:
+            if order.SecurityIDSource==SecurityIDSource_SZSE:
+                if instrument_type==INSTRUMENT_TYPE.STOCK:
+                    self.price = order.Price // SZSE_STOCK_PRICE_RD # 深圳 N13(4)，实际股票精度为分
+                elif instrument_type==INSTRUMENT_TYPE.FUND:
+                    self.price = order.Price // SZSE_FUND_PRICE_RD # 深圳 N13(4)，实际基金精度为厘
+                else:
+                    axob_logger.error(f'order SZSE ApplSeqNum={order.ApplSeqNum} instrument_type={instrument_type} not support!')
+            elif order.SecurityIDSource==SecurityIDSource_SSE:
+                if instrument_type==INSTRUMENT_TYPE.STOCK:
+                    self.price = order.Price // SSE_STOCK_PRICE_RD # 上海 原始数据3位小数
+                else:
+                    axob_logger.error(f'order SSE ApplSeqNum={order.ApplSeqNum} instrument_type={instrument_type} not support!')
+            else:
+                self.price = 0
+        self.traded = False #仅用于测试：市价单，当有成交后，市价单的价格将确定
+        self.TransactTime = order.TransactTime #仅用于测试：市价单，当有后续消息来而导致插入订单簿时，生成的订单簿用此时戳
+
+        self.qty = order.OrderQty    # 深圳2位小数;上海3位小数
+
         ## 位宽及精度舍入可行性检查
         if self.applSeqNum >= (1<<APPSEQ_BIT_SIZE) and self.applSeqNum!=0xffffffffffffffff:
             axob_logger.error(f'{order.SecurityID:06d} order ApplSeqNum={order.ApplSeqNum} ovf!')
@@ -139,7 +145,7 @@ class ob_order():
         if self.qty >= (1<<QTY_BIT_SIZE):
             axob_logger.error(f'{order.SecurityID:06d} order ApplSeqNum={order.ApplSeqNum} Volumn={order.OrderQty} ovf!')
 
-        if self.type==TYPE.LIMIT:   #检查限价单价格是否溢出；市价单价格是无效值，不可参与检查
+        if self.type==TYPE.LIMIT and order.Price!=msg_util.ORDER_PRICE_OVERFLOW:   #检查限价单价格是否溢出；市价单价格是无效值，不可参与检查
             if order.SecurityIDSource==SecurityIDSource_SZSE:
                 if instrument_type==INSTRUMENT_TYPE.STOCK and order.Price % SZSE_STOCK_PRICE_RD:
                     axob_logger.error(f'{order.SecurityID:06d} order SZSE STOCK ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')  #当被前端处理成0x7fff_ffff时 会有余数
@@ -345,6 +351,8 @@ class AXOB():
         'TradingPhaseMarket',
         'VolatilityBreaking_end_tick',
 
+        'AskWeightPx_uncertain',
+
         'cage_type',
         'bid_cage_upper_ex_min_level_price',
         'bid_cage_upper_ex_min_level_qty',
@@ -360,6 +368,10 @@ class AXOB():
         'pf_level_tree_maxSize',
         'pf_bid_level_tree_maxSize',
         'pf_ask_level_tree_maxSize',
+        'pf_AskWeightSize_max',
+        'pf_AskWeightValue_max',
+        'pf_BidWeightSize_max',
+        'pf_BidWeightValue_max',
 
         # for test olny
         'msg_nb',
@@ -428,6 +440,8 @@ class AXOB():
             self.TradingPhaseMarket = axsbe_base.TPM.Starting
             self.VolatilityBreaking_end_tick = 0
 
+            self.AskWeightPx_uncertain = False #卖出加权价格无法确定（由于卖出委托价格越界）
+
             ## 创业板价格笼子 http://docs.static.szse.cn/www/disclosure/notice/general/W020200612831351578076.pdf
             if SecurityIDSource==SecurityIDSource_SZSE and SecurityID>=300000 and SecurityID<309999:    #创业板
                 self.cage_type = CAGE.CYB
@@ -447,6 +461,11 @@ class AXOB():
             self.pf_level_tree_maxSize = 0
             self.pf_bid_level_tree_maxSize = 0
             self.pf_ask_level_tree_maxSize = 0
+            self.pf_AskWeightSize_max = 0
+            self.pf_AskWeightValue_max = 0
+            self.pf_BidWeightSize_max = 0
+            self.pf_BidWeightValue_max = 0
+
 
             self.msg_nb = 0
             self.rebuilt_snaps = {}
@@ -547,7 +566,7 @@ class AXOB():
 
 
         #if self.TradingPhaseMarket>=axsbe_base.TPM.Ending:
-        # if self.msg_nb==143198:
+        # if self.msg_nb==52462:
         #    self._print_levels()
 
 
@@ -801,6 +820,9 @@ class AXOB():
             else:
                 node = level_node(order.price, order.qty, order.applSeqNum)
                 self.ask_level_tree[order.price] = node
+
+                if order.price==PRICE_MAXIMUM:
+                    self.AskWeightPx_uncertain = True #价格越界后，卖出均价将无法确定
 
                 if not outOfCage:
                     if self.ask_min_level_qty==0 or order.price<self.ask_min_level_price: #卖方出现更低价格
@@ -1126,6 +1148,9 @@ class AXOB():
             if self.ask_level_tree[price].qty==0:
                 self.ask_level_tree.pop(price)
 
+                if price==PRICE_MAXIMUM:
+                    self.AskWeightPx_uncertain = False #加权价又可确定了
+
                 if price==self.ask_min_level_price:  #卖方最低价被cancel/trade光
                     # locate next higher ask level
                     self.ask_min_level_qty = 0
@@ -1284,6 +1309,7 @@ class AXOB():
             snap = self.genTradingSnap()
 
         if snap is not None:
+            snap.AskWeightPx_uncertain = self.AskWeightPx_uncertain
             self._clipSnap(snap)
 
         ## 调试数据，仅用于测试算法是否正确：
@@ -1749,6 +1775,10 @@ class AXOB():
         if self.level_tree_size>self.pf_level_tree_maxSize: self.pf_level_tree_maxSize = self.level_tree_size
         if self.bid_level_tree_size>self.pf_bid_level_tree_maxSize: self.pf_bid_level_tree_maxSize = self.bid_level_tree_size
         if self.ask_level_tree_size>self.pf_ask_level_tree_maxSize: self.pf_ask_level_tree_maxSize = self.ask_level_tree_size
+        if self.AskWeightSize>self.pf_AskWeightSize_max: self.pf_AskWeightSize_max = self.AskWeightSize
+        if self.AskWeightValue>self.pf_AskWeightValue_max: self.pf_AskWeightValue_max = self.AskWeightValue
+        if self.BidWeightSize>self.pf_BidWeightSize_max: self.pf_BidWeightSize_max = self.BidWeightSize
+        if self.BidWeightValue>self.pf_BidWeightValue_max: self.pf_BidWeightValue_max = self.BidWeightValue
 
     def _describe_px(self, p):
         s = ''
@@ -1784,6 +1814,10 @@ class AXOB():
         s+= f'  pf_order_map_maxSize={self.pf_order_map_maxSize}\n'
         s+= f'  pf_level_tree_maxSize={self.pf_level_tree_maxSize}\n'
         s+= f'  pf_bid_level_tree_maxSize={self.pf_bid_level_tree_maxSize} pf_ask_level_tree_maxSize={self.pf_ask_level_tree_maxSize}\n'
+        s+= f'  pf_AskWeightSize_max={self.pf_AskWeightSize_max}\n'
+        s+= f'  pf_AskWeightValue_max={self.pf_AskWeightValue_max}\n'
+        s+= f'  pf_BidWeightSize_max={self.pf_BidWeightSize_max}\n'
+        s+= f'  pf_BidWeightValue_max={self.pf_BidWeightValue_max}\n'
 
         return s
 
