@@ -45,6 +45,7 @@ SZSE_TICK_MS_TAIL = 10 # 深交所时戳，尾部毫秒精度，以10ms为单位
 
 PRICE_MAXIMUM = (1<<PRICE_BIT_SIZE)-1
 
+CYB_ORDER_ENVALUE_MAX_RATE = 9
 
 class SIDE(Enum): # 2bit
     BID = 0
@@ -112,7 +113,7 @@ class ob_order():
 
         if order.Price==msg_util.ORDER_PRICE_OVERFLOW: #原始价格越界 (不用管是否是LIMIT)
             self.price = PRICE_MAXIMUM  #本地也按越界处理，本地越界最终只影响到卖出加权价的计算
-            axob_logger.warn(f'{order.SecurityID:06d} order Price Price over the maximum!')
+            axob_logger.warn(f'{order.SecurityID:06d} order ApplSeqNum={order.ApplSeqNum} Price over the maximum!')
             assert not(self.side==SIDE.BID and self.type==TYPE.LIMIT), f'{order.SecurityID:06d} BID order price overflow' #限价买单不应溢出
         else:
             if order.SecurityIDSource==SecurityIDSource_SZSE:
@@ -388,7 +389,7 @@ class AXOB():
     ]
     def __init__(self, SecurityID:int, SecurityIDSource, instrument_type:INSTRUMENT_TYPE, load_data=None):
         '''
-        TODO: holding_order的处理是否统一到一处？
+        TODO: holding_order的处理是否统一到一处？必须要实现！
         TODO: 增加时戳输入，用于结算各自缓存，如市价单
         '''
         if load_data:
@@ -496,6 +497,7 @@ class AXOB():
                 if self.cage_type==CAGE.CYB and self.TradingPhaseMarket==axsbe_base.TPM.PMTrading and msg.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
                     # 创业板进入收盘集合竞价，敞开价格笼子，将外面的隐藏订单放进来
                     self.openCage()
+                    self.genSnap()
 
                 self._useTimestamp(msg.TransactTime)
 
@@ -538,14 +540,21 @@ class AXOB():
                     self.genSnap()
             elif msg==AX_SIGNAL.AMTRADING_END:
                 if self.TradingPhaseMarket==axsbe_base.TPM.AMTrading:
+                    if self.holding_nb and self.holding_order.type==TYPE.MARKET:
+                        self.insertOrder(self.holding_order)
+                        self.holding_nb = 0
                     if self.holding_nb==0: #不再有缓存单
                         self.TradingPhaseMarket = axsbe_base.TPM.Breaking #自行修改交易阶段，使生成的快照为交易快照
                         self.genSnap()
             elif msg==AX_SIGNAL.PMTRADING_END:
-                if self.holding_nb==0 and self.TradingPhaseMarket==axsbe_base.TPM.PMTrading: #不再有缓存单
-                    self.TradingPhaseMarket = axsbe_base.TPM.CloseCall #自行修改交易阶段，使生成的快照为交易快照
-                    self.openCage() #先打开笼子，再生成快照
-                    self.genSnap()
+                if self.TradingPhaseMarket==axsbe_base.TPM.PMTrading:
+                    if self.holding_nb and self.holding_order.type==TYPE.MARKET:
+                        self.insertOrder(self.holding_order)
+                        self.holding_nb = 0
+                    if self.holding_nb==0: #不再有缓存单
+                        self.TradingPhaseMarket = axsbe_base.TPM.CloseCall #自行修改交易阶段，使生成的快照为交易快照
+                        self.openCage() #先打开笼子，再生成快照
+                        self.genSnap()
             elif msg==AX_SIGNAL.ALL_END:
                 # 收盘集合竞价结束，收盘价：
                 #  沪市收盘价为当日该证券最后一笔交易前一分钟所有交易的成交量加权平均价（含最后一笔交易）。当日无成交的，以前收盘价为当日收盘价。
@@ -566,7 +575,7 @@ class AXOB():
 
 
         #if self.TradingPhaseMarket>=axsbe_base.TPM.Ending:
-        # if self.msg_nb==52462:
+        # if self.msg_nb<=65:
         #    self._print_levels()
 
 
@@ -841,10 +850,10 @@ class AXOB():
                         self.DBG(f'Refresh ask_cage_lower_ex_max_level_price={self.ask_cage_lower_ex_max_level_price} by new price')
 
             if not outOfCage:
-                if self.TradingPhaseMarket==axsbe_base.TPM.OpenCall and order.price>self.PrevClosePx*10:  #从深交所数据上看，超过昨收(新股时为上市价)10倍的委托不会参与统计
+                if self.TradingPhaseMarket==axsbe_base.TPM.OpenCall and order.price>self.PrevClosePx*CYB_ORDER_ENVALUE_MAX_RATE:  #从深交所数据上看，超过昨收(新股时为上市价)若干倍的委托不会参与统计
                     self.AskWeightSizeEx += order.qty
                     self.AskWeightValueEx += order.price * order.qty
-                # if order.price<self.PrevClosePx*10 and order.price!=(1<<PRICE_BIT_SIZE)-1:  
+                # if order.price<self.PrevClosePx*CYB_ORDER_ENVALUE_MAX_RATE and order.price!=(1<<PRICE_BIT_SIZE)-1:  
                 else:
                     self.AskWeightSize += order.qty
                     self.AskWeightValue += order.price * order.qty
@@ -1127,7 +1136,7 @@ class AXOB():
                 self.ask_min_level_qty -= qty
 
             if (self.ask_cage_lower_ex_max_level_qty==0 or price>self.ask_cage_lower_ex_max_level_price):
-                if self.TradingPhaseMarket==axsbe_base.TPM.OpenCall and price>self.PrevClosePx*10: #从深交所数据上看，超过昨收(新股时为上市价)10倍的委托不会参与统计
+                if self.TradingPhaseMarket==axsbe_base.TPM.OpenCall and price>self.PrevClosePx*CYB_ORDER_ENVALUE_MAX_RATE: #从深交所数据上看，超过昨收(新股时为上市价)若干倍的委托不会参与统计
                     self.AskWeightSizeEx -= qty
                     self.AskWeightValueEx -= price * qty
                 else:
@@ -1387,8 +1396,9 @@ class AXOB():
         show_level_nb:  展示的价格档数
         show_potential: 在无法撮合时展示出双方价格档
         '''
-        # if self.msg_nb==20494:
+        # if self.msg_nb==24:
         #     self.WARN('breakpoint2')
+        #     self._print_levels()
 
 
         #1. 查找 最低卖出价格档、最高买入价格档
@@ -1418,8 +1428,8 @@ class AXOB():
         
         #4. 撮合循环：
         _ref_px = self.PrevClosePx if self.NumTrades==0 else self.LastPx
-        while _bid_max_level_qty!=0 and _ask_min_level_qty!=0:  # 双方均有最优委托
-            if _bid_max_level_price >= _ask_min_level_price:    # 双方最优价有交叉
+        while True:  # 
+            if _bid_max_level_qty!=0 and _ask_min_level_qty!=0 and _bid_max_level_price >= _ask_min_level_price:    # 双方均有最优委托 且 双方最优价有交叉
                 if bid_Qty == 0:
                     bid_Qty = _bid_max_level_qty
                 if ask_Qty == 0:
@@ -1474,10 +1484,10 @@ class AXOB():
                             _ask_min_level_qty = l.qty
                             break
 
-            else:   #后续买卖双方均有委托，但价格无交叉
+            else:   #后续买卖双方至少一方无委托，或价格无交叉
                 if ask_Qty==0 and bid_Qty==0:   # 双方恰好成交，根据下一档价格，可能需要修正成交价
                     if _ask_min_level_qty and price>=_ask_min_level_price: #成交价高于卖方下一档，必须修正到小于等于卖方下一档
-                        if _bid_max_level_price+1<_ask_min_level_price:    # 买方下一档+1分钱 小于 卖方下一档，修到卖方下一档-1
+                        if _bid_max_level_qty==0 or _bid_max_level_price+1<_ask_min_level_price:    # 买方下一档+1分钱 小于 卖方下一档，修到卖方下一档-1
                             price = _ask_min_level_price-1
                         else:
                             if _ask_min_level_qty <= _bid_max_level_qty:   # 卖方双方下一档只差一分钱，选量小的，同量卖方优先
@@ -1488,7 +1498,7 @@ class AXOB():
                                 bid_Qty = _bid_max_level_qty
 
                     elif _bid_max_level_qty and price<=_bid_max_level_price: #成交价低于买方下一档，必须修正到大于等于买方下一档
-                        if _ask_min_level_price>_bid_max_level_price+1: # 卖方下一档分钱 大于 买方下一档+1，修到买方下一档+1
+                        if _bid_max_level_qty==0 or _ask_min_level_price>_bid_max_level_price+1: # 卖方下一档分钱 大于 买方下一档+1，修到买方下一档+1
                             price = _bid_max_level_price+1
                         else:
                             if _bid_max_level_qty <= _ask_min_level_qty: # 卖方双方下一档只差一分钱，选量小的，同量买方优先

@@ -366,7 +366,8 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
     Bid[7]={self.bid[7]}
     Bid[8]={self.bid[8]}
     Bid[9]={self.bid[9]}
-    @{self.TransactTime} ({self.TradingPhase_str})(AskWP={self.AskWeightPx_uncertain})
+    @{self.TransactTime} ({self.TradingPhase_str})
+    AskWeightPx_uncertain={self.AskWeightPx_uncertain}
 '''
         else:
             '''TODO-SSE'''
