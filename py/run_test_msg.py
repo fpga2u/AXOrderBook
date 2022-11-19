@@ -34,7 +34,9 @@ if __name__== '__main__':
     # msg.TEST_ApplSeqNum("data/20220812/sbe_20220812_all.log", 0)
 
     ## 
-    msg_util.extract_security("data/20220617/sbe_20220617_all.log", "data/20220617/bat_test2.log", [301129])
-    # msg_util.extract_security("data/20220812/sbe_20220812_all.log", "data/20220812/bat_test.log", [200539, 698, 300657])
-    # msg_util.extract_security("data/20221010/sbe_20221010_all.log", "data/20221010/AX_sbe_szse_300365.log", [300365])
+    msg_util.extract_security("data/20220617/sbe_20220617_all.log", "data/20220617/bat_test3.log", [2487])
+    # msg_util.extract_security("data/20220812/sbe_20220812_all.log", "data/20220812/bat_test2.log", [301192])
+    # msg_util.extract_security("data/20221010/sbe_20221010_all.log", "data/20221010/bat_test.log", [2417, 300909, 301079, 300607, 300911, 301220, 301318, 2889, 300799, 3020, 300718, 2623, 3002, 2955, 3013, 2791, 300699, 301176, 2805, 300872, 301285, 301319, 2738, 301313])
 
+    #20220812:
+    #2022-11-18 19:32:59,822 - behave.axob - ERROR - 301192 order SZSE STOCK ApplSeqNum=27236001 Price=-694967296 precision dnf!

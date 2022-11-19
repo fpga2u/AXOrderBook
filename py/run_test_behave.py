@@ -155,10 +155,10 @@ if __name__== '__main__':
     # behave.TEST_axob(20221010, 300365, 0)
 
     ### 20220617测试错误
-    logger.info('starting TEST_axob_bat')
-    data_source = "data/20220617/bat_test2.log"
-    ptn=[301129]
-    behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
+    # logger.info('starting TEST_axob_bat')
+    # data_source = "data/20220617/bat_test2.log"
+    # ptn=[301129]
+    # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
     ### 20220812测试错误
     # logger.info('starting TEST_axob_bat')
@@ -166,6 +166,13 @@ if __name__== '__main__':
     # ptn=[200539, 698, 300657]
     # # ptn=[300657]
     # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
+
+    ### 20221010测试错误
+    logger.info('starting TEST_axob_bat')
+    data_source = "data/20221010/bat_test.log"
+    ptn=[2417, 300909, 301079, 300607, 300911, 301220, 301318, 2889, 300799, 3020, 300718, 2623, 3002, 2955, 3013, 2791, 300699, 301176, 2805, 300872, 301285, 301319, 2738, 301313]
+    ptn=[301313]
+    behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack, HHMMSSms_max=20221010095212000) #
 
     #########
     # logger.info('starting TEST_axob_SL')

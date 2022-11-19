@@ -233,7 +233,7 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
 
             if now>t_bgn+60*10:#内存情况，报告周期10min
                 print(f'{datetime.today()} current memory usage={memUsage:.3f} GB free={memFree:.3f} GB'
-                    f'(epoch peak={profile_memUsage:.3f} GB, minFree={profile_memFree}),' 
+                    f'(epoch peak={profile_memUsage:.3f} GB, minFree={profile_memFree:.3f} GB),' 
                     f' @{msg.HHMMSSms}')
                 t_bgn = now
                 profile_memUsage = 0
@@ -447,7 +447,7 @@ def TEST_mu_bat(source_file, instrument_list:list,
         current_list = instrument_list[i::batch_nb]
         freeGB = getMemFreeGB()
         print(f'{datetime.today()} Working on batch {i}/{batch_nb}, current system free memory={freeGB:.3f} GB...')
-        while freeGB*168<len(current_list)*20:  #168只个股最大约占30G
+        while freeGB*168<len(current_list)*30:  #168只个股最大约占30G
             print(f'{datetime.today()} sleep for not enough free memory...')
             sleep(180)
             freeGB = getMemFreeGB()

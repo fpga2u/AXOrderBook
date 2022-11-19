@@ -1283,6 +1283,9 @@ class AXOB():
             # 连续竞价快照
             snap = self.genTradingSnap()
 
+        if snap is not None:
+            self._clipSnap(snap)
+
         ## 调试数据，仅用于测试算法是否正确：
         if snap is not None:
             self.DBG(snap)
@@ -1332,6 +1335,10 @@ class AXOB():
         snap.UpLimitPx = self.UpLimitPx
         snap.DnLimitPx = self.DnLimitPx
         snap.ChannelNo = self.ChannelNo
+
+    def _clipSnap(self, snap):
+        '''超大数据钳位'''
+        snap.AskWeightPx = self._clipInt32(snap.AskWeightPx) #当委托价无上限时，加权价格可能超出32位整数，也没有什么意义了，直接钳位到最大
 
     def _useTimestamp(self, TransactTime):
         if self.SecurityIDSource == SecurityIDSource_SZSE:
@@ -1605,7 +1612,17 @@ class AXOB():
 
         return snap
 
+    def _clipInt32(self, x):
+        if x>(0x7fffffff):
+            return 0x7fffffff
+        else:
+            return x
 
+    def _clipUint32(self, x):
+        if x>(0xffffffff):
+            return 0xffffffff
+        else:
+            return x
 
     
     def _fmtPrice_inter2snap(self, price):
