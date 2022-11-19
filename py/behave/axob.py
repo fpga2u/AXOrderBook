@@ -701,12 +701,13 @@ class AXOB():
 
             # 市价单，几种可能：
             #    * 对手方最优价格申报：有成交、最后挂在对方一档或者二档，需要等时戳切换、新委托、新撤单到来的时候插入快照
-            #    * 最优五档即时成交剩余撤销申报：最后有撤单
             #    * 即时成交剩余撤销申报：最后有撤单
             #    * 全额成交或撤销申报：最后有撤单
 
         elif _order.type==TYPE.SIDE:
-            # 本方最优价格申报 转限价单
+            # 本方最优，两种可能：
+            #    * 本方最优价格申报 转限价单
+            #    * 最优五档即时成交剩余撤销申报：最后有撤单，如果本方没有价格，立即撤单
             if _order.side==SIDE.BID:
                 if self.bid_max_level_price!=0 and self.bid_max_level_qty!=0:   #本方有量
                     _order.price = self.bid_max_level_price
@@ -1060,17 +1061,18 @@ class AXOB():
                 ## 仅测试：不论撤销的是不是缓存单，都将缓存单插入OB并生成快照用于比较
                 ##  因为市场快照可能是缓存单插入后的快照
                 self.insertOrder(self.holding_order)
-                self._useTimestamp(self.holding_order.TransactTime)
-                self.genSnap()   #先出一个snap，时戳用缓存单(市价单)的
-                self._useTimestamp(cancel.TransactTime)
+                if cancel.TransactTime!=self.holding_order.TransactTime:    #这个if是为了规避 最优五档即时成交剩余撤销申报 在撤单时没有发生过成交但插入的价格不对的问题，切换到实际操作是不会有这个问题。
+                    self._useTimestamp(self.holding_order.TransactTime)
+                    self.genSnap()   #先出一个snap，时戳用缓存单(市价单)的
+                    self._useTimestamp(cancel.TransactTime)
 
             else:
                 ## 实际操作，如果撤销的是缓存单，则不需要插入OB：
                 if self.holding_order.applSeqNum!=cancel.applSeqNum: #撤销的不是缓存单，把缓存单插入LOB
                     self.insertOrder(self.holding_order)
-                self._useTimestamp(self.holding_order.TransactTime)
-                self.genSnap()   #先出一个snap，时戳用缓存单(市价单)的
-                self._useTimestamp(cancel.TransactTime)
+                    self._useTimestamp(self.holding_order.TransactTime)
+                    self.genSnap()   #先出一个snap，时戳用缓存单(市价单)的
+                    self._useTimestamp(cancel.TransactTime)
                 if self.holding_order.applSeqNum==cancel.applSeqNum: #撤销缓存单，holding_nb清空即可
                     return  
 
