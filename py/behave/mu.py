@@ -176,13 +176,13 @@ class MU():
             s += '--------\n'
         s+= '========================\n'
         s+= f'MU-{len(self.axobs)}:'
-        s+= f'  pf_order_map_maxSize={self.pf_order_map_maxSize}\n'
-        s+= f'  pf_level_tree_maxSize={self.pf_level_tree_maxSize}\n'
-        s+= f'  pf_bid_level_tree_maxSize={self.pf_bid_level_tree_maxSize} pf_ask_level_tree_maxSize={self.pf_ask_level_tree_maxSize}\n'
-        s+= f'  pf_AskWeightSize_max={self.pf_AskWeightSize_max}\n'
-        s+= f'  pf_AskWeightValue_max={self.pf_AskWeightValue_max}\n'
-        s+= f'  pf_BidWeightSize_max={self.pf_BidWeightSize_max}\n'
-        s+= f'  pf_BidWeightValue_max={self.pf_BidWeightValue_max}\n'
+        s+= f'  pf_order_map_maxSize={self.pf_order_map_maxSize}({bitSizeOf(self.pf_order_map_maxSize)}b)\n'
+        s+= f'  pf_level_tree_maxSize={self.pf_level_tree_maxSize}({bitSizeOf(self.pf_level_tree_maxSize)}b)\n'
+        s+= f'  pf_bid_level_tree_maxSize={self.pf_bid_level_tree_maxSize}({bitSizeOf(self.pf_bid_level_tree_maxSize)}b) pf_ask_level_tree_maxSize={self.pf_ask_level_tree_maxSize}({bitSizeOf(self.pf_ask_level_tree_maxSize)}b)\n'
+        s+= f'  pf_AskWeightSize_max={self.pf_AskWeightSize_max}({bitSizeOf(self.pf_AskWeightSize_max)}b)\n'
+        s+= f'  pf_AskWeightValue_max={self.pf_AskWeightValue_max}({bitSizeOf(self.pf_AskWeightValue_max)}b)\n'
+        s+= f'  pf_BidWeightSize_max={self.pf_BidWeightSize_max}({bitSizeOf(self.pf_BidWeightSize_max)}b)\n'
+        s+= f'  pf_BidWeightValue_max={self.pf_BidWeightValue_max}({bitSizeOf(self.pf_BidWeightValue_max)}b)\n'
 
         return s
 

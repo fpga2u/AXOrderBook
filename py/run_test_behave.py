@@ -172,7 +172,7 @@ if __name__== '__main__':
     # sh.setLevel(logging.ERROR)
     logger.info('starting TEST_axob_bat')
     data_source = "data/20221010/bat_test3.log"
-    ptn=[2750, 2380]
+    ptn=[300607]
     behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
     #新精度

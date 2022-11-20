@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from re import I
 import tool.axsbe_base as axsbe_base
 from tool.axsbe_exe import axsbe_exe
 from tool.axsbe_order import axsbe_order
@@ -66,6 +67,13 @@ isTPMfreeze = lambda x:x.TradingPhaseMarket==axsbe_base.TPM.Starting\
                      or x.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking\
                      or x.TradingPhaseMarket==axsbe_base.TPM.Breaking\
                      or x.TradingPhaseMarket>=axsbe_base.TPM.Ending
+
+def bitSizeOf(i:int):
+    n = 0
+    while i:
+        i>>=1
+        n+=1
+    return n
 
 def str_to_dict(s:str):
     if s[:2] != "//":
