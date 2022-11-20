@@ -171,7 +171,7 @@ if __name__== '__main__':
     # fh.setLevel(logging.INFO)
     # sh.setLevel(logging.ERROR)
     logger.info('starting TEST_axob_bat')
-    data_source = "data/20221010/bat_test3.log"
+    data_source = "data/20221010/bat_test4.log"
     ptn=[300607]
     behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
