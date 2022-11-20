@@ -552,8 +552,9 @@ class AXOB():
                         self.insertOrder(self.holding_order)
                         self.holding_nb = 0
                     if self.holding_nb==0: #不再有缓存单
-                        self.TradingPhaseMarket = axsbe_base.TPM.CloseCall #自行修改交易阶段，使生成的快照为交易快照
                         self.openCage() #先打开笼子，再生成快照
+                        self.genSnap()
+                        self.TradingPhaseMarket = axsbe_base.TPM.CloseCall #自行修改交易阶段，使生成的快照为交易快照
                         self.genSnap()
             elif msg==AX_SIGNAL.ALL_END:
                 # 收盘集合竞价结束，收盘价：
