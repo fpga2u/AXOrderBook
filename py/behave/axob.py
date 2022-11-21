@@ -176,6 +176,7 @@ class ob_exec():
         'LastQty',
         'BidApplSeqNum',
         'OfferApplSeqNum',
+        'TradingPhaseMarket',
 
         # for test olny
         'TransactTime',
@@ -184,6 +185,7 @@ class ob_exec():
     def __init__(self, exec:axsbe_exe, instrument_type:INSTRUMENT_TYPE):
         self.BidApplSeqNum = exec.BidApplSeqNum
         self.OfferApplSeqNum = exec.OfferApplSeqNum
+        self.TradingPhaseMarket = exec.TradingPhaseMarket
 
         if exec.SecurityIDSource==SecurityIDSource_SZSE:
             if instrument_type==INSTRUMENT_TYPE.STOCK:
@@ -294,8 +296,6 @@ class AX_SIGNAL(Enum):  # 发送给AXOB的信号
     PMTRADING_BGN = 4  # 下午连续竞价开始
     PMTRADING_END = 5  # 下午连续竞价结束
     ALL_END = 6        # 闭市
-    VB_BGN = 7         # 进入波动性中断
-    VB_END = 8         # 退出波动性中断
 
 class CAGE(Enum):
     NONE = 0
@@ -350,7 +350,7 @@ class AXOB():
         'holding_nb',
 
         'TradingPhaseMarket',
-        'VolatilityBreaking_end_tick',
+        # 'VolatilityBreaking_end_tick',
 
         'AskWeightPx_uncertain',
 
@@ -439,7 +439,6 @@ class AXOB():
             self.holding_nb = 0
 
             self.TradingPhaseMarket = axsbe_base.TPM.Starting
-            self.VolatilityBreaking_end_tick = 0
 
             self.AskWeightPx_uncertain = False #卖出加权价格无法确定（由于卖出委托价格越界）
 
@@ -494,10 +493,10 @@ class AXOB():
                 return
 
             if isinstance(msg, (axsbe_order, axsbe_exe)):
-                if self.cage_type==CAGE.CYB and self.TradingPhaseMarket==axsbe_base.TPM.PMTrading and msg.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
-                    # 创业板进入收盘集合竞价，敞开价格笼子，将外面的隐藏订单放进来
-                    self.openCage()
-                    self.genSnap()
+                # if self.cage_type==CAGE.CYB and self.TradingPhaseMarket==axsbe_base.TPM.PMTrading and msg.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
+                #     # 创业板进入收盘集合竞价，敞开价格笼子，将外面的隐藏订单放进来
+                #     self.openCage()
+                #     self.genSnap()
 
                 self._useTimestamp(msg.TransactTime)
 
@@ -534,9 +533,9 @@ class AXOB():
                     self.genSnap()
             elif msg==AX_SIGNAL.AMTRADING_BGN:
                 if self.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking:
+                    self.TradingPhaseMarket = axsbe_base.TPM.AMTrading
                     self.AskWeightSize += self.AskWeightSizeEx
                     self.AskWeightValue += self.AskWeightValueEx
-                    self.TradingPhaseMarket = axsbe_base.TPM.AMTrading
                     self.genSnap()
             elif msg==AX_SIGNAL.AMTRADING_END:
                 if self.TradingPhaseMarket==axsbe_base.TPM.AMTrading:
@@ -544,7 +543,7 @@ class AXOB():
                         self.insertOrder(self.holding_order)
                         self.holding_nb = 0
                     if self.holding_nb==0: #不再有缓存单
-                        self.TradingPhaseMarket = axsbe_base.TPM.Breaking #自行修改交易阶段，使生成的快照为交易快照
+                        self.TradingPhaseMarket = axsbe_base.TPM.Breaking
                         self.genSnap()
             elif msg==AX_SIGNAL.PMTRADING_END:
                 if self.TradingPhaseMarket==axsbe_base.TPM.PMTrading:
@@ -552,9 +551,10 @@ class AXOB():
                         self.insertOrder(self.holding_order)
                         self.holding_nb = 0
                     if self.holding_nb==0: #不再有缓存单
-                        self.openCage() #先打开笼子，再生成快照
-                        self.genSnap()
-                        self.TradingPhaseMarket = axsbe_base.TPM.CloseCall #自行修改交易阶段，使生成的快照为交易快照
+                        self.genSnap() # 先生成最后一个快照
+
+                        self.TradingPhaseMarket = axsbe_base.TPM.CloseCall #自行修改交易阶段，使生成的快照为集合竞价快照
+                        self.openCage() #开笼子，再生成集合竞价
                         self.genSnap()
             elif msg==AX_SIGNAL.ALL_END:
                 # 收盘集合竞价结束，收盘价：
@@ -982,7 +982,7 @@ class AXOB():
             if self.ask_min_level_qty==0 or self.bid_max_level_qty==0 or self.ask_min_level_price>self.bid_max_level_price:
                 self.INFO('openCall/closeCall trade over')
                 if self.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking:
-                    self.TradingPhaseMarket = exec.TransactTime
+                    self.TradingPhaseMarket = exec.TradingPhaseMarket
                 self.genSnap()   #集合竞价所有成交完成
 
     def enterCage(self):
@@ -1248,7 +1248,7 @@ class AXOB():
 
         if snap.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking and self.TradingPhaseMarket!=axsbe_base.TPM.VolatilityBreaking:  #进入波动性中断
             self.WARN(f'Enter VolatilityBreaking @{snap.TransactTime}')
-            self.VolatilityBreaking_end_tick = 0
+            # self.VolatilityBreaking_end_tick = 0
             self.TradingPhaseMarket = axsbe_base.TPM.VolatilityBreaking
             self.genSnap()
 
@@ -1358,7 +1358,7 @@ class AXOB():
 
 
     def _setSnapFixParam(self, snap):
-        '''固定参数'''
+        '''固定参数:每日开盘集合竞价前确定'''
         snap.SecurityID = self.SecurityID
         if self.SecurityIDSource==SecurityIDSource_SZSE:
             if self.instrument_type==INSTRUMENT_TYPE.STOCK:

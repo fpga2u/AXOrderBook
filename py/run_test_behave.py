@@ -141,6 +141,10 @@ if __name__== '__main__':
     # #创业板上市首日波动性中断
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220812, 301336, 0)
+    # logger.info('starting TEST_axob_bat')
+    # data_source = "H:/AXOB_data_newP/20220812/sbe_20220812_all.log"
+    # ptn=[301336]
+    # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
     # #市价单后放入笼子
     # logger.info('starting TEST_axob_bat')
@@ -161,19 +165,19 @@ if __name__== '__main__':
     # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
     ### 20220812测试错误
-    # logger.info('starting TEST_axob_bat')
-    # data_source = "data/20220812/bat_test.log"
-    # ptn=[200539, 698, 300657]
-    # # ptn=[300657]
-    # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
+    logger.info('starting TEST_axob_bat')
+    data_source = "data/20220812/bat_test2.log"
+    ptn=[301192]
+    # ptn=[300657]
+    behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
     ### 20221010测试错误
     # fh.setLevel(logging.INFO)
     # sh.setLevel(logging.ERROR)
-    logger.info('starting TEST_axob_bat')
-    data_source = "data/20221010/bat_test4.log"
-    ptn=[300607]
-    behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
+    # logger.info('starting TEST_axob_bat')
+    # data_source = "data/20221010/bat_test5.log"
+    # ptn=[300667]
+    # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False, logPack=logPack) #
 
     #新精度
     # logger.info('starting TEST_axob_bat')
