@@ -458,5 +458,5 @@ def TEST_mu_bat(source_file, instrument_list:list,
             sleep(180)
             freeGB = getMemFreeGB()
             print(f'{datetime.today()} current system free memory={freeGB:.3f} GB' 
-                  f'(each instrument={freeGB/len(current_list):.4f}, require={20/168*len(current_list):.4f})')
+                  f'(each instrument={freeGB/len(current_list):.4f}), total require={30*len(current_list)/168:.4f} GB')
         TEST_axob_bat(source_file, current_list, n_max=0, openCall_only=False, SecurityIDSource=SecurityIDSource, instrument_type=instrument_type, logPack=logPack) #

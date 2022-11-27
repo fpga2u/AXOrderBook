@@ -633,12 +633,12 @@ class AXOB():
         # self._print_levels()
 
         ## 创业板上市头5日连续竞价、复牌集合竞价、收盘集合竞价的有效竞价范围是最近成交价的上下10%
-        if self.UpLimitPx==2147483647: #无涨跌停限制=创业板上市头5日 TODO: 更精确
+        if self.UpLimitPx==msg_util.ORDER_PRICE_OVERFLOW: #无涨跌停限制=创业板上市头5日 TODO: 更精确
             ex_p = []
             for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                 if p>msg_util.CYB_match_upper(self.LastPx) or p<msg_util.CYB_match_lower(self.LastPx):
                     ex_p.append(p)
-                    if p>self.ask_cage_lower_ex_max_level_price:
+                    if self.ask_cage_lower_ex_max_level_qty and p>self.ask_cage_lower_ex_max_level_price:
                         self.AskWeightSize -= l.qty
                         self.AskWeightValue -= p * l.qty
 
@@ -649,7 +649,7 @@ class AXOB():
             for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                 if p>msg_util.CYB_match_upper(self.LastPx) or p<msg_util.CYB_match_lower(self.LastPx):
                     ex_p.append(p)
-                    if p<self.bid_cage_upper_ex_min_level_price:
+                    if self.bid_cage_upper_ex_min_level_qty and p<self.bid_cage_upper_ex_min_level_price:
                         self.BidWeightSize -= l.qty
                         self.BidWeightValue -= p * l.qty
             for p in ex_p:
@@ -733,7 +733,7 @@ class AXOB():
                 self.insertOrder(self.holding_order)
                 self.holding_nb = 0
 
-            if self.TradingPhaseMarket==axsbe_base.TPM.CloseCall and self.UpLimitPx==2147483647 and\
+            if self.TradingPhaseMarket==axsbe_base.TPM.CloseCall and self.UpLimitPx==msg_util.ORDER_PRICE_OVERFLOW and\
                (order.price>msg_util.CYB_match_upper(self.LastPx) or order.price<msg_util.CYB_match_lower(self.LastPx)):
                pass # 创业板上市头5日超出范围则丢弃
             else:
