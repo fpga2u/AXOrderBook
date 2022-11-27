@@ -492,6 +492,10 @@ class AXOB():
             if msg.SecurityID!=self.SecurityID:
                 return
 
+            if isinstance(msg, (axsbe_order, axsbe_exe)) and msg.ApplSeqNum<=self.last_inc_applSeqNum:
+                self.ERR(f"ApplSeqNum={msg.ApplSeqNum} <= last_inc_applSeqNum={self.last_inc_applSeqNum} repeated or outOfOrder!")
+                return
+
             if isinstance(msg, (axsbe_order, axsbe_exe)):
                 # if self.cage_type==CAGE.CYB and self.TradingPhaseMarket==axsbe_base.TPM.PMTrading and msg.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
                 #     # 创业板进入收盘集合竞价，敞开价格笼子，将外面的隐藏订单放进来
@@ -598,7 +602,7 @@ class AXOB():
                 assert self.bid_max_level_qty==max(self.bid_level_tree.items(), key=lambda x: x[0])[1].qty, f'{self.SecurityID:06d} ache bid-max-qty NG'
 
         if (self.TradingPhaseMarket==axsbe_base.TPM.AMTrading or self.TradingPhaseMarket==axsbe_base.TPM.PMTrading) and self.bid_max_level_qty and self.ask_min_level_qty:
-            assert self.bid_max_level_price<self.ask_min_level_price, f'{self.SecurityID:06d} bid.max({self.bid_max_level_price})/ask.min({self.ask_min_level_price}) NG'
+            assert self.bid_max_level_price<self.ask_min_level_price, f'{self.SecurityID:06d} bid.max({self.bid_max_level_price})/ask.min({self.ask_min_level_price}) NG @{self.current_inc_tick}'
 
         static_AskWeightSize = 0
         static_AskWeightValue = 0
@@ -808,6 +812,10 @@ class AXOB():
 
                         self.ask_cage_ref_px = order.price
                         self.DBG(f'Ask cage ref px={self.ask_cage_ref_px}')
+                        if not self.ask_min_level_qty:  #没有对手价
+                            self.bid_cage_ref_px = order.price
+                            self.DBG(f'bid cage ref px={self.bid_cage_ref_px}')
+
                         self.ask_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
                 else:
                     self.DBG('Bid order out of cage.')
@@ -842,6 +850,9 @@ class AXOB():
 
                         self.bid_cage_ref_px = order.price
                         self.DBG(f'Bid cage ref px={self.bid_cage_ref_px}')
+                        if not self.bid_max_level_qty:  #没有对手价
+                            self.ask_cage_ref_px = order.price
+                            self.DBG(f'Ask cage ref px={self.ask_cage_ref_px}')
                         self.bid_waiting_for_cage = True if self.cage_type==CAGE.CYB else False
                 else:
                     self.DBG('Ask order out of cage.')
@@ -1001,6 +1012,10 @@ class AXOB():
                     
                     self.ask_cage_ref_px = self.bid_max_level_price
                     self.DBG(f'ASK cage ref px={self.ask_cage_ref_px}')
+                    if not self.ask_min_level_qty:
+                        self.bid_cage_ref_px = self.bid_max_level_price
+                        self.DBG(f'Bid cage ref px={self.bid_cage_ref_px}')
+
                     self.ask_waiting_for_cage = True if self.cage_type==CAGE.CYB else False   #买方最优价被修改，则判断卖方隐藏订单
 
                     #下一个隐藏订单，继续循环，直到无隐藏订单、隐藏订单可成交
@@ -1027,6 +1042,10 @@ class AXOB():
                     
                     self.bid_cage_ref_px = self.ask_min_level_price
                     self.DBG(f'BID cage ref px={self.bid_cage_ref_px}')
+                    if not self.bid_max_level_qty:
+                        self.ask_cage_ref_px = self.ask_min_level_price
+                        self.DBG(f'Ask cage ref px={self.ask_cage_ref_px}')
+
                     self.bid_waiting_for_cage = True if self.cage_type==CAGE.CYB else False   #卖方最优价被修改，则判断买方隐藏订单
 
                     self.ask_cage_lower_ex_max_level_qty = 0
@@ -1187,7 +1206,7 @@ class AXOB():
 
     def onSnap(self, snap:axsbe_snap_stock):
         self.DBG(f'msg#{self.msg_nb} onSnap:{snap}')
-        # if self.msg_nb==20842:
+        # if self.msg_nb==753:
         #     self.DBG('breakpoint')
         if snap.TradingPhaseSecurity != axsbe_base.TPI.Normal:
             self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}')
@@ -1349,12 +1368,11 @@ class AXOB():
                 if len(self.market_snaps[snap.NumTrades])==0:
                     self.market_snaps.pop(snap.NumTrades)
 
-            # 没找到匹配的交易所历史快照，或者是交易阶段切换导致生成的快照，都要缓存住，后者可能会在下一个交易阶段切换处被使用
-            if len(matched)==0 or snap.TradingPhaseMarket==axsbe_base.TPM.PreTradingBreaking or snap.TradingPhaseMarket==axsbe_base.TPM.Breaking:
-                if snap.NumTrades not in self.rebuilt_snaps:
-                    self.rebuilt_snaps[snap.NumTrades] = [snap]
-                else:
-                    self.rebuilt_snaps[snap.NumTrades].append(snap)
+            # 总是缓存生成的快照，因为可能要跟多个市场快照匹配
+            if snap.NumTrades not in self.rebuilt_snaps:
+                self.rebuilt_snaps[snap.NumTrades] = [snap]
+            else:
+                self.rebuilt_snaps[snap.NumTrades].append(snap)
 
 
     def _setSnapFixParam(self, snap):
