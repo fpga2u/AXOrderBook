@@ -792,6 +792,10 @@ class AXOB():
         订单入列，更新对应的价格档位数据
         outOfCage:入列的订单不在价格笼子内（服务器将隐藏订单，不影响当前最优档）
         '''
+
+        if outOfCage:
+            self.DBG('outOfCage')
+
         self.order_map[order.applSeqNum] = order
         
         if order.side == SIDE.BID:
@@ -895,6 +899,10 @@ class AXOB():
 
     def onTrade(self, exec:ob_exec):
         '''处理成交消息'''
+        if self.msg_nb==30729:
+            self.DBG('breakpoint')
+
+
         #
         self.NumTrades += 1
         self.TotalVolumeTrade += exec.LastQty
@@ -1001,7 +1009,8 @@ class AXOB():
         while True:
             if self.bid_cage_upper_ex_min_level_qty and self.bid_cage_upper_ex_min_level_price<=CYB_cage_upper(self.bid_cage_ref_px): #买方隐藏订单可以进入笼子
                 if self.ask_min_level_qty and self.bid_cage_upper_ex_min_level_price>=self.ask_min_level_price: #可与卖方最优成交
-                    self.DBG('ASK px may changed: waiting for BID order to enter cage & exec')
+                    self.DBG(f'ASK px may changed: waiting for BID level' 
+                             f'({self.bid_cage_upper_ex_min_level_price} x {self.bid_cage_upper_ex_min_level_qty}) to enter cage & exec')
                     break
                 else:   #无法成交，将隐藏订单加到买方队列
                     self.bid_max_level_price = self.bid_cage_upper_ex_min_level_price
@@ -1031,7 +1040,8 @@ class AXOB():
 
             if self.ask_cage_lower_ex_max_level_qty and self.ask_cage_lower_ex_max_level_price>=CYB_cage_lower(self.ask_cage_ref_px): #卖方隐藏订单可以进入笼子
                 if self.bid_max_level_qty and self.ask_cage_lower_ex_max_level_price<=self.bid_max_level_price: #可与买方最优成交
-                    self.DBG('BID px may changed: waiting for ASK order to enter cage & exec')
+                    self.DBG(f'BID px may changed: waiting for ASK level'
+                             f'({self.ask_cage_lower_ex_max_level_price} x {self.ask_cage_lower_ex_max_level_qty}) to enter cage & exec')
                     break
                 else:   #无法成交，将隐藏订单加到买方队列
                     self.ask_min_level_price = self.ask_cage_lower_ex_max_level_price
@@ -1039,7 +1049,7 @@ class AXOB():
                     self.AskWeightSize += self.ask_cage_lower_ex_max_level_qty
                     self.AskWeightValue += self.ask_cage_lower_ex_max_level_price * self.ask_cage_lower_ex_max_level_qty
                     self.DBG('ASK order enter cage and became min level')
-                    
+
                     self.bid_cage_ref_px = self.ask_min_level_price
                     self.DBG(f'BID cage ref px={self.bid_cage_ref_px}')
                     if not self.bid_max_level_qty:
@@ -1138,8 +1148,11 @@ class AXOB():
                             self.bid_max_level_qty = l.qty
                             break
 
-                    if self.bid_max_level_qty!=0:
+                    # 修改卖方价格笼子参考价
+                    if self.bid_max_level_qty!=0:                       # 买方还有下一档
                         self.ask_cage_ref_px = self.bid_max_level_price
+                    elif price in self.ask_level_tree:             # 卖方本价位有量(此时ask_min_level_price可能是旧的)
+                        self.ask_cage_ref_px = price                    #TODO: 卖方hold?
                     elif self.ask_min_level_qty!=0:
                         self.ask_cage_ref_px = self.ask_min_level_price
                     else:
@@ -1191,8 +1204,11 @@ class AXOB():
                             self.ask_min_level_qty = l.qty
                             break
 
-                    if self.ask_min_level_qty!=0:
+                    # 修改买方价格笼子参考价
+                    if self.ask_min_level_qty!=0:                           # 卖方还有下一档
                         self.bid_cage_ref_px = self.ask_min_level_price
+                    elif price in self.bid_level_tree:             # 买方本价位有量(此时bid_max_level_price可能是旧的)
+                        self.bid_cage_ref_px = price                    #TODO: 买方hold?
                     elif self.bid_max_level_qty!=0:
                         self.bid_cage_ref_px = self.bid_max_level_price
                     else:
