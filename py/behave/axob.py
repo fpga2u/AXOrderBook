@@ -634,7 +634,7 @@ class AXOB():
 
     def openCage(self):
         self.DBG('openCage')
-        # self._print_levels()
+        self._print_levels()
 
         ## 创业板上市头5日连续竞价、复牌集合竞价、收盘集合竞价的有效竞价范围是最近成交价的上下10%
         if self.UpLimitPx==msg_util.ORDER_PRICE_OVERFLOW: #无涨跌停限制=创业板上市头5日 TODO: 更精确
@@ -642,7 +642,7 @@ class AXOB():
             for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                 if p>msg_util.CYB_match_upper(self.LastPx) or p<msg_util.CYB_match_lower(self.LastPx):
                     ex_p.append(p)
-                    if self.ask_cage_lower_ex_max_level_qty and p>self.ask_cage_lower_ex_max_level_price:
+                    if not self.ask_cage_lower_ex_max_level_qty or p>self.ask_cage_lower_ex_max_level_price:    #属于被纳入动态统计的价格档
                         self.AskWeightSize -= l.qty
                         self.AskWeightValue -= p * l.qty
 
@@ -653,7 +653,7 @@ class AXOB():
             for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                 if p>msg_util.CYB_match_upper(self.LastPx) or p<msg_util.CYB_match_lower(self.LastPx):
                     ex_p.append(p)
-                    if self.bid_cage_upper_ex_min_level_qty and p<self.bid_cage_upper_ex_min_level_price:
+                    if not self.bid_cage_upper_ex_min_level_qty or p<self.bid_cage_upper_ex_min_level_price:    #属于被纳入动态统计的价格档
                         self.BidWeightSize -= l.qty
                         self.BidWeightValue -= p * l.qty
             for p in ex_p:
@@ -682,7 +682,7 @@ class AXOB():
             self.bid_cage_upper_ex_min_level_qty = 0
             self.bid_max_level_price = max(self.bid_level_tree.keys())
             self.bid_max_level_qty = self.bid_level_tree[self.bid_max_level_price].qty
-        # self._print_levels()
+        self._print_levels()
 
 
     def onOrder(self, order:axsbe_order):
