@@ -899,10 +899,6 @@ class AXOB():
 
     def onTrade(self, exec:ob_exec):
         '''处理成交消息'''
-        if self.msg_nb==30729:
-            self.DBG('breakpoint')
-
-
         #
         self.NumTrades += 1
         self.TotalVolumeTrade += exec.LastQty
@@ -1222,8 +1218,6 @@ class AXOB():
 
     def onSnap(self, snap:axsbe_snap_stock):
         self.DBG(f'msg#{self.msg_nb} onSnap:{snap}')
-        # if self.msg_nb==753:
-        #     self.DBG('breakpoint')
         if snap.TradingPhaseSecurity != axsbe_base.TPI.Normal:
             self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}')
             return
@@ -1323,21 +1317,9 @@ class AXOB():
                         self.market_snaps[snap.NumTrades].append(snap) #缓存交易所快照
                     self.WARN(f'market snap #{self.msg_nb}({snap.TransactTime}) not found in history rebuilt snaps!')
 
-                    # self.WARN('breakpoint4')
-                    # for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-                    #     # self.DBG(f'ask\t{l}')
-                    #     self.DBG(f'ask\t{l}')
-                    # for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-                    #     # self.DBG(f'bid\t{l}')
-                    #     self.DBG(f'bid\t{l}')
-
-
 
     def genSnap(self):
         assert self.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking or self.holding_nb==0, f'{self.SecurityID:06d} genSnap but with holding'
-
-        # if self.msg_nb==20729:
-        #     self.DBG('breakpoint')
 
         snap = None
         if self.TradingPhaseMarket < axsbe_base.TPM.OpenCall or self.TradingPhaseMarket > axsbe_base.TPM.Ending:
@@ -1433,11 +1415,6 @@ class AXOB():
         show_level_nb:  展示的价格档数
         show_potential: 在无法撮合时展示出双方价格档
         '''
-        # if self.msg_nb==24:
-        #     self.WARN('breakpoint2')
-        #     self._print_levels()
-
-
         #1. 查找 最低卖出价格档、最高买入价格档
         _bid_max_level_price = self.bid_max_level_price
         _bid_max_level_qty = self.bid_max_level_qty
@@ -1793,12 +1770,6 @@ class AXOB():
                 for ss in ls:
                     self.ERR(f'\t\t#{ss._seq}\t@{ss.TransactTime}')
             im_ok = False
-            # self.DBG('breakpoint5')
-            # for _, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-            #     self.DBG(f'ask\t{l}')
-            # self.DBG('--------------------------avb')
-            # for _, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
-            #     self.DBG(f'bid\t{l}')
         return im_ok
 
     @property
