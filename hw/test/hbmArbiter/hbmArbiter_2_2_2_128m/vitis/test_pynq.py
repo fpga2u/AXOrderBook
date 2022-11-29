@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # require python 3.8+
+# require ownership about folder "bin/.run" under python directory, such as "/data/anaconda3/bin/.run".
 
 import pynq
 from pynq import Device
@@ -57,7 +58,7 @@ mu0s = mu0.start(
     reg_guard_bgn = DMY, 
     wk_nb = 16, 
     min_addr = 0,
-    max_addr = 16, 
+    max_addr = 32, 
     min_data = 0,
     gap_nb = 4, 
     wr0_wk_nb = DMY,

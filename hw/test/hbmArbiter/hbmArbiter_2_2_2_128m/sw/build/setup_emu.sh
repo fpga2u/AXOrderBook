@@ -58,6 +58,7 @@ else
   then
     echo "Generating emulation config file for platform $platform.."
     export XCL_EMULATION_MODE=hw_emu
+    export EMCONFIG_PATH=$(pwd)
     emconfigutil --platform $platform
     echo "Enter Hardware Emulation Mode"
   fi
