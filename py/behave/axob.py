@@ -313,6 +313,7 @@ class AXOB():
         'instrument_type',
 
         'order_map',    # map of ob_order
+        'illegal_order_map',    # map of illegal_order
         'bid_level_tree', # map of level_node
         'ask_level_tree', # map of level_node
 
@@ -401,6 +402,7 @@ class AXOB():
 
             ## 结构数据：
             self.order_map = {} #订单队列，以applSeqNum作为索引
+            self.illegal_order_map = {} #
             self.bid_level_tree = {} #买方价格档，以价格作为索引
             self.ask_level_tree = {} #卖方价格档
 
@@ -580,7 +582,7 @@ class AXOB():
 
 
         #if self.TradingPhaseMarket>=axsbe_base.TPM.Ending:
-        # if self.msg_nb<=65:
+        # if self.msg_nb>=1828:
         #    self._print_levels()
 
 
@@ -634,7 +636,7 @@ class AXOB():
 
     def openCage(self):
         self.DBG('openCage')
-        self._print_levels()
+        # self._print_levels()
 
         ## 创业板上市头5日连续竞价、复牌集合竞价、收盘集合竞价的有效竞价范围是最近成交价的上下10%
         if self.UpLimitPx==msg_util.ORDER_PRICE_OVERFLOW: #无涨跌停限制=创业板上市头5日 TODO: 更精确
@@ -682,7 +684,7 @@ class AXOB():
             self.bid_cage_upper_ex_min_level_qty = 0
             self.bid_max_level_price = max(self.bid_level_tree.keys())
             self.bid_max_level_qty = self.bid_level_tree[self.bid_max_level_price].qty
-        self._print_levels()
+        # self._print_levels()
 
 
     def onOrder(self, order:axsbe_order):
@@ -691,6 +693,17 @@ class AXOB():
         跳转到处理限价单或处理撤单
         '''
         self.DBG(f'msg#{self.msg_nb} onOrder:{order}')
+        
+        if self.holding_nb!=0: #把此前缓存的订单(市价/限价)插入LOB
+            if self.holding_order.type == TYPE.MARKET and not self.holding_order.traded:
+                self.ERR(f'市价单 {self.holding_order} 未伴随成交')
+            self.insertOrder(self.holding_order)
+            self.holding_nb = 0
+
+            self._useTimestamp(self.holding_order.TransactTime)
+            self.genSnap()   #先出一个snap，时戳用市价单的
+            self._useTimestamp(order.TransactTime)
+
         if self.SecurityIDSource == SecurityIDSource_SZSE:
             _order = ob_order(order, self.instrument_type)
         elif self.SecurityIDSource == SecurityIDSource_SSE:
@@ -733,13 +746,17 @@ class AXOB():
     def onLimitOrder(self, order:ob_order):
         if self.TradingPhaseMarket==axsbe_base.TPM.OpenCall or self.TradingPhaseMarket==axsbe_base.TPM.CloseCall:
             #集合竞价期间，直接插入
-            if self.TradingPhaseMarket==axsbe_base.TPM.CloseCall and self.holding_nb!=0: #进入收盘集合竞价，但可能有市价单还在确认
-                self.insertOrder(self.holding_order)
-                self.holding_nb = 0
+            # if self.TradingPhaseMarket==axsbe_base.TPM.CloseCall and self.holding_nb!=0: #进入收盘集合竞价，但可能有市价单还在确认
+            #     self.insertOrder(self.holding_order)
+            #     self.holding_nb = 0
 
-            if self.TradingPhaseMarket==axsbe_base.TPM.CloseCall and self.UpLimitPx==msg_util.ORDER_PRICE_OVERFLOW and\
-               (order.price>msg_util.CYB_match_upper(self.LastPx) or order.price<msg_util.CYB_match_lower(self.LastPx)):
-               pass # 创业板上市头5日超出范围则丢弃
+            if self.cage_type==CAGE.CYB and self.UpLimitPx==msg_util.ORDER_PRICE_OVERFLOW and \
+               ((self.TradingPhaseMarket==axsbe_base.TPM.OpenCall and \
+                 (order.side==SIDE.BID and order.price>self.PrevClosePx*CYB_ORDER_ENVALUE_MAX_RATE))\
+                or
+                (self.TradingPhaseMarket==axsbe_base.TPM.CloseCall and \
+                 (order.price>msg_util.CYB_match_upper(self.LastPx) or order.price<msg_util.CYB_match_lower(self.LastPx)))):
+                self.illegal_order_map[order.applSeqNum] = order # 创业板无涨跌停时(上市头5日)超出范围则丢弃
             else:
                 self.insertOrder(order)
                 self.bid_waiting_for_cage = False
@@ -747,15 +764,15 @@ class AXOB():
 
             self.genSnap()   #可出snap
         else:
-            if self.holding_nb!=0: #把此前缓存的订单(市价/限价)插入LOB
-                if self.holding_order.type == TYPE.MARKET and not self.holding_order.traded:
-                    self.ERR(f'市价单 {self.holding_order} 未伴随成交')
-                self.insertOrder(self.holding_order)
-                self.holding_nb = 0
+            # if self.holding_nb!=0: #把此前缓存的订单(市价/限价)插入LOB
+            #     if self.holding_order.type == TYPE.MARKET and not self.holding_order.traded:
+            #         self.ERR(f'市价单 {self.holding_order} 未伴随成交')
+            #     self.insertOrder(self.holding_order)
+            #     self.holding_nb = 0
 
-                self._useTimestamp(self.holding_order.TransactTime)
-                self.genSnap()   #先出一个snap，时戳用市价单的
-                self._useTimestamp(order.TransactTime)
+            #     self._useTimestamp(self.holding_order.TransactTime)
+            #     self.genSnap()   #先出一个snap，时戳用市价单的
+            #     self._useTimestamp(order.TransactTime)
 
             if self.cage_type==CAGE.CYB and order.type==TYPE.LIMIT and\
                 (order.side==SIDE.BID and (order.price>CYB_cage_upper(self.bid_cage_ref_px)) or
@@ -1102,14 +1119,20 @@ class AXOB():
                 if self.holding_order.applSeqNum==cancel.applSeqNum: #撤销缓存单，holding_nb清空即可
                     return  
 
-        order = self.order_map.pop(cancel.applSeqNum)   # 注意order.qty是旧值
+        if cancel.applSeqNum in self.order_map:
+            order = self.order_map.pop(cancel.applSeqNum)   # 注意order.qty是旧值。实际可以不用pop。
 
-        self.levelDequeue(cancel.side, order.price, cancel.qty, cancel.applSeqNum)
-        if self.cage_type==CAGE.CYB:
-            self.enterCage()
+            self.levelDequeue(cancel.side, order.price, cancel.qty, cancel.applSeqNum)
+            if self.cage_type==CAGE.CYB:
+                self.enterCage()
 
-        self.genSnap()
-        
+            self.genSnap()
+        elif cancel.applSeqNum in self.illegal_order_map:
+            self.illegal_order_map.pop(cancel.applSeqNum)
+        else:
+            self.ERR(f'cancel AppSeqNum={cancel.applSeqNum} not found!')
+            raise 'cancel AppSeqNum not found!'
+
     def levelDequeue(self, side, price, qty, applSeqNum):
         '''买/卖方价格档出列（撤单或成交时）'''
         if side == SIDE.BID:
@@ -1261,7 +1284,7 @@ class AXOB():
             else:
                 self.YYMMDD = 0                               # 上交所不带日期
 
-        if self.TradingPhaseMarket==axsbe_base.TPM.Ending and not self.closePx_ready:
+        if self.TradingPhaseMarket==axsbe_base.TPM.Ending and snap.TradingPhaseMarket==axsbe_base.TPM.Ending and not self.closePx_ready:
             if self.SecurityIDSource==SecurityIDSource_SZSE:
                 if self.instrument_type==INSTRUMENT_TYPE.STOCK:
                     self.LastPx = snap.LastPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_STOCK_PRECISION)

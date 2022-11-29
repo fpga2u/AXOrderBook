@@ -39,6 +39,26 @@ if __name__== '__main__':
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220609, 301160, 0) #收盘集合竞价时无价格档在笼子外
     
+    # ### 20220609测试错误
+    # logger.info('starting TEST_axob_bat')
+    # behave.TEST_axob(20220609, 2801, 0) # 市价单后紧跟本方最优，导致本方最优取的价格不对
+    
+    # ### 20220610测试错误
+    # logger.info('starting TEST_axob_bat')
+    # data_source = "data/20220610/bat_test1.log"
+    # ptn=[1, 300089]
+    # behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False) #000001闭市后，300089来了两个快照导致误设了ClosePx
+
+    # ### 20220620测试错误
+    # logger.info('starting TEST_axob_bat')
+    # behave.TEST_axob(20220620, 301286, 0)
+
+    # ### 20220620测试错误
+    # logger.info('starting TEST_axob_bat')
+    # fh.setLevel(logging.WARN)
+    # sh.setLevel(logging.ERROR)
+    # behave.TEST_axob(20220620, 301238, 0) #创业板无涨跌停时，买单价格超过昨收28倍，需要被丢弃
+    
     # ### 20220622测试错误
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220622, 300103, 0)
@@ -47,7 +67,8 @@ if __name__== '__main__':
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220623, 300928, 0) #买方价格笼子外订单连续进入撮合直到涨停，导致买方本方最优价过期却被用作买方参考价。
 
-    ### 20221010测试错误
+
+    # ### 20221010测试错误
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20221010, 301313, 0)
 
