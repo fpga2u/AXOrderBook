@@ -80,6 +80,15 @@ mu0s.wait()
 for k in ol.ip_dict:
     print("{}.{}".format(k, ol.__getattr__(k).register_map))
 
+# lm_mu0_rd0 寄存器地址
+for r in lm_mu0_rd0._registers:
+    print('lm_mu0_rd0.{}.offset={}'.format(r, lm_mu0_rd0._registers[r]['address_offset']))
+
+# 通过改历史记录ram地址，读取历史记录
+offset = lm_mu0_rd0._registers['history_id']['address_offset']
+for i in range(16):
+    lm_mu0_rd0.write(offset, i)
+    print(lm_mu0_rd0.register_map)
 
 ###### clean up ######
 del DMY
