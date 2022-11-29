@@ -10,7 +10,8 @@ void binarySearchApp(
     unsigned int& w_ram_dataL,  //[31:0]
     unsigned int& target_dataM,  //[47:32]
     unsigned int& target_dataL,  //[31:0]
-    unsigned int& target_index
+    unsigned int& target_index,
+    unsigned int& access_nb
 )
 {
 
@@ -39,6 +40,7 @@ void binarySearchApp(
 #endif
 #endif
         ram[w_ram_idx] = wdat;
+        access_nb = 0;
         target_index = -1;  //如果没有这句，cosim会锁死
     } else {
         ram_target_t tgt;
@@ -55,7 +57,7 @@ void binarySearchApp(
 #endif
 
         ram_index_t index;
-        bsc.mainRun(ram, tgt, index);
+        bsc.mainRun(access_nb, ram, tgt, index);
         target_index = index;
     }
 }

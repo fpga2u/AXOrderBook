@@ -13,6 +13,7 @@ int main()
     unsigned int target_dataM = 0;
     unsigned int target_dataL = 0;
     unsigned int target_index = 0;
+    unsigned int access_nb = 0;
 
     //未写入数据前，测试应该都是-1
     std::cout << "Testing first searching..." << std::endl;
@@ -28,9 +29,10 @@ int main()
             w_ram_dataL,
             target_dataM,
             target_dataL,
-            target_index
+            target_index,
+            access_nb
         );
-        std::cout << i << " over. target_index=" << target_index << std::endl;
+        std::cout << i << " over. target_index=" << target_index << " access_nb=" << access_nb << std::endl;
         assert(target_index==-1);
     }
 
@@ -50,7 +52,8 @@ int main()
             w_ram_dataL,
             target_dataM,
             target_dataL,
-            target_index
+            target_index,
+            access_nb
         );
     }
 
@@ -68,9 +71,10 @@ int main()
             w_ram_dataL,
             target_dataM,
             target_dataL,
-            target_index
+            target_index,
+            access_nb
         );
-        std::cout << i << " over. target_index=" << target_index << std::endl;
+        std::cout << i << " over. target_index=" << target_index << " access_nb=" << access_nb << std::endl;
         if (i<1024){
             assert(target_index==i);
         }else{

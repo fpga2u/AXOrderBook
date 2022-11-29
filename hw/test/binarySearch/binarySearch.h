@@ -18,6 +18,7 @@ class binarySearchCore
 {
 public:
     void mainRun(
+        unsigned int& access_nb,
         ap_uint<dataTotalBitSize>* ordered_data, 
         ap_uint<dataValidBitSize> d, 
         ap_int<logSize+1>& index
@@ -27,8 +28,9 @@ public:
         ap_int<logSize+1> right = ramSize - 1;
         ap_int<logSize+1> location = -1;
         ap_int<logSize+1> middle;
+        unsigned int j;
 
-        for (unsigned int j = 0; j < logSize + 1; j++)
+        for (j = 0; j < logSize + 1; j++)
         {
 #pragma HLS UNROLL
             middle = (left + right) / 2;
@@ -53,6 +55,7 @@ public:
                 location = -1;
         }
         index = location;
+        access_nb = j;
     }
 
 };
@@ -72,7 +75,8 @@ void binarySearchApp(
     unsigned int& w_ram_dataL,  //[31:0]
     unsigned int& target_dataM,  //[47:32]
     unsigned int& target_dataL,  //[31:0]
-    unsigned int& target_index
+    unsigned int& target_index,
+    unsigned int& access_nb
 );
 
 
