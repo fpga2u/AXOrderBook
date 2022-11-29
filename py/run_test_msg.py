@@ -28,7 +28,8 @@ if __name__== '__main__':
 
     # pp.test_pipeline_id()
 
-    # # 198.0328 sec
+    #
+    msg.TEST_print_securityID("H:/AXOB_data_newP_ru/20220608/sbe_20220608_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
     # msg.TEST_print_securityID("H:/AXOB_data_newP/20220609/sbe_20220609_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
     # msg.TEST_print_securityID("H:/AXOB_data_newP/20220610/sbe_20220610_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
     # msg.TEST_print_securityID("H:/AXOB_data_newP/20220615/sbe_20220615_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
