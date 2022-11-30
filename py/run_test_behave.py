@@ -38,11 +38,11 @@ if __name__== '__main__':
     
     ### 20220608测试错误
     logger.info('starting TEST_axob_bat')
-    # fh.setLevel(logging.WARN)
-    # sh.setLevel(logging.ERROR)
+    fh.setLevel(logging.WARN)
+    sh.setLevel(logging.ERROR)
     data_source = "data/20220608/bat_test1.log"
     ptn=[300833, 301023, 300971, 300862, 300993, 300800, 300727, 300935, 300880, 300167, 300520, 300513, 300722, 300429, 301087, 300295, 301207, 300420, 301151, 300326, 300485, 300358, 300232, 300359, 300304, 300390, 2932]
-    ptn=[2932]  # 不同channel的逐笔间存在时差，一个channel进入盘后竞价了，导致另一个channel的TPM切换但还没有收到自己的最后一个连续竞价逐笔消息。
+    # ptn=[2932]  # 不同channel的逐笔间存在时差，一个channel进入盘后竞价了，导致另一个channel的TPM切换但还没有收到自己的最后一个连续竞价逐笔消息。
     behave.TEST_axob_bat(data_source, ptn, n_max=0, openCall_only=False)
     # behave.TEST_mu_rolling(data_source, ptn, n_max=0, rolling_gap=1, begin_section='mu_1_145602870')
     

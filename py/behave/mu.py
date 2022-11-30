@@ -163,9 +163,10 @@ class MU():
                 ok_nb += ok
             else:
                 ok_nb += 1
-        self.ERR(f'ng nb={len(ng_list)}')
-        self.ERR(f'ng_list={ng_list}')
-        return ok_nb==len(self.axobs)
+        if len(ng_list):
+            self.ERR(f'ng nb={len(ng_list)}')
+            self.ERR(f'ng_list={ng_list}')
+        return len(ng_list)==0
 
     @property
     def TradingPhaseMarket(self):
@@ -213,14 +214,13 @@ class MU():
             s += str(x)
             s += '--------\n'
         s+= '========================\n'
-        s+= f'MU-{len(self.axobs)}:'
-        s+= f'  pf_order_map_maxSize={self.pf_order_map_maxSize}({bitSizeOf(self.pf_order_map_maxSize)}b)\n'
-        s+= f'  pf_level_tree_maxSize={self.pf_level_tree_maxSize}({bitSizeOf(self.pf_level_tree_maxSize)}b)\n'
-        s+= f'  pf_bid_level_tree_maxSize={self.pf_bid_level_tree_maxSize}({bitSizeOf(self.pf_bid_level_tree_maxSize)}b) pf_ask_level_tree_maxSize={self.pf_ask_level_tree_maxSize}({bitSizeOf(self.pf_ask_level_tree_maxSize)}b)\n'
-        s+= f'  pf_AskWeightSize_max={self.pf_AskWeightSize_max}({bitSizeOf(self.pf_AskWeightSize_max)}b)\n'
-        s+= f'  pf_AskWeightValue_max={self.pf_AskWeightValue_max}({bitSizeOf(self.pf_AskWeightValue_max)}b)\n'
-        s+= f'  pf_BidWeightSize_max={self.pf_BidWeightSize_max}({bitSizeOf(self.pf_BidWeightSize_max)}b)\n'
-        s+= f'  pf_BidWeightValue_max={self.pf_BidWeightValue_max}({bitSizeOf(self.pf_BidWeightValue_max)}b)\n'
+        s+= f'  MU-{len(self.axobs)}.MUpf_order_map_maxSize={self.pf_order_map_maxSize}({bitSizeOf(self.pf_order_map_maxSize)}b)\n'
+        s+= f'  MU-{len(self.axobs)}.MUpf_level_tree_maxSize={self.pf_level_tree_maxSize}({bitSizeOf(self.pf_level_tree_maxSize)}b)\n'
+        s+= f'  MU-{len(self.axobs)}.MUpf_bid_level_tree_maxSize={self.pf_bid_level_tree_maxSize}({bitSizeOf(self.pf_bid_level_tree_maxSize)}b) MU-{len(self.axobs)}.MUpf_ask_level_tree_maxSize={self.pf_ask_level_tree_maxSize}({bitSizeOf(self.pf_ask_level_tree_maxSize)}b)\n'
+        s+= f'  MU-{len(self.axobs)}.MUpf_AskWeightSize_max={self.pf_AskWeightSize_max}({bitSizeOf(self.pf_AskWeightSize_max)}b)\n'
+        s+= f'  MU-{len(self.axobs)}.MUpf_AskWeightValue_max={self.pf_AskWeightValue_max}({bitSizeOf(self.pf_AskWeightValue_max)}b)\n'
+        s+= f'  MU-{len(self.axobs)}.MUpf_BidWeightSize_max={self.pf_BidWeightSize_max}({bitSizeOf(self.pf_BidWeightSize_max)}b)\n'
+        s+= f'  MU-{len(self.axobs)}.MUpf_BidWeightValue_max={self.pf_BidWeightValue_max}({bitSizeOf(self.pf_BidWeightValue_max)}b)\n'
 
         return s
 
