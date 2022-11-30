@@ -29,7 +29,7 @@ if __name__== '__main__':
     # pp.test_pipeline_id()
 
     #
-    msg.TEST_print_securityID("H:/AXOB_data_newP_ru/20220608/sbe_20220608_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
+    # msg.TEST_print_securityID("H:/AXOB_data_newP_ru/20220608/sbe_20220608_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
     # msg.TEST_print_securityID("H:/AXOB_data_newP/20220609/sbe_20220609_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
     # msg.TEST_print_securityID("H:/AXOB_data_newP/20220610/sbe_20220610_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
     # msg.TEST_print_securityID("H:/AXOB_data_newP/20220615/sbe_20220615_all.log", read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
@@ -43,6 +43,7 @@ if __name__== '__main__':
 
     ## 
     # msg_util.extract_security("data/20220617/sbe_20220617_all.log", "data/20220617/bat_test3.log", [2487])
+    # msg_util.extract_security("H:/AXOB_data_newP_ru/20220608/sbe_20220608_all.log", "data/20220608/bat_test1.log", [300833, 301023, 300971, 300862, 300993, 300800, 300727, 300935, 300880, 300167, 300520, 300513, 300722, 300429, 301087, 300295, 301207, 300420, 301151, 300326, 300485, 300358, 300232, 300359, 300304, 300390, 2932])
     # msg_util.extract_security("H:/AXOB_data_newP/20220609/sbe_20220609_all.log", "data/20220609/AX_sbe_szse_301160.log", [301160])
     # msg_util.extract_security("H:/AXOB_data_newP/20220609/sbe_20220609_all.log", "data/20220609/AX_sbe_szse_002801.log", [2801])
     # msg_util.extract_security("H:/AXOB_data_newP/20220610/sbe_20220610_all.log", "data/20220610/AX_sbe_szse_000151.log", [151])

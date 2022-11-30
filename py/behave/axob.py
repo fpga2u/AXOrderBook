@@ -329,6 +329,7 @@ class AXOB():
 
         'closePx_ready',
 
+        'constantValue_ready',
         'ChannelNo',
         'PrevClosePx',
         'DnLimitPx',
@@ -418,6 +419,7 @@ class AXOB():
 
             self.closePx_ready = False
 
+            self.constantValue_ready = False
             self.ChannelNo = 0 #来自于快照
             self.PrevClosePx = 0 #来自于快照 深圳要处理到内部精度，用于在还原快照时比较
             self.DnLimitPx = 0  # #来自于快照 无涨跌停价时为0x7fffffff
@@ -503,6 +505,7 @@ class AXOB():
                 #     # 创业板进入收盘集合竞价，敞开价格笼子，将外面的隐藏订单放进来
                 #     self.openCage()
                 #     self.genSnap()
+                assert self.constantValue_ready, f'{self.SecurityID:06d} constant values not ready!'
 
                 self._useTimestamp(msg.TransactTime)
 
@@ -1246,8 +1249,10 @@ class AXOB():
             return
 
         ## 更新常量
-        if self.ChannelNo==0:
-            self.INFO(f"Update constatant: ChannelNo={snap.ChannelNo}, PrevClosePx={snap.PrevClosePx}, UpLimitPx={snap.UpLimitPx}, DnLimitPx={snap.DnLimitPx}")
+        if snap.TradingPhaseMarket==axsbe_base.TPM.Starting: # 每天最早的一批快照(7点半前)是没有涨停价、跌停价的，不能只锁一次
+            self.constantValue_ready = True
+            if self.ChannelNo==0:
+                self.INFO(f"Update constatant: ChannelNo={snap.ChannelNo}, PrevClosePx={snap.PrevClosePx}, UpLimitPx={snap.UpLimitPx}, DnLimitPx={snap.DnLimitPx}")
 
             self.ChannelNo = snap.ChannelNo
             if self.SecurityIDSource==SecurityIDSource_SZSE:
@@ -1788,10 +1793,15 @@ class AXOB():
         im_ok = True
         if len(self.market_snaps):
             self.ERR(f'unmatched market snap size={len(self.market_snaps)}:')
+            n = 0
             for s,ls in self.market_snaps.items():
                 self.ERR(f'\tNumTrades={s}')
                 for ss in ls:
                     self.ERR(f'\t\t#{ss._seq}\t@{ss.TransactTime}')
+                n += 1
+                if n>=3:
+                    self.ERR("\t......")
+                    break
             im_ok = False
         return im_ok
 

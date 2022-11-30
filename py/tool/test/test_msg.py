@@ -261,7 +261,7 @@ def TEST_print_securityID(source_log, read_nb=0, instrument_type=INSTRUMENT_TYPE
         f.write(f'max_inc={max_inc}\n')
 
     print("TEST_print_securityID done")
-    return
+    return all_inc, min_inc, max_inc
 
 
 @timeit
