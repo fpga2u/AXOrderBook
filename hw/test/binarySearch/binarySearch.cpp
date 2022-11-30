@@ -1,5 +1,5 @@
 #include "binarySearch.h"
-
+#include "init_2048.h"
 //在72bit x 2048数据中查找；每地址的前48bit为目标值；在w_ram_en为1期间写ram数据、为0期间搜索ram。
 void binarySearchApp(
     /* register-to-host */
@@ -15,15 +15,20 @@ void binarySearchApp(
 )
 {
 
-    static bool init = false;
+#ifdef BRAM_INIT_M1x2048 //必须每个元素都填上初始化值；通过仿真看，如果初始化元素少于ram深度，ram剩余的部分是填0。
+    static ram_data_t ram[RAM_DEPTH] = BRAM_INIT_M1x2048;
+#else
+    //用标志位来执行初始化函数时，无法自动识别成初始化文件。
     static ram_data_t ram[RAM_DEPTH];
+    static bool init = false;
     if (!init){
         for (int i=0; i<RAM_DEPTH; ++i){
             ram[i] = ram_data_t(-1);
         }
         init = true;
     }
-    
+#endif
+
     binarySearchCore<RAM_DEPTH, RAM_DEPTH_LOG, DATA_TOTAL_SIZE, DATA_VALID_SIZE> bsc;
 
     if (w_ram_en){
