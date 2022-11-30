@@ -19,6 +19,7 @@ TODO: MU测位宽应为32，写首拍为地址。
    ```sh
    vitis_hls run_hls.tcl
    ```
+
 5. 查看vitis.log和波形
 
 ## 实机
