@@ -70,3 +70,5 @@
 * 虚拟MU，由CPU指定写数据，写间隔，自读检查，循环次数；统计效率。
 * 32个仲裁器
 * CPU检查hbm数据
+
+[每MU(2读 2写) * 2MU (每MU 128M空间)实现](/hw/test/hbmArbiter/hbmArbiter_2_2_2_128m/readme.md)

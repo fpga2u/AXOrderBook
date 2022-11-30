@@ -62,7 +62,7 @@ A股交易所L2行情相关背景参考：[交易所L2行情与撮合原理](/do
 
 * Xilinx Alveo U50
 
-* Xilinx pynq 2.6.2
+* Xilinx pynq 3.0.0
 
 ---
 
@@ -92,10 +92,14 @@ A股交易所L2行情相关背景参考：[交易所L2行情与撮合原理](/do
 
 * [订单簿重建流程梳理](doc/ob_workflow.md)
 
-* HLS 链表工具和测试
+* [订单簿重建行为模型](py/behave/axob.py)
 
 * HLS AVL工具和测试
 
 * [HLS HBM工具和测试](doc/hls_hbm.md)
+
+* [HLS 二分法查找测试](hw/test/binarySearch/binarySearch.cpp)
+
+* ~~HLS 链表工具和测试~~
 
 * HLS 测试环境
