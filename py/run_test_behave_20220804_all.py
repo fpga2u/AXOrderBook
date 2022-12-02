@@ -32,10 +32,11 @@ if __name__== '__main__':
     logger.addHandler(sh)
     logPack = logger.debug, logger.info, logger.warn, logger.error
 
-    ###测试20220802所有有委托的只股票，全天【pass@22/12/01】
-    data_source = "H:/AXOB_data_newP_ru/20220802/sbe_20220802_all.log"
+    ###测试20220804所有有委托的只股票，全天
+    data_source = "H:/AXOB_data_newP_ru/20220804/sbe_20220804_all.log"
     logger.info('TEST_print_securityID')
     all_inc, min_inc, max_inc = msg.TEST_print_securityID(data_source, read_nb=0, instrument_type=INSTRUMENT_TYPE.STOCK)
+    print(f'all_inc len={len(all_inc)}')
 
     logger.info('starting TEST_axob_bat')
     fh.setLevel(logging.WARN)

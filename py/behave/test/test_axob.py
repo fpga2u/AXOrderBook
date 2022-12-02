@@ -246,7 +246,7 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
     return
 
 
-def TEST_axob(date, instrument:int, n_max=500, 
+def TEST_axob(date, instrument:int, n_max=0, 
                 openCall_only=False,
                 SecurityIDSource=SecurityIDSource_SZSE, 
                 instrument_type=INSTRUMENT_TYPE.STOCK

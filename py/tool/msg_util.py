@@ -8,36 +8,40 @@ from tool.axsbe_base import INSTRUMENT_TYPE, SecurityIDSource_SSE, SecurityIDSou
 from tool.axsbe_snap_stock import axsbe_snap_stock, price_level
 from enum import Enum
 
-# CHNL_STOCK = 0
-# CHNL_FUND = 1
-# CHNL_KZZ = 2
-# CHNL_QZ = 3
-# CHNL_OPTION = 4
+#### 交易所 板块子类型
+class MARKET_SUBTYPE(Enum):
+    SZSE_STK_MB  =  0   #深交所 主板   000-001
+    SZSE_STK_SME =  1   #深交所 中小板 002-004
+    SZSE_STK_GEM =  2   #深交所 创业板 300-309
+    SZSE_STK_B   =  3   #深交所 B股    200-209
+    SZSE_OTHERS  =  4   #深交所 其它
 
-# def chnl_type(msg):
-#     if msg.SecurityIDSource==axsbe_base.SecurityIDSource_SSE:
-#         if isinstance(msg, axsbe_exe) or isinstance(msg, axsbe_order):
-#             if msg.ChannelNo>=2010 and msg.ChannelNo<=2019:
-#                 return CHNL_STOCK
-#             elif msg.ChannelNo>=2020 and msg.ChannelNo<=2029:
-#                 return CHNL_FUND
-#             elif msg.ChannelNo>=2030 and msg.ChannelNo<=2039:
-#                 return CHNL_KZZ
-#             elif msg.ChannelNo>=2040 and msg.ChannelNo<=2049:
-#                 return CHNL_QZ
-#             elif msg.ChannelNo>=2050 and msg.ChannelNo<=2059:
-#                 return CHNL_OPTION
-#             else:
-#                 return None
-#         elif isinstance(msg, axsbe_snap_stock):
-#                 return CHNL_STOCK
-#         else:
-#             return None
+    SSE          =  5    # 上交所
 
-#     if msg.SecurityIDSource==axsbe_base.SecurityIDSource_SZSE:
-#         '''TODO:'''
-#         pass
-#     return None
+def market_subtype(SecurityIDSource, SecurityID):
+    if SecurityIDSource==SecurityIDSource_SZSE:
+        if SecurityID<=1999:
+            mst = MARKET_SUBTYPE.SZSE_STK_MB
+        elif SecurityID<4999:      #中小板
+            mst = MARKET_SUBTYPE.SZSE_STK_SME
+        elif SecurityID>=300000 and SecurityID<309999:    #创业板 ## 创业板价格笼子 http://docs.static.szse.cn/www/disclosure/notice/general/W020200612831351578076.pdf
+            mst = MARKET_SUBTYPE.SZSE_STK_GEM
+        elif SecurityID>=200000 and SecurityID<209999:    #创业板 ## 创业板价格笼子 http://docs.static.szse.cn/www/disclosure/notice/general/W020200612831351578076.pdf
+            mst = MARKET_SUBTYPE.SZSE_STK_B
+        else:
+            mst = MARKET_SUBTYPE.SZSE_OTHERS
+    elif SecurityIDSource==SecurityIDSource_SSE:
+            mst = MARKET_SUBTYPE.SSE
+
+    return mst
+
+
+# 板块子类型将影响快照重建中需要的 涨跌停价，临停价，有效订单价，并按照以下类型划分
+#  新股首日
+#  创业板首日之后
+#  退市整理期首日
+#  普通标的
+
 
 #### 原始数据精度 ####
 PRICE_SZSE_INCR_PRECISION = 10000 # 股票价格在逐笔消息中的精度：深圳4位小数

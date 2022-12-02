@@ -44,6 +44,7 @@ if __name__== '__main__':
     ## 
     # msg_util.extract_security("data/20220617/sbe_20220617_all.log", "data/20220617/bat_test3.log", [2487])
     # msg_util.extract_security("H:/AXOB_data_newP_ru/20220608/sbe_20220608_all.log", "data/20220608/bat_test1.log", [300833, 301023, 300971, 300862, 300993, 300800, 300727, 300935, 300880, 300167, 300520, 300513, 300722, 300429, 301087, 300295, 301207, 300420, 301151, 300326, 300485, 300358, 300232, 300359, 300304, 300390, 2932])
+    # msg_util.extract_security("H:/AXOB_data_newP_ru/20220608/sbe_20220608_all.log", "data/20220608/AX_sbe_szse_200613.log", [200613])
     # msg_util.extract_security("H:/AXOB_data_newP/20220609/sbe_20220609_all.log", "data/20220609/AX_sbe_szse_301160.log", [301160])
     # msg_util.extract_security("H:/AXOB_data_newP/20220609/sbe_20220609_all.log", "data/20220609/AX_sbe_szse_002801.log", [2801])
     # msg_util.extract_security("H:/AXOB_data_newP/20220610/sbe_20220610_all.log", "data/20220610/AX_sbe_szse_000151.log", [151])
@@ -54,8 +55,11 @@ if __name__== '__main__':
     # msg_util.extract_security("H:/AXOB_data_newP/20220621/sbe_20220621_all.log", "data/20220621/AX_sbe_szse_301199.log", [301199])
     # msg_util.extract_security("H:/AXOB_data_newP/20220622/sbe_20220622_all.log", "data/20220622/AX_sbe_szse_300103.log", [300103])
     # msg_util.extract_security("H:/AXOB_data_newP/20220623/sbe_20220623_all.log", "data/20220623/AX_sbe_szse_300928.log", [300928])
+    # msg_util.extract_security("H:/AXOB_data_newP_ru/20220804/sbe_20220804_all.log", "data/20220804/AX_sbe_szse_301278.log", [301278])
+    # msg_util.extract_security("H:/AXOB_data_newP_ru/20220808/sbe_20220808_all.log", "data/20220808/AX_sbe_szse_001229.log", [1229])
 
     # msg_util.extract_security("H:/AXOB_data_newP/20220812/sbe_20220812_all.log", "data/20220812/bat_test2.log", [301192])
+    # msg_util.extract_security("H:/AXOB_data_newP/20220812/sbe_20220812_all.log", "data/20220812/AX_sbe_szse_301336.log", [301336])
     # msg_util.extract_security("H:/AXOB_data_newP/20221010/sbe_20221010_all.log", "data/20221010/bat_test5.log", [300796, 300667])
 
     #20220812:
