@@ -1024,7 +1024,7 @@ class AXOB():
         '''判断订单是否可进入笼子，若进入笼子，判断是否可以成交'''
         while True:
             if self.bid_cage_upper_ex_min_level_qty and self.bid_cage_upper_ex_min_level_price<=CYB_cage_upper(self.bid_cage_ref_px): #买方隐藏订单可以进入笼子
-                if self.ask_min_level_qty and self.bid_cage_upper_ex_min_level_price>=self.ask_min_level_price: #可与卖方最优成交
+                if self.ask_min_level_qty and self.bid_cage_upper_ex_min_level_price>=self.ask_min_level_price and self.TradingPhaseMarket!=axsbe_base.TPM.VolatilityBreaking: #可与卖方最优成交
                     self.DBG(f'ASK px may changed: waiting for BID level' 
                              f'({self.bid_cage_upper_ex_min_level_price} x {self.bid_cage_upper_ex_min_level_qty}) to enter cage & exec')
                     break
@@ -1055,7 +1055,7 @@ class AXOB():
                 self.bid_waiting_for_cage = False
 
             if self.ask_cage_lower_ex_max_level_qty and self.ask_cage_lower_ex_max_level_price>=CYB_cage_lower(self.ask_cage_ref_px): #卖方隐藏订单可以进入笼子
-                if self.bid_max_level_qty and self.ask_cage_lower_ex_max_level_price<=self.bid_max_level_price: #可与买方最优成交
+                if self.bid_max_level_qty and self.ask_cage_lower_ex_max_level_price<=self.bid_max_level_price and self.TradingPhaseMarket!=axsbe_base.TPM.VolatilityBreaking: #可与买方最优成交
                     self.DBG(f'BID px may changed: waiting for ASK level'
                              f'({self.ask_cage_lower_ex_max_level_price} x {self.ask_cage_lower_ex_max_level_qty}) to enter cage & exec')
                     break
