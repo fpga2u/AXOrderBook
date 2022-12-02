@@ -470,6 +470,7 @@ class AXOB():
             self.logger = logging.getLogger(f'{self.SecurityID:06d}')
             g_logger = logging.getLogger('main')
             self.logger.setLevel(g_logger.getEffectiveLevel())
+            axob_logger.setLevel(g_logger.getEffectiveLevel())
             for h in g_logger.handlers:
                 self.logger.addHandler(h)
                 axob_logger.addHandler(h) #这里补上模块日志的handler，有点ugly TODO: better way [low prioryty]

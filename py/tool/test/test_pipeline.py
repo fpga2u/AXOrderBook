@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ast import Lambda
 from tool.test_util import *
-
 from tool.pipeline import *
 
 

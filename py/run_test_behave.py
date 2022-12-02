@@ -91,6 +91,10 @@ if __name__== '__main__':
     # # data_source = "data/20220804/AX_sbe_szse_301278.log"
     # # behave.TEST_mu_rolling(data_source, [301278], n_max=0, rolling_gap=30, begin_section='mu_1_111033000')
 
+    # ## 20220805测试错误
+    # logger.info('starting TEST_axob_bat')
+    # behave.TEST_axob(20220805, 1236)      #TODO: 新股上市首日，涨停价44%，但集合竞价进行申报的价格有效区间是[80%, 120%]，连续竞价时才是[64%, 144%]
+
     # ## 20220808测试错误
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220808, 1229)    #TODO: 新股上市首日，涨停价44%，但集合竞价进行申报的价格有效区间是[80%, 120%]，连续竞价时才是[64%, 144%]
