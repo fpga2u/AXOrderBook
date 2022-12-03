@@ -55,7 +55,7 @@ class AVLTNode:
         利用Graphviz实现二叉树的可视化
         '''
         # colors for labels of nodes
-        graph = Digraph(comment='Binary Tree')
+        graph = Digraph(comment='AVL Binary Tree')
 
         def printNode(node:AVLTNode, node_tag):
             '''
