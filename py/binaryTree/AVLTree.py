@@ -3,16 +3,15 @@ from __future__ import annotations
 from graphviz import Digraph
 import uuid
 from tool.simpleStack import simpleStack
+from binaryTree.util import *
 
 import logging
-binTree_logger = logging.getLogger(__name__)
+AVLTree_logger = logging.getLogger(__name__)
 
-DBG_VIEW_ROOT = './log/binTreeView'
 
 ##########
-#二叉树的节点基类
-COLORS = ['skyblue', 'tomato', 'orange', 'purple', 'green', 'yellow', 'pink', 'red',  'aliceblue', 'aqua', 'aquamarine', 'bisque', 'blue', 'burlywood', 'cadetblue', 'chartreuse']
-class BinTNode:
+# AVL二叉树的节点
+class AVLTNode:
     __slots__ = [
         'parent',       #指向父节点，本节点是root端点时为None
         'is_left',      #本节点是左节点还是右节点，本节点是root端点时为None
@@ -25,7 +24,7 @@ class BinTNode:
         #for debug view
         'host_tree',     #指向本节点所属的二叉树
     ]
-    def __init__(self, value=None, parent:None|BinTNode=None, is_left=None, left_child:None|BinTNode=None, right_child:None|BinTNode=None, host_tree:None|BinTree=None):
+    def __init__(self, value=None, parent:None|AVLTNode=None, is_left=None, left_child:None|AVLTNode=None, right_child:None|AVLTNode=None, host_tree:None|AVLTree=None):
         self.value = value  #节点在二叉树中的权重
         self.parent = parent
         self.is_left = is_left
@@ -58,7 +57,7 @@ class BinTNode:
         # colors for labels of nodes
         graph = Digraph(comment='Binary Tree')
 
-        def printNode(node:BinTNode, node_tag):
+        def printNode(node:AVLTNode, node_tag):
             '''
             绘制以某个节点为根节点的二叉树
             '''
@@ -68,30 +67,30 @@ class BinTNode:
             if node.left_child is not None:
                 left_tag = str(uuid.uuid1())
                 color = COLORS[node.left_child.value  % len(COLORS)]    #颜色与权重绑定，保持在颜色在树平衡前后的稳定性
-                graph.node(left_tag, str(node.left_child.value), style='filled', color=color)    # 左节点
+                graph.node(left_tag, str(node.left_child.value), style='filled', fillcolor=color, color='black')    # 左节点
                 graph.edge(node_tag, left_tag, label='L' + str(node.left_height))   # 左节点与其父节点的连线
                 printNode(node.left_child, left_tag)
             else:
                 left_tag = str(uuid.uuid1())
-                graph.node(left_tag, '', style='filled', color='white')    # 左节点
-                graph.edge(node_tag, left_tag, label='', color='white')   # 左节点与其父节点的连线
+                graph.node(left_tag, '', style='filled', fillcolor='white', color='white')    # 左节点
+                graph.edge(node_tag, left_tag, label='', fillcolor='white', color='white')   # 左节点与其父节点的连线
 
             if node.right_child is not None:
                 right_tag = str(uuid.uuid1())
                 color = COLORS[node.right_child.value  % len(COLORS)]
-                graph.node(right_tag, str(node.right_child.value), style='filled', color=color)
+                graph.node(right_tag, str(node.right_child.value), style='filled', fillcolor=color, color='black')
                 graph.edge(node_tag, right_tag, label='R' + str(node.right_height))
                 printNode(node.right_child, right_tag)
             else:
                 right_tag = str(uuid.uuid1())
-                graph.node(right_tag, '', style='filled', color='white')
-                graph.edge(node_tag, right_tag, label='', color='white')
+                graph.node(right_tag, '', style='filled', fillcolor='white', color='white')
+                graph.edge(node_tag, right_tag, label='', fillcolor='white', color='white')
 
         # 如果树非空
         if self.value is not None:
             root_tag = str(uuid.uuid1())                # 根节点标签
             color = COLORS[self.value  % len(COLORS)]
-            graph.node(root_tag, str(self.value), style='filled', color=color)     # 创建根节点
+            graph.node(root_tag, str(self.value), style='filled', fillcolor=color, color='black')     # 创建根节点
             printNode(self, root_tag)
 
         return graph
@@ -105,7 +104,7 @@ class BinTNode:
             if item in ['host_tree']:
                 continue
             attr = getattr(self, item)
-            if isinstance(attr, BinTNode):
+            if isinstance(attr, AVLTNode):
                 data[item] = attr.value
             elif attr is None:
                 data[item] = None
@@ -124,48 +123,9 @@ class BinTNode:
             setattr(self, attr, value)
 
 
-#先序遍历函数，主要用于树的拷贝，以及搜索前缀
-#如果是文件夹，先输出文件夹名，然后再依次输出该文件夹下的所有文件(包括子文件夹)，如果有子文件夹，则再进入该子文件夹，输出该子文件夹下的所有文件名。这是一个典型的先序遍历过程。
-def preorder_nonrec(t:BinTNode, proc):
-    s = simpleStack()
-    while t is not None or not s.is_empty():
-        while t is not None:        # 沿左分支下行
-            proc(t)            # 先根序先处理根数据
-            s.push(t.right_child)         # 右分支入栈
-            t = t.left_child
-        t = s.pop()
-
-#中序非递归遍历
-def inorder_nonrec(t:BinTNode, proc):
-    s = simpleStack()
-    while t is not None or not s.is_empty():
-        while t is not None:
-            s.push(t)
-            t = t.left_child
-        t = s.pop()
-        proc(t.value)
-        t = t.right_child
-
-#非递归的后序遍历，主要用于树的删除，以及搜索后缀
-#执行操作时，肯定已经遍历过该节点的左右子节点，故适用于要进行破坏性操作的情况
-#若要知道某文件夹的大小，必须先知道该文件夹下所有文件的大小，如果有子文件夹，若要知道该子文件夹大小，必须先知道子文件夹所有文件的大小。这是一个典型的后序遍历过程。
-def postorder_nonrec(t:BinTNode, proc):
-    s = simpleStack()
-    while t is not None or not s.is_empty():
-        while t is not None:        # 下行循环， 直到栈顶的两子树空
-            s.push(t)
-            t = t.left_child if t.left_child is not None else t.right_child
-        t = s.pop()                 # 栈顶是应访问节点
-        proc(t.value)
-        if not s.is_empty() and s.top().left_child == t:
-            t = s.top().right_child       # 栈不为空且当前节点是栈顶的左子节点
-        else:
-            t = None                # 没有右子树或右子树遍历完毕， 强迫退栈
-
-
-# 二叉树对象
-class BinTree:
-    def __init__(self, name='BinTree', debug_level=0):
+# AVL二叉树对象
+class AVLTree:
+    def __init__(self, name='AVLTree', debug_level=0):
         '''
         debug_level:0=no-debug; 1=draw_tree; 2+=draw_tree_all
         '''
@@ -187,10 +147,10 @@ class BinTree:
         self.logger = logging.getLogger(f'{self.tree_name}')
         g_logger = logging.getLogger('main')
         self.logger.setLevel(g_logger.getEffectiveLevel())
-        binTree_logger.setLevel(g_logger.getEffectiveLevel())
+        AVLTree_logger.setLevel(g_logger.getEffectiveLevel())
         for h in g_logger.handlers:
             self.logger.addHandler(h)
-            binTree_logger.addHandler(h) #这里补上模块日志的handler，有点ugly TODO: better way [low prioryty]
+            AVLTree_logger.addHandler(h) #这里补上模块日志的handler
 
         self.DBG = self.logger.debug
         self.INFO = self.logger.info
@@ -198,7 +158,7 @@ class BinTree:
         self.ERR = self.logger.error
 
     def __str__(self):
-        return f'BinTree({self.tree_name}) id:{id(self)}'
+        return f'AVLTree({self.tree_name}) id:{id(self)}'
 
     #打印树 #for debug only
     def debugShow(self, label="", check=True):
@@ -226,7 +186,7 @@ class BinTree:
 
     #检查树 链接关系 和 平衡性 #for debug only
     def _checkTree(self):
-        def check(node:BinTNode):
+        def check(node:AVLTNode):
             # self.DBG(node.value)
             if node.is_left is None:
                 assert node.parent is None
@@ -245,13 +205,13 @@ class BinTree:
 
     #验证树平衡性 #for debug only
     def checkBalance(self):
-        def check(node:BinTNode):
+        def check(node:AVLTNode):
             assert node.left_height < node.right_height + 2
             assert node.right_height < node.left_height + 2
         preorder_nonrec(self.root, check)
 
     #新增端点
-    def insert(self, new_node:BinTNode, auto_rebalance=True):
+    def insert(self, new_node:AVLTNode, auto_rebalance=True):
         """
         """
         assert new_node.value not in self.value_list or self.value_list[new_node.value]=='r'
@@ -343,7 +303,7 @@ class BinTree:
             t = t.left_child
         return l
 
-    def locate(self, value:int)->BinTNode|None:
+    def locate(self, value:int)->AVLTNode|None:
         if self.root is None:
             return
 
@@ -360,7 +320,7 @@ class BinTree:
             else:
                 return node
 
-    def locate_min(self, node:BinTNode|None = None)->BinTNode:
+    def locate_min(self, node:AVLTNode|None = None)->AVLTNode:
         if node is None:
             min_node = self.root
         else:
@@ -373,7 +333,7 @@ class BinTree:
                 break
         return min_node
 
-    def locate_max(self, node:BinTNode|None = None):
+    def locate_max(self, node:AVLTNode|None = None):
         if node is None:
             max_node = self.root
         else:
@@ -387,7 +347,7 @@ class BinTree:
         return max_node
 
     # 找比某node更小的
-    def locate_lower(self, node:BinTNode):
+    def locate_lower(self, node:AVLTNode):
         assert id(node.host_tree) ==  id(self)
         if node.left_child is not None:
             return self.locate_max(node.left_child)
@@ -399,7 +359,7 @@ class BinTree:
                 return lower
             return None
 
-    def locate_higher(self, node:BinTNode):
+    def locate_higher(self, node:AVLTNode):
         assert id(node.host_tree) ==  id(self)
         if node.right_child is not None:
             return self.locate_min(node.right_child)
@@ -423,7 +383,7 @@ class BinTree:
         self.remove_node(node, auto_rebalance)
         self.value_list[value] = 'r'
 
-    def remove_node(self, node:BinTNode, auto_rebalance=True):
+    def remove_node(self, node:AVLTNode, auto_rebalance=True):
         if node is None:
             return
         label = f'remove_node {node.value}'
@@ -528,7 +488,7 @@ class BinTree:
 
     #平衡端点，在插入或删除端点后，要递归平衡其父节点
     #node is the point to hook nodes
-    def _balance(self, node_param:BinTNode, recurve_to_root=False):
+    def _balance(self, node_param:AVLTNode, recurve_to_root=False):
         node = node_param
         while node is not None:
             balance_factor = node.right_height - node.left_height
@@ -555,7 +515,7 @@ class BinTree:
             node = node.parent
 
     # 挂载新端点
-    def _hook_new_node(self, is_left:bool, new_hook:BinTNode, parent:BinTNode):
+    def _hook_new_node(self, is_left:bool, new_hook:AVLTNode, parent:AVLTNode):
         if is_left is None:
             # node = self.root
             self.root = new_hook
@@ -588,7 +548,7 @@ class BinTree:
                 break
 
 
-    def _ll_case(self, child:BinTNode):
+    def _ll_case(self, child:AVLTNode):
         """Rotate Nodes for LL Case.
 
         Reference:
@@ -617,7 +577,7 @@ class BinTree:
 
         self.debugShow(label)
 
-    def _rr_case(self, node_param:BinTNode):
+    def _rr_case(self, node_param:AVLTNode):
         """Rotate Nodes for RR Case.
 
         Reference:
@@ -648,7 +608,7 @@ class BinTree:
 
         self.debugShow(label)
 
-    def _lr_case(self, node:BinTNode):
+    def _lr_case(self, node:AVLTNode):
         """Rotate Nodes for LR Case.
 
         Reference:
@@ -678,7 +638,7 @@ class BinTree:
         self._ll_case(node)
 
 
-    def _rl_case(self, node:BinTNode):
+    def _rl_case(self, node:AVLTNode):
         """Rotate Nodes for RL Case.
 
         Reference:
@@ -724,14 +684,14 @@ class BinTree:
         data = data['nodes']
         nodes = {}
         for n in data:
-            new_node = BinTNode(host_tree=self)
+            new_node = AVLTNode(host_tree=self)
             new_node.load(n)
             nodes[new_node.value] = new_node
 
             if new_node.parent is None:
                 self.root = new_node
 
-        def linkChild(node:BinTNode):
+        def linkChild(node:AVLTNode):
             if node.left_child is not None:
                 lf = nodes[node.left_child]
                 node.left_child = lf

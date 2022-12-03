@@ -4,7 +4,7 @@ import logging
 import datetime
 from time import localtime
 import os
-import tool.test.test_binTree as binTree
+import binaryTree.test.test_binTree as binTree
 
 if __name__== '__main__':
     myname = os.path.split(__file__)[1][:-3]
@@ -28,9 +28,9 @@ if __name__== '__main__':
     logger.addHandler(fh)
     logger.addHandler(sh)
 
-    binTree.TEST_insert_then_removeA()
-    binTree.TEST_insert_then_removeB()
-    binTree.TEST_insert_then_removeC()
-    binTree.TEST_batch_insert_remove()
-    binTree.test_pattern_save_load()
+    binTree.TESTAVL_insert_then_removeA()
+    # binTree.TESTAVL_insert_then_removeB()
+    # binTree.TESTAVL_insert_then_removeC()
+    # binTree.TESTAVL_batch_insert_remove()
+    # binTree.TESTAVL_save_load()
     # binTree.test_pattern_no_auto_rebalance()

@@ -12,8 +12,8 @@ class simpleStack(object):
     def push(self,item):
         # 压栈，添加元素
         self.__list.append(item)
-        if len(self.__list) > self.max_list:
-            self.max_list = len(self.__list)
+        if len(self.__list) > self.max_size:
+            self.max_size = len(self.__list)
 
     def pop(self):
         # 弹栈，弹出最后压入栈的元素

@@ -42,6 +42,6 @@ if __name__== '__main__':
     fh.setLevel(logging.WARN)
     sh.setLevel(logging.ERROR)
     try:
-        behave.TEST_mu_bat(data_source, all_inc, batch_nb=16, bgn_batch=0, SecurityIDSource=SecurityIDSource_SZSE, instrument_type=INSTRUMENT_TYPE.STOCK, logPack=logPack) #
+        behave.TEST_mu_bat(data_source, all_inc, batch_nb=16, bgn_batch=13, SecurityIDSource=SecurityIDSource_SZSE, instrument_type=INSTRUMENT_TYPE.STOCK, logPack=logPack) #
     except Exception as e:
         logger.error(f'{traceback.format_exc()}')
