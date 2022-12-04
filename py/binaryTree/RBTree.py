@@ -193,29 +193,29 @@ class RBTree:
 
     
     def check_node_valid(self, node:RBTNode):
-        if node == RBTree.NULL_NODE:
-            # assert node.is_red == 0
+        if node==RBTree.NULL_NODE:
+            # assert node.is_red==0
             return
 
-        if node.is_red == 1:
-            assert node.left==RBTree.NULL_NODE or node.left.is_red == 0
-            assert node.right==RBTree.NULL_NODE or node.right.is_red == 0
+        if node.is_red==1:
+            assert node.left==RBTree.NULL_NODE or node.left.is_red==0
+            assert node.right==RBTree.NULL_NODE or node.right.is_red==0
 
-        if node.left != RBTree.NULL_NODE and node.left is not None:
-            assert node.value >= node.left.value and node.left.is_left
+        if node.left!=RBTree.NULL_NODE and node.left is not None:
+            assert node.value>=node.left.value and node.left.is_left
             assert node.left.parent==node
-        if node.right != RBTree.NULL_NODE and node.right is not None:
-            assert node.value <= node.right.value and not node.right.is_left
+        if node.right!=RBTree.NULL_NODE and node.right is not None:
+            assert node.value<=node.right.value and not node.right.is_left
             assert node.right.parent==node
 
     def check_valid_recur(self, node:RBTNode):
         self.check_node_valid(node)
 
-        if node == RBTree.NULL_NODE:
+        if node==RBTree.NULL_NODE:
             return 1
 
-        if node.left == RBTree.NULL_NODE and node.right == RBTree.NULL_NODE:
-            if node.is_red == 0:
+        if node.left==RBTree.NULL_NODE and node.right==RBTree.NULL_NODE:
+            if node.is_red==0:
                 return 2
             else:
                 return 1
@@ -223,17 +223,17 @@ class RBTree:
         left_count = self.check_valid_recur(node.left)
         right_count = self.check_valid_recur(node.right)
 
-        assert left_count == right_count
+        assert left_count==right_count
 
         cur_count = left_count # doesn't matter which one we choose because they're the same
-        if node.is_red == 0:
+        if node.is_red==0:
             cur_count += 1 
 
         return cur_count
 
 
     def _checkTree(self):
-        assert self.root.is_red == 0
+        assert self.root.is_red==0
 
         self.check_valid_recur(self.root)
     
@@ -249,9 +249,9 @@ class RBTree:
         y = None
         x = self.root
 
-        while x != RBTree.NULL_NODE:
+        while x!=RBTree.NULL_NODE:
             y = x
-            if new_node.value < x.value:
+            if new_node.value<x.value:
                 x = x.left
             else:
                 x = x.right
@@ -259,7 +259,7 @@ class RBTree:
         new_node.parent = y
         if y is None:
             self.root = new_node
-        elif new_node.value < y.value:
+        elif new_node.value<y.value:
             new_node.is_left = True
             y.left = new_node
         else:
@@ -267,6 +267,8 @@ class RBTree:
             y.right = new_node
         
         self.size += 1
+        if self.size>self.size_max:
+            self.size_max = self.size
 
         if new_node.parent is None:
             new_node.is_red = False
@@ -284,16 +286,16 @@ class RBTree:
 
     # Balance the tree after insertion
     def _balance(self, node:RBTNode):
-        while node.parent.is_red == 1:
-            if node.parent == node.parent.parent.right:
+        while node.parent.is_red==1:
+            if node.parent==node.parent.parent.right:
                 u = node.parent.parent.left
-                if u!=RBTree.NULL_NODE and u.is_red == 1:
+                if u!=RBTree.NULL_NODE and u.is_red==1:
                     u.is_red = 0
                     node.parent.is_red = 0
                     node.parent.parent.is_red = 1
                     node = node.parent.parent
                 else:
-                    if node == node.parent.left:
+                    if node==node.parent.left:
                         node = node.parent
                         self.right_rotate(node)
                     node.parent.is_red = 0
@@ -302,19 +304,19 @@ class RBTree:
             else:
                 u = node.parent.parent.right
 
-                if u!=RBTree.NULL_NODE and u.is_red == 1:
+                if u!=RBTree.NULL_NODE and u.is_red==1:
                     u.is_red = 0
                     node.parent.is_red = 0
                     node.parent.parent.is_red = 1
                     node = node.parent.parent
                 else:
-                    if node == node.parent.right:
+                    if node==node.parent.right:
                         node = node.parent
                         self.left_rotate(node)
                     node.parent.is_red = 0
                     node.parent.parent.is_red = 1
                     self.right_rotate(node.parent.parent)
-            if node == self.root:
+            if node==self.root:
                 break
         self.root.is_red = 0
         
@@ -322,7 +324,7 @@ class RBTree:
     def left_rotate(self, x:RBTNode):
         y = x.right
         x.right = y.left
-        if y.left != RBTree.NULL_NODE:
+        if y.left!=RBTree.NULL_NODE:
             y.left.is_left = False
             y.left.parent = x
 
@@ -330,7 +332,7 @@ class RBTree:
         if x.parent is None:
             y.is_left = None
             self.root = y
-        elif x.is_left:# x == x.parent.left:
+        elif x.is_left:# x==x.parent.left:
             y.is_left = True
             x.parent.left = y
         else:
@@ -342,7 +344,7 @@ class RBTree:
     def right_rotate(self, x:RBTNode):
         y = x.left
         x.left = y.right
-        if y.right != RBTree.NULL_NODE:
+        if y.right!=RBTree.NULL_NODE:
             y.right.is_left = True
             y.right.parent = x
 
@@ -350,7 +352,7 @@ class RBTree:
         if x.parent is None:
             y.is_left = None
             self.root = y
-        elif not x.is_left:# x == x.parent.right:
+        elif not x.is_left:# x==x.parent.right:
             y.is_left = False
             x.parent.right = y
         else:
@@ -394,11 +396,11 @@ class RBTree:
 
         node = self.root
         while True:
-            if node.value < value:
+            if node.value<value:
                 node = node.right
                 if node is None:
                     return
-            elif node.value > value:
+            elif node.value>value:
                 node = node.left
                 if node is None:
                     return
@@ -410,7 +412,7 @@ class RBTree:
         if node is None:
             min_node = self.root
         else:
-            assert id(node.host_tree) ==  id(self)
+            assert id(node.host_tree)== id(self)
             min_node = node
         while min_node is not None:
             if min_node.left:
@@ -423,7 +425,7 @@ class RBTree:
         if node is None:
             max_node = self.root
         else:
-            assert id(node.host_tree) ==  id(self)
+            assert id(node.host_tree)== id(self)
             max_node = node
         while max_node is not None:
             if max_node.right:
@@ -434,26 +436,26 @@ class RBTree:
 
     # 找比某node更小的
     def locate_lower(self, node:RBTNode):
-        assert id(node.host_tree) ==  id(self)
+        assert id(node.host_tree)== id(self)
         if node.left is not None:
             return self.locate_max(node.left)
         else:
             lower = node.parent
-            while lower is not None and lower.value > node.value:
+            while lower is not None and lower.value>node.value:
                 lower = lower.parent
-            if lower is not None and lower.value < node.value:
+            if lower is not None and lower.value<node.value:
                 return lower
             return None
             
     def locate_higher(self, node:RBTNode):
-        assert id(node.host_tree) ==  id(self)
+        assert id(node.host_tree)== id(self)
         if node.right is not None:
             return self.locate_min(node.right)
         else:
             higher = node.parent
-            while higher is not None and higher.value < node.value:
+            while higher is not None and higher.value<node.value:
                 higher = higher.parent
-            if higher is not None and higher.value > node.value:
+            if higher is not None and higher.value>node.value:
                 return higher
             return None
 
@@ -468,34 +470,34 @@ class RBTree:
     # Node deletion
     def delete_node_helper(self, node:RBTNode|None, key, auto_rebalance=True):
         z = RBTree.NULL_NODE
-        while node != RBTree.NULL_NODE:
-            if node.value == key:
+        while node!=RBTree.NULL_NODE:
+            if node.value==key:
                 z = node
 
-            if node.value <= key:
+            if node.value<=key:
                 node = node.right
             else:
                 node = node.left
 
-        if z == RBTree.NULL_NODE:
+        if z==RBTree.NULL_NODE:
             # print("Cannot find key in the tree")
             return
 
         y = z
         y_original_color = y.is_red
-        if z.left == RBTree.NULL_NODE:
+        if z.left==RBTree.NULL_NODE:
             # If no left child, just scoot the right subtree up
             self.__rb_transplant(z, z.right)
-            if z.right != RBTree.NULL_NODE:
+            if z.right!=RBTree.NULL_NODE:
                 x = z.right
             else:
                 x = RBTNode(None, False)
                 x.parent = z.parent
                 x.is_left = z.is_left
-        elif z.right == RBTree.NULL_NODE:
+        elif z.right==RBTree.NULL_NODE:
             # If no right child, just scoot the left subtree up
             self.__rb_transplant(z, z.left)
-            if z.left != RBTree.NULL_NODE:
+            if z.left!=RBTree.NULL_NODE:
                 x = z.left
             else:
                 x = RBTNode(None, False)
@@ -504,7 +506,7 @@ class RBTree:
         else:
             y = self.locate_min(z.right)
             y_original_color = y.is_red
-            if y.parent == z:
+            if y.parent==z:
                 x = y.right
                 if x!=RBTree.NULL_NODE:
                     x.parent = y
@@ -514,7 +516,7 @@ class RBTree:
                     x.parent = y
             else:
                 self.__rb_transplant(y, y.right)
-                if y.right != RBTree.NULL_NODE:
+                if y.right!=RBTree.NULL_NODE:
                     x = y.right
                 else:
                     x = RBTNode(None, False)
@@ -528,7 +530,7 @@ class RBTree:
             y.left = z.left
             y.left.parent = y
             y.is_red = z.is_red
-        if y_original_color == 0 and self.root is not None and auto_rebalance:
+        if y_original_color==0 and self.root is not None and auto_rebalance:
             self.delete_fix(x)
 
         self.size -= 1
@@ -536,7 +538,7 @@ class RBTree:
     def __rb_transplant(self, u:RBTNode, v:RBTNode):
         if u.parent is None:
             self.root = v
-        elif u.is_left: #u == u.parent.left:
+        elif u.is_left: #u==u.parent.left:
             u.parent.left = v
         else:
             u.parent.right = v
@@ -546,23 +548,23 @@ class RBTree:
         
     # Balancing the tree after deletion
     def delete_fix(self, x:RBTNode):
-        # print(x.item, x == self.TNULL, x is None, self.size, x.parent, x.parent.left, x.parent.right, x.parent.right.left, x.parent.right.right)
+        # print(x.item, x==self.TNULL, x is None, self.size, x.parent, x.parent.left, x.parent.right, x.parent.right.left, x.parent.right.right)
         # if x.parent.right.right is None:
         #     self.print_tree()
-        while x != self.root and x.is_red == 0:
-            if x.is_left:# x == x.parent.left:
+        while x!=self.root and x.is_red==0:
+            if x.is_left:# x==x.parent.left:
                 s = x.parent.right
-                if s!=RBTree.NULL_NODE and s.is_red == 1:
+                if s!=RBTree.NULL_NODE and s.is_red==1:
                     s.is_red = 0
                     x.parent.is_red = 1
                     self.left_rotate(x.parent)
                     s = x.parent.right
 
-                if (s.left==RBTree.NULL_NODE or s.left.is_red == 0) and (s.right==RBTree.NULL_NODE or s.right.is_red == 0):
+                if (s.left==RBTree.NULL_NODE or s.left.is_red==0) and (s.right==RBTree.NULL_NODE or s.right.is_red==0):
                     s.is_red = 1
                     x = x.parent
                 else:
-                    if s.right==RBTree.NULL_NODE or s.right.is_red == 0:
+                    if s.right==RBTree.NULL_NODE or s.right.is_red==0:
                         s.left.is_red = 0
                         s.is_red = 1
                         self.right_rotate(s)
@@ -575,17 +577,17 @@ class RBTree:
                     x = self.root
             else:
                 s = x.parent.left
-                if s!=RBTree.NULL_NODE and s.is_red == 1:
+                if s!=RBTree.NULL_NODE and s.is_red==1:
                     s.is_red = 0
                     x.parent.is_red = 1
                     self.right_rotate(x.parent)
                     s = x.parent.left
 
-                if (s.left==RBTree.NULL_NODE or s.left.is_red == 0) and (s.right==RBTree.NULL_NODE or s.right.is_red == 0):
+                if (s.left==RBTree.NULL_NODE or s.left.is_red==0) and (s.right==RBTree.NULL_NODE or s.right.is_red==0):
                     s.is_red = 1
                     x = x.parent
                 else:
-                    if s.left==RBTree.NULL_NODE or s.left.is_red == 0:
+                    if s.left==RBTree.NULL_NODE or s.left.is_red==0:
                         s.right.is_red = 0
                         s.is_red = 1
                         self.left_rotate(s)
