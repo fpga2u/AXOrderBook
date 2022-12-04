@@ -241,7 +241,6 @@ class RBTree:
         label = "insert " + str(new_node.value)
         self.DBG(f'{label}...')
 
-        new_node.parent = None
         new_node.left = RBTree.NULL_NODE
         new_node.right = RBTree.NULL_NODE
         new_node.is_red = True
@@ -287,7 +286,7 @@ class RBTree:
     # Balance the tree after insertion
     def _balance(self, node:RBTNode):
         while node.parent.is_red==1:
-            if node.parent==node.parent.parent.right:
+            if not node.parent.is_left:# node.parent==node.parent.parent.right:
                 u = node.parent.parent.left
                 if u!=RBTree.NULL_NODE and u.is_red==1:
                     u.is_red = 0
@@ -295,7 +294,7 @@ class RBTree:
                     node.parent.parent.is_red = 1
                     node = node.parent.parent
                 else:
-                    if node==node.parent.left:
+                    if node.is_left:#node==node.parent.left:
                         node = node.parent
                         self.right_rotate(node)
                     node.parent.is_red = 0
@@ -310,13 +309,13 @@ class RBTree:
                     node.parent.parent.is_red = 1
                     node = node.parent.parent
                 else:
-                    if node==node.parent.right:
+                    if not node.is_left:#node==node.parent.right:
                         node = node.parent
                         self.left_rotate(node)
                     node.parent.is_red = 0
                     node.parent.parent.is_red = 1
                     self.right_rotate(node.parent.parent)
-            if node==self.root:
+            if node.parent is None:#node==self.root:
                 break
         self.root.is_red = 0
         
@@ -406,7 +405,6 @@ class RBTree:
                     return
             else:
                 return node
-
 
     def locate_min(self, node:RBTNode|None = None)->RBTNode:
         if node is None:

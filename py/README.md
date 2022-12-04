@@ -28,6 +28,8 @@
 
 ![AVL](../doc/pic/AVLTree_view.png)
 
+其中红黑树主要基于[Python red-black trees](https://github.com/emilydolson/python-red-black-trees)修改。
+
 ## 执行
 
 python部分不是一个库，因此没有提供安装。
