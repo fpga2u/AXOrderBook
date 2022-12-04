@@ -1005,7 +1005,7 @@ class AXOB():
             self.tradeLimit(SIDE.BID, exec.LastQty, exec.BidApplSeqNum)
 
             if self.ask_min_level_qty==0 or self.bid_max_level_qty==0 or self.ask_min_level_price>self.bid_max_level_price:
-                self.INFO('openCall/closeCall trade over')
+                self.DBG('openCall/closeCall trade over')
                 if self.TradingPhaseMarket==axsbe_base.TPM.VolatilityBreaking:
                     self.TradingPhaseMarket = exec.TradingPhaseMarket
                 self.genSnap()   #集合竞价所有成交完成
@@ -1242,7 +1242,7 @@ class AXOB():
         if snap.TradingPhaseMarket==axsbe_base.TPM.Starting: # 每天最早的一批快照(7点半前)是没有涨停价、跌停价的，不能只锁一次
             self.constantValue_ready = True
             if self.ChannelNo==0:
-                self.INFO(f"Update constatant: ChannelNo={snap.ChannelNo}, PrevClosePx={snap.PrevClosePx}, UpLimitPx={snap.UpLimitPx}, DnLimitPx={snap.DnLimitPx}")
+                self.DBG(f"Update constatant: ChannelNo={snap.ChannelNo}, PrevClosePx={snap.PrevClosePx}, UpLimitPx={snap.UpLimitPx}, DnLimitPx={snap.DnLimitPx}")
 
             self.ChannelNo = snap.ChannelNo
             if self.SecurityIDSource==SecurityIDSource_SZSE:
@@ -1306,7 +1306,7 @@ class AXOB():
         else:
             # 在重建的快照中检索是否有相同的快照
             if self.last_snap and snap.is_same(self.last_snap) and self._chkSnapTimestamp(snap, self.last_snap):
-                self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
+                self.DBG(f'market snap #{self.msg_nb}({snap.TransactTime})'+
                           f' matches last rebuilt snap #{self.last_snap._seq}({self.last_snap.TransactTime})')
                 ks = list(self.rebuilt_snaps.keys())
                 for k in ks:
@@ -1318,7 +1318,7 @@ class AXOB():
                 if snap.NumTrades in self.rebuilt_snaps:
                     for gen in self.rebuilt_snaps[snap.NumTrades]:
                         if snap.is_same(gen) and self._chkSnapTimestamp(snap, gen):
-                            self.INFO(f'market snap #{self.msg_nb}({snap.TransactTime})'+
+                            self.DBG(f'market snap #{self.msg_nb}({snap.TransactTime})'+
                                     f' matches history rebuilt snap #{gen._seq}({gen.TransactTime})')
                             matched = True
                             break

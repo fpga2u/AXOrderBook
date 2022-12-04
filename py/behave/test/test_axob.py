@@ -9,6 +9,10 @@ from behave.mu import *
 import os
 import pickle
 
+def print_log(h, msg):
+    print(msg)
+    if h!=print:
+        h(msg)
 
 def TEST_axob_SL(date, instrument:int, 
                 SecurityIDSource=SecurityIDSource_SZSE, 
@@ -186,7 +190,7 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
     DBG, INFO, WARN, ERR = logPack
 
     mu = MU(instrument_list, SecurityIDSource, instrument_type)
-    print(f'{datetime.today()} instrumen_nb={len(instrument_list)}, current memory usage={getMemUsageGB():.3f} GB')
+    print_log(INFO, f'{datetime.today()} instrumen_nb={len(instrument_list)}, current memory usage={getMemUsageGB():.3f} GB')
 
     n = 0 #只计算在 instrument_list 内的消息
     n_bgn = 0
@@ -199,25 +203,25 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
     for msg in axsbe_file(source_file):
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
-            print(f'{datetime.today()} openCall start')
+            print_log(INFO, f'{datetime.today()} openCall start')
 
         if msg.TradingPhaseMarket==TPM.Ending and ecc==0:
             ecc = 1
-            print(f'{datetime.today()} closeCall over')
+            print_log(INFO, f'{datetime.today()} closeCall over')
 
         mu.onMsg(msg)
         n += 1
         if n_max>0 and n>=n_max:
-            print(f'{datetime.today()} nb over, n={n}')
+            print_log(INFO, f'{datetime.today()} nb over, n={n}')
             break
 
         if (openCall_only and msg.HHMMSSms>92600000) or \
            (msg.HHMMSSms>150100000):
-            print(f'{datetime.today()} Ending: over, n={n}')
+            print_log(INFO, f'{datetime.today()} Ending: over, n={n}')
             break
 
         if HHMMSSms_max is not None and HHMMSSms_max>0 and msg.HHMMSSms>HHMMSSms_max:
-            print(f'{datetime.today()} HHMMSSms_max: over, n={n}, msg @({msg.TransactTime})')
+            print_log(INFO, f'{datetime.today()} HHMMSSms_max: over, n={n}, msg @({msg.TransactTime})')
             break
 
         now = time()
@@ -232,7 +236,7 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
             t_pf = now
 
             if now>t_bgn+60*10:#内存情况，报告周期10min
-                print(f'{datetime.today()} current memory usage={memUsage:.3f} GB free={memFree:.3f} GB'
+                print_log(INFO, f'{datetime.today()} current memory usage={memUsage:.3f} GB free={memFree:.3f} GB'
                     f'(epoch peak={profile_memUsage:.3f} GB, minFree={profile_memFree:.3f} GB),' 
                     f' @{msg.HHMMSSms}')
                 t_bgn = now
@@ -242,7 +246,7 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
     if WARN is not None:
         WARN(mu) #保证能记录到文件中
     assert mu.are_you_ok()
-    print(f'== TEST_axob_bat PASS ==')
+    print_log(INFO, f'== TEST_axob_bat PASS ==')
     return
 
 
@@ -447,16 +451,17 @@ def TEST_mu_bat(source_file, instrument_list:list,
     '''
     _end_batch = end_batch
     if _end_batch<bgn_batch or _end_batch>=batch_nb: _end_batch=batch_nb-1
+    DBG, INFO, WARN, ERR = logPack
 
-    print(f'{datetime.today()} Test mu batch nb={batch_nb}, work from #{bgn_batch} to #{_end_batch}:')
+    print_log(INFO, f'{datetime.today()} Test mu batch nb={batch_nb}, work from #{bgn_batch} to #{_end_batch}:')
     for i in range(bgn_batch, _end_batch+1):
         current_list = instrument_list[i::batch_nb]
         freeGB = getMemFreeGB()
-        print(f'{datetime.today()} Working on batch #{i}/{batch_nb}, current system free memory={freeGB:.3f} GB...')
+        print_log(INFO, f'{datetime.today()} Working on batch #{i}/{batch_nb}, current system free memory={freeGB:.3f} GB...')
         while freeGB*168<len(current_list)*30:  #168只个股最大约占30G
-            print(f'{datetime.today()} sleep for not enough free memory...')
+            print_log(INFO, f'{datetime.today()} sleep for not enough free memory...')
             sleep(180)
             freeGB = getMemFreeGB()
-            print(f'{datetime.today()} current system free memory={freeGB:.3f} GB' 
+            print_log(INFO, f'{datetime.today()} current system free memory={freeGB:.3f} GB' 
                   f'(each instrument={freeGB/len(current_list):.4f}), total require={30*len(current_list)/168:.4f} GB')
         TEST_axob_bat(source_file, current_list, n_max=0, openCall_only=False, SecurityIDSource=SecurityIDSource, instrument_type=instrument_type, logPack=logPack) #

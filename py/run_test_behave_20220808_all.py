@@ -39,7 +39,7 @@ if __name__== '__main__':
     print(f'all_inc len={len(all_inc)}')
 
     logger.info('starting TEST_axob_bat')
-    fh.setLevel(logging.WARN)
+    fh.setLevel(logging.INFO)
     sh.setLevel(logging.ERROR)
     try:
         behave.TEST_mu_bat(data_source, all_inc, batch_nb=16, bgn_batch=0, SecurityIDSource=SecurityIDSource_SZSE, instrument_type=INSTRUMENT_TYPE.STOCK, logPack=logPack) #

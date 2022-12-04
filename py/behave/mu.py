@@ -96,48 +96,48 @@ class MU():
                 #任意逐笔，或快照时戳大于等于开盘
                 if (isinstance(msg, (axsbe_order, axsbe_exe))) or\
                    (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=91500000):
-                    self.INFO('Starting -> OpenCall')
+                    self.INFO(f'Chnl {unique_ChannelNo} Starting -> OpenCall')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.OpenCall
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.OPENCALL_BGN)
             elif self.channel_map[unique_ChannelNo]['TPM']==TPM.OpenCall: # OpenCall -> PreTradingBreaking
                 # 任意逐笔离开开盘集合竞价，或快照时戳超过盘前休市15s
                 if (isinstance(msg, axsbe_exe) and msg.TradingPhaseMarket==TPM.PreTradingBreaking) or\
                    (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=92515000):
-                    self.INFO('OpenCall -> PreTradingBreaking')
+                    self.INFO(f'Chnl {unique_ChannelNo} OpenCall -> PreTradingBreaking')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.PreTradingBreaking
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.OPENCALL_END)
             elif self.channel_map[unique_ChannelNo]['TPM']==TPM.PreTradingBreaking: # PreTradingBreaking -> AMTrading
                 #任意逐笔进入上午连续竞价阶段，或快照时戳大于等于上午连续竞价
                 if (isinstance(msg, (axsbe_order, axsbe_exe)) and msg.TradingPhaseMarket==TPM.AMTrading) or\
                    (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=93000000):
-                    self.INFO('PreTradingBreaking -> AMTrading')
+                    self.INFO(f'Chnl {unique_ChannelNo} PreTradingBreaking -> AMTrading')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.AMTrading
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.AMTRADING_BGN)
             elif self.channel_map[unique_ChannelNo]['TPM']==TPM.AMTrading: # AMTrading -> Breaking
                 #快照时戳大于等于中午休市15s
                 if (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=113015000):
-                    self.INFO('AMTrading -> Breaking')
+                    self.INFO(f'Chnl {unique_ChannelNo} AMTrading -> Breaking')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.Breaking
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.AMTRADING_END)
             elif self.channel_map[unique_ChannelNo]['TPM']==TPM.Breaking: # Breaking -> PMTrading
                 #任意逐笔，或快照时戳大于等于下午连续竞价
                 if (isinstance(msg, (axsbe_order, axsbe_exe))) or\
                    (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=130000000):
-                    self.INFO('Breaking -> PMTrading')
+                    self.INFO(f'Chnl {unique_ChannelNo} Breaking -> PMTrading')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.PMTrading
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.PMTRADING_BGN)
             elif self.channel_map[unique_ChannelNo]['TPM']==TPM.PMTrading: # PMTrading -> CloseCall
                 #任意逐笔进入收盘集合竞价阶段，或快照时戳大于等于收盘集合竞价15s
                 if (isinstance(msg, (axsbe_order, axsbe_exe)) and msg.TradingPhaseMarket==TPM.CloseCall) or\
                    (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=145715000):
-                    self.INFO('PMTrading -> CloseCall')
+                    self.INFO(f'Chnl {unique_ChannelNo} PMTrading -> CloseCall')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.CloseCall
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.PMTRADING_END)
             elif self.channel_map[unique_ChannelNo]['TPM']==TPM.CloseCall: # CloseCall -> Ending
                 #任意成交离开收盘集合竞价阶段，或快照时戳大于等于闭市15s
                 if (isinstance(msg, axsbe_exe) and msg.TradingPhaseMarket==TPM.Ending) or\
                    (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=150015000):
-                    self.INFO('CloseCall -> Ending')
+                    self.INFO(f'Chnl {unique_ChannelNo} CloseCall -> Ending')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.Ending
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.ALL_END)
         else:

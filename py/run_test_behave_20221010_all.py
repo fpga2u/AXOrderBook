@@ -32,7 +32,7 @@ if __name__== '__main__':
     logPack = logger.debug, logger.info, logger.warn, logger.error
 
     ###测试20221010所有有委托的只股票，全天【pass@22/11/24】
-    fh.setLevel(logging.WARN)
+    fh.setLevel(logging.INFO)
     sh.setLevel(logging.ERROR)
     logger.info('starting TEST_axob_bat')
     data_source = "H:/AXOB_data_newP/20221010/sbe_20221010_all.log" #股票:2734
