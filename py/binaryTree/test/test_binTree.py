@@ -10,7 +10,7 @@ def _AVL_insert_then_remove(l, s):
     if not os.path.exists(DBG_VIEW_ROOT):
         os.makedirs(DBG_VIEW_ROOT, exist_ok=True)
 
-    t = AVLTree(s, 2)
+    t = AVLTree(s, 1)
     for n in l:
         new_node = AVLTNode(n, host_tree=t)
         t.insert(new_node, auto_rebalance=True)
@@ -97,18 +97,20 @@ def TESTAVL_batch_insert_remove():
         AVLTree_logger.info(t.inorder_list_dec())
     t.checkBalance()
 
-def test_pattern_no_auto_rebalance():
+def TESTAVL_no_auto_rebalance(inorder):
     '''
     测试：在插入时不进行平衡
+    inorder 插入值是否递增；True: 递增，将退化成链表；False: 插入值随机
     '''
     l = [14987, 16059, 20287, 23639, 47623, 47624, 47625, 50672, 87188, 87189, 97471, 97472, 118563, 124604, 135780, 135781]
-    random.seed(1000)
-    shuffle(l)
-    t = AVLTree()
+    if not inorder:
+        random.seed(1000)
+        shuffle(l)
+    tree_name = 'no_auto_rebalance' + ('(inorder)' if inorder else '(random)')
+    t = AVLTree(tree_name, debug_level=1)
     for n in l:
         new_node = AVLTNode(n, host_tree=t)
         t.insert(new_node, auto_rebalance=False)
-    t.debugShow(save_graph=True)
     #TODO: 在所有插入完成后平衡，目前不成功
     # t._balance(t.locate_max(t.root), recurve_to_root=True)
     # # t._balance(t.root)
