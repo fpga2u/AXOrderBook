@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from binaryTree.AVLTree import *
+from binaryTree.RBTree import *
 import random
 from random import shuffle, randint
 import os
@@ -16,6 +17,17 @@ def _AVL_insert_then_remove(l, s):
         t.insert(new_node, auto_rebalance=True)
     t.debugShow(label='insert_final')
 
+    AVLTree_logger.info(t.inorder_list_inc())
+    AVLTree_logger.info(t.inorder_list_dec())
+
+    AVLTree_logger.info(f'locate({l[len(l)//2]}) = {t.locate(l[len(l)//2])}')
+    AVLTree_logger.info(f'locate({max(l)+1}) = {t.locate(max(l)+1)}')
+    AVLTree_logger.info(f'locate({min(l)-1}) = {t.locate(min(l)-1)}')
+    AVLTree_logger.info(f'locate_min = {t.locate_min()}')
+    AVLTree_logger.info(f'locate_max = {t.locate_max()}')
+    AVLTree_logger.info(f'locate_lower({l[len(l)//2]}) = {t.locate_lower(t.locate(l[len(l)//2]))}')
+    AVLTree_logger.info(f'locate_higher({l[len(l)//2]}) = {t.locate_higher(t.locate(l[len(l)//2]))}')
+
     for n in l:
         t.remove(n, auto_rebalance=True)
     t.debugShow(label='remove_final')
@@ -28,6 +40,7 @@ def TESTAVL_insert_then_removeB():
 
 def TESTAVL_insert_then_removeC():
     _AVL_insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name)
+
 
 def TESTAVL_batch_insert_remove():
     if not os.path.exists(DBG_VIEW_ROOT):
@@ -97,6 +110,7 @@ def TESTAVL_batch_insert_remove():
         AVLTree_logger.info(t.inorder_list_dec())
     t.checkBalance()
 
+
 def TESTAVL_no_auto_rebalance(inorder):
     '''
     测试：在插入时不进行平衡
@@ -147,3 +161,113 @@ def TESTAVL_save_load():
     tl.debugShow(label="load-final")
 
     assert(t.size == tl.size)
+
+
+def _RBT_insert_then_remove(l, s):
+    if not os.path.exists(DBG_VIEW_ROOT):
+        os.makedirs(DBG_VIEW_ROOT, exist_ok=True)
+
+    t = RBTree(s, 1)
+    for n in l:
+        new_node = RBTNode(n, host_tree=t)
+        t.insert(new_node, auto_rebalance=True)
+    t.debugShow(label='insert_final')
+
+    RBTree_logger.info(t.inorder_list_inc())
+    RBTree_logger.info(t.inorder_list_dec())
+
+    RBTree_logger.info(f'locate({l[len(l)//2]}) = {t.locate(l[len(l)//2])}')
+    RBTree_logger.info(f'locate({max(l)+1}) = {t.locate(max(l)+1)}')
+    RBTree_logger.info(f'locate({min(l)-1}) = {t.locate(min(l)-1)}')
+    RBTree_logger.info(f'locate_min = {t.locate_min()}')
+    RBTree_logger.info(f'locate_max = {t.locate_max()}')
+    RBTree_logger.info(f'locate_lower({l[len(l)//2]}) = {t.locate_lower(t.locate(l[len(l)//2]))}')
+    RBTree_logger.info(f'locate_higher({l[len(l)//2]}) = {t.locate_higher(t.locate(l[len(l)//2]))}')
+
+    for n in l:
+        t.remove(n, auto_rebalance=True)
+    t.debugShow(label='remove_final')
+
+def TESTRBT_insert_then_removeA():
+    _RBT_insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name)
+
+def TESTRBT_insert_then_removeB():
+    _RBT_insert_then_remove([x for x in range(10,0,-1)], sys._getframe().f_code.co_name)
+
+def TESTRBT_insert_then_removeC():
+    _RBT_insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name)
+
+
+
+def TESTRBT_batch_insert_remove(seed, draw):
+    if not os.path.exists(DBG_VIEW_ROOT):
+        os.makedirs(DBG_VIEW_ROOT, exist_ok=True)
+    random.seed(seed)
+    if draw:
+        debug_level = 2
+    else:
+        debug_level = 0
+    t = RBTree(name=sys._getframe().f_code.co_name, debug_level=debug_level)
+
+    total_data_size = 30
+    batch_nb = 4
+
+    value_list = [x for x in range(total_data_size)]
+    shuffle(value_list)
+    RBTree_logger.info(f'{sys._getframe().f_code.co_name} batch_nb={batch_nb} value_list={value_list}')
+
+    ##Create batch insert/remove lists ##
+    #for example:
+    # insert_lists = [ [8, 10, 1, 3, 11], [6, 15, 0, 12, 16, 2], [14, 5, 19, 9, 13, 17, 4, 7, 18] ]
+    # remove_lists = [ [8, 10, 1],        [16, 0, 6, 12, 15],    [9, 5, 13, 17, 4, 14, 19],       [3, 11, 2, 7, 18]]
+    insert_lists = []
+    bg = 0
+    for i in range(batch_nb):
+        cl = randint(3, len(value_list)//batch_nb)
+        insert_lists.append(value_list[bg: bg+cl])
+        bg = bg+cl
+    insert_lists.append(value_list[bg:])
+
+
+    remove_lists = []
+    remove_lists_r = []
+    for i in range(len(insert_lists)):
+        cl = randint(3, len(insert_lists[i]))
+        lst_i = insert_lists[i][:cl]
+        shuffle(lst_i)
+        remove_lists.append(lst_i)
+        remove_lists_r.extend(insert_lists[i][cl:])
+    remove_lists.append(remove_lists_r)
+
+    RBTree_logger.info(f'insert_lists={insert_lists}')
+    RBTree_logger.info(f'remove_lists={remove_lists}')
+
+    RBTree_logger.info(t)
+    for n in range(len(insert_lists)):
+
+        list = insert_lists[n]
+        RBTree_logger.info(f"insert list={list}")
+
+        for i in list:
+            new_node = RBTNode(i, host_tree=t)
+            t.insert(new_node)
+            RBTree_logger.info(t.inorder_list_inc())
+            RBTree_logger.info(t.inorder_list_dec())
+
+        del_list = remove_lists[n]
+
+        RBTree_logger.info(f"del_list={del_list}")
+        for i in del_list:
+            t.remove(i)
+            RBTree_logger.info(t.inorder_list_inc())
+            RBTree_logger.info(t.inorder_list_dec())
+
+
+    del_list = remove_lists[-1]
+
+    RBTree_logger.info(f"del_list={del_list}")
+    for i in del_list:
+        t.remove(i)
+        RBTree_logger.info(t.inorder_list_inc())
+        RBTree_logger.info(t.inorder_list_dec())
+    # t.checkBalance()

@@ -94,6 +94,9 @@ class AVLTNode:
             printNode(self, root_tag)
 
         return graph
+    
+    def __str__(self):
+        return f'AVLTNode({self.value}) id:{id(self)}'
 
     def save(self):
         '''

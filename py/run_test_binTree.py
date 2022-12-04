@@ -28,11 +28,19 @@ if __name__== '__main__':
     logger.addHandler(fh)
     logger.addHandler(sh)
 
-    ### test VAL
-    binTree.TESTAVL_insert_then_removeA()
-    binTree.TESTAVL_insert_then_removeB()
-    binTree.TESTAVL_insert_then_removeC()
-    binTree.TESTAVL_batch_insert_remove()
-    binTree.TESTAVL_save_load()
-    binTree.TESTAVL_no_auto_rebalance(True)
-    binTree.TESTAVL_no_auto_rebalance(False)
+    # ### test VAL
+    # binTree.TESTAVL_insert_then_removeA()
+    # binTree.TESTAVL_insert_then_removeB()
+    # binTree.TESTAVL_insert_then_removeC()
+    # binTree.TESTAVL_batch_insert_remove()
+    # binTree.TESTAVL_save_load()
+    # binTree.TESTAVL_no_auto_rebalance(True)
+    # binTree.TESTAVL_no_auto_rebalance(False)
+
+    ### RBTree
+    # binTree.TESTRBT_insert_then_removeA()
+    # binTree.TESTRBT_insert_then_removeB()
+    # binTree.TESTRBT_insert_then_removeC()
+    for i in range(1000):
+        binTree.TESTRBT_batch_insert_remove(i+13, False)
+
