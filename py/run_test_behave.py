@@ -99,11 +99,11 @@ if __name__== '__main__':
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220808, 1229)    #TODO: 新股上市首日，涨停价44%，但集合竞价进行申报的价格有效区间是[80%, 120%]，连续竞价时才是[64%, 144%]
 
-    # ### 20220812测试
-    # logger.info('starting TEST_axob_bat')
+    ### 20220812测试
+    logger.info('starting TEST_axob_bat')
     # fh.setLevel(logging.WARN)
     # sh.setLevel(logging.ERROR)
-    # behave.TEST_axob(20220812, 301336) #创业板新股首日，波动性中断测试
+    behave.TEST_axob(20220812, 301336, logPack=logPack) #创业板新股首日，波动性中断测试
     
     # ### 20220812测试
     # logger.info('starting TEST_axob_bat')

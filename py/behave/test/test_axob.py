@@ -253,13 +253,14 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
 def TEST_axob(date, instrument:int, n_max=0, 
                 openCall_only=False,
                 SecurityIDSource=SecurityIDSource_SZSE, 
-                instrument_type=INSTRUMENT_TYPE.STOCK
+                instrument_type=INSTRUMENT_TYPE.STOCK,
+                logPack=(print, print, print, print)
             ):
     md_file = f'data/{date}/AX_sbe_szse_{instrument:06d}.log'
     if not os.path.exists(md_file):
         raise f"{md_file} not exists"
 
-    TEST_axob_bat(md_file, [instrument], n_max, openCall_only, SecurityIDSource, instrument_type)
+    TEST_axob_bat(md_file, [instrument], n_max, openCall_only, SecurityIDSource, instrument_type, logPack=logPack)
 
     return
 

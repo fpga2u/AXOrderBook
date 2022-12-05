@@ -271,3 +271,93 @@ def TESTRBT_batch_insert_remove(seed, draw):
         RBTree_logger.info(t.inorder_list_inc())
         RBTree_logger.info(t.inorder_list_dec())
     # t.checkBalance()
+    assert t.size==0
+
+
+def extract_level_access_log(log_file, modify_only, side='both'):
+    '''
+    抽取日志中的价格档访问消息，独立写入一个新文件，便于观察和测试二叉树。
+    与 TESTTree_using_log 配合。
+    log_file: TEST_axob 测试日志，示例在 run_test_behave.py 中有，生成前需设置 axob.py 中的 EXPORT_LEVEL_ACCESS 为 True。
+    '''
+    export_file = log_file+'.la.log'
+    with open(log_file, 'r') as f, open(export_file, 'w') as o:
+        print(f'export file={export_file}')
+        while True:
+            l = f.readline()
+            if not l:break
+            if l.find('LEVEL_ACCESS')<0:
+                continue
+
+            if modify_only and l.find(' insert ')<0 and l.find(' remove ')<0:
+                continue
+
+            if side=='bid' and l.find(' BID ')<0:
+                continue
+
+            if side=='ask' and l.find(' ASK ')<0:
+                continue
+
+            o.write(l)
+    return export_file
+
+
+def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=None):
+    '''
+    !!!目前只支持单只个股!!!
+    读取 extract_level_access_log 输出的日志，构造价格档二叉树。
+    log_file: extract_level_access_log 输出的日志文件
+    tree_type: 'AVL' or 'RB'
+    bid_draw_size: bid树的size大于此值时将绘出树结构并保存到png文件，最大值可以在 extract_level_access_log的【输入】文件末尾查找。
+                   None时不输出png。
+    ask_draw_size: ask树的size大于此值时将绘出树结构并保存到png文件，最大值可以在 extract_level_access_log的【输入】文件末尾查找。
+                   None时不输出png。
+    '''
+    if tree_type=='AVL':
+        ask = AVLTree(f'{tree_type}_ASK_')
+        bid = AVLTree(f'{tree_type}_BID_')
+    else:
+        ask = RBTree(f'{tree_type}_ASK_')
+        bid = RBTree(f'{tree_type}_BID_')
+    with open(log_file, 'r') as f:
+        while True:
+            l = f.readline()
+            if not l:break
+
+            for cmd in [' remove ', ' insert ']:
+                p = l.find(cmd)
+                if p>=0:
+                    v = int(l[p:].strip().split(' ')[1])
+                    if l.find(' BID ')>0:
+                        if cmd==' insert ':
+                            if tree_type=='AVL':
+                                new_node = AVLTNode(v, host_tree=bid)
+                            else:
+                                new_node = RBTNode(v, host_tree=bid)
+                            bid.insert(new_node)
+                        elif cmd==' remove ':
+                            bid.remove(v)
+                    elif l.find(' ASK ')>0:
+                        if cmd==' insert ':
+                            if tree_type=='AVL':
+                                new_node = AVLTNode(v, host_tree=ask)
+                            else:
+                                new_node = RBTNode(v, host_tree=ask)
+                            ask.insert(new_node)
+                        elif cmd==' remove ':
+                            ask.remove(v)
+
+                    if bid_draw_size is not None and bid.size >= bid_draw_size:
+                        bid.debugShow('max_size', force_draw=1)
+
+                    if ask_draw_size is not None and ask.size >= ask_draw_size:
+                        ask.debugShow('max_size', force_draw=1)
+
+    if tree_type=='AVL':
+        AVLTree_logger.info(f'ASK max size={ask.size_max}')
+        AVLTree_logger.info(f'BID max size={bid.size_max}')
+    else:
+        RBTree_logger.info(f'ASK max size={ask.size_max}')
+        RBTree_logger.info(f'BID max size={bid.size_max}')
+
+

@@ -27,6 +27,9 @@ from copy import deepcopy
 import logging
 axob_logger = logging.getLogger(__name__)
 
+#### 静态工作开关 ####
+EXPORT_LEVEL_ACCESS = False # 是否导出对价格档位的读写请求
+
 #### 内部计算精度 ####
 APPSEQ_BIT_SIZE = 32    # 序列号，34b，约40亿，因为不同channel的序列号各自独立，所以单channel整形就够
 PRICE_BIT_SIZE  = 25    # 价格，20b，33554431，股票:335544.31;基金:33554.431。（创业板上市首日有委托价格为￥188888.00的，若忽略这种特殊情况，则20b(10485.75)足够了）
@@ -634,17 +637,19 @@ class AXOB():
         ## 创业板上市头5日连续竞价、复牌集合竞价、收盘集合竞价的有效竞价范围是最近成交价的上下10%
         if self.UpLimitPx==msg_util.ORDER_PRICE_OVERFLOW: #无涨跌停限制=创业板上市头5日 TODO: 更精确
             ex_p = []
+            self._export_level_access(f'LEVEL_ACCESS ASK inorder_list_inc //remove invalid price')
             for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                 if p>msg_util.CYB_match_upper(self.LastPx) or p<msg_util.CYB_match_lower(self.LastPx):
                     ex_p.append(p)
                     if not self.ask_cage_lower_ex_max_level_qty or p>self.ask_cage_lower_ex_max_level_price:    #属于被纳入动态统计的价格档
                         self.AskWeightSize -= l.qty
                         self.AskWeightValue -= p * l.qty
-
             for p in ex_p:
                 self.ask_level_tree.pop(p)
+                self._export_level_access(f'LEVEL_ACCESS ASK remove {p} //remove invalid price') #二叉树也不能边遍历边修改, TODO: 全部remove后再平衡？
 
             ex_p = []
+            self._export_level_access(f'LEVEL_ACCESS BID inorder_list_dec //remove invalid price')
             for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                 if p>msg_util.CYB_match_upper(self.LastPx) or p<msg_util.CYB_match_lower(self.LastPx):
                     ex_p.append(p)
@@ -653,9 +658,11 @@ class AXOB():
                         self.BidWeightValue -= p * l.qty
             for p in ex_p:
                 self.bid_level_tree.pop(p)
+                self._export_level_access(f'LEVEL_ACCESS BID remove {p} //remove invalid price') #二叉树也不能边遍历边修改, TODO: 全部remove后再平衡？
 
 
         if self.ask_cage_lower_ex_max_level_qty:
+            self._export_level_access(f'LEVEL_ACCESS ASK inorder_list_inc while <={self.ask_cage_lower_ex_max_level_price} //openCage')
             for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                 if p<=self.ask_cage_lower_ex_max_level_price:
                     self.AskWeightSize += l.qty
@@ -666,7 +673,10 @@ class AXOB():
             self.ask_cage_lower_ex_max_level_qty = 0
             self.ask_min_level_price = min(self.ask_level_tree.keys())
             self.ask_min_level_qty = self.ask_level_tree[self.ask_min_level_price].qty
+            self._export_level_access(f'LEVEL_ACCESS ASK locate_min //openCage') #TODO: 直接在上面遍历时赋值
+
         if self.bid_cage_upper_ex_min_level_qty:
+            self._export_level_access(f'LEVEL_ACCESS BID inorder_list_dec while >={self.bid_cage_upper_ex_min_level_price} //openCage')
             for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                 if p>=self.bid_cage_upper_ex_min_level_price:
                     self.BidWeightSize += l.qty
@@ -677,6 +687,7 @@ class AXOB():
             self.bid_cage_upper_ex_min_level_qty = 0
             self.bid_max_level_price = max(self.bid_level_tree.keys())
             self.bid_max_level_qty = self.bid_level_tree[self.bid_max_level_price].qty
+            self._export_level_access(f'LEVEL_ACCESS BID locate_max //openCage') #TODO: 直接在上面遍历时赋值
         # self._print_levels()
 
 
@@ -809,8 +820,10 @@ class AXOB():
         self.order_map[order.applSeqNum] = order
         
         if order.side == SIDE.BID:
+            self._export_level_access(f'LEVEL_ACCESS BID locate {order.price} //insertOrder')
             if order.price in self.bid_level_tree:
                 self.bid_level_tree[order.price].qty += order.qty
+                self._export_level_access(f'LEVEL_ACCESS BID writeback {order.price} //insertOrder')
                 if order.price==self.bid_max_level_price:
                     self.bid_max_level_qty += order.qty
                 if self.bid_cage_upper_ex_min_level_qty and order.price==self.bid_cage_upper_ex_min_level_price:
@@ -818,6 +831,7 @@ class AXOB():
             else:
                 node = level_node(order.price, order.qty, order.applSeqNum)
                 self.bid_level_tree[order.price] = node
+                self._export_level_access(f'LEVEL_ACCESS BID insert {order.price} //insertOrder')
 
                 if not outOfCage:
                     if self.bid_max_level_qty==0 or order.price>self.bid_max_level_price:  #买方出现更高价格
@@ -844,8 +858,10 @@ class AXOB():
                 self.BidWeightValue += order.price * order.qty
 
         elif order.side == SIDE.ASK:
+            self._export_level_access(f'LEVEL_ACCESS ASK locate {order.price} //insertOrder')
             if order.price in self.ask_level_tree:
                 self.ask_level_tree[order.price].qty += order.qty
+                self._export_level_access(f'LEVEL_ACCESS ASK writeback {order.price} //insertOrder')
                 if order.price==self.ask_min_level_price:
                     self.ask_min_level_qty += order.qty
                 if self.ask_cage_lower_ex_max_level_qty and order.price==self.ask_cage_lower_ex_max_level_price:
@@ -853,6 +869,7 @@ class AXOB():
             else:
                 node = level_node(order.price, order.qty, order.applSeqNum)
                 self.ask_level_tree[order.price] = node
+                self._export_level_access(f'LEVEL_ACCESS ASK insert {order.price} //insertOrder')
 
                 if order.price==PRICE_MAXIMUM:
                     self.AskWeightPx_uncertain = True #价格越界后，卖出均价将无法确定
@@ -1035,6 +1052,7 @@ class AXOB():
 
                     #下一个隐藏订单，继续循环，直到无隐藏订单、隐藏订单可成交
                     self.bid_cage_upper_ex_min_level_qty = 0
+                    self._export_level_access(f'LEVEL_ACCESS BID locate_higher {self.bid_cage_upper_ex_min_level_price} //enterCage:find next order out of cage')
                     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                         if p>self.bid_cage_upper_ex_min_level_price:
                             self.bid_cage_upper_ex_min_level_price = p
@@ -1065,6 +1083,7 @@ class AXOB():
                     self.bid_waiting_for_cage = True if self.market_subtype==MARKET_SUBTYPE.SZSE_STK_GEM else False   #卖方最优价被修改，则判断买方隐藏订单
 
                     self.ask_cage_lower_ex_max_level_qty = 0
+                    self._export_level_access(f'LEVEL_ACCESS ASK locate_lower {self.ask_cage_lower_ex_max_level_price} //enterCage:find next order out of cage')
                     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                         if p<self.ask_cage_lower_ex_max_level_price:
                             self.ask_cage_lower_ex_max_level_price = p
@@ -1130,6 +1149,7 @@ class AXOB():
         '''买/卖方价格档出列（撤单或成交时）'''
         if side == SIDE.BID:
             self.bid_level_tree[price].qty -= qty
+            self._export_level_access(f'LEVEL_ACCESS BID locate {price} //levelDequeue')
             # self.bid_level_tree[price].ts.remove(applSeqNum)
             if price==self.bid_max_level_price:
                 self.bid_max_level_qty -= qty
@@ -1141,6 +1161,7 @@ class AXOB():
                 self.bid_cage_upper_ex_min_level_qty -= qty
                 if self.bid_cage_upper_ex_min_level_qty==0: #买方价格笼子外最低价被cancel/trade光
                     # locate next high bid level
+                    self._export_level_access(f'LEVEL_ACCESS BID locate_higher {self.bid_cage_upper_ex_min_level_price} //levelDequeue:find next level out of cage')
                     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历，TODO:可以先判断是否存在
                         if p>self.bid_cage_upper_ex_min_level_price:
                             self.bid_cage_upper_ex_min_level_price = p
@@ -1150,10 +1171,12 @@ class AXOB():
 
             if self.bid_level_tree[price].qty==0:
                 self.bid_level_tree.pop(price)
+                self._export_level_access(f'LEVEL_ACCESS BID remove {price} //levelDequeue')
 
                 if price==self.bid_max_level_price:  #买方最高价被cancel/trade光
                     self.bid_max_level_qty = 0
                     # locate next lower bid level
+                    self._export_level_access(f'LEVEL_ACCESS BID locate_lower {self.bid_max_level_price} //levelDequeue:find next side level')
                     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                         if p<self.bid_max_level_price:
                             self.bid_max_level_price = p
@@ -1163,21 +1186,26 @@ class AXOB():
                     # 修改卖方价格笼子参考价
                     if self.bid_max_level_qty!=0:                       # 买方还有下一档
                         self.ask_cage_ref_px = self.bid_max_level_price
-                    elif price in self.ask_level_tree:             # 卖方本价位有量(此时ask_min_level_price可能是旧的)
-                        self.ask_cage_ref_px = price                    #TODO: 卖方hold?
-                    elif self.ask_min_level_qty!=0:
-                        self.ask_cage_ref_px = self.ask_min_level_price
                     else:
-                        self.ask_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
+                        self._export_level_access(f'LEVEL_ACCESS ASK locate {price} //levelDequeue:update oppo ref px')
+                        if price in self.ask_level_tree:             # 卖方本价位有量(此时ask_min_level_price可能是旧的)
+                            self.ask_cage_ref_px = price                    #TODO: 卖方hold?
+                        elif self.ask_min_level_qty!=0:
+                            self.ask_cage_ref_px = self.ask_min_level_price
+                        else:
+                            self.ask_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
                     self.DBG(f'Ask cage ref px={self.ask_cage_ref_px}')
                     
                     if self.TradingPhaseMarket==axsbe_base.TPM.AMTrading or self.TradingPhaseMarket==axsbe_base.TPM.PMTrading:
                         self.ask_waiting_for_cage = True if self.market_subtype==MARKET_SUBTYPE.SZSE_STK_GEM else False
                     else:
                         self.ask_waiting_for_cage = False
+            else:
+                self._export_level_access(f'LEVEL_ACCESS BID writeback {price} //levelDequeue')
 
         else:## side == SIDE.ASK:
             self.ask_level_tree[price].qty -= qty
+            self._export_level_access(f'LEVEL_ACCESS ASK locate {price} //levelDequeue')
             # self.ask_level_tree[price].ts.remove(applSeqNum)
             if price==self.ask_min_level_price:
                 self.ask_min_level_qty -= qty
@@ -1193,7 +1221,8 @@ class AXOB():
                 self.ask_cage_lower_ex_max_level_qty -= qty
                 if self.ask_cage_lower_ex_max_level_qty==0: #卖方价格笼子外最高价被cancel/trade光
                     # locate next high bid level
-                    for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从小到大遍历，TODO:可以先判断是否存在
+                    self._export_level_access(f'LEVEL_ACCESS ASK locate_lower {self.ask_cage_lower_ex_max_level_price} //levelDequeue:find next level out of cage')
+                    for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历，TODO:可以先判断是否存在
                         if p<self.ask_cage_lower_ex_max_level_price:
                             self.ask_cage_lower_ex_max_level_price = p
                             self.ask_cage_lower_ex_max_level_qty = l.qty
@@ -1203,6 +1232,7 @@ class AXOB():
 
             if self.ask_level_tree[price].qty==0:
                 self.ask_level_tree.pop(price)
+                self._export_level_access(f'LEVEL_ACCESS ASK remove {price} //levelDequeue')
 
                 if price==PRICE_MAXIMUM:
                     self.AskWeightPx_uncertain = False #加权价又可确定了
@@ -1210,6 +1240,7 @@ class AXOB():
                 if price==self.ask_min_level_price:  #卖方最低价被cancel/trade光
                     # locate next higher ask level
                     self.ask_min_level_qty = 0
+                    self._export_level_access(f'LEVEL_ACCESS ASK locate_higher {self.ask_min_level_price} //levelDequeue:find next side level')
                     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                         if p>self.ask_min_level_price:
                             self.ask_min_level_price = p
@@ -1219,18 +1250,23 @@ class AXOB():
                     # 修改买方价格笼子参考价
                     if self.ask_min_level_qty!=0:                           # 卖方还有下一档
                         self.bid_cage_ref_px = self.ask_min_level_price
-                    elif price in self.bid_level_tree:             # 买方本价位有量(此时bid_max_level_price可能是旧的)
-                        self.bid_cage_ref_px = price                    #TODO: 买方hold?
-                    elif self.bid_max_level_qty!=0:
-                        self.bid_cage_ref_px = self.bid_max_level_price
                     else:
-                        self.bid_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
+                        self._export_level_access(f'LEVEL_ACCESS BID locate {price} //levelDequeue:update oppo ref px')
+                        if price in self.bid_level_tree:             # 买方本价位有量(此时bid_max_level_price可能是旧的)
+                            self.bid_cage_ref_px = price                    #TODO: 买方hold?
+                        elif self.bid_max_level_qty!=0:
+                            self.bid_cage_ref_px = self.bid_max_level_price
+                        else:
+                            self.bid_cage_ref_px = self.LastPx # 一旦lastPx被更新，总会到这里，而此后就不会再用PreClosePx了
                     self.DBG(f'Bid cage ref px={self.bid_cage_ref_px}')
 
                     if self.TradingPhaseMarket==axsbe_base.TPM.AMTrading or self.TradingPhaseMarket==axsbe_base.TPM.PMTrading:
                         self.bid_waiting_for_cage = True if self.market_subtype==MARKET_SUBTYPE.SZSE_STK_GEM else False
                     else:
                         self.bid_waiting_for_cage = False
+            else:
+                self._export_level_access(f'LEVEL_ACCESS ASK writeback {price} //levelDequeue')
+
 
     def onSnap(self, snap:axsbe_snap_stock):
         self.DBG(f'msg#{self.msg_nb} onSnap:{snap}')
@@ -1495,6 +1531,7 @@ class AXOB():
                         price = _ask_min_level_price
                     # locate next lower bid level
                     _bid_max_level_qty = 0
+                    self._export_level_access(f'LEVEL_ACCESS BID locate_lower {_bid_max_level_price} //callSnap:next side level')
                     for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                         if p<_bid_max_level_price:
                             # if price<=p:
@@ -1508,6 +1545,7 @@ class AXOB():
                         price = _bid_max_level_price
                     # locate next higher ask level
                     _ask_min_level_qty = 0
+                    self._export_level_access(f'LEVEL_ACCESS ASK locate_higher {_ask_min_level_price} //callSnap:next side level')
                     for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                         if p>_ask_min_level_price:
                             # if price>=p:
@@ -1613,20 +1651,26 @@ class AXOB():
         snap_bid_levels = {}
         lv = 0
         if not isVolatilityBreaking: #临停期间，各档均填0；非临停期间才从价格档中取值
+            self._export_level_access(f'LEVEL_ACCESS BID locate_lower {self.bid_max_level_price} x{level_nb} //tradingSnap:traverse side level')
             for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                 if self.bid_cage_upper_ex_min_level_qty==0 or p<self.bid_cage_upper_ex_min_level_price:
                     snap_bid_levels[lv] = price_level(self._fmtPrice_inter2snap(p), l.qty)
                     lv += 1
+                    if lv>=level_nb:
+                        break
         for i in range(lv, level_nb):
             snap_bid_levels[i] = price_level(0, 0)
             
         snap_ask_levels = {}
         lv = 0
         if not isVolatilityBreaking: #临停期间，各档均填0；非临停期间才从价格档中取值
+            self._export_level_access(f'LEVEL_ACCESS ASK locate_higher {self.ask_min_level_price} x{level_nb} //tradingSnap:traverse side level')
             for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                 if self.ask_cage_lower_ex_max_level_qty==0 or p>self.ask_cage_lower_ex_max_level_price:
                     snap_ask_levels[lv] = price_level(self._fmtPrice_inter2snap(p), l.qty)
                     lv += 1
+                    if lv>=level_nb:
+                        break
         for i in range(lv, level_nb):
             snap_ask_levels[i] = price_level(0, 0)
 
@@ -1732,6 +1776,7 @@ class AXOB():
                 snap_ask_levels[nb] = price_level(self._fmtPrice_inter2snap(_ask_min_level_price), _ask_min_level_qty)
                 # locate next higher ask level
                 _ask_min_level_qty = 0
+                self._export_level_access(f'LEVEL_ACCESS ASK locate_higher {_ask_min_level_price} //snap:traverse side level')
                 for p, l in sorted(self.ask_level_tree.items(),key=lambda x:x[0], reverse=False):    #从小到大遍历
                     if p>_ask_min_level_price:
                         _ask_min_level_price = p
@@ -1744,6 +1789,7 @@ class AXOB():
                 snap_bid_levels[nb] = price_level(self._fmtPrice_inter2snap(_bid_max_level_price), _bid_max_level_qty)
                 # locate next lower bid level
                 _bid_max_level_qty = 0
+                self._export_level_access(f'LEVEL_ACCESS BID locate_lower {_bid_max_level_price} //snap:traverse side level')
                 for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
                     if p<_bid_max_level_price:
                         _bid_max_level_price = p
@@ -1844,6 +1890,10 @@ class AXOB():
         for p, l in sorted(self.bid_level_tree.items(),key=lambda x:x[0], reverse=True):    #从大到小遍历
             s = f'bid\t{l}{self._describe_px(l.price)}'
             self.DBG(s)
+
+    def _export_level_access(self, msg):
+        if EXPORT_LEVEL_ACCESS:
+            self.DBG(msg)
 
     def __str__(self) -> str:
         s = f'axob-behave {self.SecurityID:06d} {self.YYMMDD}-{self.current_inc_tick} msg_nb={self.msg_nb}\n'

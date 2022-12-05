@@ -164,14 +164,14 @@ class AVLTree:
         return f'AVLTree({self.tree_name}) id:{id(self)}'
 
     #打印树 #for debug only
-    def debugShow(self, label="", check=True):
+    def debugShow(self, label="", check=True, force_draw=0):
         self.DBG(f"{label}")
         if not self.root:
             self.DBG(f" Tree is empty!")
             return
-        if self.debug_level>0:
+        if self.debug_level>0 or force_draw>0:
             graph = self.root.printTree()
-            if self.debug_level>1:    #显示上一步和当前
+            if self.debug_level>1 or force_draw>1:    #显示上一步和当前
                 if self.graph_last is None:
                     self.graph_last = graph
                 else:
@@ -217,7 +217,7 @@ class AVLTree:
     def insert(self, new_node:AVLTNode, auto_rebalance=True):
         """
         """
-        assert new_node.value not in self.value_list or self.value_list[new_node.value]=='r'
+        assert new_node.value not in self.value_list or self.value_list[new_node.value]=='r', f'{self.tree_name} node:{new_node.value} exists!'
         self.value_list[new_node.value] = 'i'
         self.size += 1
         self.size_max = max(self.size, self.size_max)
@@ -306,11 +306,15 @@ class AVLTree:
             t = t.left_child
         return l
 
-    def locate(self, value:int)->AVLTNode|None:
+    def locate(self, value:int, root:AVLTNode|None=None)->AVLTNode|None:
         if self.root is None:
             return
 
-        node = self.root
+        if root is None:
+            node = self.root
+        else:
+            node = root
+
         while True:
             if node.value < value:
                 node = node.right_child

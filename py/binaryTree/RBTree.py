@@ -168,14 +168,14 @@ class RBTree:
         return f'RBTree({self.tree_name}) id:{id(self)}'
 
     #打印树 #for debug only
-    def debugShow(self, label="", check=True):
+    def debugShow(self, label="", check=True, force_draw=0):
         self.DBG(f"show {label}")
         if not self.root:
             self.DBG(f" Tree is empty!")
             return
-        if self.debug_level>0:
+        if self.debug_level>0 or force_draw>0:
             graph = self.root.printTree()
-            if self.debug_level>1:    #显示上一步和当前
+            if self.debug_level>1 or force_draw>1:    #显示上一步和当前
                 if self.graph_last is None:
                     self.graph_last = graph
                 else:
@@ -285,42 +285,52 @@ class RBTree:
 
     # Balance the tree after insertion
     def _balance(self, node:RBTNode):
-        while node.parent.is_red==1:
-            if not node.parent.is_left:# node.parent==node.parent.parent.right:
-                u = node.parent.parent.left
+        parent = node.parent
+        grand = parent.parent
+        while parent.is_red==1:
+            if not parent.is_left:# node.parent==node.parent.parent.right:
+                u = grand.left
                 if u!=RBTree.NULL_NODE and u.is_red==1:
                     u.is_red = 0
-                    node.parent.is_red = 0
-                    node.parent.parent.is_red = 1
-                    node = node.parent.parent
+                    parent.is_red = 0
+                    grand.is_red = 1
+                    node = grand
                 else:
                     if node.is_left:#node==node.parent.left:
-                        node = node.parent
+                        node = parent
                         self.right_rotate(node)
-                    node.parent.is_red = 0
-                    node.parent.parent.is_red = 1
-                    self.left_rotate(node.parent.parent)
+                        parent = node.parent
+                        grand = parent.parent
+                    parent.is_red = 0
+                    grand.is_red = 1
+                    self.left_rotate(grand)
             else:
-                u = node.parent.parent.right
+                u = grand.right
 
                 if u!=RBTree.NULL_NODE and u.is_red==1:
                     u.is_red = 0
-                    node.parent.is_red = 0
-                    node.parent.parent.is_red = 1
-                    node = node.parent.parent
+                    parent.is_red = 0
+                    grand.is_red = 1
+                    node = grand
                 else:
                     if not node.is_left:#node==node.parent.right:
-                        node = node.parent
+                        node = parent
                         self.left_rotate(node)
-                    node.parent.is_red = 0
-                    node.parent.parent.is_red = 1
-                    self.right_rotate(node.parent.parent)
-            if node.parent is None:#node==self.root:
+                        parent = node.parent
+                        grand = parent.parent
+                    parent.is_red = 0
+                    grand.is_red = 1
+                    self.right_rotate(grand)
+            parent = node.parent
+            if parent is None:#node==self.root:
                 break
+            grand = parent.parent
         self.root.is_red = 0
         
 
     def left_rotate(self, x:RBTNode):
+        self.DBG(f"left_rotate")
+
         y = x.right
         x.right = y.left
         if y.left!=RBTree.NULL_NODE:
@@ -340,25 +350,27 @@ class RBTree:
         y.left = x
         x.parent = y
 
-    def right_rotate(self, x:RBTNode):
-        y = x.left
-        x.left = y.right
-        if y.right!=RBTree.NULL_NODE:
-            y.right.is_left = True
-            y.right.parent = x
+    def right_rotate(self, y:RBTNode):
+        self.DBG(f"right_rotate")
 
-        y.parent = x.parent
-        if x.parent is None:
-            y.is_left = None
-            self.root = y
-        elif not x.is_left:# x==x.parent.right:
-            y.is_left = False
-            x.parent.right = y
+        x = y.left
+        y.left = x.right
+        if x.right!=RBTree.NULL_NODE:
+            x.right.is_left = True
+            x.right.parent = y
+
+        x.parent = y.parent
+        if y.parent is None:
+            x.is_left = None
+            self.root = x
+        elif not y.is_left:# y==y.parent.right:
+            x.is_left = False
+            y.parent.right = x
         else:
-            x.parent.left = y
-        x.is_left = False
-        y.right = x
-        x.parent = y
+            y.parent.left = x
+        y.is_left = False
+        x.right = y
+        y.parent = x
 
 
     #中序非递归遍历，从小到大输出所有序列
@@ -389,11 +401,15 @@ class RBTree:
             t = t.left
         return l
 
-    def locate(self, value:int)->RBTNode|None:
+    def locate(self, value:int, root:RBTNode|None=None)->RBTNode|None:
         if self.root is None:
             return
 
-        node = self.root
+        if root is None:
+            node = self.root
+        else:
+            node = root
+
         while True:
             if node.value<value:
                 node = node.right
@@ -460,26 +476,13 @@ class RBTree:
     def remove(self, value:int, auto_rebalance=True):
         label = "remove " + str(value)
         self.DBG(f'{label}...')
-        if value==19:
-            value =19
+        
         self.delete_node_helper(self.root, value, auto_rebalance)
         self.debugShow(label)
 
     # Node deletion
     def delete_node_helper(self, node:RBTNode|None, key, auto_rebalance=True):
-        z = RBTree.NULL_NODE
-        while node!=RBTree.NULL_NODE:
-            if node.value==key:
-                z = node
-
-            if node.value<=key:
-                node = node.right
-            else:
-                node = node.left
-
-        if z==RBTree.NULL_NODE:
-            # print("Cannot find key in the tree")
-            return
+        z = self.locate(key, node)
 
         y = z
         y_original_color = y.is_red
@@ -534,6 +537,8 @@ class RBTree:
         self.size -= 1
         
     def __rb_transplant(self, u:RBTNode, v:RBTNode):
+        self.DBG('rb_transplant')
+
         if u.parent is None:
             self.root = v
         elif u.is_left: #u==u.parent.left:
@@ -546,10 +551,8 @@ class RBTree:
         
     # Balancing the tree after deletion
     def delete_fix(self, x:RBTNode):
-        # print(x.item, x==self.TNULL, x is None, self.size, x.parent, x.parent.left, x.parent.right, x.parent.right.left, x.parent.right.right)
-        # if x.parent.right.right is None:
-        #     self.print_tree()
         while x!=self.root and x.is_red==0:
+            self.DBG(f'delete_fix({x.value})')
             if x.is_left:# x==x.parent.left:
                 s = x.parent.right
                 if s!=RBTree.NULL_NODE and s.is_red==1:
