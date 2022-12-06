@@ -16,7 +16,7 @@ TYPE_MAP = {
 }
 
 
-def _insert_then_remove(l:list, s, type):
+def _insert_then_remove(l:list, s, type, debug_level=2):
     if not os.path.exists(DBG_VIEW_ROOT):
         os.makedirs(DBG_VIEW_ROOT, exist_ok=True)
 
@@ -26,7 +26,7 @@ def _insert_then_remove(l:list, s, type):
     NODE = TYPE_MAP[type]['NODE']
     LOGGER = TYPE_MAP[type]['LOGGER']
 
-    t = TREE(s, 2)
+    t = TREE(s, debug_level)
     for n in l:
         new_node = NODE(n)
         t.insert(new_node, auto_rebalance=True)
@@ -310,4 +310,15 @@ def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=No
 
 
 def TESTAVLWR_insert_then_removeA():
-    _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'AVL_wr')
+    l = [x for x in range(1000)]
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)
+
+def TESTAVLWR_insert_then_removeB():
+    l = [x for x in range(1000, 0, -1)]
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)
+
+def TESTAVLWR_insert_then_removeC():
+    l = [x for x in range(1000, 0, -1)]
+    random.seed(1110)
+    shuffle(l)
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)

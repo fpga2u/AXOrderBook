@@ -49,7 +49,7 @@ class AVLTNode:
         return self.parent is None
     
     def __str__(self):
-        return f'AVLTNode({self.value}) id:{id(self)}'
+        return f'AVLTNode({self.value})'
 
     def save(self):
         '''

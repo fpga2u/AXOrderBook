@@ -48,7 +48,7 @@ class RBTNode:
             s += '(L)'
         else:
             s += '(R)'
-        return s#f'RBTNode({self.value}) id:{id(self)}'
+        return s
 
     def save(self):
         '''

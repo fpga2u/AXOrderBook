@@ -4,6 +4,8 @@ class simpleStack(object):
         # 创建空列表实现栈
         self.__list = []
         self.max_size = 0
+        self.push_nb = 0
+        self.pop_nb = 0
 
     def is_empty(self):
         # 判断是否为空
@@ -11,12 +13,14 @@ class simpleStack(object):
 
     def push(self,item):
         # 压栈，添加元素
+        self.push_nb += 1
         self.__list.append(item)
         if len(self.__list) > self.max_size:
             self.max_size = len(self.__list)
 
     def pop(self):
         # 弹栈，弹出最后压入栈的元素
+        self.pop_nb += 1
         if self.is_empty():
             return 
         else:
