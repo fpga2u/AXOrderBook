@@ -22,17 +22,15 @@ class RBTNode:
         'is_red',       #
 
         #for debug view
-        'host_tree',     #指向本节点所属的二叉树
+        # 'host_tree',     #指向本节点所属的二叉树
     ]
-    def __init__(self, value, is_red=True, parent:None|RBTNode=None, is_left=None, left:None|RBTNode=None, right:None|RBTNode=None, host_tree:None|RBTree=None):
+    def __init__(self, value, is_red=True, parent:None|RBTNode=None, is_left=None, left:None|RBTNode=None, right:None|RBTNode=None):
         self.value = value  #节点在二叉树中的权重
         self.parent = parent
         self.is_left = is_left
         self.left = left
         self.right = right
         self.is_red = is_red
-
-        self.host_tree = host_tree
 
     @property
     def is_root(self):
@@ -107,8 +105,6 @@ class RBTNode:
         '''
         data = {}
         for item in self.__slots__:
-            if item in ['host_tree']:
-                continue
             attr = getattr(self, item)
             if isinstance(attr, RBTNode):
                 data[item] = attr.value
@@ -123,8 +119,6 @@ class RBTNode:
         导入已存储的节点信息
         '''
         for attr in self.__slots__:
-            if attr in ['host_tree']:
-                continue
             value = data[attr]
             setattr(self, attr, value)
 
@@ -237,6 +231,9 @@ class RBTree:
 
         self.check_valid_recur(self.root)
     
+    def getRoot(self)->RBTNode|None:
+        return self.root
+
     def insert(self, new_node:RBTNode, auto_rebalance=True):
         label = "insert " + str(new_node.value)
         self.DBG(f'{label}...')
@@ -426,7 +423,6 @@ class RBTree:
         if node is None:
             min_node = self.root
         else:
-            assert id(node.host_tree)== id(self)
             min_node = node
         while min_node is not None:
             if min_node.left:
@@ -439,7 +435,6 @@ class RBTree:
         if node is None:
             max_node = self.root
         else:
-            assert id(node.host_tree)== id(self)
             max_node = node
         while max_node is not None:
             if max_node.right:
@@ -450,7 +445,6 @@ class RBTree:
 
     # 找比某node更小的
     def locate_lower(self, node:RBTNode):
-        assert id(node.host_tree)== id(self)
         if node.left is not None:
             return self.locate_max(node.left)
         else:
@@ -462,7 +456,6 @@ class RBTree:
             return None
             
     def locate_higher(self, node:RBTNode):
-        assert id(node.host_tree)== id(self)
         if node.right is not None:
             return self.locate_min(node.right)
         else:

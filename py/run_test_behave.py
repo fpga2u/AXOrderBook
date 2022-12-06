@@ -106,17 +106,19 @@ if __name__== '__main__':
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220805, 1236)      #TODO: 新股上市首日，涨停价44%，但集合竞价进行申报的价格有效区间是[80%, 120%]，连续竞价时才是[64%, 144%]
                                             #http://www.szse.cn/disclosure/notice/temp/t20220805_595261.html
+
     # ## 20220808测试错误
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220808, 1229)    #TODO: 新股上市首日，涨停价44%，但集合竞价进行申报的价格有效区间是[80%, 120%]，连续竞价时才是[64%, 144%]
                                           #http://www.szse.cn/disclosure/notice/temp/t20220808_595282.html
-    ### 20220812测试
-    logger.info('starting TEST_axob_bat')
+
+    # ### 20220812测试
+    # logger.info('starting TEST_axob_bat')
     # fh.setLevel(logging.WARN)
     # sh.setLevel(logging.ERROR)
-    behave.TEST_axob(20220812, 301336, logPack=logPack) #创业板新股首日，波动性中断测试
-                                                        #http://www.szse.cn/disclosure/notice/temp/t20220812_595343.html
-                                                        #http://www.szse.cn/disclosure/notice/temp/t20220812_595344.html
+    # behave.TEST_axob(20220812, 301336, logPack=logPack) #创业板新股首日，波动性中断测试
+    #                                                     #http://www.szse.cn/disclosure/notice/temp/t20220812_595343.html
+    #                                                     #http://www.szse.cn/disclosure/notice/temp/t20220812_595344.html
     
     # ### 20220812测试
     # logger.info('starting TEST_axob_bat')

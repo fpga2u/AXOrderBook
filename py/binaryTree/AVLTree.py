@@ -22,9 +22,8 @@ class AVLTNode:
         'right_height', #右
 
         #for debug view
-        'host_tree',     #指向本节点所属的二叉树
     ]
-    def __init__(self, value=None, parent:None|AVLTNode=None, is_left=None, left_child:None|AVLTNode=None, right_child:None|AVLTNode=None, host_tree:None|AVLTree=None):
+    def __init__(self, value=None, parent:None|AVLTNode=None, is_left=None, left_child:None|AVLTNode=None, right_child:None|AVLTNode=None):
         self.value = value  #节点在二叉树中的权重
         self.parent = parent
         self.is_left = is_left
@@ -33,8 +32,6 @@ class AVLTNode:
         self.left_height = 0
         self.right_height = 0
 
-        self.host_tree = host_tree
-    
     @property
     def balance_factor(self):
         '''
@@ -104,8 +101,6 @@ class AVLTNode:
         '''
         data = {}
         for item in self.__slots__:
-            if item in ['host_tree']:
-                continue
             attr = getattr(self, item)
             if isinstance(attr, AVLTNode):
                 data[item] = attr.value
@@ -120,8 +115,6 @@ class AVLTNode:
         导入已存储的节点信息
         '''
         for attr in self.__slots__:
-            if attr in ['host_tree']:
-                continue
             value = data[attr]
             setattr(self, attr, value)
 
@@ -212,6 +205,9 @@ class AVLTree:
             assert node.left_height < node.right_height + 2
             assert node.right_height < node.left_height + 2
         preorder_nonrec(self.root, check)
+
+    def getRoot(self)->AVLTNode|None:
+        return self.root
 
     #新增端点
     def insert(self, new_node:AVLTNode, auto_rebalance=True):
@@ -331,7 +327,6 @@ class AVLTree:
         if node is None:
             min_node = self.root
         else:
-            assert id(node.host_tree) ==  id(self)
             min_node = node
         while min_node is not None:
             if min_node.left_child:
@@ -344,7 +339,6 @@ class AVLTree:
         if node is None:
             max_node = self.root
         else:
-            assert id(node.host_tree) ==  id(self)
             max_node = node
         while max_node is not None:
             if max_node.right_child:
@@ -355,7 +349,6 @@ class AVLTree:
 
     # 找比某node更小的
     def locate_lower(self, node:AVLTNode):
-        assert id(node.host_tree) ==  id(self)
         if node.left_child is not None:
             return self.locate_max(node.left_child)
         else:
@@ -367,7 +360,6 @@ class AVLTree:
             return None
 
     def locate_higher(self, node:AVLTNode):
-        assert id(node.host_tree) ==  id(self)
         if node.right_child is not None:
             return self.locate_min(node.right_child)
         else:
@@ -691,7 +683,7 @@ class AVLTree:
         data = data['nodes']
         nodes = {}
         for n in data:
-            new_node = AVLTNode(host_tree=self)
+            new_node = AVLTNode()
             new_node.load(n)
             nodes[new_node.value] = new_node
 

@@ -7,52 +7,81 @@ from random import shuffle, randint
 import os
 import sys
 
-def _AVL_insert_then_remove(l, s):
+TYPE_MAP = {
+    'AVL':{'TREE':AVLTree, 'NODE':AVLTNode, 'LOGGER':AVLTree_logger},
+    'RB':{'TREE':RBTree, 'NODE':RBTNode, 'LOGGER':RBTree_logger},
+}
+
+
+def _insert_then_remove(l:list, s, type):
     if not os.path.exists(DBG_VIEW_ROOT):
         os.makedirs(DBG_VIEW_ROOT, exist_ok=True)
 
-    t = AVLTree(s, 1)
+    assert type in TYPE_MAP, f'unkown tree type={type}!'
+
+    TREE = TYPE_MAP[type]['TREE']
+    NODE = TYPE_MAP[type]['NODE']
+    LOGGER = TYPE_MAP[type]['LOGGER']
+
+    t = TREE(s, 2)
     for n in l:
-        new_node = AVLTNode(n, host_tree=t)
+        new_node = NODE(n)
         t.insert(new_node, auto_rebalance=True)
     t.debugShow(label='insert_final')
 
-    AVLTree_logger.info(t.inorder_list_inc())
-    AVLTree_logger.info(t.inorder_list_dec())
+    LOGGER.info(t.inorder_list_inc())
+    LOGGER.info(t.inorder_list_dec())
 
-    AVLTree_logger.info(f'locate({l[len(l)//2]}) = {t.locate(l[len(l)//2])}')
-    AVLTree_logger.info(f'locate({max(l)+1}) = {t.locate(max(l)+1)}')
-    AVLTree_logger.info(f'locate({min(l)-1}) = {t.locate(min(l)-1)}')
-    AVLTree_logger.info(f'locate_min = {t.locate_min()}')
-    AVLTree_logger.info(f'locate_max = {t.locate_max()}')
-    AVLTree_logger.info(f'locate_lower({l[len(l)//2]}) = {t.locate_lower(t.locate(l[len(l)//2]))}')
-    AVLTree_logger.info(f'locate_higher({l[len(l)//2]}) = {t.locate_higher(t.locate(l[len(l)//2]))}')
+    minV, midV, maxV = min(l), l[len(l)//2], max(l)
+    assert t.locate(minV-1)==None
+    assert t.locate(minV).value==minV
+    assert t.locate(midV).value==midV
+    assert t.locate(maxV).value==maxV
+    assert t.locate(maxV+1)==None
+    assert t.locate_min().value==minV
+    assert t.locate_max().value==maxV
+    LOGGER.info(f'locate({midV}) = {t.locate(midV)}')
+    LOGGER.info(f'locate({maxV+1}) = {t.locate(maxV+1)}')
+    LOGGER.info(f'locate({minV-1}) = {t.locate(minV-1)}')
+    LOGGER.info(f'locate_min = {t.locate_min()}')
+    LOGGER.info(f'locate_max = {t.locate_max()}')
+    LOGGER.info(f'locate_lower({midV}) = {t.locate_lower(t.locate(midV))}')
+    LOGGER.info(f'locate_higher({midV}) = {t.locate_higher(t.locate(midV))}')
+
+    for _ in range(min(len(l)//3, 3)):
+        rootV = t.getRoot().value
+        LOGGER.info(f'rootV = {rootV}')
+        t.remove(rootV, auto_rebalance=True)
+        l.remove(rootV)
 
     for n in l:
         t.remove(n, auto_rebalance=True)
     t.debugShow(label='remove_final')
 
-def TESTAVL_insert_then_removeA():
-    _AVL_insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name)
 
-def TESTAVL_insert_then_removeB():
-    _AVL_insert_then_remove([9,8,7,6,5,4,3,2,1], sys._getframe().f_code.co_name)
-
-def TESTAVL_insert_then_removeC():
-    _AVL_insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name)
-
-
-def TESTAVL_batch_insert_remove():
+def _batch_insert_remove(seed, draw, type, name):
     if not os.path.exists(DBG_VIEW_ROOT):
         os.makedirs(DBG_VIEW_ROOT, exist_ok=True)
-    t = AVLTree(name=sys._getframe().f_code.co_name, debug_level=2)
+    random.seed(seed)
+    if draw:
+        debug_level = 2
+    else:
+        debug_level = 0
+        
+    assert type in TYPE_MAP, f'unkown tree type={type}!'
+
+    TREE = TYPE_MAP[type]['TREE']
+    NODE = TYPE_MAP[type]['NODE']
+    LOGGER = TYPE_MAP[type]['LOGGER']
+
+    t = TREE(name=name, debug_level=debug_level)
 
     total_data_size = 30
     batch_nb = 4
 
     value_list = [x for x in range(total_data_size)]
     shuffle(value_list)
-    AVLTree_logger.info(f'{sys._getframe().f_code.co_name} batch_nb={batch_nb} value_list={value_list}')
+    LOGGER.info(f'{sys._getframe().f_code.co_name} batch_nb={batch_nb} value_list={value_list}')
 
     ##Create batch insert/remove lists ##
     #for example:
@@ -77,38 +106,54 @@ def TESTAVL_batch_insert_remove():
         remove_lists_r.extend(insert_lists[i][cl:])
     remove_lists.append(remove_lists_r)
 
-    AVLTree_logger.info(f'insert_lists={insert_lists}')
-    AVLTree_logger.info(f'remove_lists={remove_lists}')
+    LOGGER.info(f'insert_lists={insert_lists}')
+    LOGGER.info(f'remove_lists={remove_lists}')
 
-    AVLTree_logger.info(t)
+    LOGGER.info(t)
     for n in range(len(insert_lists)):
 
         list = insert_lists[n]
-        AVLTree_logger.info(f"insert list={list}")
+        LOGGER.info(f"insert list={list}")
 
         for i in list:
-            new_node = AVLTNode(i, host_tree=t)
+            new_node = NODE(i)
             t.insert(new_node)
-            AVLTree_logger.info(t.inorder_list_inc())
-            AVLTree_logger.info(t.inorder_list_dec())
+            LOGGER.info(t.inorder_list_inc())
+            LOGGER.info(t.inorder_list_dec())
 
         del_list = remove_lists[n]
 
-        AVLTree_logger.info(f"del_list={del_list}")
+        LOGGER.info(f"del_list={del_list}")
         for i in del_list:
             t.remove(i)
-            AVLTree_logger.info(t.inorder_list_inc())
-            AVLTree_logger.info(t.inorder_list_dec())
+            LOGGER.info(t.inorder_list_inc())
+            LOGGER.info(t.inorder_list_dec())
 
 
     del_list = remove_lists[-1]
 
-    AVLTree_logger.info(f"del_list={del_list}")
+    LOGGER.info(f"del_list={del_list}")
     for i in del_list:
         t.remove(i)
-        AVLTree_logger.info(t.inorder_list_inc())
-        AVLTree_logger.info(t.inorder_list_dec())
-    t.checkBalance()
+        LOGGER.info(t.inorder_list_inc())
+        LOGGER.info(t.inorder_list_dec())
+
+    assert t.size==0
+
+
+
+def TESTAVL_insert_then_removeA():
+    _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'AVL')
+
+def TESTAVL_insert_then_removeB():
+    _insert_then_remove([9,8,7,6,5,4,3,2,1], sys._getframe().f_code.co_name, 'AVL')
+
+def TESTAVL_insert_then_removeC():
+    _insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name, 'AVL')
+
+
+def TESTAVL_batch_insert_remove(seed, draw):
+    _batch_insert_remove(seed, draw, 'AVL', name=sys._getframe().f_code.co_name)
 
 
 def TESTAVL_no_auto_rebalance(inorder):
@@ -123,7 +168,7 @@ def TESTAVL_no_auto_rebalance(inorder):
     tree_name = 'no_auto_rebalance' + ('(inorder)' if inorder else '(random)')
     t = AVLTree(tree_name, debug_level=1)
     for n in l:
-        new_node = AVLTNode(n, host_tree=t)
+        new_node = AVLTNode(n)
         t.insert(new_node, auto_rebalance=False)
     #TODO: 在所有插入完成后平衡，目前不成功
     # t._balance(t.locate_max(t.root), recurve_to_root=True)
@@ -142,11 +187,11 @@ def TESTAVL_save_load():
     shuffle(l)
     t = AVLTree('before_save', debug_level=2)
     for n in l:
-        new_node = AVLTNode(n, host_tree=t)
+        new_node = AVLTNode(n)
         t.insert(new_node)
     saved = t.save()    #保存旧树结构
     print(saved)
-    new_node = AVLTNode(50677, host_tree=t)
+    new_node = AVLTNode(50677)
     t.insert(new_node)  #旧树新增一个节点 50677
     t.debugShow(label="save-final")
 
@@ -156,122 +201,28 @@ def TESTAVL_save_load():
 
     saved2 = tl.save()
     print(saved2)
-    new_node = AVLTNode(60000, host_tree=tl)
+    new_node = AVLTNode(60000)
     tl.insert(new_node) #新树新增一个节点 60000
     tl.debugShow(label="load-final")
 
     assert(t.size == tl.size)
 
 
-def _RBT_insert_then_remove(l, s):
-    if not os.path.exists(DBG_VIEW_ROOT):
-        os.makedirs(DBG_VIEW_ROOT, exist_ok=True)
-
-    t = RBTree(s, 1)
-    for n in l:
-        new_node = RBTNode(n, host_tree=t)
-        t.insert(new_node, auto_rebalance=True)
-    t.debugShow(label='insert_final')
-
-    RBTree_logger.info(t.inorder_list_inc())
-    RBTree_logger.info(t.inorder_list_dec())
-
-    RBTree_logger.info(f'locate({l[len(l)//2]}) = {t.locate(l[len(l)//2])}')
-    RBTree_logger.info(f'locate({max(l)+1}) = {t.locate(max(l)+1)}')
-    RBTree_logger.info(f'locate({min(l)-1}) = {t.locate(min(l)-1)}')
-    RBTree_logger.info(f'locate_min = {t.locate_min()}')
-    RBTree_logger.info(f'locate_max = {t.locate_max()}')
-    RBTree_logger.info(f'locate_lower({l[len(l)//2]}) = {t.locate_lower(t.locate(l[len(l)//2]))}')
-    RBTree_logger.info(f'locate_higher({l[len(l)//2]}) = {t.locate_higher(t.locate(l[len(l)//2]))}')
-
-    for n in l:
-        t.remove(n, auto_rebalance=True)
-    t.debugShow(label='remove_final')
 
 def TESTRBT_insert_then_removeA():
-    _RBT_insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name)
+    _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'RB')
 
 def TESTRBT_insert_then_removeB():
-    _RBT_insert_then_remove([x for x in range(10,0,-1)], sys._getframe().f_code.co_name)
+    _insert_then_remove([x for x in range(10,0,-1)], sys._getframe().f_code.co_name, 'RB')
 
 def TESTRBT_insert_then_removeC():
-    _RBT_insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name)
+    _insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name, 'RB')
+
 
 
 
 def TESTRBT_batch_insert_remove(seed, draw):
-    if not os.path.exists(DBG_VIEW_ROOT):
-        os.makedirs(DBG_VIEW_ROOT, exist_ok=True)
-    random.seed(seed)
-    if draw:
-        debug_level = 2
-    else:
-        debug_level = 0
-    t = RBTree(name=sys._getframe().f_code.co_name, debug_level=debug_level)
-
-    total_data_size = 30
-    batch_nb = 4
-
-    value_list = [x for x in range(total_data_size)]
-    shuffle(value_list)
-    RBTree_logger.info(f'{sys._getframe().f_code.co_name} batch_nb={batch_nb} value_list={value_list}')
-
-    ##Create batch insert/remove lists ##
-    #for example:
-    # insert_lists = [ [8, 10, 1, 3, 11], [6, 15, 0, 12, 16, 2], [14, 5, 19, 9, 13, 17, 4, 7, 18] ]
-    # remove_lists = [ [8, 10, 1],        [16, 0, 6, 12, 15],    [9, 5, 13, 17, 4, 14, 19],       [3, 11, 2, 7, 18]]
-    insert_lists = []
-    bg = 0
-    for i in range(batch_nb):
-        cl = randint(3, len(value_list)//batch_nb)
-        insert_lists.append(value_list[bg: bg+cl])
-        bg = bg+cl
-    insert_lists.append(value_list[bg:])
-
-
-    remove_lists = []
-    remove_lists_r = []
-    for i in range(len(insert_lists)):
-        cl = randint(3, len(insert_lists[i]))
-        lst_i = insert_lists[i][:cl]
-        shuffle(lst_i)
-        remove_lists.append(lst_i)
-        remove_lists_r.extend(insert_lists[i][cl:])
-    remove_lists.append(remove_lists_r)
-
-    RBTree_logger.info(f'insert_lists={insert_lists}')
-    RBTree_logger.info(f'remove_lists={remove_lists}')
-
-    RBTree_logger.info(t)
-    for n in range(len(insert_lists)):
-
-        list = insert_lists[n]
-        RBTree_logger.info(f"insert list={list}")
-
-        for i in list:
-            new_node = RBTNode(i, host_tree=t)
-            t.insert(new_node)
-            RBTree_logger.info(t.inorder_list_inc())
-            RBTree_logger.info(t.inorder_list_dec())
-
-        del_list = remove_lists[n]
-
-        RBTree_logger.info(f"del_list={del_list}")
-        for i in del_list:
-            t.remove(i)
-            RBTree_logger.info(t.inorder_list_inc())
-            RBTree_logger.info(t.inorder_list_dec())
-
-
-    del_list = remove_lists[-1]
-
-    RBTree_logger.info(f"del_list={del_list}")
-    for i in del_list:
-        t.remove(i)
-        RBTree_logger.info(t.inorder_list_inc())
-        RBTree_logger.info(t.inorder_list_dec())
-    # t.checkBalance()
-    assert t.size==0
+    _batch_insert_remove(seed, draw, 'RB', name=sys._getframe().f_code.co_name)
 
 
 def extract_level_access_log(log_file, modify_only, side='both'):
@@ -331,18 +282,18 @@ def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=No
                     if l.find(' BID ')>0:
                         if cmd==' insert ':
                             if tree_type=='AVL':
-                                new_node = AVLTNode(v, host_tree=bid)
+                                new_node = AVLTNode(v)
                             else:
-                                new_node = RBTNode(v, host_tree=bid)
+                                new_node = RBTNode(v)
                             bid.insert(new_node)
                         elif cmd==' remove ':
                             bid.remove(v)
                     elif l.find(' ASK ')>0:
                         if cmd==' insert ':
                             if tree_type=='AVL':
-                                new_node = AVLTNode(v, host_tree=ask)
+                                new_node = AVLTNode(v)
                             else:
-                                new_node = RBTNode(v, host_tree=ask)
+                                new_node = RBTNode(v)
                             ask.insert(new_node)
                         elif cmd==' remove ':
                             ask.remove(v)
