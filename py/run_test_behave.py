@@ -49,6 +49,15 @@ if __name__== '__main__':
     # ### 20220608测试错误
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220608, 200613) #TODO: 退市B股，进入退市整理期首日，多次临停但快照TPM无变化
+                                         #http://www.szse.cn/disclosure/notice/temp/t20220608_593688.html
+    #临停规则
+    #http://www.szse.cn/www/lawrules/index/rule/P020210105571755659081.pdf
+    #http://investor.szse.cn/application/search/index.html?keyword=%E7%9B%98%E4%B8%AD%E4%B8%B4%E6%97%B6&r=1670290891297
+    #http://investor.szse.cn/knowledge/stock/deal/t20210203_584642.html
+    #http://investor.szse.cn/knowledge/stock/deal/t20210203_584643.html
+    #http://investor.szse.cn/knowledge/bond/other/t20220622_594109.html
+    #http://investor.szse.cn/knowledge/bond/other/t20220810_595304.html
+    #http://investor.szse.cn/knowledge/bond/other/t20220810_595306.html
     
     # ### 20220609测试错误
     # logger.info('starting TEST_axob_bat')
