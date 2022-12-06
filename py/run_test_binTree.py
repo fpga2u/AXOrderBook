@@ -28,25 +28,26 @@ if __name__== '__main__':
     logger.addHandler(fh)
     logger.addHandler(sh)
 
-    # # ### test VAL
-    binTree.TESTAVL_insert_then_removeA()
-    binTree.TESTAVL_insert_then_removeB()
-    binTree.TESTAVL_insert_then_removeC()
-    binTree.TESTAVL_batch_insert_remove(671, True)
-    for i in range(10):
-        binTree.TESTAVL_batch_insert_remove(i*7+13, False)
-    binTree.TESTAVL_save_load()
-    binTree.TESTAVL_no_auto_rebalance(True)
-    binTree.TESTAVL_no_auto_rebalance(False)
+    ### test VAL
+    # binTree.TESTAVL_insert_then_removeA()
+    # binTree.TESTAVL_insert_then_removeB()
+    # binTree.TESTAVL_insert_then_removeC()
+    # binTree.TESTAVL_batch_insert_remove(671, True)
+    # for i in range(10):
+    #     binTree.TESTAVL_batch_insert_remove(i*7+13, False)
+    # binTree.TESTAVL_save_load()
+    # binTree.TESTAVL_no_auto_rebalance(True)
+    # binTree.TESTAVL_no_auto_rebalance(False)
 
     # ### RBTree
-    binTree.TESTRBT_insert_then_removeA()
-    binTree.TESTRBT_insert_then_removeB()
-    binTree.TESTRBT_insert_then_removeC()
-    binTree.TESTRBT_batch_insert_remove(671, True)
-    for i in range(10):
-        binTree.TESTRBT_batch_insert_remove(i*7+13, False)
+    # binTree.TESTRBT_insert_then_removeA()
+    # binTree.TESTRBT_insert_then_removeB()
+    # binTree.TESTRBT_insert_then_removeC()
+    # binTree.TESTRBT_batch_insert_remove(671, True)
+    # for i in range(10):
+    #     binTree.TESTRBT_batch_insert_remove(i*7+13, False)
 
+    binTree.TESTAVLWR_insert_then_removeA()
 
     # ### 根据个股增、删价格档日志，测试不同二叉树的行为
     # tree_log = binTree.extract_level_access_log('log/301336_220812_LEVEL_ACCESS.log', modify_only=True, side='both')

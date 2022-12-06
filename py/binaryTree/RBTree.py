@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
-from tkinter.tix import Tree
 from graphviz import Digraph
 import uuid
 from tool.simpleStack import simpleStack
 from binaryTree.util import *
+import sys
 
 import logging
 RBTree_logger = logging.getLogger(__name__)
@@ -112,10 +112,10 @@ class RBTree:
     def __str__(self):
         return f'RBTree({self.tree_name}) id:{id(self)}'
 
-    def _printTree(self):
+    def _drawTree(self):
         graph = Digraph(comment='RB Binary Tree')
 
-        def printNode(node:RBTNode, node_tag):
+        def drawNode(node:RBTNode, node_tag):
             '''
             绘制以某个节点为根节点的二叉树
             '''
@@ -132,7 +132,7 @@ class RBTree:
                 linecolor = 'red' if node.left.is_red else 'black'
                 graph.node(left_tag, nodelabel, style='filled', fillcolor=fillcolor, color=linecolor)    # 左节点
                 graph.edge(node_tag, left_tag, label='L', fillcolor=linecolor, color=linecolor)   # 左节点与其父节点的连线
-                printNode(node.left, left_tag)
+                drawNode(node.left, left_tag)
             else:
                 left_tag = str(uuid.uuid1())
                 graph.node(left_tag, '', style='filled', fillcolor='white', color='white')    # 左节点
@@ -145,7 +145,7 @@ class RBTree:
                 linecolor = 'red' if node.right.is_red else 'black'
                 graph.node(right_tag, nodelabel, style='filled', fillcolor=fillcolor, color=linecolor)
                 graph.edge(node_tag, right_tag, label='R', fillcolor=linecolor, color=linecolor)
-                printNode(node.right, right_tag)
+                drawNode(node.right, right_tag)
             else:
                 right_tag = str(uuid.uuid1())
                 graph.node(right_tag, '', style='filled', fillcolor='white', color='white')
@@ -156,9 +156,30 @@ class RBTree:
             root_tag = str(uuid.uuid1())                # 根节点标签
             fillcolor = COLORS[self.root.value  % len(COLORS)]
             graph.node(root_tag, str(self.root), style='filled', fillcolor=fillcolor, color='black')     # 创建根节点
-            printNode(self.root, root_tag)
+            drawNode(self.root, root_tag)
 
         return graph
+
+    def __print_helper(self, node:RBTNode, indent, last, s, print):
+        if node != RBTree.NULL_NODE:
+            s += indent
+            if last:
+                s += "R----  "
+                indent += "     "
+            else:
+                s += "L----  "
+                indent += "|    "
+
+            s_color = "RED" if node.is_red == 1 else "BLACK"
+            print(f'{s}{str(node.value) + "(" + s_color + ")"}')
+            s = ""
+            self.__print_helper(node.left, indent, False, s, print)
+            self.__print_helper(node.right, indent, True, s, print)
+
+    def printTree(self, printer=None):
+        if printer is None:
+            printer = print
+        self.__print_helper(self.root, "", True, "", print=printer)
 
     #打印树 #for debug only
     def debugShow(self, label="", check=True, force_draw=0):
@@ -167,7 +188,7 @@ class RBTree:
             self.DBG(f" Tree is empty!")
             return
         if self.debug_level>0 or force_draw>0:
-            graph = self._printTree()
+            graph = self._drawTree()
             if self.debug_level>1 or force_draw>1:    #显示上一步和当前
                 if self.graph_last is None:
                     self.graph_last = graph

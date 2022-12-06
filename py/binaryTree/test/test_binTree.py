@@ -2,6 +2,7 @@
 
 import binaryTree.AVLTree as AVL
 import binaryTree.RBTree as RB
+import binaryTree.AVLTree_wr as AVL_wr
 from binaryTree.util import *
 import random
 from random import shuffle, randint
@@ -10,6 +11,7 @@ import sys
 
 TYPE_MAP = {
     'AVL':{'TREE':AVL.AVLTree, 'NODE':AVL.AVLTNode, 'LOGGER':AVL.AVLTree_logger},
+    'AVL_wr':{'TREE':AVL_wr.AVLTree, 'NODE':AVL_wr.AVLTNode, 'LOGGER':AVL_wr.AVLTree_logger},
     'RB':{'TREE':RB.RBTree, 'NODE':RB.RBTNode, 'LOGGER':RB.RBTree_logger},
 }
 
@@ -49,15 +51,17 @@ def _insert_then_remove(l:list, s, type):
     LOGGER.info(f'locate_lower({midV}) = {t.locate_lower(t.locate(midV))}')
     LOGGER.info(f'locate_higher({midV}) = {t.locate_higher(t.locate(midV))}')
 
-    for _ in range(min(len(l)//3, 3)):
-        rootV = t.getRoot().value
-        LOGGER.info(f'rootV = {rootV}')
-        t.remove(rootV, auto_rebalance=True)
-        l.remove(rootV)
+    t.printTree(LOGGER.info)
 
-    for n in l:
-        t.remove(n, auto_rebalance=True)
-    t.debugShow(label='remove_final')
+    # for _ in range(min(len(l)//3, 3)):
+    #     rootV = t.getRoot().value
+    #     LOGGER.info(f'rootV = {rootV}')
+    #     t.remove(rootV, auto_rebalance=True)
+    #     l.remove(rootV)
+
+    # for n in l:
+    #     t.remove(n, auto_rebalance=True)
+    # t.debugShow(label='remove_final')
 
 
 def _batch_insert_remove(seed, draw, type, name):
@@ -304,3 +308,6 @@ def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=No
     LOGGER.info(f'BID max size={bid.size_max}')
 
 
+
+def TESTAVLWR_insert_then_removeA():
+    _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'AVL_wr')

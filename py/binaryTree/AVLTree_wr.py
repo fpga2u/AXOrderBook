@@ -48,56 +48,11 @@ class AVLTNode:
 
     @property
     def is_root(self):
-        if self.parent is None:
+        if self.parent_addr is None:
             assert self.is_left is None, "root with is_left not None"
         else:
             assert self.is_left is not None, "none-root with is_left is None"
-        return self.parent is None
-
-    # def printTree(self):
-    #     '''
-    #     利用Graphviz实现二叉树的可视化
-    #     '''
-    #     # colors for labels of nodes
-    #     graph = Digraph(comment='AVL Binary Tree')
-
-    #     def printNode(node:AVLTNode, node_tag):
-    #         '''
-    #         绘制以某个节点为根节点的二叉树
-    #         '''
-    #         if node.left_child is None and node.right_child is None:
-    #             return
-    #         # 节点颜色
-    #         if node.left_child is not None:
-    #             left_tag = str(uuid.uuid1())
-    #             color = COLORS[node.left_child.value  % len(COLORS)]    #颜色与权重绑定，保持在颜色在树平衡前后的稳定性
-    #             graph.node(left_tag, str(node.left_child.value), style='filled', fillcolor=color, color='black')    # 左节点
-    #             graph.edge(node_tag, left_tag, label='L' + str(node.left_height))   # 左节点与其父节点的连线
-    #             printNode(node.left_child, left_tag)
-    #         else:
-    #             left_tag = str(uuid.uuid1())
-    #             graph.node(left_tag, '', style='filled', fillcolor='white', color='white')    # 左节点
-    #             graph.edge(node_tag, left_tag, label='', fillcolor='white', color='white')   # 左节点与其父节点的连线
-
-    #         if node.right_child is not None:
-    #             right_tag = str(uuid.uuid1())
-    #             color = COLORS[node.right_child.value  % len(COLORS)]
-    #             graph.node(right_tag, str(node.right_child.value), style='filled', fillcolor=color, color='black')
-    #             graph.edge(node_tag, right_tag, label='R' + str(node.right_height))
-    #             printNode(node.right_child, right_tag)
-    #         else:
-    #             right_tag = str(uuid.uuid1())
-    #             graph.node(right_tag, '', style='filled', fillcolor='white', color='white')
-    #             graph.edge(node_tag, right_tag, label='', fillcolor='white', color='white')
-
-    #     # 如果树非空
-    #     if self.value is not None:
-    #         root_tag = str(uuid.uuid1())                # 根节点标签
-    #         color = COLORS[self.value  % len(COLORS)]
-    #         graph.node(root_tag, str(self.value), style='filled', fillcolor=color, color='black')     # 创建根节点
-    #         printNode(self, root_tag)
-
-    #     return graph
+        return self.parent_addr is None
     
     def __str__(self):
         return f'AVLTNode({self.value}) id:{id(self)}'
@@ -150,12 +105,9 @@ class NODE_BRAM():
         self.data[value.addr] = value
 
     def at(self, addr)->AVLTNode:
-        '''无读写记录'''
+        '''无读写记录，用于debug'''
         assert addr<self.depth, f'{self.ram_name} read addr={addr} / {self.depth} OVF!'
         return self.data[addr]
-
-    def clr(self, addr):
-        self.data[addr] = None
 
     def init(self):
         '''
@@ -166,7 +118,7 @@ class NODE_BRAM():
                 node = AVLTNode(right_addr=i+1)
             else:
                 node = AVLTNode()
-            self.data[i] = node
+            self.data.append(node)
 
 
 # AVL二叉树对象
@@ -216,26 +168,99 @@ class AVLTree:
         '''
         return self.ram.read_num + self.ram.write_num
 
+    def _drawTree(self):
+        '''
+        利用Graphviz实现二叉树的可视化
+        '''
+        # colors for labels of nodes
+        graph = Digraph(comment='AVL Binary Tree')
+
+        def drawNode(node:AVLTNode, node_tag):
+            '''
+            绘制以某个节点为根节点的二叉树
+            '''
+            if node.left_addr is None and node.right_addr is None:
+                return
+            # 节点颜色
+            if node.left_addr is not None:
+                left_child = self.ram.at(node.left_addr)
+                left_tag = str(uuid.uuid1())
+                color = COLORS[left_child.value  % len(COLORS)]    #颜色与权重绑定，保持在颜色在树平衡前后的稳定性
+                graph.node(left_tag, str(left_child.value), style='filled', fillcolor=color, color='black')    # 左节点
+                graph.edge(node_tag, left_tag, label='L' + str(node.left_height))   # 左节点与其父节点的连线
+                drawNode(left_child, left_tag)
+            else:
+                left_tag = str(uuid.uuid1())
+                graph.node(left_tag, '', style='filled', fillcolor='white', color='white')    # 左节点
+                graph.edge(node_tag, left_tag, label='', fillcolor='white', color='white')   # 左节点与其父节点的连线
+
+            if node.right_addr is not None:
+                right_child = self.ram.at(node.right_addr)
+                right_tag = str(uuid.uuid1())
+                color = COLORS[right_child.value  % len(COLORS)]
+                graph.node(right_tag, str(right_child.value), style='filled', fillcolor=color, color='black')
+                graph.edge(node_tag, right_tag, label='R' + str(node.right_height))
+                drawNode(right_child, right_tag)
+            else:
+                right_tag = str(uuid.uuid1())
+                graph.node(right_tag, '', style='filled', fillcolor='white', color='white')
+                graph.edge(node_tag, right_tag, label='', fillcolor='white', color='white')
+
+        # 如果树非空
+        if self.root_addr is not None:
+            root = self.ram.at(self.root_addr)
+            root_tag = str(uuid.uuid1())                # 根节点标签
+            color = COLORS[root.value  % len(COLORS)]
+            graph.node(root_tag, str(root.value), style='filled', fillcolor=color, color='black')     # 创建根节点
+            drawNode(root, root_tag)
+
+        return graph
+
+    def __print_helper(self, node:AVLTNode, indent, last, s, print):
+        if node != None:
+            # sys.stdout.write(indent)
+            s += indent
+            if last:
+                # sys.stdout.write("R----  ")
+                s += "R----  "
+                indent += "     "
+            else:
+                # sys.stdout.write("L----  ")
+                s += "L----  "
+                indent += "|    "
+            # print(str(node))
+            print(f'{s}{str(node.value)}')
+            s = ""
+            left_child = self.ram.at(node.left_addr)
+            right_child = self.ram.at(node.right_addr)
+            self.__print_helper(left_child, indent, False, s, print)
+            self.__print_helper(right_child, indent, True, s, print)
+
+    def printTree(self, printer=None):
+        if printer is None:
+            printer = print
+        self.__print_helper(self.root, "", True, "", print=printer)
+
     #打印树 #for debug only
     def debugShow(self, label="", check=True, force_draw=0):
-        # self.DBG(f"{label}")
-        # if not self.root:
-        #     self.DBG(f" Tree is empty!")
-        #     return
-        # if self.debug_level>0 or force_draw>0:
-        #     graph = self.root.printTree()
-        #     if self.debug_level>1 or force_draw>1:    #显示上一步和当前
-        #         if self.graph_last is None:
-        #             self.graph_last = graph
-        #         else:
-        #             new_step = graph
-        #             graph = self.graph_last
-        #             graph.subgraph(new_step)
-        #             self.graph_last = new_step
-        #     save_path = f'{DBG_VIEW_ROOT}/{self.tree_name}_show{self.graphSeq:05d}_{label}'
-        #     r = graph.render(format='png', filename=save_path)
-        #     self.DBG(f' {r}')
-        # self.graphSeq+=1
+        self.DBG(f"{label}")
+        if self.root_addr is None:
+            self.DBG(f" Tree is empty!")
+            return
+        if self.debug_level>0 or force_draw>0:
+            graph = self._drawTree()
+            if self.debug_level>1 or force_draw>1:    #显示上一步和当前
+                if self.graph_last is None:
+                    self.graph_last = graph
+                else:
+                    new_step = graph
+                    graph = self.graph_last
+                    graph.subgraph(new_step)
+                    self.graph_last = new_step
+            save_path = f'{DBG_VIEW_ROOT}/{self.tree_name}_show{self.graphSeq:05d}_{label}'
+            r = graph.render(format='png', filename=save_path)
+            self.DBG(f' {r}')
+        self.graphSeq+=1
 
         if check:
             self._checkTree()
@@ -307,27 +332,25 @@ class AVLTree:
             if current_node is None or new_node.value > current_node.value:
                 if current_node.right_addr is None:
                     new_node.is_left = False
-                    new_node.parent_addr = current_addr
+                    new_node.parent_addr = current_node.addr
                     current_node.right_addr = new_node.addr
                     # self.ram.write(new_node)
                     # self.ram.write(current_node)
                     break
                 else:
                     stk.push(current_node)
-                    current_addr = current_node.right_addr
-                    current_node = self.ram.read(current_addr)
+                    current_node = self.ram.read(current_node.right_addr)
             elif new_node.value < current_node.value:
                 if current_node.left_addr is None:
                     new_node.is_left = True
-                    new_node.parent_addr = current_addr
+                    new_node.parent_addr = current_node.addr
                     current_node.left_addr = new_node.addr
                     # self.ram.write(new_node)
                     # self.ram.write(current_node)
                     break
                 else:                    
                     stk.push(current_node)
-                    current_addr = current_node.left_addr
-                    current_node = self.ram.read(current_addr)
+                    current_node = self.ram.read(current_node.left_addr)
             else:
                 # The level already exists
                 break
@@ -366,29 +389,31 @@ class AVLTree:
     #中序非递归遍历，从小到大输出所有序列
     def inorder_list_inc(self):
         s = simpleStack()
-        t = self.root
+        t = self.root_addr
         l = []
         while t is not None or not s.is_empty():
             while t is not None:
-                s.push(t)
-                t = t.left_child
-            t = s.pop()
-            l.append(t.value)
-            t = t.right_child
+                node = self.ram.read(t)
+                s.push(node)
+                t = node.left_addr
+            node = s.pop()
+            l.append(node.value)
+            t = node.right_addr
         return l
 
     #中序非递归遍历，从大到小输出所有序列
     def inorder_list_dec(self):
         s = simpleStack()
-        t = self.root
+        t = self.root_addr
         l = []
         while t is not None or not s.is_empty():
             while t is not None:
-                s.push(t)
-                t = t.right_child
-            t = s.pop()
-            l.append(t.value)
-            t = t.left_child
+                node = self.ram.read(t)
+                s.push(node)
+                t = node.right_addr
+            node = s.pop()
+            l.append(node.value)
+            t = node.left_addr
         return l
 
     def locate(self, value:int, root:AVLTNode|None=None)->AVLTNode|None:
@@ -681,7 +706,10 @@ class AVLTree:
             https://en.wikipedia.org/wiki/File:Tree_Rebalancing.gif
         :return:
         """
-        parent = self.ram.read(node_param.parent_addr)
+        if node_param.parent_addr is not None:
+            parent = self.ram.read(node_param.parent_addr)
+        else:
+            parent = None
         is_left = node_param.is_left
 
         label = f'RR {node_param.value} is_left({is_left})'
