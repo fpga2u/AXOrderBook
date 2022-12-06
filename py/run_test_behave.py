@@ -88,22 +88,26 @@ if __name__== '__main__':
     # fh.setLevel(logging.WARN)
     # sh.setLevel(logging.ERROR)
     # behave.TEST_axob(20220804, 301278) #创业板新股首日，波动性中断期间撤单导致价格笼子变化
+    #                                    #http://www.szse.cn/disclosure/notice/temp/t20220804_595243.html
+    #                                    #http://www.szse.cn/disclosure/notice/temp/t20220804_595244.html
     # # data_source = "data/20220804/AX_sbe_szse_301278.log"
     # # behave.TEST_mu_rolling(data_source, [301278], n_max=0, rolling_gap=30, begin_section='mu_1_111033000')
 
     # ## 20220805测试错误
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220805, 1236)      #TODO: 新股上市首日，涨停价44%，但集合竞价进行申报的价格有效区间是[80%, 120%]，连续竞价时才是[64%, 144%]
-
+                                            #http://www.szse.cn/disclosure/notice/temp/t20220805_595261.html
     # ## 20220808测试错误
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220808, 1229)    #TODO: 新股上市首日，涨停价44%，但集合竞价进行申报的价格有效区间是[80%, 120%]，连续竞价时才是[64%, 144%]
-
+                                          #http://www.szse.cn/disclosure/notice/temp/t20220808_595282.html
     ### 20220812测试
     logger.info('starting TEST_axob_bat')
     # fh.setLevel(logging.WARN)
     # sh.setLevel(logging.ERROR)
     behave.TEST_axob(20220812, 301336, logPack=logPack) #创业板新股首日，波动性中断测试
+                                                        #http://www.szse.cn/disclosure/notice/temp/t20220812_595343.html
+                                                        #http://www.szse.cn/disclosure/notice/temp/t20220812_595344.html
     
     # ### 20220812测试
     # logger.info('starting TEST_axob_bat')
