@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from binaryTree.AVLTree import *
-from binaryTree.RBTree import *
+import binaryTree.AVLTree as AVL
+import binaryTree.RBTree as RB
+from binaryTree.util import *
 import random
 from random import shuffle, randint
 import os
 import sys
 
 TYPE_MAP = {
-    'AVL':{'TREE':AVLTree, 'NODE':AVLTNode, 'LOGGER':AVLTree_logger},
-    'RB':{'TREE':RBTree, 'NODE':RBTNode, 'LOGGER':RBTree_logger},
+    'AVL':{'TREE':AVL.AVLTree, 'NODE':AVL.AVLTNode, 'LOGGER':AVL.AVLTree_logger},
+    'RB':{'TREE':RB.RBTree, 'NODE':RB.RBTNode, 'LOGGER':RB.RBTree_logger},
 }
 
 
@@ -166,9 +167,9 @@ def TESTAVL_no_auto_rebalance(inorder):
         random.seed(1000)
         shuffle(l)
     tree_name = 'no_auto_rebalance' + ('(inorder)' if inorder else '(random)')
-    t = AVLTree(tree_name, debug_level=1)
+    t = AVL.AVLTree(tree_name, debug_level=1)
     for n in l:
-        new_node = AVLTNode(n)
+        new_node = AVL.AVLTNode(n)
         t.insert(new_node, auto_rebalance=False)
     #TODO: 在所有插入完成后平衡，目前不成功
     # t._balance(t.locate_max(t.root), recurve_to_root=True)
@@ -185,23 +186,23 @@ def TESTAVL_save_load():
     l = [14987, 16059, 20287, 23639, 47623, 47624, 47625, 50672, 87188, 87189, 97471, 97472, 118563, 124604, 135780, 135781]
     random.seed(1000)
     shuffle(l)
-    t = AVLTree('before_save', debug_level=2)
+    t = AVL.AVLTree('before_save', debug_level=2)
     for n in l:
-        new_node = AVLTNode(n)
+        new_node = AVL.AVLTNode(n)
         t.insert(new_node)
     saved = t.save()    #保存旧树结构
     print(saved)
-    new_node = AVLTNode(50677)
+    new_node = AVL.AVLTNode(50677)
     t.insert(new_node)  #旧树新增一个节点 50677
     t.debugShow(label="save-final")
 
-    tl = AVLTree('after_load', debug_level=2)      #新树装载旧树
+    tl = AVL.AVLTree('after_load', debug_level=2)      #新树装载旧树
     tl.load(saved)
     assert(t.size != tl.size)
 
     saved2 = tl.save()
     print(saved2)
-    new_node = AVLTNode(60000)
+    new_node = AVL.AVLTNode(60000)
     tl.insert(new_node) #新树新增一个节点 60000
     tl.debugShow(label="load-final")
 
@@ -264,12 +265,13 @@ def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=No
     ask_draw_size: ask树的size大于此值时将绘出树结构并保存到png文件，最大值可以在 extract_level_access_log的【输入】文件末尾查找。
                    None时不输出png。
     '''
-    if tree_type=='AVL':
-        ask = AVLTree(f'{tree_type}_ASK_')
-        bid = AVLTree(f'{tree_type}_BID_')
-    else:
-        ask = RBTree(f'{tree_type}_ASK_')
-        bid = RBTree(f'{tree_type}_BID_')
+    assert tree_type in TYPE_MAP, f'unkown tree type={tree_type}!'
+    TREE = TYPE_MAP[tree_type]['TREE']
+    NODE = TYPE_MAP[tree_type]['NODE']
+    LOGGER = TYPE_MAP[tree_type]['LOGGER']
+
+    ask = TREE(f'{tree_type}_ASK_')
+    bid = TREE(f'{tree_type}_BID_')
     with open(log_file, 'r') as f:
         while True:
             l = f.readline()
@@ -281,19 +283,13 @@ def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=No
                     v = int(l[p:].strip().split(' ')[1])
                     if l.find(' BID ')>0:
                         if cmd==' insert ':
-                            if tree_type=='AVL':
-                                new_node = AVLTNode(v)
-                            else:
-                                new_node = RBTNode(v)
+                            new_node = NODE(v)
                             bid.insert(new_node)
                         elif cmd==' remove ':
                             bid.remove(v)
                     elif l.find(' ASK ')>0:
                         if cmd==' insert ':
-                            if tree_type=='AVL':
-                                new_node = AVLTNode(v)
-                            else:
-                                new_node = RBTNode(v)
+                            new_node = NODE(v)
                             ask.insert(new_node)
                         elif cmd==' remove ':
                             ask.remove(v)
@@ -304,11 +300,7 @@ def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=No
                     if ask_draw_size is not None and ask.size >= ask_draw_size:
                         ask.debugShow('max_size', force_draw=1)
 
-    if tree_type=='AVL':
-        AVLTree_logger.info(f'ASK max size={ask.size_max}')
-        AVLTree_logger.info(f'BID max size={bid.size_max}')
-    else:
-        RBTree_logger.info(f'ASK max size={ask.size_max}')
-        RBTree_logger.info(f'BID max size={bid.size_max}')
+    LOGGER.info(f'ASK max size={ask.size_max}')
+    LOGGER.info(f'BID max size={bid.size_max}')
 
 
