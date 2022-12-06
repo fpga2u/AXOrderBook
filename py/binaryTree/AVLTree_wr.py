@@ -138,7 +138,7 @@ class AVLTree:
         self.root_addr = None
         self.size = 0   #leaf num
         self.size_max = 0
-        self.ram = NODE_BRAM(16*1024, ram_name=name+'_BRAM')
+        self.ram = NODE_BRAM(512, ram_name=name+'_BRAM')
         self.empty_head = 0
         self.empty_tail = self.ram.depth-1
 
@@ -275,6 +275,7 @@ class AVLTree:
 
         if check:
             self._checkTree()
+            self._checkRam()
 
     def preorder_nonrec(self, t:int, proc):
         s = simpleStack()
@@ -306,6 +307,21 @@ class AVLTree:
                     assert self.ram.at(node.parent_addr).right_height == max(node.left_height, node.right_height) + 1
         self.preorder_nonrec(self.root_addr, check)
 
+    def _checkRam(self):
+        used_nb = self.size
+        def count_sed(a):
+            self.size -= 1
+        self.preorder_nonrec(self.root_addr, count_sed)
+        assert self.size==0
+        self.size = used_nb
+
+        addr = self.empty_head
+        empty_nb = 0
+        while addr is not None:
+            empty_nb += 1
+            addr = self.ram.at(addr).right_addr
+        assert empty_nb+self.size==self.ram.depth
+
     #验证树平衡性 #for debug only
     def checkBalance(self):
         def check(addr:int):
@@ -334,6 +350,7 @@ class AVLTree:
         #分配地址
         new_node.addr = self.empty_head
         self.empty_head = self.ram.read(self.empty_head).right_addr
+        assert self.empty_tail is not None, f'{self.tree_name} ram address run out!' #必须总有一个是空的，不完全用尽
 
         if self.root_addr is None:
             self.ram.write(new_node)
@@ -528,6 +545,9 @@ class AVLTree:
             return
         label = f'remove_node {node.value}'
         self.size -= 1
+
+        new_tail_addr = node.addr
+
         if node.left_addr is not None and node.right_addr is not None:
             node_right_child = self.ram.read(node.right_addr)
             node_left_child = self.ram.read(node.left_addr)
@@ -544,7 +564,7 @@ class AVLTree:
 
             node_right_child.parent_addr = min_node.addr
             self.ram.write(node_right_child)
-            if min_node.right_addr:
+            if min_node.right_addr is not None:
                 min_node_right_child = self.ram.read(min_node.right_addr)
                 min_node_right_child.parent_addr = node.addr
                 self.ram.write(min_node_right_child)
@@ -574,7 +594,7 @@ class AVLTree:
             node.left_height, min_node.left_height = min_node.left_height, node.left_height
             node.right_height, min_node.right_height = min_node.right_height, node.right_height
 
-            self.ram.write(node)
+            # self.ram.write(node)
             self.ram.write(min_node)
 
             self.debugShow(label + "_pre", check=False)
@@ -633,6 +653,15 @@ class AVLTree:
                 self.ram.write(node_parent)
 
         self.debugShow(label+' bef balance', check=False)
+        
+        tail = self.ram.read(self.empty_tail)
+        tail.right_addr = new_tail_addr
+        tail.addr = self.empty_tail
+        self.ram.write(tail)
+        self.empty_tail = new_tail_addr
+        tail = self.ram.read(new_tail_addr)
+        tail.right_addr = None
+        self.ram.write(tail)
 
         if node.parent_addr is not None:
             node_parent = self.ram.read(node.parent_addr)

@@ -47,9 +47,12 @@ if __name__== '__main__':
     # for i in range(10):
     #     binTree.TESTRBT_batch_insert_remove(i*7+13, False)
 
-    # binTree.TESTAVLWR_insert_then_removeA()
-    # binTree.TESTAVLWR_insert_then_removeB()
-    # binTree.TESTAVLWR_insert_then_removeC()
+    ### VAL 读写统计
+    binTree.TESTAVLWR_insert_then_removeA()
+    binTree.TESTAVLWR_insert_then_removeB()
+    binTree.TESTAVLWR_insert_then_removeC()
+    for i in range(10):
+        binTree.TESTAVLWR_batch_insert_remove(i*7+13, False)
 
     # ### 根据个股增、删价格档日志，测试不同二叉树的行为
     tree_log = binTree.extract_level_access_log('log/301336_220812_LEVEL_ACCESS.log', modify_only=True, side='both')

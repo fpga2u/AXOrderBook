@@ -88,7 +88,7 @@ def _batch_insert_remove(seed, draw, type, name):
 
     value_list = [x for x in range(total_data_size)]
     shuffle(value_list)
-    LOGGER.info(f'{sys._getframe().f_code.co_name} batch_nb={batch_nb} value_list={value_list}')
+    LOGGER.info(f'{sys._getframe().f_code.co_name} seed={seed} batch_nb={batch_nb} value_list={value_list}')
 
     ##Create batch insert/remove lists ##
     #for example:
@@ -225,9 +225,6 @@ def TESTRBT_insert_then_removeB():
 def TESTRBT_insert_then_removeC():
     _insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name, 'RB')
 
-
-
-
 def TESTRBT_batch_insert_remove(seed, draw):
     _batch_insert_remove(seed, draw, 'RB', name=sys._getframe().f_code.co_name)
 
@@ -324,3 +321,6 @@ def TESTAVLWR_insert_then_removeC():
     random.seed(1110)
     shuffle(l)
     _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)
+    
+def TESTAVLWR_batch_insert_remove(seed, draw):
+    _batch_insert_remove(seed, draw, 'AVL_wr', name=sys._getframe().f_code.co_name)
