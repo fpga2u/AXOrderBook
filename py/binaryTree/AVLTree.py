@@ -156,6 +156,51 @@ class AVLTree:
     def __str__(self):
         return f'AVLTree({self.tree_name}) id:{id(self)}'
 
+    def _printTree(self):
+        '''
+        利用Graphviz实现二叉树的可视化
+        '''
+        # colors for labels of nodes
+        graph = Digraph(comment='AVL Binary Tree')
+
+        def printNode(node:AVLTNode, node_tag):
+            '''
+            绘制以某个节点为根节点的二叉树
+            '''
+            if node.left_child is None and node.right_child is None:
+                return
+            # 节点颜色
+            if node.left_child is not None:
+                left_tag = str(uuid.uuid1())
+                color = COLORS[node.left_child.value  % len(COLORS)]    #颜色与权重绑定，保持在颜色在树平衡前后的稳定性
+                graph.node(left_tag, str(node.left_child.value), style='filled', fillcolor=color, color='black')    # 左节点
+                graph.edge(node_tag, left_tag, label='L' + str(node.left_height))   # 左节点与其父节点的连线
+                printNode(node.left_child, left_tag)
+            else:
+                left_tag = str(uuid.uuid1())
+                graph.node(left_tag, '', style='filled', fillcolor='white', color='white')    # 左节点
+                graph.edge(node_tag, left_tag, label='', fillcolor='white', color='white')   # 左节点与其父节点的连线
+
+            if node.right_child is not None:
+                right_tag = str(uuid.uuid1())
+                color = COLORS[node.right_child.value  % len(COLORS)]
+                graph.node(right_tag, str(node.right_child.value), style='filled', fillcolor=color, color='black')
+                graph.edge(node_tag, right_tag, label='R' + str(node.right_height))
+                printNode(node.right_child, right_tag)
+            else:
+                right_tag = str(uuid.uuid1())
+                graph.node(right_tag, '', style='filled', fillcolor='white', color='white')
+                graph.edge(node_tag, right_tag, label='', fillcolor='white', color='white')
+
+        # 如果树非空
+        if self.root is not None:
+            root_tag = str(uuid.uuid1())                # 根节点标签
+            color = COLORS[self.root.value  % len(COLORS)]
+            graph.node(root_tag, str(self.root.value), style='filled', fillcolor=color, color='black')     # 创建根节点
+            printNode(self.root, root_tag)
+
+        return graph
+
     #打印树 #for debug only
     def debugShow(self, label="", check=True, force_draw=0):
         self.DBG(f"{label}")
@@ -163,7 +208,7 @@ class AVLTree:
             self.DBG(f" Tree is empty!")
             return
         if self.debug_level>0 or force_draw>0:
-            graph = self.root.printTree()
+            graph = self._printTree()
             if self.debug_level>1 or force_draw>1:    #显示上一步和当前
                 if self.graph_last is None:
                     self.graph_last = graph
