@@ -9,6 +9,8 @@ from random import shuffle, randint
 import os
 import sys
 
+from tool.test_util import timeit
+
 TYPE_MAP = {
     'AVL':{'TREE':AVL.AVLTree, 'NODE':AVL.AVLTNode, 'LOGGER':AVL.AVLTree_logger},
     'AVL_wr':{'TREE':AVL_wr.AVLTree, 'NODE':AVL_wr.AVLTNode, 'LOGGER':AVL_wr.AVLTree_logger},
@@ -53,15 +55,15 @@ def _insert_then_remove(l:list, s, type, debug_level=2):
 
     t.printTree(LOGGER.info)
 
-    # for _ in range(min(len(l)//3, 3)):
-    #     rootV = t.getRoot().value
-    #     LOGGER.info(f'rootV = {rootV}')
-    #     t.remove(rootV, auto_rebalance=True)
-    #     l.remove(rootV)
+    for _ in range(min(len(l)//3, 3)):
+        rootV = t.getRoot().value
+        LOGGER.info(f'rootV = {rootV}')
+        t.remove(rootV, auto_rebalance=True)
+        l.remove(rootV)
 
-    # for n in l:
-    #     t.remove(n, auto_rebalance=True)
-    # t.debugShow(label='remove_final')
+    for n in l:
+        t.remove(n, auto_rebalance=True)
+    t.debugShow(label='remove_final')
 
 
 def _batch_insert_remove(seed, draw, type, name):
@@ -257,7 +259,7 @@ def extract_level_access_log(log_file, modify_only, side='both'):
             o.write(l)
     return export_file
 
-
+@timeit
 def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=None):
     '''
     !!!目前只支持单只个股!!!
@@ -310,12 +312,12 @@ def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=No
 
 
 def TESTAVLWR_insert_then_removeA():
-    l = [x for x in range(1000)]
-    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)
+    l = [x for x in range(10)]
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=1)
 
 def TESTAVLWR_insert_then_removeB():
-    l = [x for x in range(1000, 0, -1)]
-    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)
+    l = [x for x in range(10, 0, -1)]
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=2)
 
 def TESTAVLWR_insert_then_removeC():
     l = [x for x in range(1000, 0, -1)]

@@ -292,7 +292,7 @@ class AVLTree:
             # self.DBG(node.value)
             node = self.ram.at(addr)
             if node.is_left is None:
-                assert addr==0
+                assert addr==self.root_addr
                 assert node.parent_addr is None
             else:
                 assert node.parent_addr is not None
@@ -304,7 +304,7 @@ class AVLTree:
                     assert id(self.ram.at(self.ram.at(node.parent_addr).right_addr))==id(node)
                     assert node.value > self.ram.at(node.parent_addr).value
                     assert self.ram.at(node.parent_addr).right_height == max(node.left_height, node.right_height) + 1
-        self.preorder_nonrec(0, check)
+        self.preorder_nonrec(self.root_addr, check)
 
     #验证树平衡性 #for debug only
     def checkBalance(self):
@@ -312,7 +312,12 @@ class AVLTree:
             node = self.ram.at(addr)
             assert node.left_height < node.right_height + 2
             assert node.right_height < node.left_height + 2
-        self.preorder_nonrec(0, check)
+        self.preorder_nonrec(self.root_addr, check)
+
+    def getRoot(self)->AVLTNode|None:
+        if self.root_addr is None:
+            return None
+        return self.ram.read(self.root_addr)
 
     #新增端点
     @profileit
@@ -523,110 +528,145 @@ class AVLTree:
             return
         label = f'remove_node {node.value}'
         self.size -= 1
-        if node.left_child and node.right_child:
-            min_node = self.locate_min(node.right_child)
+        if node.left_addr is not None and node.right_addr is not None:
+            node_right_child = self.ram.read(node.right_addr)
+            node_left_child = self.ram.read(node.left_addr)
+            min_node = self.locate_min(node_right_child)
             
             # Swap min_node and current node
-            node.left_child.parent = min_node
-            if min_node.left_child:
-                min_node.left_child.parent = node
-            node.left_child, min_node.left_child = min_node.left_child, node.left_child
+            node_left_child.parent_addr = min_node.addr
+            self.ram.write(node_left_child)
+            if min_node.left_addr is not None:
+                min_node_left_child = self.ram.read(min_node.left_addr)
+                min_node_left_child.parent_addr = node.addr
+                self.ram.write(min_node_left_child)
+            node.left_addr, min_node.left_addr = min_node.left_addr, node.left_addr
 
-            node.right_child.parent = min_node
-            if min_node.right_child:
-                min_node.right_child.parent = node
-            node.right_child, min_node.right_child = min_node.right_child, node.right_child
+            node_right_child.parent_addr = min_node.addr
+            self.ram.write(node_right_child)
+            if min_node.right_addr:
+                min_node_right_child = self.ram.read(min_node.right_addr)
+                min_node_right_child.parent_addr = node.addr
+                self.ram.write(min_node_right_child)
+            node.right_addr, min_node.right_addr = min_node.right_addr, node.right_addr
 
-            new_parent = min_node.parent
+            new_parent = self.ram.read(min_node.parent_addr)
             if node.is_left is None:
-                self.root = min_node
-            elif node.is_left:
-                node.parent.left_child = min_node
+                self.root_addr = min_node.addr
             else:
-                node.parent.right_child = min_node
-            min_node.parent = node.parent
+                node_parent = self.ram.read(node.parent_addr)
+                if node.is_left:
+                    node_parent.left_addr = min_node.addr
+                else:
+                    node_parent.right_addr = min_node.addr
+                self.ram.write(node_parent)
+            min_node.parent_addr = node.parent_addr
 
             if min_node.is_left:
-                new_parent.left_child = node
+                new_parent.left_addr = node.addr
             else:
-                new_parent.right_child = node
-            node.parent = new_parent
+                new_parent.right_addr = node.addr
+            node.parent_addr = new_parent.addr
+            self.ram.write(new_parent)
             
             # node.parent, min_node.parent = min_node.parent, node.parent
             node.is_left, min_node.is_left = min_node.is_left, node.is_left
             node.left_height, min_node.left_height = min_node.left_height, node.left_height
             node.right_height, min_node.right_height = min_node.right_height, node.right_height
 
+            self.ram.write(node)
+            self.ram.write(min_node)
+
             self.debugShow(label + "_pre", check=False)
             
-        if node.left_child:
+        if node.left_addr is not None:
             # Only left child
-            if not node.parent: #del root
-                self.root = node.left_child
-                node.left_child.parent = None
-                node.left_child.is_left = None
+            if node.parent_addr is None: #del root
+                self.root_addr = node.left_addr
+                left_child = self.ram.read(node.left_addr)
+                left_child.parent_addr = None
+                left_child.is_left = None
+                self.ram.write(left_child)
             else:
+                node_parent = self.ram.read(node.parent_addr)
+                left_child = self.ram.read(node.left_addr)
                 if node.is_left:
-                    node.parent.left_child = node.left_child
-                    node.left_child.parent = node.parent
+                    node_parent.left_addr = node.left_addr
+                    left_child.parent_addr = node_parent.addr
                 else:
-                    node.parent.right_child = node.left_child
-                    node.left_child.parent = node.parent
-                    node.left_child.is_left = False
-        elif node.right_child:
+                    node_parent.right_addr = node.left_addr
+                    left_child.parent_addr = node_parent.addr
+                    left_child.is_left = False
+                self.ram.write(node_parent)
+                self.ram.write(left_child)
+        elif node.right_addr is not None:
             # Only right child
-            if not node.parent: #del root
-                self.root = node.right_child
-                node.right_child.parent = None
-                node.right_child.is_left = None
+            if node.parent_addr is None: #del root
+                self.root_addr = node.right_addr
+                right_child = self.ram.read(node.right_addr)
+                right_child.parent_addr = None
+                right_child.is_left = None
+                self.ram.write(right_child)
             else:
+                node_parent = self.ram.read(node.parent_addr)
+                right_child = self.ram.read(node.right_addr)
                 if node.is_left:
-                    node.parent.left_child = node.right_child
-                    node.right_child.parent = node.parent
-                    node.right_child.is_left = True
+                    node_parent.left_addr = node.right_addr
+                    right_child.parent_addr = node_parent.addr
+                    right_child.is_left = True
                 else:
-                    node.parent.right_child = node.right_child
-                    node.right_child.parent = node.parent
+                    node_parent.right_addr = node.right_addr
+                    right_child.parent_addr = node_parent.addr
+                self.ram.write(node_parent)
+                self.ram.write(right_child)
         else:
             # No children
-            if not node.parent: #del root
-                self.root = None
+            if node.parent_addr is None: #del root
+                self.root_addr = None
                 self.graph_last = None
             else:
+                node_parent = self.ram.read(node.parent_addr)
                 if node.is_left:
-                    node.parent.left_child = None
+                    node_parent.left_addr = None
                 else:
-                    node.parent.right_child = None
+                    node_parent.right_addr = None
+                self.ram.write(node_parent)
 
-        latch_parent = node.parent
+        self.debugShow(label+' bef balance', check=False)
 
-        # udpate height
-        while True:
-            if node.is_left is None:
-                break
-            elif node.is_left:
-                node.parent.left_height -= 1
-                if node.parent.left_height < node.parent.right_height:
+        if node.parent_addr is not None:
+            node_parent = self.ram.read(node.parent_addr)
+            latch_parent = node_parent
+
+            # udpate height
+            while True:
+                if node.is_left is None:
                     break
-            else:
-                node.parent.right_height -= 1
-                if node.parent.right_height < node.parent.left_height:
+                elif node.is_left:
+                    node_parent.left_height -= 1
+                    if node_parent.left_height < node_parent.right_height:
+                        break
+                else:
+                    node_parent.right_height -= 1
+                    if node_parent.right_height < node_parent.left_height:
+                        break
+                node = node_parent
+                if node.parent_addr is None:
                     break
-            node = node.parent
-        
-        self.debugShow(label)
+                node_parent = self.ram.read(node.parent_addr)
+            
 
-        if auto_rebalance:
-            self._balance(latch_parent)
-            if latch_parent:
-                self._balance(latch_parent.parent)
+            if auto_rebalance:
+                self._balance(latch_parent)
+                if latch_parent is not None and latch_parent.parent_addr is not None:
+                    self._balance(self.ram.read(latch_parent.parent_addr))
+
 
     #平衡端点，在插入或删除端点后，要递归平衡其父节点
     #node is the point to hook nodes
     @profileit
     def _balance(self, node_param:AVLTNode, recurve_to_root=False):
         node = node_param
-        _ram_access_nb = self.ram_access_nb
 
         while node is not None:
             balance_factor = node.right_height - node.left_height

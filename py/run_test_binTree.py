@@ -49,9 +49,10 @@ if __name__== '__main__':
 
     # binTree.TESTAVLWR_insert_then_removeA()
     # binTree.TESTAVLWR_insert_then_removeB()
-    binTree.TESTAVLWR_insert_then_removeC()
+    # binTree.TESTAVLWR_insert_then_removeC()
 
     # ### 根据个股增、删价格档日志，测试不同二叉树的行为
-    # tree_log = binTree.extract_level_access_log('log/301336_220812_LEVEL_ACCESS.log', modify_only=True, side='both')
+    tree_log = binTree.extract_level_access_log('log/301336_220812_LEVEL_ACCESS.log', modify_only=True, side='both')
     # binTree.TESTTree_using_log(tree_log, 'AVL', 450, 510)
     # binTree.TESTTree_using_log(tree_log, 'RB', 450, 510)
+    binTree.TESTTree_using_log(tree_log, 'AVL_wr', 450, 510)
