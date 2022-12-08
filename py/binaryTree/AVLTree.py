@@ -41,6 +41,10 @@ class AVLTNode:
         return self.right_height - self.left_height
 
     @property
+    def is_balance(self):
+        return self.balance_factor>=-1 and self.balance_factor<=1
+
+    @property
     def is_root(self):
         if self.parent is None:
             assert self.is_left is None, "root with is_left not None"
@@ -157,8 +161,13 @@ class AVLTree:
 
         return graph
 
-    def __print_helper(self, node:AVLTNode, indent, last, s, print):
-        if node != None:
+    def __print_helper(self, node:AVLTNode, indent, last, s, depth, print):
+        if depth>30:
+            error='depth ovf!'
+            self.ERR(error)
+            raise error
+
+        if node is not None:
             s += indent
             if last:
                 s += "R----  "
@@ -168,13 +177,13 @@ class AVLTree:
                 indent += "|    "
             print(f'{s}{str(node.value)}')
             s = ""
-            self.__print_helper(node.left_child, indent, False, s, print)
-            self.__print_helper(node.right_child, indent, True, s, print)
+            self.__print_helper(node.left_child, indent, False, s, depth+1, print)
+            self.__print_helper(node.right_child, indent, True, s, depth+1, print)
 
     def printTree(self, printer=None):
         if printer is None:
             printer = print
-        self.__print_helper(self.root, "", True, "", print=printer)
+        self.__print_helper(self.root, "", True, "", 0, print=printer)
 
     #打印树 #for debug only
     def debugShow(self, label="", check=True, force_draw=0):
@@ -204,20 +213,29 @@ class AVLTree:
     def _checkTree(self):
         def check(node:AVLTNode):
             # self.DBG(node.value)
-            if node.is_left is None:
-                assert node.parent is None
-                assert id(node)==id(self.root)
-            else:
-                assert node.parent is not None
-                if node.is_left:
-                    assert id(node.parent.left_child)==id(node)
-                    assert node.value < node.parent.value
-                    assert node.parent.left_height == max(node.left_height, node.right_height) + 1
+            try:
+                if node.is_left is None:
+                    assert node.parent is None
+                    assert id(node)==id(self.root)
                 else:
-                    assert id(node.parent.right_child)==id(node)
-                    assert node.value > node.parent.value
-                    assert node.parent.right_height == max(node.left_height, node.right_height) + 1
+                    assert node.parent is not None
+                    if node.is_left:
+                        assert id(node.parent.left_child)==id(node)
+                        assert node.value < node.parent.value
+                        assert node.parent.left_height == max(node.left_height, node.right_height) + 1
+                    else:
+                        assert id(node.parent.right_child)==id(node)
+                        assert node.value > node.parent.value
+                        assert node.parent.right_height == max(node.left_height, node.right_height) + 1
+            except Exception as e:
+                self.ERR(f"checkTree FAIL!")
+                self.printTree(self.ERR)
+                self.debugShow("checkTree FAIL", check=False, force_draw=1)
+                raise e
         preorder_nonrec(self.root, check)
+
+    def profile(self):
+        return ""
 
     #验证树平衡性 #for debug only
     def checkBalance(self):
@@ -228,6 +246,9 @@ class AVLTree:
 
     def getRoot(self)->AVLTNode|None:
         return self.root
+
+    def dmy_writeback(self):
+        pass
 
     #新增端点
     def insert(self, new_node:AVLTNode, auto_rebalance=True):
@@ -283,7 +304,6 @@ class AVLTree:
                     break
             new_node = new_node.parent
             
-
         self.debugShow(label)
 
         if auto_rebalance:
@@ -482,6 +502,8 @@ class AVLTree:
                 else:
                     node.parent.right_child = None
 
+        self.debugShow(label+' bef balance', check=False)
+        
         latch_parent = node.parent
 
         # udpate height

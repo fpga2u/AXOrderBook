@@ -31,7 +31,7 @@ if __name__== '__main__':
     logger.addHandler(sh)
     logPack = logger.debug, logger.info, logger.warn, logger.error
 
-    ###测试20220812所有有委托的只股票，全天【pass@22/11/25(D.T.)】
+    ###测试20220812所有有委托的只股票，全天【pass@22/11/25(D.T.), pass@22/12/07(D.R.)】
     fh.setLevel(logging.INFO)
     sh.setLevel(logging.ERROR)
     logger.info('starting TEST_axob_bat')

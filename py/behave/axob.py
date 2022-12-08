@@ -34,7 +34,7 @@ EXPORT_LEVEL_ACCESS = False # 是否导出对价格档位的读写请求
 APPSEQ_BIT_SIZE = 32    # 序列号，34b，约40亿，因为不同channel的序列号各自独立，所以单channel整形就够
 PRICE_BIT_SIZE  = 25    # 价格，20b，33554431，股票:335544.31;基金:33554.431。（创业板上市首日有委托价格为￥188888.00的，若忽略这种特殊情况，则20b(10485.75)足够了）
 QTY_BIT_SIZE    = 30    # 数量，30b，(1,073,741,823)，深圳2位小数，上海3位小数
-LEVEL_QTY_BIT_SIZE    = QTY_BIT_SIZE+7    # 价格档位上的数量位宽
+LEVEL_QTY_BIT_SIZE    = QTY_BIT_SIZE+8    # 价格档位上的数量位宽 20220729:001258 qty=137439040000(38b)
 TIMESTAMP_BIT_SIZE = 24 # 时戳精度 时-分-秒-10ms 最大15000000=24b
 
 PRICE_INTER_STOCK_PRECISION = 100  # 股票价格精度：2位小数，(深圳原始数据4位，上海3位)
@@ -1170,9 +1170,6 @@ class AXOB():
                             break
 
             if self.bid_level_tree[price].qty==0:
-                self.bid_level_tree.pop(price)
-                self._export_level_access(f'LEVEL_ACCESS BID remove {price} //levelDequeue')
-
                 if price==self.bid_max_level_price:  #买方最高价被cancel/trade光
                     self.bid_max_level_qty = 0
                     # locate next lower bid level
@@ -1200,6 +1197,10 @@ class AXOB():
                         self.ask_waiting_for_cage = True if self.market_subtype==MARKET_SUBTYPE.SZSE_STK_GEM else False
                     else:
                         self.ask_waiting_for_cage = False
+                
+                #remove要在locate_lower之后
+                self.bid_level_tree.pop(price)
+                self._export_level_access(f'LEVEL_ACCESS BID remove {price} //levelDequeue')
             else:
                 self._export_level_access(f'LEVEL_ACCESS BID writeback {price} //levelDequeue')
 
@@ -1231,9 +1232,6 @@ class AXOB():
 
 
             if self.ask_level_tree[price].qty==0:
-                self.ask_level_tree.pop(price)
-                self._export_level_access(f'LEVEL_ACCESS ASK remove {price} //levelDequeue')
-
                 if price==PRICE_MAXIMUM:
                     self.AskWeightPx_uncertain = False #加权价又可确定了
 
@@ -1264,6 +1262,10 @@ class AXOB():
                         self.bid_waiting_for_cage = True if self.market_subtype==MARKET_SUBTYPE.SZSE_STK_GEM else False
                     else:
                         self.bid_waiting_for_cage = False
+                
+                #remove要在locate_lower之后
+                self.ask_level_tree.pop(price)
+                self._export_level_access(f'LEVEL_ACCESS ASK remove {price} //levelDequeue')
             else:
                 self._export_level_access(f'LEVEL_ACCESS ASK writeback {price} //levelDequeue')
 

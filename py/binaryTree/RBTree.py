@@ -74,6 +74,8 @@ class RBTNode:
             setattr(self, attr, value)
 
 
+def profile():
+    return ""
 
 class RBTree:
     NULL_NODE = None #RBTNode(None, False)
@@ -251,8 +253,14 @@ class RBTree:
 
         self.check_valid_recur(self.root)
     
+    def profile(self):
+        return ""
+
     def getRoot(self)->RBTNode|None:
         return self.root
+
+    def dmy_writeback(self):
+        pass
 
     def insert(self, new_node:RBTNode, auto_rebalance=True):
         label = "insert " + str(new_node.value)

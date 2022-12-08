@@ -32,3 +32,9 @@ class simpleStack(object):
             return
         else:
             return self.__list[-1]
+
+    def clr(self):
+        self.__list = []
+        self.max_size = 0
+        self.push_nb = 0
+        self.pop_nb = 0

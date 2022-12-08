@@ -8,6 +8,7 @@ import random
 from random import shuffle, randint
 import os
 import sys
+import time
 
 from tool.test_util import timeit
 
@@ -64,6 +65,7 @@ def _insert_then_remove(l:list, s, type, debug_level=2):
     for n in l:
         t.remove(n, auto_rebalance=True)
     t.debugShow(label='remove_final')
+    LOGGER.info(f'profile:\n{t.profile()}')
 
 
 def _batch_insert_remove(seed, draw, type, name):
@@ -145,18 +147,22 @@ def _batch_insert_remove(seed, draw, type, name):
         LOGGER.info(t.inorder_list_inc())
         LOGGER.info(t.inorder_list_dec())
 
+    LOGGER.info(f'profile:\n{t.profile()}')
     assert t.size==0
 
 
 
 def TESTAVL_insert_then_removeA():
-    _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'AVL')
+    _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'AVL', debug_level=1)
 
 def TESTAVL_insert_then_removeB():
-    _insert_then_remove([9,8,7,6,5,4,3,2,1], sys._getframe().f_code.co_name, 'AVL')
+    _insert_then_remove([9,8,7,6,5,4,3,2,1], sys._getframe().f_code.co_name, 'AVL', debug_level=1)
 
 def TESTAVL_insert_then_removeC():
-    _insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name, 'AVL')
+    l = [x for x in range(500, 0, -1)]
+    random.seed(1110)
+    shuffle(l)
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL', debug_level=0)
 
 
 def TESTAVL_batch_insert_remove(seed, draw):
@@ -217,13 +223,13 @@ def TESTAVL_save_load():
 
 
 def TESTRBT_insert_then_removeA():
-    _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'RB')
+    _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'RB', debug_level=1)
 
 def TESTRBT_insert_then_removeB():
-    _insert_then_remove([x for x in range(10,0,-1)], sys._getframe().f_code.co_name, 'RB')
+    _insert_then_remove([x for x in range(10,0,-1)], sys._getframe().f_code.co_name, 'RB', debug_level=1)
 
 def TESTRBT_insert_then_removeC():
-    _insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name, 'RB')
+    _insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name, 'RB', debug_level=1)
 
 def TESTRBT_batch_insert_remove(seed, draw):
     _batch_insert_remove(seed, draw, 'RB', name=sys._getframe().f_code.co_name)
@@ -275,36 +281,51 @@ def TESTTree_using_log(log_file, tree_type, bid_draw_size=None, ask_draw_size=No
 
     ask = TREE(f'{tree_type}_ASK_')
     bid = TREE(f'{tree_type}_BID_')
+
+    working_tree = {
+        'BID':bid,
+        'ASK':ask,
+    }
     with open(log_file, 'r') as f:
         while True:
             l = f.readline()
             if not l:break
 
-            for cmd in [' remove ', ' insert ']:
+            for cmd in [' remove ', ' insert ', ' locate ', ' writeback ', ' locate_higher ', ' locate_lower ']:
                 p = l.find(cmd)
                 if p>=0:
                     v = int(l[p:].strip().split(' ')[1])
                     if l.find(' BID ')>0:
-                        if cmd==' insert ':
-                            new_node = NODE(v)
-                            bid.insert(new_node)
-                        elif cmd==' remove ':
-                            bid.remove(v)
+                        working_tree = bid
                     elif l.find(' ASK ')>0:
-                        if cmd==' insert ':
-                            new_node = NODE(v)
-                            ask.insert(new_node)
-                        elif cmd==' remove ':
-                            ask.remove(v)
+                        working_tree = ask
+                    else:
+                        continue
+                    if cmd==' insert ':
+                        new_node = NODE(v)
+                        working_tree.insert(new_node)
+                    elif cmd==' remove ':
+                        working_tree.remove(v)
+                    elif cmd==' locate ':
+                        working_tree.locate(v)
+                    elif cmd==' writeback ':
+                        working_tree.dmy_writeback()
+                    elif cmd==' locate_higher ':
+                        working_tree.locate_higher(working_tree.locate(v))
+                    elif cmd==' locate_lower ':
+                        working_tree.locate_lower(working_tree.locate(v))
 
                     if bid_draw_size is not None and bid.size >= bid_draw_size:
                         bid.debugShow('max_size', force_draw=1)
 
                     if ask_draw_size is not None and ask.size >= ask_draw_size:
                         ask.debugShow('max_size', force_draw=1)
+                    break
 
     LOGGER.info(f'ASK max size={ask.size_max}')
+    LOGGER.info(f'ASK.profile:\n{ask.profile()}')
     LOGGER.info(f'BID max size={bid.size_max}')
+    LOGGER.info(f'BID.profile:\n{bid.profile()}')
 
 
 
@@ -313,14 +334,18 @@ def TESTAVLWR_insert_then_removeA():
     _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=1)
 
 def TESTAVLWR_insert_then_removeB():
-    l = [x for x in range(10, 0, -1)]
-    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=2)
+    l = [x for x in range(9, 0, -1)]
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=1)
 
 def TESTAVLWR_insert_then_removeC():
-    l = [x for x in range(1000, 0, -1)]
-    random.seed(1110)
+    l = [x for x in range(500, 0, -1)]
+    t=1670492570.9852529
+    LOGGER = TYPE_MAP['AVL_wr']['LOGGER']
+    LOGGER.info(t)
+
+    random.seed(t)
     shuffle(l)
-    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)
+    _insert_then_remove(l, str(t), 'AVL_wr', debug_level=0)
     
 def TESTAVLWR_batch_insert_remove(seed, draw):
     _batch_insert_remove(seed, draw, 'AVL_wr', name=sys._getframe().f_code.co_name)

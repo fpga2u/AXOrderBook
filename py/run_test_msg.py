@@ -55,6 +55,7 @@ if __name__== '__main__':
     # msg_util.extract_security("H:/AXOB_data_newP/20220621/sbe_20220621_all.log", "data/20220621/AX_sbe_szse_301199.log", [301199])
     # msg_util.extract_security("H:/AXOB_data_newP/20220622/sbe_20220622_all.log", "data/20220622/AX_sbe_szse_300103.log", [300103])
     # msg_util.extract_security("H:/AXOB_data_newP/20220623/sbe_20220623_all.log", "data/20220623/AX_sbe_szse_300928.log", [300928])
+    msg_util.extract_security("H:/AXOB_data_newP_ru/20220729/sbe_20220729_all.log", "data/20220729/AX_sbe_szse_001258.log", [1258])
     # msg_util.extract_security("H:/AXOB_data_newP_ru/20220804/sbe_20220804_all.log", "data/20220804/AX_sbe_szse_301278.log", [301278])
     # msg_util.extract_security("H:/AXOB_data_newP_ru/20220805/sbe_20220805_all.log", "data/20220805/AX_sbe_szse_001236.log", [1236])
     # msg_util.extract_security("H:/AXOB_data_newP_ru/20220808/sbe_20220808_all.log", "data/20220808/AX_sbe_szse_001229.log", [1229])
