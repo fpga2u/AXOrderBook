@@ -671,14 +671,11 @@ class AVLTree(TreeWithRam):
                     if v is not None:
                         r[d] = v.save()
                 data['ram'] = r
+            elif item in ['graph_last']:
+                data[item] = None
             else:
                 attr = getattr(self, item)
-                if attr in ['graph_last']:
-                    data[item] = None
-                elif attr is None:
-                    data[item] = None
-                else:
-                    data[item] = attr
+                data[item] = attr
 
         return data
 
@@ -710,6 +707,6 @@ class AVLTree(TreeWithRam):
         for addr, n in r.items():
             new_node = AVLTNode()
             new_node.load(n)
-            self.ram.data[addr] = new_node
+            self.ram.data[int(addr)] = new_node
 
 

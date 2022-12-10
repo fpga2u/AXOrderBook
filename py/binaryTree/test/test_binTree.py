@@ -8,7 +8,7 @@ import random
 from random import shuffle, randint
 import os
 import sys
-import time
+import json
 
 from tool.test_util import timeit
 
@@ -93,8 +93,15 @@ def _save_load(type):
     save_final = t.printTree()
     LOGGER.info('\n'+save_final)
 
+    with open('log/test_save_load.json', 'w') as f:
+        json.dump(saved, f, indent=4)
+
+    with open('log/test_save_load.json', 'r') as f:
+        saved = json.load(f)
+
     tl = TREE('after_load', debug_level=2)      #新树装载旧树
     tl.load(saved)
+    tl.tree_name = 'after_load'
     assert(t.size != tl.size)
 
     saved2 = tl.save()

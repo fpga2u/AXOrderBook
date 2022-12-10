@@ -35,7 +35,7 @@ if __name__== '__main__':
     # binTree.TESTAVL_batch_insert_remove(671, True)
     # for i in range(10):
     #     binTree.TESTAVL_batch_insert_remove(i*7+13, False)
-    # binTree.TESTAVL_save_load()
+    binTree.TESTAVL_save_load()
     # binTree.TESTAVL_no_auto_rebalance(True)
     # binTree.TESTAVL_no_auto_rebalance(False)
 
