@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
-from graphviz import Digraph
 import uuid
-from tool.simpleStack import simpleStack
-from binaryTree.absTree import TNodeInRam, NODE_BRAM, TreeWithRam
+from binaryTree.absTree import TNodeInRam, TreeWithRam
 from binaryTree.util import *
 
 
@@ -117,7 +115,7 @@ class AVLTree(TreeWithRam):
     def __str__(self):
         return f'AVLTree({self.tree_name})'
 
-    def _drawNode_nest(self, graph, node, node_tag, depth):
+    def _drawNode_nest(self, graph, node:AVLTNode, node_tag, depth):
             '''
             绘制以某个节点为根节点的二叉树
             '''
