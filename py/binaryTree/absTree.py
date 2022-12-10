@@ -5,6 +5,12 @@ import abc
 from copy import deepcopy
 import uuid
 import pandas as pd
+
+pd.set_option('display.max_rows',100)
+pd.set_option('display.width', 5000)
+pd.set_option('display.max_colwidth', 100)
+pd.set_option('display.max_columns',None)
+
 from functools import wraps
 
 from tool.simpleStack import simpleStack
@@ -36,13 +42,13 @@ class TNodeInRam(metaclass=abc.ABCMeta):
     def __eq__(self, __o:TNodeInRam) -> bool:
         return self.addr == __o.addr
 
-    @abc.abstractmethod
-    def save(self):
-        pass
+    # @abc.abstractmethod
+    # def save(self):
+    #     pass
 
-    @abc.abstractmethod
-    def load(self, data):
-        pass
+    # @abc.abstractmethod
+    # def load(self, data):
+    #     pass
 
 class NODE_BRAM():
     def __init__(self, depth:int, ram_name='NODE_BRAM'):
@@ -176,7 +182,7 @@ class TreeWithRam(metaclass=abc.ABCMeta):
             root_tag = str(uuid.uuid1())                # 根节点标签
             color = COLORS[root.value  % len(COLORS)]
             graph.node(root_tag, str(root.value), style='filled', fillcolor=color, color='black')     # 创建根节点
-            drawNode_nest(root, root_tag, 0)
+            drawNode_nest(graph, root, root_tag, 0)
 
         return graph
 
@@ -210,9 +216,9 @@ class TreeWithRam(metaclass=abc.ABCMeta):
         self.__print_helper(root, "", True, "", 0, print=printer)
 
     @abc.abstractmethod
-    def _drawNode_nest(self, node, node_tag, depth):
+    def _drawNode_nest(self, graph, node, node_tag, depth):
         '''
-        绘制以某个节点为根节点的二叉树
+        绘制以某个节点为根节点的二叉树，从node开始递归遍历所有子节点
         '''
         pass
 
@@ -261,7 +267,10 @@ class TreeWithRam(metaclass=abc.ABCMeta):
     def profile(self):
         return self._describe_ram_access_stats()
 
-    def preorder_nonrec(self, t:int, proc):
+    def _preorder_nonrec(self, t:int, proc):
+        '''
+        先序遍历，仅用于debug
+        '''
         s = simpleStack()
         while t is not None or not s.is_empty():
             while t is not None:        # 沿左分支下行
@@ -292,7 +301,7 @@ class TreeWithRam(metaclass=abc.ABCMeta):
         used_nb = self.size
         def count_sed(a):
             self.size -= 1
-        self.preorder_nonrec(self.root_addr, count_sed)
+        self._preorder_nonrec(self.root_addr, count_sed)
         assert self.size==0
         self.size = used_nb
 
@@ -347,8 +356,11 @@ class TreeWithRam(metaclass=abc.ABCMeta):
 
     #新增端点
     @profileit
-    @abc.abstractmethod
     def insert(self, new_node:TNodeInRam, auto_rebalance=True):
+        self._insert_helper(new_node, auto_rebalance)
+
+    @abc.abstractmethod
+    def _insert_helper(self, new_node:TNodeInRam, auto_rebalance=True):
         pass
 
     @profileit
@@ -440,31 +452,25 @@ class TreeWithRam(metaclass=abc.ABCMeta):
         self.value_list[value] = 'r'
 
     @profileit
-    @abc.abstractmethod
     def remove_node(self, node:TNodeInRam, auto_rebalance=True):
+        self._remove_node_helper(node, auto_rebalance)
+
+    @abc.abstractmethod
+    def _remove_node_helper(self, node:TNodeInRam, auto_rebalance=True):
         pass
 
+    @abc.abstractmethod
     def save(self):
         '''
         导出树数据
         '''
-        data = {}
-        for d in range(self.ram.depth):
-            v = self.ram.at(d)
-            if v is not None:
-                data[d] = v
-        return {'ram' : data, 'size':self.size}
+        pass
 
+    @abc.abstractmethod
     def load(self, data):
         '''
         导入树数据
         '''
-        self.size = data['size']
-        data = data['ram']
-        self.ram.init()
-        for addr, n in data.items():
-            new_node = TNodeInRam()
-            new_node.load(n)
-            self.ram.data[addr] = new_node
+        pass
 
 

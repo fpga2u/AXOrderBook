@@ -3,17 +3,9 @@ from __future__ import annotations
 from graphviz import Digraph
 import uuid
 from tool.simpleStack import simpleStack
-from binaryTree.absTree import TNodeInRam, NODE_BRAM
+from binaryTree.absTree import TNodeInRam, NODE_BRAM, TreeWithRam
 from binaryTree.util import *
-from functools import wraps
-import pandas as pd
-from copy import deepcopy
 
-
-pd.set_option('display.max_rows',100)
-pd.set_option('display.width', 5000)
-pd.set_option('display.max_colwidth', 100)
-pd.set_option('display.max_columns',None)
 
 import logging
 AVLTree_logger = logging.getLogger(__name__)
@@ -51,7 +43,7 @@ class AVLTNode(TNodeInRam):
         return self.balance_factor>=-1 and self.balance_factor<=1
     
     def __str__(self):
-        return f'AVLTNode({self.value} @{self.addr})'
+        return f'{self.value} @{self.addr}'#f'AVLTNode({self.value} @{self.addr})'
 
     def save(self):
         '''
@@ -78,62 +70,14 @@ class AVLTNode(TNodeInRam):
 
 
 
-## 统计ram读写次数
-def profileit(f):
-    @wraps(f)
-    def wrap(*args, **kw):
-        tree=args[0]
-        _ram_access_nb = tree.ram_access_nb
-        tree.stk.clr() #即使f内部没有用到stk，也清一次
-
-        result = f(*args, **kw)
-
-        rd_inc = tree.ram_access_nb[0]-_ram_access_nb[0]
-        wr_inc = tree.ram_access_nb[1]-_ram_access_nb[1]
-        stk_push = tree.ram_access_nb[2]*2 #读写总是成对
-        tree.DBG(f'{f.__name__} {_ram_access_nb}->{tree.ram_access_nb} =+({rd_inc}, {wr_inc}, {stk_push})')
-
-        if f.__name__ not in tree.ram_access_stats:
-            tree.ram_access_stats[f.__name__] = {
-                'rd':[rd_inc],
-                'wr':[wr_inc],
-                'stk':[stk_push],
-            }
-        else:
-            tree.ram_access_stats[f.__name__]['rd'].append(rd_inc)
-            tree.ram_access_stats[f.__name__]['wr'].append(wr_inc)
-            tree.ram_access_stats[f.__name__]['stk'].append(stk_push)
-
-        return result
-    return wrap
-
-
 # AVL二叉树对象
-class AVLTree:
-    def __init__(self, name='AVLTree', debug_level=0):
+class AVLTree(TreeWithRam):
+    def __init__(self, name='AVLTree', ram_depth=512, debug_level=0):
         '''
         debug_level:0=no-debug; 1=draw_tree; 2+=draw_tree_all
         '''
-        self.root_addr = None
-        self.size = 0   #leaf num
-        self.size_max = 0
-        self.ram = NODE_BRAM(512, ram_name=name+'_BRAM')
-        self.stk = simpleStack()
-        self.empty_head = 0
-        self.empty_tail = self.ram.depth-1
+        super(AVLTree, self).__init__(name, ram_depth, debug_level)
 
-        #for debug only
-        self.graph_last = None
-        self.graphSeq = 0
-
-        self.ram_access_stats = {}
-
-        #for debug check
-        self.value_list = {}
-        self.tree_name = name
-        self.debug_level = debug_level
-        self.graph_last = None
-        
         ## 日志
         self.logger = logging.getLogger(f'{self.tree_name}')
         g_logger = logging.getLogger('main')
@@ -149,23 +93,9 @@ class AVLTree:
         self.ERR = self.logger.error
 
     def __str__(self):
-        return f'AVLTree({self.tree_name}) id:{id(self)}'
+        return f'AVLTree({self.tree_name})'
 
-    @property
-    def ram_access_nb(self):
-        '''
-        return: (read_num, write_num, stk_push)
-        '''
-        return self.ram.read_num, self.ram.write_num, self.stk.push_nb
-
-    def _drawTree(self):
-        '''
-        利用Graphviz实现二叉树的可视化
-        '''
-        # colors for labels of nodes
-        graph = Digraph(comment='AVL Binary Tree')
-
-        def drawNode(node:AVLTNode, node_tag, depth):
+    def _drawNode_nest(self, graph, node, node_tag, depth):
             '''
             绘制以某个节点为根节点的二叉树
             '''
@@ -183,7 +113,7 @@ class AVLTree:
                 color = COLORS[left_child.value  % len(COLORS)]    #颜色与权重绑定，保持在颜色在树平衡前后的稳定性
                 graph.node(left_tag, str(left_child.value), style='filled', fillcolor=color, color='black')    # 左节点
                 graph.edge(node_tag, left_tag, label='L' + str(node.left_height))   # 左节点与其父节点的连线
-                drawNode(left_child, left_tag, depth+1)
+                self._drawNode_nest(graph, left_child, left_tag, depth+1)
             else:
                 left_tag = str(uuid.uuid1())
                 graph.node(left_tag, '', style='filled', fillcolor='white', color='white')    # 左节点
@@ -195,107 +125,15 @@ class AVLTree:
                 color = COLORS[right_child.value  % len(COLORS)]
                 graph.node(right_tag, str(right_child.value), style='filled', fillcolor=color, color='black')
                 graph.edge(node_tag, right_tag, label='R' + str(node.right_height))
-                drawNode(right_child, right_tag, depth+1)
+                self._drawNode_nest(graph, right_child, right_tag, depth+1)
             else:
                 right_tag = str(uuid.uuid1())
                 graph.node(right_tag, '', style='filled', fillcolor='white', color='white')
                 graph.edge(node_tag, right_tag, label='', fillcolor='white', color='white')
 
-        # 如果树非空
-        if self.root_addr is not None:
-            root = self.ram.at(self.root_addr)
-            root_tag = str(uuid.uuid1())                # 根节点标签
-            color = COLORS[root.value  % len(COLORS)]
-            graph.node(root_tag, str(root.value), style='filled', fillcolor=color, color='black')     # 创建根节点
-            drawNode(root, root_tag, 0)
-
-        return graph
-
-    def __print_helper(self, node:AVLTNode, indent, last, s, depth, print):
-        if depth>30:
-            error='depth ovf!'
-            self.ERR(error)
-            raise error
-
-        if node is not None:
-            s += indent
-            if last:
-                s += "R----  "
-                indent += "     "
-            else:
-                s += "L----  "
-                indent += "|    "
-            print(f'{s}{str(node.value)}')
-            s = ""
-            if node.left_addr is not None:
-                left_child = self.ram.at(node.left_addr)
-                self.__print_helper(left_child, indent, False, s, depth+1, print)
-            if node.right_addr is not None:
-                right_child = self.ram.at(node.right_addr)
-                self.__print_helper(right_child, indent, True, s, depth+1, print)
-
-    def printTree(self, printer=None):
-        if printer is None:
-            printer = print
-        root = self.ram.at(self.root_addr)
-        self.__print_helper(root, "", True, "", 0, print=printer)
-
-    #打印树 #for debug only
-    def debugShow(self, label="", check=True, force_draw=0):
-        self.DBG(f"{label}")
-        if self.root_addr is None:
-            self.DBG(f" Tree is empty!")
-            return
-        if self.debug_level>0 or force_draw>0:
-            graph = self._drawTree()
-            if self.debug_level>1 or force_draw>1:    #显示上一步和当前
-                if self.graph_last is None:
-                    self.graph_last = graph
-                else:
-                    new_step = graph
-                    graph = self.graph_last
-                    graph.subgraph(new_step)
-                    self.graph_last = new_step
-            save_path = f'{DBG_VIEW_ROOT}/{self.tree_name}_show{self.graphSeq:05d}_{label}'
-            r = graph.render(format='png', filename=save_path)
-            self.DBG(f' {r}')
-        self.graphSeq+=1
-
-        if check:
-            try:
-                self._checkTree()
-                self._checkRam()
-            except Exception as e:
-                self.ERR(f"check {label} FAIL!")
-                self.printTree(self.ERR)
-                self.debugShow("checkTree FAIL", check=False, force_draw=1)
-                raise e
-
-    def _describe_ram_access_stats(self):
-        m = []
-        for cmd, s in self.ram_access_stats.items():
-            df = pd.DataFrame(s)
-            df.columns=[cmd+"."+x for x in s]
-            df = df.loc[:, df.any()]
-            m.append(df)
-        m = pd.concat(m, axis=1)
-        return f"{self.tree_name} ram access stats:\n"+str(m.describe()) + f"\n{self.tree_name} ram access sum:\n" + str(m.sum())
-
-    def profile(self):
-        return self._describe_ram_access_stats()
-
-    def preorder_nonrec(self, t:int, proc):
-        s = simpleStack()
-        while t is not None or not s.is_empty():
-            while t is not None:        # 沿左分支下行
-                proc(t)            # 先根序先处理根数据
-                t = self.ram.at(t)
-                s.push(t.right_addr)         # 右分支入栈
-                t = t.left_addr
-            t = s.pop()
 
     #检查树 链接关系 和 平衡性 #for debug only
-    def _checkTree(self):
+    def _checkLink(self):
         def check(addr:int):
             # self.DBG(node.value)
             node = self.ram.at(addr)
@@ -312,44 +150,16 @@ class AVLTree:
                     assert self.ram.at(node.parent_addr).right_addr==node.addr
                     assert node.value > self.ram.at(node.parent_addr).value
                     assert self.ram.at(node.parent_addr).right_height == max(node.left_height, node.right_height) + 1
-        self.preorder_nonrec(self.root_addr, check)
+        self._preorder_nonrec(self.root_addr, check)
 
-    def _checkRam(self):
-        used_nb = self.size
-        def count_sed(a):
-            self.size -= 1
-        self.preorder_nonrec(self.root_addr, count_sed)
-        assert self.size==0
-        self.size = used_nb
-
-        addr = self.empty_head
-        empty_nb = 0
-        while addr is not None:
-            empty_nb += 1
-            addr = self.ram.at(addr).right_addr
-        assert empty_nb+self.size==self.ram.depth
-
-    #验证树平衡性 #for debug only
-    def checkBalance(self):
-        def check(addr:int):
-            node = self.ram.at(addr)
-            assert node.left_height < node.right_height + 2
-            assert node.right_height < node.left_height + 2
-        self.preorder_nonrec(self.root_addr, check)
-
-    def getRoot(self)->AVLTNode|None:
-        if self.root_addr is None:
-            return None
-        return self.ram.read(self.root_addr)
-
-    @profileit
-    def dmy_writeback(self):
-        '''模拟写回，仅增加统计计数'''
-        self.ram.write_num += 1
+    def _checkBalance(self):
+        '''
+        检查平衡性
+        '''
+        pass
 
     #新增端点
-    @profileit
-    def insert(self, new_node:AVLTNode, auto_rebalance=True):
+    def _insert_helper(self, new_node:AVLTNode, auto_rebalance=True):
         """
         """
         assert new_node.value not in self.value_list or self.value_list[new_node.value]=='r', f'{self.tree_name} node:{new_node.value} exists!'
@@ -430,129 +240,7 @@ class AVLTree:
                 parent = self.ram.read(addr)
                 self._balance(parent)
 
-    #中序非递归遍历，从小到大输出所有序列
-    @profileit
-    def inorder_list_inc(self):
-        # self.stk = simpleStack()
-        t = self.root_addr
-        l = []
-        while t is not None or not self.stk.is_empty():
-            while t is not None:
-                node = self.ram.read(t)
-                self.stk.push(node)
-                t = node.left_addr
-            node = self.stk.pop()
-            l.append(node.value)
-            t = node.right_addr
-        return l
-
-    #中序非递归遍历，从大到小输出所有序列
-    @profileit
-    def inorder_list_dec(self):
-        # self.stk = simpleStack()
-        t = self.root_addr
-        l = []
-        while t is not None or not self.stk.is_empty():
-            while t is not None:
-                node = self.ram.read(t)
-                self.stk.push(node)
-                t = node.right_addr
-            node = self.stk.pop()
-            l.append(node.value)
-            t = node.left_addr
-        return l
-
-    @profileit
-    def locate(self, value:int, root:AVLTNode|None=None)->AVLTNode|None:
-        if self.root_addr is None:
-            return
-
-        if root is None:
-            node = self.ram.read(self.root_addr)
-        else:
-            node = root
-
-        while True:
-            if node.value < value:
-                if node.right_addr is None:
-                    return
-                node = self.ram.read(node.right_addr)
-            elif node.value > value:
-                if node.left_addr is None:
-                    return
-                node = self.ram.read(node.left_addr)
-            else:
-                return node
-
-    @profileit
-    def locate_min(self, node:AVLTNode|None = None)->AVLTNode:
-        if node is None:
-            min_node = self.ram.read(self.root_addr)
-        else:
-            min_node = deepcopy(node)
-        while min_node.left_addr is not None:
-            min_node = self.ram.read(min_node.left_addr)
-        return min_node
-
-    @profileit
-    def locate_max(self, node:AVLTNode|None = None):
-        if node is None:
-            max_node = self.ram.read(self.root_addr)
-        else:
-            max_node = deepcopy(node)
-        while max_node.right_addr is not None:
-            max_node = self.ram.read(max_node.right_addr)
-        return max_node
-
-    # 找比某node更小的
-    @profileit
-    def locate_lower(self, node:AVLTNode):
-        if node.left_addr is not None:
-            left_child = self.ram.read(node.left_addr)
-            return self.locate_max(left_child)
-        else:
-            lower_addr = node.parent_addr
-            lower = None
-            while lower_addr is not None:
-                lower = self.ram.read(lower_addr)
-                if lower.value > node.value:
-                    lower_addr = lower.parent_addr
-                else:
-                    break
-            if lower is not None and lower.value < node.value:
-                return lower
-            return None
-
-    @profileit
-    def locate_higher(self, node:AVLTNode):
-        if node.right_addr is not None:
-            right_child = self.ram.read(node.right_addr)
-            return self.locate_min(right_child)
-        else:
-            higher_addr = node.parent_addr
-            higher = None
-            while higher_addr is not None:
-                higher = self.ram.read(higher_addr)
-                if higher.value < node.value:
-                    higher_addr = higher.parent_addr
-                else:
-                    break
-            if higher is not None and higher.value > node.value:
-                return higher
-            return None
-
-    def remove(self, value:int, auto_rebalance=True):
-
-        node = self.locate(value)
-        if node is None:
-            assert value not in self.value_list or self.value_list[value]=='r'
-            self.DBG(f"{value} is not inserted or has already been removed.")
-            return
-        self.remove_node(node, auto_rebalance)
-        self.value_list[value] = 'r'
-
-    @profileit
-    def remove_node(self, node:AVLTNode, auto_rebalance=True):
+    def _remove_node_helper(self, node:AVLTNode, auto_rebalance=True):
         if node is None:
             return
         label = f'remove_node {node.value}'
