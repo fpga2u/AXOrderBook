@@ -160,7 +160,7 @@ class AVLTree:
 
         return graph
 
-    def __print_helper(self, node:AVLTNode, indent, last, s, depth, print):
+    def __print_helper(self, node:AVLTNode, indent, last, s, depth, ret):
         if depth>30:
             error='depth ovf!'
             self.ERR(error)
@@ -174,15 +174,15 @@ class AVLTree:
             else:
                 s += "L----  "
                 indent += "|    "
-            print(f'{s}{str(node.value)}')
+            ret.append(f'{s}{str(node.value)}')
             s = ""
-            self.__print_helper(node.left_child, indent, False, s, depth+1, print)
-            self.__print_helper(node.right_child, indent, True, s, depth+1, print)
+            self.__print_helper(node.left_child, indent, False, s, depth+1, ret)
+            self.__print_helper(node.right_child, indent, True, s, depth+1, ret)
 
-    def printTree(self, printer=None):
-        if printer is None:
-            printer = print
-        self.__print_helper(self.root, "", True, "", 0, print=printer)
+    def printTree(self):
+        ret = []
+        self.__print_helper(self.root, "", True, "", 0, ret)
+        return '\n'.join(ret)
 
     #打印树 #for debug only
     def debugShow(self, label="", check=True, force_draw=0):

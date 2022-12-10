@@ -163,7 +163,7 @@ class RBTree:
 
         return graph
 
-    def __print_helper(self, node:RBTNode, indent, last, s, print):
+    def __print_helper(self, node:RBTNode, indent, last, s, ret):
         if node != RBTree.NULL_NODE:
             s += indent
             if last:
@@ -172,15 +172,15 @@ class RBTree:
             else:
                 s += "L----  "
                 indent += "|    "
-            print(f'{s}{node}')
+            ret.append(f'{s}{node}')
             s = ""
-            self.__print_helper(node.left, indent, False, s, print)
-            self.__print_helper(node.right, indent, True, s, print)
+            self.__print_helper(node.left, indent, False, s, ret)
+            self.__print_helper(node.right, indent, True, s, ret)
 
-    def printTree(self, printer=None):
-        if printer is None:
-            printer = print
-        self.__print_helper(self.root, "", True, "", print=printer)
+    def printTree(self):
+        ret = []
+        self.__print_helper(self.root, "", True, "", ret)
+        return '\n'.join(ret)
 
     #打印树 #for debug only
     def debugShow(self, label="", check=True, force_draw=0):

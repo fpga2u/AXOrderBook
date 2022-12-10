@@ -42,22 +42,22 @@ class TNodeInRam(metaclass=abc.ABCMeta):
     def __eq__(self, __o:TNodeInRam) -> bool:
         return self.addr == __o.addr
 
-    # @abc.abstractmethod
-    # def save(self):
-    #     pass
+    @abc.abstractmethod
+    def save(self):
+        pass
 
-    # @abc.abstractmethod
-    # def load(self, data):
-    #     pass
+    @abc.abstractmethod
+    def load(self, data):
+        pass
 
 class NODE_BRAM():
-    def __init__(self, depth:int, ram_name='NODE_BRAM'):
+    def __init__(self, depth:int, ram_name, node_impl=TNodeInRam):
         self.depth = depth
         self.ram_name = ram_name
         self.read_num = 0
         self.write_num = 0
-        self.data:list[TNodeInRam] = []
-        self.init()
+        self.data:list[node_impl] = []
+        self.init(node_impl)
 
     def read(self, addr:int)->TNodeInRam:
         self.read_num += 1
@@ -73,15 +73,16 @@ class NODE_BRAM():
         assert addr<self.depth, f'{self.ram_name} read addr={addr} / {self.depth} OVF!'
         return self.data[addr]
 
-    def init(self):
+    def init(self, node_impl):
         '''
         初始化成链表，right_addr指向下一个空地址
         '''
+        self.data = []
         for i in range(self.depth):
             if i!=self.depth-1:
-                node = TNodeInRam(right_addr=i+1)
+                node = node_impl(right_addr=i+1)
             else:
-                node = TNodeInRam()
+                node = node_impl()
             self.data.append(node)
 
 
@@ -117,14 +118,14 @@ def profileit(f):
 
 # AVL二叉树对象
 class TreeWithRam(metaclass=abc.ABCMeta):
-    def __init__(self, name='TreeWithRam', ram_depth=512, debug_level=0):
+    def __init__(self, name='TreeWithRam', ram_depth=512, debug_level=0, node_impl=TNodeInRam):
         '''
         debug_level:0=no-debug; 1=draw_tree; 2+=draw_tree_all
         '''
         self.root_addr = None
         self.size = 0   #leaf num
         self.size_max = 0
-        self.ram = NODE_BRAM(ram_depth, ram_name=name+'_BRAM')
+        self.ram = NODE_BRAM(ram_depth, ram_name=name+'_BRAM', node_impl=node_impl)
         self.stk = simpleStack()
         self.empty_head = 0
         self.empty_tail = self.ram.depth-1
@@ -139,21 +140,8 @@ class TreeWithRam(metaclass=abc.ABCMeta):
         self.value_list = {}
         self.tree_name = name
         self.debug_level = debug_level
-        self.graph_last = None
         
         ## 日志
-        # self.logger = logging.getLogger(f'{self.tree_name}')
-        # g_logger = logging.getLogger('main')
-        # self.logger.setLevel(g_logger.getEffectiveLevel())
-        # AVLTree_logger.setLevel(g_logger.getEffectiveLevel())
-        # for h in g_logger.handlers:
-        #     self.logger.addHandler(h)
-        #     AVLTree_logger.addHandler(h) #这里补上模块日志的handler
-
-        # self.DBG = self.logger.debug
-        # self.INFO = self.logger.info
-        # self.WARN = self.logger.warning
-        # self.ERR = self.logger.error
         self.DBG = print
         self.INFO = print
         self.WARN = print
@@ -186,7 +174,7 @@ class TreeWithRam(metaclass=abc.ABCMeta):
 
         return graph
 
-    def __print_helper(self, node:TNodeInRam, indent, last, s, depth, print):
+    def __print_helper(self, node:TNodeInRam, indent, last, s, depth, ret):
         if depth>30:
             error='depth ovf!'
             self.ERR(error)
@@ -200,20 +188,20 @@ class TreeWithRam(metaclass=abc.ABCMeta):
             else:
                 s += "L----  "
                 indent += "|    "
-            print(f'{s}{node}')
+            ret.append(f'{s}{node}')
             s = ""
             if node.left_addr is not None:
                 left_child = self.ram.at(node.left_addr)
-                self.__print_helper(left_child, indent, False, s, depth+1, print)
+                self.__print_helper(left_child, indent, False, s, depth+1, ret)
             if node.right_addr is not None:
                 right_child = self.ram.at(node.right_addr)
-                self.__print_helper(right_child, indent, True, s, depth+1, print)
+                self.__print_helper(right_child, indent, True, s, depth+1, ret)
 
-    def printTree(self, printer=None):
-        if printer is None:
-            printer = self.INFO
+    def printTree(self):
+        ret = []
         root = self.ram.at(self.root_addr)
-        self.__print_helper(root, "", True, "", 0, print=printer)
+        self.__print_helper(root, "", True, "", 0, ret)
+        return '\n'.join(ret)
 
     @abc.abstractmethod
     def _drawNode_nest(self, graph, node, node_tag, depth):
@@ -250,7 +238,7 @@ class TreeWithRam(metaclass=abc.ABCMeta):
                 self._checkRam()
             except Exception as e:
                 self.ERR(f"check {label} FAIL!")
-                self.printTree(self.ERR)
+                self.ERR(self.printTree())
                 self.debugShow(f"check {label} FAIL", check=False, force_draw=1)
                 raise e
 

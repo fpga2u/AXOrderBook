@@ -29,7 +29,7 @@ def _insert_then_remove(l:list, s, type, debug_level=2):
     NODE = TYPE_MAP[type]['NODE']
     LOGGER = TYPE_MAP[type]['LOGGER']
 
-    t = TREE(s, debug_level)
+    t = TREE(s, debug_level=debug_level)
     for n in l:
         new_node = NODE(n)
         t.insert(new_node, auto_rebalance=True)
@@ -54,7 +54,7 @@ def _insert_then_remove(l:list, s, type, debug_level=2):
     LOGGER.info(f'locate_lower({midV}) = {t.locate_lower(t.locate(midV))}')
     LOGGER.info(f'locate_higher({midV}) = {t.locate_higher(t.locate(midV))}')
 
-    t.printTree(LOGGER.info)
+    LOGGER.info('\n'+t.printTree())
 
     for _ in range(min(len(l)//3, 3)):
         rootV = t.getRoot().value
@@ -67,6 +67,47 @@ def _insert_then_remove(l:list, s, type, debug_level=2):
     t.debugShow(label='remove_final')
     LOGGER.info(f'profile:\n{t.profile()}')
 
+def _save_load(type):
+    '''
+    测试：导出/导入树
+    '''
+    if not os.path.exists(DBG_VIEW_ROOT):
+        os.makedirs(DBG_VIEW_ROOT, exist_ok=True)
+    assert type in TYPE_MAP, f'unkown tree type={type}!'
+
+    TREE = TYPE_MAP[type]['TREE']
+    NODE = TYPE_MAP[type]['NODE']
+    LOGGER = TYPE_MAP[type]['LOGGER']
+    l = [14987, 16059, 20287, 23639, 47623, 47624, 47625, 50672, 87188, 87189, 97471, 97472, 118563, 124604, 135780, 135781]
+    random.seed(1000)
+    shuffle(l)
+    t = TREE('before_save', debug_level=2)
+    for n in l:
+        new_node = NODE(n)
+        t.insert(new_node)
+    saved = t.save()    #保存旧树结构
+    LOGGER.info(saved)
+    new_node = NODE(50677)
+    t.insert(new_node)  #旧树新增一个节点 50677
+    t.debugShow(label="save-final")
+    save_final = t.printTree()
+    LOGGER.info('\n'+save_final)
+
+    tl = TREE('after_load', debug_level=2)      #新树装载旧树
+    tl.load(saved)
+    assert(t.size != tl.size)
+
+    saved2 = tl.save()
+    LOGGER.info(saved2)
+    new_node = NODE(60000)
+    tl.insert(new_node) #新树新增一个节点 60000
+    tl.debugShow(label="load-final")
+    load_final = tl.printTree()
+    LOGGER.info('\n'+load_final)
+
+    assert(t.size == tl.size)
+    save_final = save_final.replace('50677', '60000')
+    assert(save_final==load_final)
 
 def _batch_insert_remove(seed, draw, type, name):
     if not os.path.exists(DBG_VIEW_ROOT):
@@ -164,10 +205,11 @@ def TESTAVL_insert_then_removeC():
     shuffle(l)
     _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL', debug_level=0)
 
-
 def TESTAVL_batch_insert_remove(seed, draw):
     _batch_insert_remove(seed, draw, 'AVL', name=sys._getframe().f_code.co_name)
 
+def TESTAVL_save_load():
+    _save_load('AVL')
 
 def TESTAVL_no_auto_rebalance(inorder):
     '''
@@ -191,34 +233,7 @@ def TESTAVL_no_auto_rebalance(inorder):
 
 
 
-def TESTAVL_save_load():
-    '''
-    测试：导出/导入树
-    '''
-    l = [14987, 16059, 20287, 23639, 47623, 47624, 47625, 50672, 87188, 87189, 97471, 97472, 118563, 124604, 135780, 135781]
-    random.seed(1000)
-    shuffle(l)
-    t = AVL.AVLTree('before_save', debug_level=2)
-    for n in l:
-        new_node = AVL.AVLTNode(n)
-        t.insert(new_node)
-    saved = t.save()    #保存旧树结构
-    print(saved)
-    new_node = AVL.AVLTNode(50677)
-    t.insert(new_node)  #旧树新增一个节点 50677
-    t.debugShow(label="save-final")
 
-    tl = AVL.AVLTree('after_load', debug_level=2)      #新树装载旧树
-    tl.load(saved)
-    assert(t.size != tl.size)
-
-    saved2 = tl.save()
-    print(saved2)
-    new_node = AVL.AVLTNode(60000)
-    tl.insert(new_node) #新树新增一个节点 60000
-    tl.debugShow(label="load-final")
-
-    assert(t.size == tl.size)
 
 
 
@@ -233,6 +248,9 @@ def TESTRBT_insert_then_removeC():
 
 def TESTRBT_batch_insert_remove(seed, draw):
     _batch_insert_remove(seed, draw, 'RB', name=sys._getframe().f_code.co_name)
+
+def TESTRBT_save_load():
+    _save_load('RB')
 
 
 def extract_level_access_log(log_file, modify_only, side='both'):
@@ -346,3 +364,6 @@ def TESTAVLWR_insert_then_removeC():
     
 def TESTAVLWR_batch_insert_remove(seed, draw):
     _batch_insert_remove(seed, draw, 'AVL_wr', name=sys._getframe().f_code.co_name)
+
+def TESTAVLWR_save_load():
+    _save_load('AVL_wr')

@@ -72,11 +72,33 @@ class AVLTNode(TNodeInRam):
 
 # AVL二叉树对象
 class AVLTree(TreeWithRam):
+    __slots__ = [
+        'root_addr',
+        'size',
+        'size_max',
+        'stk',
+        'empty_head',
+        'empty_tail',
+        'graphSeq',
+        'ram_access_stats',
+        'value_list',
+        'tree_name',
+        'debug_level',
+
+        'ram',
+        'graph_last',
+
+        'logger',
+        'DBG',
+        'INFO',
+        'WARN',
+        'ERR',
+    ]
     def __init__(self, name='AVLTree', ram_depth=512, debug_level=0):
         '''
         debug_level:0=no-debug; 1=draw_tree; 2+=draw_tree_all
         '''
-        super(AVLTree, self).__init__(name, ram_depth, debug_level)
+        super(AVLTree, self).__init__(name=name, ram_depth=ram_depth, debug_level=debug_level, node_impl=AVLTNode)
 
         ## 日志
         self.logger = logging.getLogger(f'{self.tree_name}')
@@ -638,20 +660,54 @@ class AVLTree(TreeWithRam):
         导出树数据
         '''
         data = {}
-        for d in range(self.ram.depth):
-            v = self.ram.at(d)
-            if v is not None:
-                data[d] = v
-        return {'ram' : data, 'size':self.size}
+        for item in self.__slots__:
+            if item in ['logger', 'DBG', 'INFO', 'WARN', 'ERR', 'stk']:
+                continue
+
+            if item=='ram':
+                r = {}
+                for d in range(self.ram.depth):
+                    v = self.ram.at(d)
+                    if v is not None:
+                        r[d] = v.save()
+                data['ram'] = r
+            else:
+                attr = getattr(self, item)
+                if attr in ['graph_last']:
+                    data[item] = None
+                elif attr is None:
+                    data[item] = None
+                else:
+                    data[item] = attr
+
+        return data
 
     def load(self, data):
         '''
         导入树数据
         '''
-        self.size = data['size']
-        data = data['ram']
-        self.ram.init()
-        for addr, n in data.items():
+        for attr in self.__slots__:
+            if attr in ['logger', 'DBG', 'INFO', 'WARN', 'ERR', 'ram', 'stk']:
+                continue
+            
+            setattr(self, attr, data[attr])
+
+        ## 日志
+        self.logger = logging.getLogger(f'{self.tree_name}')
+        g_logger = logging.getLogger('main')
+        self.logger.setLevel(g_logger.getEffectiveLevel())
+        for h in g_logger.handlers:
+            self.logger.addHandler(h)
+            AVLTree_logger.addHandler(h) #
+
+        self.DBG = self.logger.debug
+        self.INFO = self.logger.info
+        self.WARN = self.logger.warning
+        self.ERR = self.logger.error
+
+        r = data['ram']
+        self.ram.init(AVLTNode)
+        for addr, n in r.items():
             new_node = AVLTNode()
             new_node.load(n)
             self.ram.data[addr] = new_node
