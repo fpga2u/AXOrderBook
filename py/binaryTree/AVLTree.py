@@ -4,7 +4,6 @@ from graphviz import Digraph
 import uuid
 from tool.simpleStack import simpleStack
 from binaryTree.util import *
-import sys
 
 import logging
 AVLTree_logger = logging.getLogger(__name__)

@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
-from multiprocessing import parent_process
-from turtle import left
-from unicodedata import name
 from graphviz import Digraph
 import uuid
 from tool.simpleStack import simpleStack
+from binaryTree.absTree import TNodeInRam, NODE_BRAM
 from binaryTree.util import *
 from functools import wraps
 import pandas as pd
 from copy import deepcopy
+
 
 pd.set_option('display.max_rows',100)
 pd.set_option('display.width', 5000)
@@ -22,7 +21,7 @@ AVLTree_logger = logging.getLogger(__name__)
 
 ##########
 # AVL二叉树的节点
-class AVLTNode:
+class AVLTNode(TNodeInRam):
     __slots__ = [
         'parent_addr',  #指向父节点，本节点是root端点时为None
         'is_left',      #本节点是左节点还是右节点，本节点是root端点时为None
@@ -32,19 +31,11 @@ class AVLTNode:
         'left_height',  #左子节点高度，无左子节点时为0
         'right_height', #右
         'addr',
-
-        #for debug view
-        # 'host_tree',     #指向本节点所属的二叉树
     ]
     def __init__(self, value=None, parent_addr:None|int=None, is_left=None, left_addr:None|int=None, right_addr:None|int=None):
-        self.value = value  #节点在二叉树中的权重
-        self.parent_addr = parent_addr
-        self.is_left = is_left
-        self.left_addr = left_addr
-        self.right_addr = right_addr
+        super(AVLTNode, self).__init__(value, parent_addr, is_left, left_addr, right_addr)
         self.left_height = 0
         self.right_height = 0
-        self.addr = None #在分配ram地址时赋值，在FPGA中并不存储在RAM中，而是读取时赋值
 
         # self.host_tree = host_tree
     
@@ -58,20 +49,9 @@ class AVLTNode:
     @property
     def is_balance(self):
         return self.balance_factor>=-1 and self.balance_factor<=1
-
-    @property
-    def is_root(self):
-        if self.parent_addr is None:
-            assert self.is_left is None, "root with is_left not None"
-        else:
-            assert self.is_left is not None, "none-root with is_left is None"
-        return self.parent_addr is None
     
     def __str__(self):
-        return f'AVLTNode({self.value})'
-
-    def __eq__(self, __o:AVLTNode) -> bool:
-        return self.addr == __o.addr
+        return f'AVLTNode({self.value} @{self.addr})'
 
     def save(self):
         '''
@@ -96,41 +76,6 @@ class AVLTNode:
             value = data[attr]
             setattr(self, attr, value)
 
-
-
-class NODE_BRAM():
-    def __init__(self, depth:int, ram_name='NODE_BRAM'):
-        self.depth = depth
-        self.ram_name = ram_name
-        self.read_num = 0
-        self.write_num = 0
-        self.data:list[AVLTNode] = []
-        self.init()
-
-    def read(self, addr:int)->AVLTNode:
-        self.read_num += 1
-        return deepcopy(self.data[addr])
-
-    def write(self, value:AVLTNode):
-        assert value.addr<self.depth, f'{self.ram_name} write addr={value.addr} / {self.depth} OVF!'
-        self.write_num += 1
-        self.data[value.addr] = value
-
-    def at(self, addr)->AVLTNode:
-        '''无读写记录，用于debug'''
-        assert addr<self.depth, f'{self.ram_name} read addr={addr} / {self.depth} OVF!'
-        return self.data[addr]
-
-    def init(self):
-        '''
-        初始化成链表，right_addr指向下一个空地址
-        '''
-        for i in range(self.depth):
-            if i!=self.depth-1:
-                node = AVLTNode(right_addr=i+1)
-            else:
-                node = AVLTNode()
-            self.data.append(node)
 
 
 ## 统计ram读写次数
@@ -794,7 +739,7 @@ class AVLTree:
             if balance_factor > 1:
                 # right is heavier
                 right_child = self.ram.read(node.right_addr)
-                if right_child.balance_factor <= 0: #TODO: < 和 <= 将导致树轻微单向倾斜，最终导致更适合BID或ASK
+                if right_child.balance_factor < 0: #TODO: < 和 <= 将导致树轻微单向倾斜，最终导致更适合BID或ASK
                     # right_child.left is heavier, RL case
                     self._rl_case(node, right_child)
                 elif right_child.balance_factor >= 0:
@@ -803,7 +748,7 @@ class AVLTree:
             elif balance_factor < -1:
                 # left is heavier
                 left_child = self.ram.read(node.left_addr)
-                if left_child.balance_factor < 0: #TODO: < 和 <= 将导致树轻微单向倾斜，最终导致更适合BID或ASK
+                if left_child.balance_factor <= 0: #TODO: < 和 <= 将导致树轻微单向倾斜，最终导致更适合BID或ASK
                     # left_child.left is heavier, LL case
                     self._ll_case(node)
                 elif left_child.balance_factor >= 0:

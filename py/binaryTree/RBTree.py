@@ -4,7 +4,6 @@ from graphviz import Digraph
 import uuid
 from tool.simpleStack import simpleStack
 from binaryTree.util import *
-import sys
 
 import logging
 RBTree_logger = logging.getLogger(__name__)
@@ -41,14 +40,16 @@ class RBTNode:
         return self.parent is None
     
     def __str__(self):
-        s = str(self.value)
-        if self.is_left is None:
-            s += '(root)'
-        elif self.is_left:
-            s += '(L)'
-        else:
-            s += '(R)'
-        return s
+        # s = str(self.value)
+        # if self.is_left is None:
+        #     s += '(root)'
+        # elif self.is_left:
+        #     s += '(L)'
+        # else:
+        #     s += '(R)'
+        # return s
+        s_color = "RED" if self.is_red == 1 else "BLACK"
+        return f'{self.value}({s_color})'
 
     def save(self):
         '''
@@ -171,9 +172,7 @@ class RBTree:
             else:
                 s += "L----  "
                 indent += "|    "
-
-            s_color = "RED" if node.is_red == 1 else "BLACK"
-            print(f'{s}{str(node.value) + "(" + s_color + ")"}')
+            print(f'{s}{node}')
             s = ""
             self.__print_helper(node.left, indent, False, s, print)
             self.__print_helper(node.right, indent, True, s, print)

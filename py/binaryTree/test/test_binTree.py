@@ -339,13 +339,10 @@ def TESTAVLWR_insert_then_removeB():
 
 def TESTAVLWR_insert_then_removeC():
     l = [x for x in range(500, 0, -1)]
-    t=1670492570.9852529
     LOGGER = TYPE_MAP['AVL_wr']['LOGGER']
-    LOGGER.info(t)
-
-    random.seed(t)
+    random.seed(1110)
     shuffle(l)
-    _insert_then_remove(l, str(t), 'AVL_wr', debug_level=0)
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)
     
 def TESTAVLWR_batch_insert_remove(seed, draw):
     _batch_insert_remove(seed, draw, 'AVL_wr', name=sys._getframe().f_code.co_name)
