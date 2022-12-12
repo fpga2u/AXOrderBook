@@ -233,9 +233,7 @@ class TreeWithRam(metaclass=abc.ABCMeta):
 
         if check:
             try:
-                self._checkLink()
-                self._checkBalance()
-                self._checkRam()
+                self._checkTree()
             except Exception as e:
                 self.ERR(f"check {label} FAIL!")
                 self.ERR(self.printTree())
@@ -269,36 +267,35 @@ class TreeWithRam(metaclass=abc.ABCMeta):
             t = s.pop()
 
     @abc.abstractmethod
-    def _checkLink(self):
+    def _checkTree(self):
         '''
         检查连接关系
         '''
         pass
 
-    @abc.abstractmethod
-    def _checkBalance(self):
-        '''
-        检查平衡性
-        '''
-        pass
-
-    def _checkRam(self):
+    def _checkRam(self, label):
         '''
         检查ram使用情况和空指针回收情况
         '''
-        used_nb = self.size
-        def count_sed(a):
-            self.size -= 1
-        self._preorder_nonrec(self.root_addr, count_sed)
-        assert self.size==0
-        self.size = used_nb
+        try:
+            used_nb = self.size
+            def count_sed(a):
+                self.size -= 1
+            self._preorder_nonrec(self.root_addr, count_sed)
+            assert self.size==0
+            self.size = used_nb
 
-        addr = self.empty_head
-        empty_nb = 0
-        while addr is not None:
-            empty_nb += 1
-            addr = self.ram.at(addr).right_addr
-        assert empty_nb+self.size==self.ram.depth
+            addr = self.empty_head
+            empty_nb = 0
+            while addr is not None:
+                empty_nb += 1
+                addr = self.ram.at(addr).right_addr
+            assert empty_nb+self.size==self.ram.depth
+        except Exception as e:
+            self.ERR(f"check {label} FAIL!")
+            self.ERR(self.printTree())
+            self.debugShow(f"check {label} FAIL", check=False, force_draw=1)
+            raise e
 
     def getRoot(self)->TNodeInRam|None:
         if self.root_addr is None:
@@ -345,10 +342,26 @@ class TreeWithRam(metaclass=abc.ABCMeta):
     #新增端点
     @profileit
     def insert(self, new_node:TNodeInRam, auto_rebalance=True):
+        # 检查外部操作正确性
+        assert new_node.value not in self.value_list or self.value_list[new_node.value]=='r', f'{self.tree_name} node:{new_node.value} exists!'
+        self.value_list[new_node.value] = 'i'
+        self.size += 1
+        self.size_max = max(self.size, self.size_max)
+
+        #分配地址
+        new_node.addr = self._get_head_before_insert()
+
+        label = "insert " + str(new_node.value)
         self._insert_helper(new_node, auto_rebalance)
+
+        # 最后检查ram
+        self._checkRam(label)
 
     @abc.abstractmethod
     def _insert_helper(self, new_node:TNodeInRam, auto_rebalance=True):
+        '''
+        node的addr已经在基类中被分配，本函数实现时不得再修改。
+        '''
         pass
 
     @profileit
@@ -432,19 +445,49 @@ class TreeWithRam(metaclass=abc.ABCMeta):
 
     def remove(self, value:int, auto_rebalance=True):
         node = self.locate(value)
+        # 检查外部操作正确性
         if node is None:
             assert value not in self.value_list or self.value_list[value]=='r'
             self.DBG(f"{value} is not inserted or has already been removed.")
             return
+        self.size -= 1
+
         self.remove_node(node, auto_rebalance)
+
+        #用于检查外部操作，防止重复删除
         self.value_list[value] = 'r'
+
+    def _get_head_before_insert(self):
+        addr = self.empty_head
+        self.empty_head = self.ram.read(self.empty_head).right_addr
+        assert self.empty_head is not None, f'{self.tree_name} ram address run out!' #必须总有一个是空的，不完全用尽
+        return addr
+
+    def _update_tail_after_remove(self, new_tail_addr):
+        assert self.empty_tail is not None, f'{self.tree_name} ram address run out!' #必须总有一个是空的，不完全用尽
+        tail = self.ram.read(self.empty_tail)
+        tail.right_addr = new_tail_addr
+        tail.addr = self.empty_tail
+        self.ram.write(tail)
+        self.empty_tail = new_tail_addr
+        tail = self.ram.read(new_tail_addr)
+        tail.right_addr = None
+        self.ram.write(tail)
 
     @profileit
     def remove_node(self, node:TNodeInRam, auto_rebalance=True):
+        label = f'remove_node {node.value}'
+        new_tail_addr = node.addr
         self._remove_node_helper(node, auto_rebalance)
+        self._update_tail_after_remove(new_tail_addr)
+        # 最后检查ram
+        self._checkRam(label)
 
     @abc.abstractmethod
     def _remove_node_helper(self, node:TNodeInRam, auto_rebalance=True):
+        '''
+        node的ram地址将在基类中回收，本函数实现时无需处理。
+        '''
         pass
 
     @abc.abstractmethod

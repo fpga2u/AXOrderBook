@@ -48,8 +48,8 @@ class RBTNode:
         # else:
         #     s += '(R)'
         # return s
-        s_color = "RED" if self.is_red == 1 else "BLACK"
-        return f'{self.value}({s_color})'
+        s_color = "red" if self.is_red == 1 else "blk"
+        return f'{self.value} ({s_color})'
 
     def save(self):
         '''
@@ -119,9 +119,6 @@ class RBTree:
         graph = Digraph(comment='RB Binary Tree')
 
         def drawNode(node:RBTNode, node_tag):
-            '''
-            绘制以某个节点为根节点的二叉树
-            '''
             '''
             绘制以某个节点为根节点的二叉树
             '''
@@ -497,12 +494,13 @@ class RBTree:
         label = "remove " + str(value)
         self.DBG(f'{label}...')
         
-        self.delete_node_helper(self.root, value, auto_rebalance)
+        node = self.locate(value)
+        self.delete_node_helper(node, auto_rebalance)
         self.debugShow(label)
 
     # Node deletion
-    def delete_node_helper(self, node:RBTNode|None, key, auto_rebalance=True):
-        z = self.locate(key, node)
+    def delete_node_helper(self, node:RBTNode, auto_rebalance=True):
+        z = node
 
         y = z
         y_original_color = y.is_red

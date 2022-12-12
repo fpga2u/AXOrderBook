@@ -35,7 +35,7 @@ if __name__== '__main__':
     # binTree.TESTAVL_batch_insert_remove(671, True)
     # for i in range(10):
     #     binTree.TESTAVL_batch_insert_remove(i*7+13, False)
-    binTree.TESTAVL_save_load()
+    # binTree.TESTAVL_save_load()
     # binTree.TESTAVL_no_auto_rebalance(True)
     # binTree.TESTAVL_no_auto_rebalance(False)
 
@@ -48,18 +48,20 @@ if __name__== '__main__':
     #     binTree.TESTRBT_batch_insert_remove(i*7+13, False)
 
     # ### VAL 读写统计
-    # binTree.TESTAVLWR_insert_then_removeA()
-    # binTree.TESTAVLWR_insert_then_removeB()
-    # binTree.TESTAVLWR_insert_then_removeC()
-    # binTree.TESTAVLWR_batch_insert_remove(671, True)
-    # for i in range(10):
-    #     binTree.TESTAVLWR_batch_insert_remove(i*7+13, False)
+    binTree.TESTAVLWR_insert_then_removeA()
+    binTree.TESTAVLWR_insert_then_removeB()
+    binTree.TESTAVLWR_insert_then_removeC()
+    binTree.TESTAVLWR_batch_insert_remove(671, True)
+    for i in range(10):
+        binTree.TESTAVLWR_batch_insert_remove(i*7+13, False)
     binTree.TESTAVLWR_save_load()
-    # binTree.TESTAVL_no_auto_rebalance(True)
-    # binTree.TESTAVL_no_auto_rebalance(False)
+    '''
+    binTree.TESTAVLWR_no_auto_rebalance(True)
+    binTree.TESTAVLWR_no_auto_rebalance(False)
+    '''
 
-    # # # ### 根据个股增、删、改、查价格档的实盘数据，测试不同二叉树的行为
-    # tree_log = binTree.extract_level_access_log('log/301336_220812_LEVEL_ACCESS.log', modify_only=False, side='both')
-    # # binTree.TESTTree_using_log(tree_log, 'AVL', 450, 510)
-    # # binTree.TESTTree_using_log(tree_log, 'RB', 450, 510)
-    # binTree.TESTTree_using_log(tree_log, 'AVL_wr', 450, 510)
+    # # ### 根据个股增、删、改、查价格档的实盘数据，测试不同二叉树的行为
+    tree_log = binTree.extract_level_access_log('log/301336_220812_LEVEL_ACCESS.log', modify_only=False, side='both')
+    # binTree.TESTTree_using_log(tree_log, 'AVL', 450, 510)
+    # binTree.TESTTree_using_log(tree_log, 'RB', 450, 510)
+    binTree.TESTTree_using_log(tree_log, 'AVL_wr', 450, 510)

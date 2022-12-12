@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 import uuid
-from binaryTree.absTree import TNodeInRam, TreeWithRam
+from binaryTree.absTree import TNodeInRam, TreeWithRam, NODE_BRAM
 from binaryTree.util import *
 
 
@@ -63,8 +63,6 @@ class RBTNode(TNodeInRam):
 class RBTree(TreeWithRam):
     __slots__ = [
         'root_addr',
-        'size',
-        'size_max',
         'stk',
         'empty_head',
         'empty_tail',
@@ -75,6 +73,10 @@ class RBTree(TreeWithRam):
         'debug_level',
 
         'ram',
+
+        'size',
+        'size_max',
+
         'graph_last',
 
         'logger',
@@ -87,6 +89,7 @@ class RBTree(TreeWithRam):
         '''
         debug_level:0=no-debug; 1=draw_tree; 2+=draw_tree_all
         '''
+        self.ram:NODE_BRAM = None
         super(RBTree, self).__init__(name=name, ram_depth=ram_depth, debug_level=debug_level, node_impl=RBTNode)
         ## 日志
         self.logger = logging.getLogger(f'{self.tree_name}')
@@ -197,12 +200,15 @@ class RBTree(TreeWithRam):
         '''
         pass
 
-    def insert(self, new_node:RBTNode, auto_rebalance=True):
+    def _insert_helper(self, new_node:RBTNode, auto_rebalance=True):
+        '''
+        外部配好new_node的数据和权重即可
+        '''
         label = "insert " + str(new_node.value)
         self.DBG(f'{label}...')
 
-        new_node.left = None
-        new_node.right = None
+        new_node.left_addr = None
+        new_node.right_addr = None
         new_node.is_red = True
 
         y = None
@@ -289,61 +295,85 @@ class RBTree(TreeWithRam):
         
 
     def left_rotate(self, x:RBTNode):
+        '''
+        总是要修改:
+        x
+        x.right
+        若存在则要修改:
+        x.right.left
+        x.parent
+        '''
         self.DBG(f"left_rotate")
+        assert x.right_addr is not None
 
-        y = x.right
-        x.right = y.left
-        if y.left!=None:
-            y.left.is_left = False
-            y.left.parent = x
+        y = self.ram.read(x.right_addr)
+        x.right_addr = y.left_addr
+        if y.left_addr!=None:
+            left_child = self.ram.read(y.left_addr)
+            left_child.is_left = False
+            left_child.parent_addr = x.addr
+            self.ram.write(left_child)
 
-        y.parent = x.parent
-        if x.parent is None:
+        y.parent_addr = x.parent_addr
+        if x.parent_addr is None:
             y.is_left = None
-            self.root = y
-        elif x.is_left:# x==x.parent.left:
-            y.is_left = True
-            x.parent.left = y
+            self.root_addr = y.addr
         else:
-            x.parent.right = y
+            parent = self.ram.read(x.parent_addr)
+            if x.is_left:# x==x.parent.left:
+                y.is_left = True
+                parent.left_addr = y.addr
+            else:
+                parent.right_addr = y.addr
+            self.ram.write(parent)
+
         x.is_left = True
-        y.left = x
-        x.parent = y
+        y.left_addr = x.addr
+        x.parent_addr = y.addr
+        self.ram.write(y)
+        self.ram.write(x)
 
     def right_rotate(self, y:RBTNode):
+        '''
+        总是要修改:
+        y
+        y.left
+        若存在则要修改:
+        y.left.right
+        y.parent
+        '''
         self.DBG(f"right_rotate")
 
-        x = y.left
-        y.left = x.right
-        if x.right!=None:
-            x.right.is_left = True
-            x.right.parent = y
+        x = self.ram.read(y.left_addr)
+        y.left_addr = x.right_addr
+        if x.right_addr!=None:
+            right_child = self.ram.read(x.right_addr)
+            right_child.is_left = True
+            right_child.parent_addr = y
+            self.ram.write(right_child)
 
-        x.parent = y.parent
-        if y.parent is None:
+        x.parent_addr = y.parent_addr
+        if y.parent_addr is None:
             x.is_left = None
-            self.root = x
-        elif not y.is_left:# y==y.parent.right:
-            x.is_left = False
-            y.parent.right = x
+            self.root_addr = x.addr
         else:
-            y.parent.left = x
+            parent = self.ram.read(y.parent_addr)
+            if not y.is_left:# y==y.parent.right:
+                x.is_left = False
+                parent.right_addr = x.addr
+            else:
+                parent.left_addr = x.addr
+            self.ram.write(parent)
         y.is_left = False
-        x.right = y
-        y.parent = x
+        x.right_addr = y.addr
+        y.parent_addr = x.addr
+        self.ram.write(x)
+        self.ram.write(y)
 
-
-
-    def remove(self, value:int, auto_rebalance=True):
-        label = "remove " + str(value)
-        self.DBG(f'{label}...')
-        
-        self.delete_node_helper(self.root, value, auto_rebalance)
-        self.debugShow(label)
 
     # Node deletion
-    def delete_node_helper(self, node:RBTNode|None, key, auto_rebalance=True):
-        z = self.locate(key, node)
+    def _remove_node_helper(self, node:RBTNode, auto_rebalance=True):
+        z = node
 
         y = z
         y_original_color = y.is_red

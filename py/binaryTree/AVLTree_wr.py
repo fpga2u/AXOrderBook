@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 import uuid
-from binaryTree.absTree import TNodeInRam, TreeWithRam
+from binaryTree.absTree import TNodeInRam, TreeWithRam, NODE_BRAM
 from binaryTree.util import *
 
 
@@ -72,8 +72,6 @@ class AVLTNode(TNodeInRam):
 class AVLTree(TreeWithRam):
     __slots__ = [
         'root_addr',
-        'size',
-        'size_max',
         'stk',
         'empty_head',
         'empty_tail',
@@ -84,6 +82,10 @@ class AVLTree(TreeWithRam):
         'debug_level',
 
         'ram',
+
+        'size',
+        'size_max',
+
         'graph_last',
 
         'logger',
@@ -96,6 +98,7 @@ class AVLTree(TreeWithRam):
         '''
         debug_level:0=no-debug; 1=draw_tree; 2+=draw_tree_all
         '''
+        self.ram:NODE_BRAM = None
         super(AVLTree, self).__init__(name=name, ram_depth=ram_depth, debug_level=debug_level, node_impl=AVLTNode)
 
         ## 日志
@@ -153,7 +156,7 @@ class AVLTree(TreeWithRam):
 
 
     #检查树 链接关系 和 平衡性 #for debug only
-    def _checkLink(self):
+    def _checkTree(self):
         def check(addr:int):
             # self.DBG(node.value)
             node = self.ram.at(addr)
@@ -172,27 +175,11 @@ class AVLTree(TreeWithRam):
                     assert self.ram.at(node.parent_addr).right_height == max(node.left_height, node.right_height) + 1
         self._preorder_nonrec(self.root_addr, check)
 
-    def _checkBalance(self):
-        '''
-        检查平衡性
-        '''
-        pass
-
     #新增端点
     def _insert_helper(self, new_node:AVLTNode, auto_rebalance=True):
         """
         """
-        assert new_node.value not in self.value_list or self.value_list[new_node.value]=='r', f'{self.tree_name} node:{new_node.value} exists!'
-        self.value_list[new_node.value] = 'i'
-        self.size += 1
-        self.size_max = max(self.size, self.size_max)
-        
         label = "insert " + str(new_node.value)
-
-        #分配地址
-        new_node.addr = self.empty_head
-        self.empty_head = self.ram.read(self.empty_head).right_addr
-        assert self.empty_tail is not None, f'{self.tree_name} ram address run out!' #必须总有一个是空的，不完全用尽
 
         if self.root_addr is None:
             self.ram.write(new_node)
@@ -264,9 +251,9 @@ class AVLTree(TreeWithRam):
         if node is None:
             return
         label = f'remove_node {node.value}'
-        self.size -= 1
+        # self.size -= 1
 
-        new_tail_addr = node.addr
+        # new_tail_addr = node.addr
 
         if node.left_addr is not None and node.right_addr is not None:
             node_right_child = self.ram.read(node.right_addr)
@@ -392,14 +379,14 @@ class AVLTree(TreeWithRam):
 
         self.debugShow(label+' bef balance', check=False)
         
-        tail = self.ram.read(self.empty_tail)
-        tail.right_addr = new_tail_addr
-        tail.addr = self.empty_tail
-        self.ram.write(tail)
-        self.empty_tail = new_tail_addr
-        tail = self.ram.read(new_tail_addr)
-        tail.right_addr = None
-        self.ram.write(tail)
+        # tail = self.ram.read(self.empty_tail)
+        # tail.right_addr = new_tail_addr
+        # tail.addr = self.empty_tail
+        # self.ram.write(tail)
+        # self.empty_tail = new_tail_addr
+        # tail = self.ram.read(new_tail_addr)
+        # tail.right_addr = None
+        # self.ram.write(tail)
 
         if node.parent_addr is not None:
             node_parent = self.ram.read(node.parent_addr)
@@ -438,7 +425,7 @@ class AVLTree(TreeWithRam):
     def _balance(self, node_param:AVLTNode, recurve_to_root=False):
         node = node_param
 
-        #</<=; <=/> BID
+        #</>=; <=/> BID
         #<=/>=;<=/>=
         #</>=;</>=
         #<=/>=;</>= ASK
@@ -459,7 +446,7 @@ class AVLTree(TreeWithRam):
                 if left_child.balance_factor <= 0: #TODO: < 和 <= 将导致树轻微单向倾斜，最终导致更适合BID或ASK
                     # left_child.left is heavier, LL case
                     self._ll_case(node)
-                elif left_child.balance_factor >= 0:
+                elif left_child.balance_factor > 0:
                     # left_child.right is heavier, LR case
                     self._lr_case(node, left_child)
             elif not recurve_to_root:
