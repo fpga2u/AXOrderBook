@@ -91,6 +91,10 @@ if __name__== '__main__':
     # logger.info('starting TEST_axob_bat')
     # behave.TEST_axob(20220623, 300928) #买方价格笼子外订单连续进入撮合直到涨停，导致买方本方最优价过期却被用作买方参考价。
 
+    # ## 20220701测试错误
+    # logger.info('starting TEST_axob_bat')
+    # behave.TEST_axob(20220701, 1309)    #TODO: 新股上市首日，涨停价44%，但集合竞价进行申报的价格有效区间是[80%, 120%]，连续竞价时才是[64%, 144%]
+                                          #http://www.szse.cn/disclosure/notice/temp/t20220701_594505.html
     
     # ### 20220804测试错误
     # logger.info('starting TEST_axob_bat')

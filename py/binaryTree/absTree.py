@@ -80,7 +80,7 @@ class NODE_BRAM():
         self.data = []
         for i in range(self.depth):
             if i!=self.depth-1:
-                node = node_impl(right_addr=i+1)
+                node = node_impl(value=None, right_addr=i+1)
             else:
                 node = node_impl()
             self.data.append(node)
@@ -169,7 +169,7 @@ class TreeWithRam(metaclass=abc.ABCMeta):
             root = self.ram.at(self.root_addr)
             root_tag = str(uuid.uuid1())                # 根节点标签
             color = COLORS[root.value  % len(COLORS)]
-            graph.node(root_tag, str(root.value), style='filled', fillcolor=color, color='black')     # 创建根节点
+            graph.node(root_tag, str(root), style='filled', fillcolor=color, color='black')     # 创建根节点
             drawNode_nest(graph, root, root_tag, 0)
 
         return graph
@@ -236,7 +236,7 @@ class TreeWithRam(metaclass=abc.ABCMeta):
                 self._checkTree()
             except Exception as e:
                 self.ERR(f"check {label} FAIL!")
-                self.ERR(self.printTree())
+                self.ERR('\n'+self.printTree())
                 self.debugShow(f"check {label} FAIL", check=False, force_draw=1)
                 raise e
 
@@ -293,7 +293,7 @@ class TreeWithRam(metaclass=abc.ABCMeta):
             assert empty_nb+self.size==self.ram.depth
         except Exception as e:
             self.ERR(f"check {label} FAIL!")
-            self.ERR(self.printTree())
+            self.ERR('\n'+self.printTree())
             self.debugShow(f"check {label} FAIL", check=False, force_draw=1)
             raise e
 
@@ -360,6 +360,7 @@ class TreeWithRam(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def _insert_helper(self, new_node:TNodeInRam, auto_rebalance=True):
         '''
+        应用层配好new_node的数据和权重；
         node的addr已经在基类中被分配，本函数实现时不得再修改。
         '''
         pass

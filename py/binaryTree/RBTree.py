@@ -309,6 +309,7 @@ class RBTree:
         parent = node.parent
         grand = parent.parent
         while parent.is_red==1:
+            self.debugShow(f'balance {node.value}', False)
             if not parent.is_left:# node.parent==node.parent.parent.right:
                 u = grand.left
                 if u!=RBTree.NULL_NODE and u.is_red==1:
@@ -318,10 +319,12 @@ class RBTree:
                     node = grand
                 else:
                     if node.is_left:#node==node.parent.left:
-                        node = parent
-                        self.right_rotate(node)
-                        parent = node.parent
+                        self.right_rotate(parent)
+                        node, parent = parent, node
                         grand = parent.parent
+                        self.INFO(f'{node}, {node.parent}, {node.left}, {node.right}')
+                        self.INFO(f'{parent}, {parent.parent}, {parent.left}, {parent.right}')
+                        self.INFO(f'{grand}, {grand.parent}, {grand.left}, {grand.right}')
                     parent.is_red = 0
                     grand.is_red = 1
                     self.left_rotate(grand)
@@ -335,9 +338,8 @@ class RBTree:
                     node = grand
                 else:
                     if not node.is_left:#node==node.parent.right:
-                        node = parent
-                        self.left_rotate(node)
-                        parent = node.parent
+                        self.left_rotate(parent)
+                        node, parent = parent, node
                         grand = parent.parent
                     parent.is_red = 0
                     grand.is_red = 1
@@ -348,6 +350,7 @@ class RBTree:
             grand = parent.parent
         self.root.is_red = 0
         
+        self.debugShow(f'balance over', True)
 
     def left_rotate(self, x:RBTNode):
         self.DBG(f"left_rotate")

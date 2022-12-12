@@ -3,6 +3,7 @@
 import binaryTree.AVLTree as AVL
 import binaryTree.RBTree as RB
 import binaryTree.AVLTree_wr as AVL_wr
+import binaryTree.RBTree_wr as RB_wr
 from binaryTree.util import *
 import random
 from random import shuffle, randint
@@ -16,6 +17,7 @@ TYPE_MAP = {
     'AVL':{'TREE':AVL.AVLTree, 'NODE':AVL.AVLTNode, 'LOGGER':AVL.AVLTree_logger},
     'AVL_wr':{'TREE':AVL_wr.AVLTree, 'NODE':AVL_wr.AVLTNode, 'LOGGER':AVL_wr.AVLTree_logger},
     'RB':{'TREE':RB.RBTree, 'NODE':RB.RBTNode, 'LOGGER':RB.RBTree_logger},
+    'RB_wr':{'TREE':RB_wr.RBTree, 'NODE':RB_wr.RBTNode, 'LOGGER':RB_wr.RBTree_logger},
 }
 
 
@@ -38,34 +40,34 @@ def _insert_then_remove(l:list, s, type, debug_level=2):
     LOGGER.info(t.inorder_list_inc())
     LOGGER.info(t.inorder_list_dec())
 
-    minV, midV, maxV = min(l), l[len(l)//2], max(l)
-    assert t.locate(minV-1)==None
-    assert t.locate(minV).value==minV
-    assert t.locate(midV).value==midV
-    assert t.locate(maxV).value==maxV
-    assert t.locate(maxV+1)==None
-    assert t.locate_min().value==minV
-    assert t.locate_max().value==maxV
-    LOGGER.info(f'locate({midV}) = {t.locate(midV)}')
-    LOGGER.info(f'locate({maxV+1}) = {t.locate(maxV+1)}')
-    LOGGER.info(f'locate({minV-1}) = {t.locate(minV-1)}')
-    LOGGER.info(f'locate_min = {t.locate_min()}')
-    LOGGER.info(f'locate_max = {t.locate_max()}')
-    LOGGER.info(f'locate_lower({midV}) = {t.locate_lower(t.locate(midV))}')
-    LOGGER.info(f'locate_higher({midV}) = {t.locate_higher(t.locate(midV))}')
+    # minV, midV, maxV = min(l), l[len(l)//2], max(l)
+    # assert t.locate(minV-1)==None
+    # assert t.locate(minV).value==minV
+    # assert t.locate(midV).value==midV
+    # assert t.locate(maxV).value==maxV
+    # assert t.locate(maxV+1)==None
+    # assert t.locate_min().value==minV
+    # assert t.locate_max().value==maxV
+    # LOGGER.info(f'locate({midV}) = {t.locate(midV)}')
+    # LOGGER.info(f'locate({maxV+1}) = {t.locate(maxV+1)}')
+    # LOGGER.info(f'locate({minV-1}) = {t.locate(minV-1)}')
+    # LOGGER.info(f'locate_min = {t.locate_min()}')
+    # LOGGER.info(f'locate_max = {t.locate_max()}')
+    # LOGGER.info(f'locate_lower({midV}) = {t.locate_lower(t.locate(midV))}')
+    # LOGGER.info(f'locate_higher({midV}) = {t.locate_higher(t.locate(midV))}')
 
-    LOGGER.info('\n'+t.printTree())
+    # LOGGER.info('\n'+t.printTree())
 
-    for _ in range(min(len(l)//3, 3)):
-        rootV = t.getRoot().value
-        LOGGER.info(f'rootV = {rootV}')
-        t.remove(rootV, auto_rebalance=True)
-        l.remove(rootV)
+    # for _ in range(min(len(l)//3, 3)):
+    #     rootV = t.getRoot().value
+    #     LOGGER.info(f'rootV = {rootV}')
+    #     t.remove(rootV, auto_rebalance=True)
+    #     l.remove(rootV)
 
-    for n in l:
-        t.remove(n, auto_rebalance=True)
-    t.debugShow(label='remove_final')
-    LOGGER.info(f'profile:\n{t.profile()}')
+    # for n in l:
+    #     t.remove(n, auto_rebalance=True)
+    # t.debugShow(label='remove_final')
+    # LOGGER.info(f'profile:\n{t.profile()}')
 
 def _save_load(type):
     '''
@@ -248,7 +250,7 @@ def TESTRBT_insert_then_removeA():
     _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'RB', debug_level=1)
 
 def TESTRBT_insert_then_removeB():
-    _insert_then_remove([x for x in range(10,0,-1)], sys._getframe().f_code.co_name, 'RB', debug_level=1)
+    _insert_then_remove([x for x in range(9, 0, -1)], sys._getframe().f_code.co_name, 'RB', debug_level=1)
 
 def TESTRBT_insert_then_removeC():
     _insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name, 'RB', debug_level=1)
@@ -374,3 +376,11 @@ def TESTAVLWR_batch_insert_remove(seed, draw):
 
 def TESTAVLWR_save_load():
     _save_load('AVL_wr')
+
+
+
+def TESTRBWR_insert_then_removeA():
+    _insert_then_remove([x for x in range(10)], sys._getframe().f_code.co_name, 'RB_wr', debug_level=1)
+
+def TESTRBWR_insert_then_removeB():
+    _insert_then_remove([x for x in range(9, 0, -1)], sys._getframe().f_code.co_name, 'RB_wr', debug_level=1)
