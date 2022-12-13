@@ -382,7 +382,7 @@ class RBTree(TreeWithRam):
         y.parent;
         '''
         self.DBG(f"right_rotate")
-        assert x.left_addr is not None
+        assert y.left_addr is not None
 
         if x is None:
             x = self.ram.read(y.left_addr)

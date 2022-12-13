@@ -248,7 +248,15 @@ class TreeWithRam(metaclass=abc.ABCMeta):
             df = df.loc[:, df.any()]
             m.append(df)
         m = pd.concat(m, axis=1)
-        return f"{self.tree_name} ram access stats:\n"+str(m.describe()) + f"\n{self.tree_name} ram access sum:\n" + str(m.sum())
+
+        s = m.sum().astype('int')
+        u = (s*10000 / s.sum()).astype('int')/100
+        s['SUM'] = s.sum()
+        u['SUM'] = '100%'
+        v = pd.concat([s, u], axis=1)
+        v.columns = ['times', '%']
+        return f"{self.tree_name} ram access stats:\n{m.describe()}\n" \
+               f"{self.tree_name} ram access sum:\n{v}\n" 
 
     def profile(self):
         return self._describe_ram_access_stats()

@@ -40,23 +40,29 @@ def _insert_then_remove(l:list, s, type, debug_level=2):
     LOGGER.info(t.inorder_list_inc())
     LOGGER.info(t.inorder_list_dec())
 
-    # minV, midV, maxV = min(l), l[len(l)//2], max(l)
-    # assert t.locate(minV-1)==None
-    # assert t.locate(minV).value==minV
-    # assert t.locate(midV).value==midV
-    # assert t.locate(maxV).value==maxV
-    # assert t.locate(maxV+1)==None
-    # assert t.locate_min().value==minV
-    # assert t.locate_max().value==maxV
-    # LOGGER.info(f'locate({midV}) = {t.locate(midV)}')
-    # LOGGER.info(f'locate({maxV+1}) = {t.locate(maxV+1)}')
-    # LOGGER.info(f'locate({minV-1}) = {t.locate(minV-1)}')
-    # LOGGER.info(f'locate_min = {t.locate_min()}')
-    # LOGGER.info(f'locate_max = {t.locate_max()}')
-    # LOGGER.info(f'locate_lower({midV}) = {t.locate_lower(t.locate(midV))}')
-    # LOGGER.info(f'locate_higher({midV}) = {t.locate_higher(t.locate(midV))}')
+    minV, midV, maxV = min(l), l[len(l)//2], max(l)
+    assert t.locate(minV-1)==None
+    assert t.locate(minV).value==minV
+    assert t.locate(midV).value==midV
+    assert t.locate(maxV).value==maxV
+    assert t.locate(maxV+1)==None
+    assert t.locate_min().value==minV
+    assert t.locate_max().value==maxV
+    LOGGER.info(f'locate({midV}) = {t.locate(midV)}')
+    LOGGER.info(f'locate({maxV+1}) = {t.locate(maxV+1)}')
+    LOGGER.info(f'locate({minV-1}) = {t.locate(minV-1)}')
+    LOGGER.info(f'locate_min = {t.locate_min()}')
+    LOGGER.info(f'locate_max = {t.locate_max()}')
+    LOGGER.info(f'locate_lower({midV}) = {t.locate_lower(t.locate(midV))}')
+    LOGGER.info(f'locate_higher({midV}) = {t.locate_higher(t.locate(midV))}')
 
-    # LOGGER.info('\n'+t.printTree())
+    m = sorted(l)
+    lq = m[len(m)//4]
+    hq = m[len(m)//4+len(m)//2]
+    LOGGER.info(f'locate({lq}) = {t.locate(lq)}')
+    LOGGER.info(f'locate({hq}) = {t.locate(hq)}')
+
+    LOGGER.info('\n'+t.printTree())
 
     # for _ in range(min(len(l)//3, 3)):
     #     rootV = t.getRoot().value
@@ -67,7 +73,7 @@ def _insert_then_remove(l:list, s, type, debug_level=2):
     # for n in l:
     #     t.remove(n, auto_rebalance=True)
     # t.debugShow(label='remove_final')
-    # LOGGER.info(f'profile:\n{t.profile()}')
+    LOGGER.info(f'profile:\n{t.profile()}')
 
 def _save_load(type):
     '''
@@ -366,8 +372,10 @@ def TESTAVLWR_insert_then_removeB():
 
 def TESTAVLWR_insert_then_removeC():
     l = [x for x in range(500, 0, -1)]
-    LOGGER = TYPE_MAP['AVL_wr']['LOGGER']
-    random.seed(1110)
+    seed = 1110
+    LOGGER = TYPE_MAP['RB_wr']['LOGGER']
+    LOGGER.info(f'seed={seed}')
+    random.seed(seed)
     shuffle(l)
     _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)
     
@@ -384,3 +392,12 @@ def TESTRBWR_insert_then_removeA():
 
 def TESTRBWR_insert_then_removeB():
     _insert_then_remove([x for x in range(9, 0, -1)], sys._getframe().f_code.co_name, 'RB_wr', debug_level=1)
+
+def TESTRBWR_insert_then_removeC():
+    l = [x for x in range(500, 0, -1)]
+    seed = 1110
+    LOGGER = TYPE_MAP['RB_wr']['LOGGER']
+    LOGGER.info(f'seed={seed}')
+    random.seed(seed)
+    shuffle(l)
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'RB_wr', debug_level=0)

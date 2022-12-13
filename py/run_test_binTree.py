@@ -68,4 +68,5 @@ if __name__== '__main__':
 
     ### RB 读写统计
     # binTree.TESTRBWR_insert_then_removeA()
-    binTree.TESTRBWR_insert_then_removeB()
+    # binTree.TESTRBWR_insert_then_removeB()
+    binTree.TESTRBWR_insert_then_removeC()
