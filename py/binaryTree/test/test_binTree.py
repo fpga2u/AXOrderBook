@@ -10,6 +10,8 @@ from random import shuffle, randint
 import os
 import sys
 import json
+import time
+import logging
 
 from tool.test_util import timeit
 
@@ -64,15 +66,15 @@ def _insert_then_remove(l:list, s, type, debug_level=2):
 
     LOGGER.info('\n'+t.printTree())
 
-    # for _ in range(min(len(l)//3, 3)):
-    #     rootV = t.getRoot().value
-    #     LOGGER.info(f'rootV = {rootV}')
-    #     t.remove(rootV, auto_rebalance=True)
-    #     l.remove(rootV)
+    for _ in range(min(len(l)//3, 3)):
+        rootV = t.getRoot().value
+        LOGGER.info(f'rootV = {rootV}')
+        t.remove(rootV, auto_rebalance=True)
+        l.remove(rootV)
 
-    # for n in l:
-    #     t.remove(n, auto_rebalance=True)
-    # t.debugShow(label='remove_final')
+    for n in l:
+        t.remove(n, auto_rebalance=True)
+    t.debugShow(label='remove_final')
     LOGGER.info(f'profile:\n{t.profile()}')
 
 def _save_load(type):
@@ -259,7 +261,13 @@ def TESTRBT_insert_then_removeB():
     _insert_then_remove([x for x in range(9, 0, -1)], sys._getframe().f_code.co_name, 'RB', debug_level=1)
 
 def TESTRBT_insert_then_removeC():
-    _insert_then_remove([4, 6, 3, 1, 7, 9, 8, 5, 2], sys._getframe().f_code.co_name, 'RB', debug_level=1)
+    l = [x for x in range(20, 0, -1)]
+    seed = 38431142648.70772#1110
+    g_logger = logging.getLogger('main')
+    g_logger.info(f'seed={seed}')
+    random.seed(seed)
+    shuffle(l)
+    _insert_then_remove(l, sys._getframe().f_code.co_name, 'RB', debug_level=1)
 
 def TESTRBT_batch_insert_remove(seed, draw):
     _batch_insert_remove(seed, draw, 'RB', name=sys._getframe().f_code.co_name)
@@ -373,8 +381,8 @@ def TESTAVLWR_insert_then_removeB():
 def TESTAVLWR_insert_then_removeC():
     l = [x for x in range(500, 0, -1)]
     seed = 1110
-    LOGGER = TYPE_MAP['RB_wr']['LOGGER']
-    LOGGER.info(f'seed={seed}')
+    g_logger = logging.getLogger('main')
+    g_logger.info(f'seed={seed}')
     random.seed(seed)
     shuffle(l)
     _insert_then_remove(l, sys._getframe().f_code.co_name, 'AVL_wr', debug_level=0)
@@ -394,10 +402,14 @@ def TESTRBWR_insert_then_removeB():
     _insert_then_remove([x for x in range(9, 0, -1)], sys._getframe().f_code.co_name, 'RB_wr', debug_level=1)
 
 def TESTRBWR_insert_then_removeC():
-    l = [x for x in range(500, 0, -1)]
-    seed = 1110
-    LOGGER = TYPE_MAP['RB_wr']['LOGGER']
-    LOGGER.info(f'seed={seed}')
+    l = [x for x in range(200, 0, -1)]
+    seed = time.time()*23
+    g_logger = logging.getLogger('main')
+    g_logger.info(f'seed={seed}')
     random.seed(seed)
     shuffle(l)
     _insert_then_remove(l, sys._getframe().f_code.co_name, 'RB_wr', debug_level=0)
+
+    
+def TESTRBWR_batch_insert_remove(seed, draw):
+    _batch_insert_remove(seed, draw, 'RB_wr', name=sys._getframe().f_code.co_name)

@@ -322,9 +322,6 @@ class RBTree:
                         self.right_rotate(parent)
                         node, parent = parent, node
                         grand = parent.parent
-                        self.INFO(f'{node}, {node.parent}, {node.left}, {node.right}')
-                        self.INFO(f'{parent}, {parent.parent}, {parent.left}, {parent.right}')
-                        self.INFO(f'{grand}, {grand.parent}, {grand.left}, {grand.right}')
                     parent.is_red = 0
                     grand.is_red = 1
                     self.left_rotate(grand)
@@ -499,7 +496,6 @@ class RBTree:
         
         node = self.locate(value)
         self.delete_node_helper(node, auto_rebalance)
-        self.debugShow(label)
 
     # Node deletion
     def delete_node_helper(self, node:RBTNode, auto_rebalance=True):
@@ -531,7 +527,7 @@ class RBTree:
             if y.parent==z:
                 x = y.right
                 if x!=RBTree.NULL_NODE:
-                    x.parent = y
+                    assert x.parent==y
                 else:
                     x = RBTNode(None, False)
                     x.is_left = False
@@ -552,6 +548,9 @@ class RBTree:
             y.left = z.left
             y.left.parent = y
             y.is_red = z.is_red
+
+        self.debugShow(f'remove_node {node.value}', False)
+        
         if y_original_color==0 and self.root is not None and auto_rebalance:
             self.delete_fix(x)
 
@@ -572,8 +571,10 @@ class RBTree:
         
     # Balancing the tree after deletion
     def delete_fix(self, x:RBTNode):
+        label = f'delete_fix'
         while x!=self.root and x.is_red==0:
             self.DBG(f'delete_fix({x.value})')
+            _label = f'delete_fix {x.value}, {x.parent}, {x.left}, {x.right}'
             if x.is_left:# x==x.parent.left:
                 s = x.parent.right
                 if s!=RBTree.NULL_NODE and s.is_red==1:
@@ -620,4 +621,7 @@ class RBTree:
                     s.left.is_red = 0
                     self.right_rotate(x.parent)
                     x = self.root
+            self.debugShow(_label, check=False)
+
         x.is_red = 0
+        self.debugShow(label)

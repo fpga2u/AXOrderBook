@@ -330,11 +330,11 @@ class RBTree(TreeWithRam):
         y is x.right,
         p is x.parent;
         总是要修改:
-        x
-        x.right
+        x,
+        x.right;
         若存在则要修改:
-        x.right.left
-        x.parent
+        x.right.left,
+        x.parent;
         '''
         self.DBG(f"left_rotate")
         assert x.right_addr is not None
@@ -419,122 +419,184 @@ class RBTree(TreeWithRam):
     def _remove_node_helper(self, node:RBTNode, auto_rebalance=True):
         z = node
 
-        y = z
-        y_original_color = y.is_red
-        if z.left==None:
+        y_original_color = node.is_red
+        if z.left_addr==None:
             # If no left child, just scoot the right subtree up
-            self.__rb_transplant(z, z.right)
-            if z.right!=None:
-                x = z.right
+            if z.right_addr!=None:
+                z_right_child = self.ram.read(z.right_addr)
+                self.__rb_transplant(z, z_right_child, z.right_addr)
+                x = z_right_child
             else:
+                self.__rb_transplant(z, None, None)
                 x = RBTNode(None, False)
-                x.parent = z.parent
+                x.parent_addr = z.parent_addr
                 x.is_left = z.is_left
-        elif z.right==None:
+        elif z.right_addr==None:
             # If no right child, just scoot the left subtree up
-            self.__rb_transplant(z, z.left)
-            if z.left!=None:
-                x = z.left
+            if z.left_addr!=None:
+                z_left_child = self.ram.read(z.left_addr)
+                self.__rb_transplant(z, z_left_child, z.left_addr)
+                x = z_left_child
             else:
+                self.__rb_transplant(z, None, None)
                 x = RBTNode(None, False)
-                x.parent = z.parent
+                x.parent_addr = z.parent_addr
                 x.is_left = z.is_left
         else:
-            y = self.locate_min(z.right)
+            z_right_child = self.ram.read(z.right_addr)
+            y = self.locate_min(z_right_child)
             y_original_color = y.is_red
-            if y.parent==z:
-                x = y.right
-                if x!=None:
-                    x.parent = y
-                else:
+            if y.parent_addr==z.addr:
+                if y.right_addr is None:
                     x = RBTNode(None, False)
                     x.is_left = False
-                    x.parent = y
-            else:
-                self.__rb_transplant(y, y.right)
-                if y.right!=None:
-                    x = y.right
+                    x.parent_addr = y.addr
                 else:
+                    x = self.ram.read(y.right_addr)
+            else:
+                if y.right_addr is None:
+                    if y.parent_addr==z_right_child.addr:
+                        if y.is_left:
+                            z_right_child.left_addr = None
+                        else:
+                            z_right_child.right_addr = None
+                    else:
+                        self.__rb_transplant(y, None, None)
                     x = RBTNode(None, False)
-                    x.parent = y.parent
+                    x.parent_addr = y.parent_addr
                     x.is_left = y.is_left
-                y.right = z.right
-                y.right.parent = y
-            
+                else:
+                    y_right_child = self.ram.read(y.right_addr)
+                    self.__rb_transplant(y, y_right_child, y_right_child.addr)
+                    x = y_right_child
+                    if z_right_child.addr==y.parent_addr:
+                        z_right_child = self.ram.read(z.right_addr)
+                y.right_addr = z.right_addr
+                z_right_child.parent_addr = y.addr
+                self.ram.write(z_right_child)
 
-            self.__rb_transplant(z, y)
-            y.left = z.left
-            y.left.parent = y
+            self.__rb_transplant(z, y, y.addr)
+            y.left_addr = z.left_addr
+            z_left_child = self.ram.read(z.left_addr)
+            z_left_child.parent_addr = y.addr
+            self.ram.write(z_left_child)
+
             y.is_red = z.is_red
-        if y_original_color==0 and self.root is not None and auto_rebalance:
+            self.ram.write(y)
+
+        self.debugShow(f'remove_node {node.value}', False)
+
+        if y_original_color==0 and self.root_addr is not None:
             self.delete_fix(x)
 
-        self.size -= 1
-        
-    def __rb_transplant(self, u:RBTNode, v:RBTNode):
+    def __rb_transplant(self, u:RBTNode, v:RBTNode, v_addr):
+        '''
+        将u的父节点接到v上，读写u的父节点(left/right_addr)，修改v(parent, is_left)，不改变u.
+        '''
         self.DBG('rb_transplant')
 
-        if u.parent is None:
-            self.root = v
-        elif u.is_left: #u==u.parent.left:
-            u.parent.left = v
+        if u.parent_addr is None:
+            self.root_addr = v_addr
         else:
-            u.parent.right = v
-        if v!=None:
-            v.parent = u.parent
+            parent = self.ram.read(u.parent_addr)
+            if u.is_left: #u==u.parent.left:
+                parent.left_addr = v_addr
+            else:
+                parent.right_addr = v_addr
+            self.ram.write(parent)
+        if v_addr is not None:
+            v.parent_addr = u.parent_addr
             v.is_left = u.is_left
         
     # Balancing the tree after deletion
     def delete_fix(self, x:RBTNode):
-        while x!=self.root and x.is_red==0:
+        label = f'delete_fix'
+        while x.addr!=self.root_addr and x.is_red==0:
             self.DBG(f'delete_fix({x.value})')
+
+            xp = None if x.parent_addr is None else self.ram.at(x.parent_addr)
+            xl = None if x.left_addr is None else self.ram.at(x.left_addr)
+            xr = None if x.right_addr is None else self.ram.at(x.right_addr)
+            _label = f'delete_fix {x.value}, {xp}, {xl}, {xr}'
+
+            x_parent = self.ram.read(x.parent_addr)
+            
             if x.is_left:# x==x.parent.left:
-                s = x.parent.right
-                if s!=None and s.is_red==1:
+                if x_parent.right_addr is not None:
+                    s = self.ram.read(x_parent.right_addr)
+                if x_parent.right_addr!=None and s.is_red==1:
                     s.is_red = 0
-                    x.parent.is_red = 1
-                    self.left_rotate(x.parent)
-                    s = x.parent.right
+                    x_parent.is_red = 1
+                    self.left_rotate(x_parent, s, writeback=True)
+                    s = self.ram.read(x_parent.right_addr)
 
-                if (s.left==None or s.left.is_red==0) and (s.right==None or s.right.is_red==0):
-                    s.is_red = 1
-                    x = x.parent
-                else:
-                    if s.right==None or s.right.is_red==0:
-                        s.left.is_red = 0
+                if x_parent.right_addr!=None and s.left_addr is not None:
+                    s_left = self.ram.read(s.left_addr)
+                if x_parent.right_addr!=None and s.right_addr is not None:
+                    s_right = self.ram.read(s.right_addr)
+                if x_parent.right_addr==None or ((s.left_addr==None or s_left.is_red==0) and (s.right_addr==None or s_right.is_red==0)):
+                    if x_parent.right_addr is not None:
                         s.is_red = 1
-                        self.right_rotate(s)
-                        s = x.parent.right
+                        self.ram.write(s)
+                    x = x_parent
+                else:
+                    if s.right_addr==None or s_right.is_red==0:
+                        s_left.is_red = 0
+                        s.is_red = 1
+                        self.right_rotate(s,x=s_left,p=x_parent,writeback=True)
+                        s = self.ram.read(x_parent.right_addr)
 
-                    s.is_red = x.parent.is_red
-                    x.parent.is_red = 0
-                    s.right.is_red = 0
-                    self.left_rotate(x.parent)
-                    x = self.root
+                    s.is_red = x_parent.is_red
+                    x_parent.is_red = 0
+                    s_right = self.ram.read(s.right_addr)
+                    s_right.is_red = 0
+                    self.ram.write(s_right) #TODO:
+                    self.left_rotate(x_parent,y=s,writeback=True)
+
+                    # x = self.root
+                    break
             else:
-                s = x.parent.left
-                if s!=None and s.is_red==1:
+                if x_parent.left_addr!=None:
+                    s = self.ram.read(x_parent.left_addr)
+                if x_parent.left_addr!=None and s.is_red==1:
                     s.is_red = 0
-                    x.parent.is_red = 1
-                    self.right_rotate(x.parent)
-                    s = x.parent.left
+                    x_parent.is_red = 1
+                    self.right_rotate(x_parent, s, writeback=True)
+                    s = self.ram.read(x_parent.left_addr)
 
-                if (s.left==None or s.left.is_red==0) and (s.right==None or s.right.is_red==0):
-                    s.is_red = 1
-                    x = x.parent
-                else:
-                    if s.left==None or s.left.is_red==0:
-                        s.right.is_red = 0
+                if x_parent.left_addr!=None and s.left_addr is not None:
+                    s_left = self.ram.read(s.left_addr)
+                if x_parent.left_addr!=None and s.right_addr is not None:
+                    s_right = self.ram.read(s.right_addr)
+                if x_parent.left_addr==None or ((s.left_addr==None or s_left.is_red==0) and (s.right_addr==None or s_right.is_red==0)):
+                    if x_parent.left_addr is not None:
                         s.is_red = 1
-                        self.left_rotate(s)
-                        s = x.parent.left
+                        self.ram.write(s)
+                    x = x_parent
+                else:
+                    if s.left_addr==None or s_left.is_red==0:
+                        s_right.is_red = 0
+                        s.is_red = 1
+                        self.left_rotate(s,y=s_right,p=x_parent,writeback=True)
+                        s = self.ram.read(x_parent.left_addr)
 
-                    s.is_red = x.parent.is_red
-                    x.parent.is_red = 0
-                    s.left.is_red = 0
-                    self.right_rotate(x.parent)
-                    x = self.root
+                    s.is_red = x_parent.is_red
+                    x_parent.is_red = 0
+                    s_left = self.ram.read(s.left_addr)
+                    s_left.is_red = 0
+                    self.ram.write(s_left) #TODO:
+                    self.right_rotate(x_parent,x=s,writeback=True)
+                    # x = self.root
+                    break
+            
+            self.ram.write(x_parent)
+            self.debugShow(_label, check=False)
+
         x.is_red = 0
+        if x.addr!=None:
+            self.ram.write(x)
+        self.debugShow(label)
+
 
         
 

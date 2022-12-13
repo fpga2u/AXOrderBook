@@ -249,10 +249,10 @@ class TreeWithRam(metaclass=abc.ABCMeta):
             m.append(df)
         m = pd.concat(m, axis=1)
 
-        s = m.sum().astype('int')
-        u = (s*10000 / s.sum()).astype('int')/100
-        s['SUM'] = s.sum()
-        u['SUM'] = '100%'
+        s = m.sum().astype('int64')
+        u = (s*10000 / s.sum()).astype('int64')/100
+        s['---- SUM ----'] = s.sum()
+        u['---- SUM ----'] = '100%'
         v = pd.concat([s, u], axis=1)
         v.columns = ['times', '%']
         return f"{self.tree_name} ram access stats:\n{m.describe()}\n" \
