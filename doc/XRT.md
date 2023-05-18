@@ -75,6 +75,30 @@ cd Release
 make package
 
 sudo yum install xrt_202310.2.15.0_8.5.2111-x86_64-xrt.rpm
+
+#安装过程中将安装xocl和xclmgmt驱动，如果未能成功加载将无法使用XRT并显示设备没找到，确认驱动是否安装：
+xbutil --version
+#如果XOCL和XCLMGMT位置出现unknown则说明驱动未成功加载，比如：
+#  #####
+#  Version              : 2.16.0
+#  Branch               : master
+#  Hash                 : d6826e2cef10228a92e4b4c6760477bf3b21133c
+#  Hash Date            : 2023-05-06 11:20:53
+#  XOCL                 : unknown, unknown
+#  XCLMGMT              : unknown, unknown
+#  #####
+#如果正确加载驱动应该如：
+#  #####
+#  Version              : 2.16.0
+#  Branch               : master
+#  Hash                 : d6826e2cef10228a92e4b4c6760477bf3b21133c
+#  Hash Date            : 2023-05-06 11:20:53
+#  XOCL                 : 2.16.0, d6826e2cef10228a92e4b4c6760477bf3b21133c
+#  XCLMGMT              : 2.16.0, d6826e2cef10228a92e4b4c6760477bf3b21133c
+#  #####
+#加载驱动的解决方法参考 https://xilinx.github.io/Alveo-Cards/master/debugging/build/html/docs/xrt-troubleshooting.html 中 《Drivers not installed into kernel》
+#一个简单但不被官方推荐的方法是在BIOS中禁用Security Boot，再重装xrt-xxxx.rpm。
+
 ```
 
 ## hw_emu
