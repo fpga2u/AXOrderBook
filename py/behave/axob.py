@@ -39,6 +39,7 @@ TIMESTAMP_BIT_SIZE = 24 # 时戳精度 时-分-秒-10ms 最大15000000=24b
 
 PRICE_INTER_STOCK_PRECISION = 100  # 股票价格精度：2位小数，(深圳原始数据4位，上海3位)
 PRICE_INTER_FUND_PRECISION  = 1000 # 基金价格精度：3位小数，(深圳原始数据4位，上海3位)
+PRICE_INTER_KZZ_PRECISION  = 1000 # 可转债格精度：3位小数，(深圳原始数据4位，上海3位)
 
 QTY_INTER_SZSE_PRECISION   = 100   # 数量精度：深圳2位小数
 QTY_INTER_SSE_PRECISION    = 1000  # 数量精度：上海3位小数
@@ -75,6 +76,7 @@ class TYPE(Enum): # 2bit
 # 用于将原始精度转换到ob精度
 SZSE_STOCK_PRICE_RD = msg_util.PRICE_SZSE_INCR_PRECISION // PRICE_INTER_STOCK_PRECISION
 SZSE_FUND_PRICE_RD = msg_util.PRICE_SZSE_INCR_PRECISION // PRICE_INTER_FUND_PRECISION
+SZSE_KZZ_PRICE_RD = msg_util.PRICE_SZSE_INCR_PRECISION // PRICE_INTER_KZZ_PRECISION
 SSE_STOCK_PRICE_RD = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_STOCK_PRECISION
 # SSE_FUND_PRICE_RD = msg_util.PRICE_SSE_PRECISION // PRICE_INTER_FUND_PRECISION TODO:确认精度 [low priority]
 
@@ -124,6 +126,8 @@ class ob_order():
                     self.price = order.Price // SZSE_STOCK_PRICE_RD # 深圳 N13(4)，实际股票精度为分
                 elif instrument_type==INSTRUMENT_TYPE.FUND:
                     self.price = order.Price // SZSE_FUND_PRICE_RD # 深圳 N13(4)，实际基金精度为厘
+                elif instrument_type==INSTRUMENT_TYPE.KZZ:
+                    self.price = order.Price // SZSE_KZZ_PRICE_RD # 深圳 N13(4)，实际基金精度为厘
                 else:
                     axob_logger.error(f'order SZSE ApplSeqNum={order.ApplSeqNum} instrument_type={instrument_type} not support!')
             elif order.SecurityIDSource==SecurityIDSource_SSE:
@@ -155,6 +159,8 @@ class ob_order():
                     axob_logger.error(f'{order.SecurityID:06d} order SZSE STOCK ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')  #当被前端处理成0x7fff_ffff时 会有余数
                 elif instrument_type==INSTRUMENT_TYPE.FUND and order.Price % SZSE_FUND_PRICE_RD:
                     axob_logger.error(f'{order.SecurityID:06d} order SZSE FUND ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')  #当被前端处理成0x7fff_ffff时 会有余数
+                elif instrument_type==INSTRUMENT_TYPE.KZZ and order.Price % SZSE_KZZ_PRICE_RD:
+                    axob_logger.error(f'{order.SecurityID:06d} order SZSE KZZ ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')  #当被前端处理成0x7fff_ffff时 会有余数
             elif order.SecurityIDSource==SecurityIDSource_SSE:
                 if instrument_type==INSTRUMENT_TYPE.STOCK and order.Price % SSE_STOCK_PRICE_RD:
                     axob_logger.error(f'{order.SecurityID:06d} order SSE STOCK ApplSeqNum={order.ApplSeqNum} Price={order.Price} precision dnf!')
@@ -195,6 +201,8 @@ class ob_exec():
                 self.LastPx = exec.LastPx // SZSE_STOCK_PRICE_RD # 深圳 N13(4)，实际股票精度为分
             elif instrument_type==INSTRUMENT_TYPE.FUND:
                 self.LastPx = exec.LastPx // SZSE_FUND_PRICE_RD # 深圳 N13(4)，实际基金精度为厘
+            elif instrument_type==INSTRUMENT_TYPE.KZZ:
+                self.LastPx = exec.LastPx // SZSE_KZZ_PRICE_RD # 深圳 N13(4)，实际可转债精度为厘
             else:
                 axob_logger.error(f'exec SZSE ApplSeqNum={exec.ApplSeqNum} instrument_type={instrument_type} not support!')
         elif exec.SecurityIDSource==SecurityIDSource_SSE:
@@ -498,6 +506,7 @@ class AXOB():
                 #     # 创业板进入收盘集合竞价，敞开价格笼子，将外面的隐藏订单放进来
                 #     self.openCage()
                 #     self.genSnap()
+
                 assert self.constantValue_ready, f'{self.SecurityID:06d} constant values not ready!'
 
                 self._useTimestamp(msg.TransactTime)
@@ -936,6 +945,8 @@ class AXOB():
                 self.TotalValueTrade += int(exec.LastQty * exec.LastPx/(QTY_INTER_SZSE_PRECISION*PRICE_INTER_STOCK_PRECISION // msg_util.TOTALVALUETRADE_SZSE_PRECISION)) # 2x2->4
             elif self.instrument_type==INSTRUMENT_TYPE.FUND:
                 self.TotalValueTrade += int(exec.LastQty * exec.LastPx/(QTY_INTER_SZSE_PRECISION*PRICE_INTER_FUND_PRECISION // msg_util.TOTALVALUETRADE_SZSE_PRECISION)) # 2x3->4
+            elif self.instrument_type==INSTRUMENT_TYPE.KZZ:
+                self.TotalValueTrade += int(exec.LastQty * exec.LastPx/(QTY_INTER_SZSE_PRECISION*PRICE_INTER_KZZ_PRECISION // msg_util.TOTALVALUETRADE_SZSE_PRECISION)) # 2x3->4
             else:
                 self.TotalValueTrade += None
         elif self.SecurityIDSource==SecurityIDSource_SSE:
@@ -1288,6 +1299,8 @@ class AXOB():
                     self.PrevClosePx = snap.PrevClosePx // (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_STOCK_PRECISION)
                 elif self.instrument_type==INSTRUMENT_TYPE.FUND:
                     self.PrevClosePx = snap.PrevClosePx // (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_FUND_PRECISION)
+                elif self.instrument_type==INSTRUMENT_TYPE.KZZ:
+                    self.PrevClosePx = snap.PrevClosePx // (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_KZZ_PRECISION)
                 else:
                     pass    # TODO:
             else:
@@ -1307,6 +1320,9 @@ class AXOB():
                 elif self.instrument_type==INSTRUMENT_TYPE.FUND:
                     self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
                     self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
+                elif self.instrument_type==INSTRUMENT_TYPE.KZZ:
+                    self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_KZZ_PRECISION)
+                    self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_KZZ_PRECISION)
                 else:
                     pass    # TODO:
             else:
@@ -1323,6 +1339,8 @@ class AXOB():
                     self.LastPx = snap.LastPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_STOCK_PRECISION)
                 elif self.instrument_type==INSTRUMENT_TYPE.FUND:
                     self.LastPx = snap.LastPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
+                elif self.instrument_type==INSTRUMENT_TYPE.KZZ:
+                    self.LastPx = snap.LastPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_KZZ_PRECISION)
                 else:
                     pass    # TODO:
             else:
@@ -1437,6 +1455,8 @@ class AXOB():
                 snap.PrevClosePx = self.PrevClosePx * (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_STOCK_PRECISION)
             elif self.instrument_type==INSTRUMENT_TYPE.FUND:
                 snap.PrevClosePx = self.PrevClosePx * (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_FUND_PRECISION)
+            elif self.instrument_type==INSTRUMENT_TYPE.KZZ:
+                snap.PrevClosePx = self.PrevClosePx * (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_KZZ_PRECISION)
             else:
                 snap.PrevClosePx = self.PrevClosePx    #TODO:
         else:
@@ -1611,9 +1631,10 @@ class AXOB():
 
 
         #### 开始构造快照
-        if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+        if self.instrument_type==INSTRUMENT_TYPE.STOCK or self.instrument_type==INSTRUMENT_TYPE.KZZ:
             snap_call = axsbe_snap_stock(SecurityIDSource=self.SecurityIDSource, source=f"AXOB-call")
         else:
+            self.DBG(f'genCallSnap for instrument_type={self.instrument_type} is not ready!')
             return None # TODO: not ready [Mid priority]
         
         self._setSnapFixParam(snap_call)
@@ -1677,9 +1698,10 @@ class AXOB():
             snap_ask_levels[i] = price_level(0, 0)
 
 
-        if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+        if self.instrument_type==INSTRUMENT_TYPE.STOCK or self.instrument_type==INSTRUMENT_TYPE.KZZ:
             snap = axsbe_snap_stock(SecurityIDSource=self.SecurityIDSource, source=f"AXOB-{level_nb}")
         else:
+            self.WARN(f'genTradingSnap for instrument_type={self.instrument_type} is not ready!')
             return None # TODO: not ready [Mid priority]
         snap.ask = snap_ask_levels
         snap.bid = snap_bid_levels
@@ -1747,6 +1769,8 @@ class AXOB():
                 price *= msg_util.PRICE_SZSE_SNAP_PRECISION // PRICE_INTER_STOCK_PRECISION    # 内部2位，输出6位
             elif self.instrument_type==INSTRUMENT_TYPE.FUND:
                 price *= msg_util.PRICE_SZSE_SNAP_PRECISION // PRICE_INTER_FUND_PRECISION    # 内部3位，输出6位
+            elif self.instrument_type==INSTRUMENT_TYPE.KZZ:
+                price *= msg_util.PRICE_SZSE_SNAP_PRECISION // PRICE_INTER_KZZ_PRECISION    # 内部3位，输出6位
             else:
                 price = None
         elif self.SecurityIDSource==SecurityIDSource_SSE:

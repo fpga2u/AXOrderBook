@@ -176,17 +176,13 @@ def TEST_mu_SL(source_file, instrument_list,
     return
 
 
-@timeit
-def TEST_axob_bat(source_file, instrument_list:list, n_max=500, 
+def TEST_axob_core(loader_itor, instrument_list:list, n_max=500, 
                     openCall_only=False,
                     SecurityIDSource=SecurityIDSource_SZSE, 
                     instrument_type=INSTRUMENT_TYPE.STOCK,
                     HHMMSSms_max=None,
                     logPack=(print, print, print, print)
                 ):
-    if not os.path.exists(source_file):
-        raise f"{source_file} not exists"
-
     DBG, INFO, WARN, ERR = logPack
 
     mu = MU(instrument_list, SecurityIDSource, instrument_type)
@@ -200,7 +196,7 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
     t_pf = t_bgn
     profile_memUsage = 0
     profile_memFree = getMemFreeGB()
-    for msg in axsbe_file(source_file):
+    for msg in loader_itor:
         if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
             boc = 1
             print_log(INFO, f'{datetime.today()} openCall start')
@@ -249,6 +245,90 @@ def TEST_axob_bat(source_file, instrument_list:list, n_max=500,
     print_log(INFO, f'== TEST_axob_bat PASS ==')
     return
 
+def TEST_axob_bat(source_file, instrument_list:list, n_max=500, 
+                    openCall_only=False,
+                    SecurityIDSource=SecurityIDSource_SZSE, 
+                    instrument_type=INSTRUMENT_TYPE.STOCK,
+                    HHMMSSms_max=None,
+                    logPack=(print, print, print, print)
+                ):
+    if not os.path.exists(source_file):
+        raise f"{source_file} not exists"
+
+    loader_itor = axsbe_file(source_file)
+
+    TEST_axob_core(loader_itor, 
+                    instrument_list, 
+                    n_max=n_max,
+                    openCall_only=openCall_only,
+                    SecurityIDSource=SecurityIDSource,
+                    instrument_type=instrument_type,
+                    HHMMSSms_max=HHMMSSms_max,
+                    logPack=logPack
+    )
+
+    # DBG, INFO, WARN, ERR = logPack
+
+    # mu = MU(instrument_list, SecurityIDSource, instrument_type)
+    # print_log(INFO, f'{datetime.today()} instrumen_nb={len(instrument_list)}, current memory usage={getMemUsageGB():.3f} GB')
+
+    # n = 0 #只计算在 instrument_list 内的消息
+    # n_bgn = 0
+    # boc = 0
+    # ecc = 0
+    # t_bgn = time()
+    # t_pf = t_bgn
+    # profile_memUsage = 0
+    # profile_memFree = getMemFreeGB()
+    # for msg in axsbe_file(source_file):
+    #     if msg.TradingPhaseMarket==TPM.OpenCall and boc==0:
+    #         boc = 1
+    #         print_log(INFO, f'{datetime.today()} openCall start')
+
+    #     if msg.TradingPhaseMarket==TPM.Ending and ecc==0:
+    #         ecc = 1
+    #         print_log(INFO, f'{datetime.today()} closeCall over')
+
+    #     mu.onMsg(msg)
+    #     n += 1
+    #     if n_max>0 and n>=n_max:
+    #         print_log(INFO, f'{datetime.today()} nb over, n={n}')
+    #         break
+
+    #     if (openCall_only and msg.HHMMSSms>92600000) or \
+    #        (msg.HHMMSSms>150100000):
+    #         print_log(INFO, f'{datetime.today()} Ending: over, n={n}')
+    #         break
+
+    #     if HHMMSSms_max is not None and HHMMSSms_max>0 and msg.HHMMSSms>HHMMSSms_max:
+    #         print_log(INFO, f'{datetime.today()} HHMMSSms_max: over, n={n}, msg @({msg.TransactTime})')
+    #         break
+
+    #     now = time()
+
+    #     if now > t_pf+30: #内存占用采样周期30s
+    #         memUsage = getMemUsageGB()
+    #         if memUsage>profile_memUsage:
+    #             profile_memUsage = memUsage
+    #         memFree = getMemFreeGB()
+    #         if memFree<profile_memFree:
+    #             profile_memFree = memFree
+    #         t_pf = now
+
+    #         if now>t_bgn+60*10:#内存情况，报告周期10min
+    #             print_log(INFO, f'{datetime.today()} current memory usage={memUsage:.3f} GB free={memFree:.3f} GB'
+    #                 f'(epoch peak={profile_memUsage:.3f} GB, minFree={profile_memFree:.3f} GB),' 
+    #                 f' @{msg.HHMMSSms}')
+    #             t_bgn = now
+    #             profile_memUsage = 0
+    #             profile_memFree = memFree
+
+    # if WARN is not None:
+    #     WARN(mu) #保证能记录到文件中
+    # assert mu.are_you_ok()
+    # print_log(INFO, f'== TEST_axob_bat PASS ==')
+    return
+
 
 def TEST_axob(date, instrument:int, n_max=0, 
                 openCall_only=False,
@@ -261,6 +341,40 @@ def TEST_axob(date, instrument:int, n_max=0,
         raise f"{md_file} not exists"
 
     TEST_axob_bat(md_file, [instrument], n_max, openCall_only, SecurityIDSource, instrument_type, logPack=logPack)
+
+    return
+
+def TEST_axob_csv(date, instrument:int, n_max=0, 
+                openCall_only=False,
+                SecurityIDSource=SecurityIDSource_SZSE, 
+                instrument_type=INSTRUMENT_TYPE.STOCK,
+                logPack=(print, print, print, print)
+            ):
+    if SecurityIDSource==SecurityIDSource_SZSE:
+        SecurityIDSource_char = 'SZ'
+    elif SecurityIDSource==SecurityIDSource_SSE:
+        SecurityIDSource_char = 'SH'
+    cj_file = f'data/{date}/{instrument:06d}.{SecurityIDSource_char}.cj'
+    wt_file = f'data/{date}/{instrument:06d}.{SecurityIDSource_char}.wt'
+    snap_file = f'data/{date}/{instrument:06d}.{SecurityIDSource_char}.snap' #需要手动写一个快照，用于初始化AXOB
+
+    if not os.path.exists(wt_file):
+        raise f"{wt_file} not exists"
+    if not os.path.exists(cj_file):
+        raise f"{cj_file} not exists"
+    if not os.path.exists(snap_file):
+        raise f"{snap_file} not exists"
+
+    loader_itor = axsbe_file_csv(wt_file, cj_file, snap_file)
+
+    TEST_axob_core(loader_itor, 
+                    [instrument], 
+                    n_max=n_max,
+                    openCall_only=openCall_only,
+                    SecurityIDSource=SecurityIDSource,
+                    instrument_type=instrument_type,
+                    logPack=logPack
+    )
 
     return
 
