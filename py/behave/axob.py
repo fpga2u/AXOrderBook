@@ -587,7 +587,7 @@ class AXOB():
 
 
         #if self.TradingPhaseMarket>=axsbe_base.TPM.Ending:
-        # if self.msg_nb>=1828:
+        # if self.msg_nb>=885:
         #    self._print_levels()
 
 
@@ -1491,6 +1491,8 @@ class AXOB():
         show_level_nb:  展示的价格档数
         show_potential: 在无法撮合时展示出双方价格档
         '''
+        # if self.msg_nb>=885:
+        #    self._print_levels()
         #1. 查找 最低卖出价格档、最高买入价格档
         _bid_max_level_price = self.bid_max_level_price
         _bid_max_level_qty = self.bid_max_level_qty
