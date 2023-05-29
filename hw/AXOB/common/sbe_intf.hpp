@@ -1,20 +1,54 @@
+/*
+ * SBE 消息格式字段解析工具
+ * xxx_packed 类型为 xxx结构体完全展开后的辅助类型，便于在AXI_STREAM中发送。
+ * xxx_pack()和xxx_unpack()用于在展开类型和原始类型中切换， TODO:理论上应该没有FF。
+ */
+
 #ifndef __SBE_INTF_HPP__
 #define __SBE_INTF_HPP__
 
 #include "sbe_ssz_origin.hpp"
-typedef ap_uint<96> price_level_t_packed;
-typedef ap_uint<808> QtyQueue_level_t_packed;
-typedef ap_uint<8> SSZ_TradingPhaseCodePack_t_packed;
-typedef ap_uint<192> SBE_SSZ_header_t_packed;
-typedef ap_uint<2816> SBE_SSZ_instrument_snap_t_packed;
-typedef ap_uint<768> SBE_SSZ_index_snap_t_packed;
-typedef ap_uint<384> SBE_SSZ_ord_t_packed;
-typedef ap_uint<512> SBE_SSZ_exe_t_packed;
-typedef ap_uint<2880> SBE_SSZ_option_snap_t_packed;
-typedef ap_uint<2816> SBE_SSZ_fund_snap_t_packed;
-typedef ap_uint<2944> SBE_SSZ_bond_snap_t_packed;
-typedef ap_uint<384> SBE_SSZ_bond_ord_t_packed;
-typedef ap_uint<512> SBE_SSZ_bond_exe_t_packed;
+
+
+#define BITSIZE_price_level_t_packed 96
+typedef ap_uint<BITSIZE_price_level_t_packed> price_level_t_packed;
+
+#define BITSIZE_QtyQueue_level_t_packed 808
+typedef ap_uint<BITSIZE_QtyQueue_level_t_packed> QtyQueue_level_t_packed;
+
+#define BITSIZE_SSZ_TradingPhaseCodePack_t_packed 8
+typedef ap_uint<BITSIZE_SSZ_TradingPhaseCodePack_t_packed> SSZ_TradingPhaseCodePack_t_packed;
+
+#define BITSIZE_SBE_SSZ_header_t_packed 192
+typedef ap_uint<BITSIZE_SBE_SSZ_header_t_packed> SBE_SSZ_header_t_packed;
+
+#define BITSIZE_SBE_SSZ_instrument_snap_t_packed 2816
+typedef ap_uint<BITSIZE_SBE_SSZ_instrument_snap_t_packed> SBE_SSZ_instrument_snap_t_packed;
+
+#define BITSIZE_SBE_SSZ_index_snap_t_packed 768
+typedef ap_uint<BITSIZE_SBE_SSZ_index_snap_t_packed> SBE_SSZ_index_snap_t_packed;
+
+#define BITSIZE_SBE_SSZ_ord_t_packed 384
+typedef ap_uint<BITSIZE_SBE_SSZ_ord_t_packed> SBE_SSZ_ord_t_packed;
+
+#define BITSIZE_SBE_SSZ_exe_t_packed 512
+typedef ap_uint<BITSIZE_SBE_SSZ_exe_t_packed> SBE_SSZ_exe_t_packed;
+
+#define BITSIZE_SBE_SSZ_option_snap_t_packed 2880
+typedef ap_uint<BITSIZE_SBE_SSZ_option_snap_t_packed> SBE_SSZ_option_snap_t_packed;
+
+#define BITSIZE_SBE_SSZ_fund_snap_t_packed 2816
+typedef ap_uint<BITSIZE_SBE_SSZ_fund_snap_t_packed> SBE_SSZ_fund_snap_t_packed;
+
+#define BITSIZE_SBE_SSZ_bond_snap_t_packed 2944
+typedef ap_uint<BITSIZE_SBE_SSZ_bond_snap_t_packed> SBE_SSZ_bond_snap_t_packed;
+
+#define BITSIZE_SBE_SSZ_bond_ord_t_packed 384
+typedef ap_uint<BITSIZE_SBE_SSZ_bond_ord_t_packed> SBE_SSZ_bond_ord_t_packed;
+
+#define BITSIZE_SBE_SSZ_bond_exe_t_packed 512
+typedef ap_uint<BITSIZE_SBE_SSZ_bond_exe_t_packed> SBE_SSZ_bond_exe_t_packed;
+
 
 class sbe_intf
 {

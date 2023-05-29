@@ -3,6 +3,8 @@
 
 #include "ap_axi_sdata.h"
 
+namespace SBE_ENDIAN {
+
 template <int D>
 ap_uint<D> reverse(const ap_uint<D>& w) {
 #pragma HLS INLINE
@@ -13,5 +15,7 @@ ap_uint<D> reverse(const ap_uint<D>& w) {
     }
     return temp;
 }
+
+}//SBE_ENDIAN
 
 #endif // __ENDIAN_HPP__
