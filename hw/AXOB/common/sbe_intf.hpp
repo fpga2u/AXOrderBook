@@ -7,6 +7,7 @@
 #ifndef __SBE_INTF_HPP__
 #define __SBE_INTF_HPP__
 
+#include "xv_define.h"
 #include "sbe_ssz_origin.hpp"
 
 
@@ -133,4 +134,20 @@ public:
                           SBE_SSZ_bond_exe_t_packed &dest);
 }; // class sbe_intf
 
-#endif // __SBE_INTF_HPP__"
+bool operator==(const price_level_t& A, const price_level_t& B);
+bool operator==(const QtyQueue_level_t& A, const QtyQueue_level_t& B);
+bool operator==(const SSZ_TradingPhaseCodePack_t& A, const SSZ_TradingPhaseCodePack_t& B);
+bool operator==(const SBE_SSZ_header_t& A, const SBE_SSZ_header_t& B);
+bool operator==(const SBE_SSZ_instrument_snap_t& A, const SBE_SSZ_instrument_snap_t& B);
+bool operator==(const SBE_SSZ_index_snap_t& A, const SBE_SSZ_index_snap_t& B);
+bool operator==(const SBE_SSZ_ord_t& A, const SBE_SSZ_ord_t& B);
+bool operator==(const SBE_SSZ_exe_t& A, const SBE_SSZ_exe_t& B);
+bool operator==(const SBE_SSZ_option_snap_t& A, const SBE_SSZ_option_snap_t& B);
+bool operator==(const SBE_SSZ_fund_snap_t& A, const SBE_SSZ_fund_snap_t& B);
+bool operator==(const SBE_SSZ_bond_snap_t& A, const SBE_SSZ_bond_snap_t& B);
+bool operator==(const SBE_SSZ_bond_ord_t& A, const SBE_SSZ_bond_ord_t& B);
+bool operator==(const SBE_SSZ_bond_exe_t& A, const SBE_SSZ_bond_exe_t& B);
+
+
+#endif // __SBE_INTF_HPP__
+

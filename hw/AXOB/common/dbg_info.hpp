@@ -2,8 +2,8 @@
  * c-sim 消息打印
  */
 
-#ifndef __SBE_DBG_H__
-#define __SBE_DBG_H__
+#ifndef __SBE_DBG_INFO_HPP__
+#define __SBE_DBG_INFO_HPP__
 
 
 #ifndef __SYNTHESIS__
@@ -51,5 +51,5 @@
 #endif
 
 
-#endif
+#endif //__SBE_DBG_INFO_HPP__
 

@@ -19,6 +19,8 @@ void sbe_intf::price_level_t_pack(price_level_t &src,
     dest.range(95, 64) = SBE_ENDIAN::reverse<32>(src.Price);
     dest.range(63, 0) = SBE_ENDIAN::reverse<64>(src.Qty);
 }
+
+
 void sbe_intf::QtyQueue_level_t_unpack(QtyQueue_level_t_packed &src,
                           QtyQueue_level_t &dest)
 {
@@ -133,6 +135,8 @@ void sbe_intf::QtyQueue_level_t_pack(QtyQueue_level_t &src,
     dest.range(31, 16) = SBE_ENDIAN::reverse<16>(src.QtyQueue[48]);
     dest.range(15, 0) = SBE_ENDIAN::reverse<16>(src.QtyQueue[49]);
 }
+
+
 void sbe_intf::SSZ_TradingPhaseCodePack_t_unpack(SSZ_TradingPhaseCodePack_t_packed &src,
                           SSZ_TradingPhaseCodePack_t &dest)
 {
@@ -149,6 +153,8 @@ void sbe_intf::SSZ_TradingPhaseCodePack_t_pack(SSZ_TradingPhaseCodePack_t &src,
     dest.range(7, 4) = src.Code0;
     dest.range(3, 0) = src.Code1;
 }
+
+
 void sbe_intf::SBE_SSZ_header_t_unpack(SBE_SSZ_header_t_packed &src,
                           SBE_SSZ_header_t &dest)
 {
@@ -193,6 +199,8 @@ void sbe_intf::SBE_SSZ_header_t_pack(SBE_SSZ_header_t &src,
     dest.range(7, 4) = src.TradingPhase.Code0;
     dest.range(3, 0) = src.TradingPhase.Code1;
 }
+
+
 void sbe_intf::SBE_SSZ_instrument_snap_t_unpack(SBE_SSZ_instrument_snap_t_packed &src,
                           SBE_SSZ_instrument_snap_t &dest)
 {
@@ -355,6 +363,8 @@ void sbe_intf::SBE_SSZ_instrument_snap_t_pack(SBE_SSZ_instrument_snap_t &src,
     dest.range(15, 8) = src.Resv[2];
     dest.range(7, 0) = src.Resv[3];
 }
+
+
 void sbe_intf::SBE_SSZ_index_snap_t_unpack(SBE_SSZ_index_snap_t_packed &src,
                           SBE_SSZ_index_snap_t &dest)
 {
@@ -417,6 +427,8 @@ void sbe_intf::SBE_SSZ_index_snap_t_pack(SBE_SSZ_index_snap_t &src,
     dest.range(127, 64) = SBE_ENDIAN::reverse<64>(src.LowPx);
     dest.range(63, 0) = SBE_ENDIAN::reverse<64>(src.TransactTime);
 }
+
+
 void sbe_intf::SBE_SSZ_ord_t_unpack(SBE_SSZ_ord_t_packed &src,
                           SBE_SSZ_ord_t &dest)
 {
@@ -475,6 +487,8 @@ void sbe_intf::SBE_SSZ_ord_t_pack(SBE_SSZ_ord_t &src,
     dest.range(15, 8) = src.Resv[0];
     dest.range(7, 0) = src.Resv[1];
 }
+
+
 void sbe_intf::SBE_SSZ_exe_t_unpack(SBE_SSZ_exe_t_packed &src,
                           SBE_SSZ_exe_t &dest)
 {
@@ -537,6 +551,8 @@ void sbe_intf::SBE_SSZ_exe_t_pack(SBE_SSZ_exe_t &src,
     dest.range(15, 8) = src.Resv[1];
     dest.range(7, 0) = src.Resv[2];
 }
+
+
 void sbe_intf::SBE_SSZ_option_snap_t_unpack(SBE_SSZ_option_snap_t_packed &src,
                           SBE_SSZ_option_snap_t &dest)
 {
@@ -695,6 +711,8 @@ void sbe_intf::SBE_SSZ_option_snap_t_pack(SBE_SSZ_option_snap_t &src,
     dest.range(127, 64) = SBE_ENDIAN::reverse<64>(src.AskLevel[9].Qty);
     dest.range(63, 0) = SBE_ENDIAN::reverse<64>(src.TransactTime);
 }
+
+
 void sbe_intf::SBE_SSZ_fund_snap_t_unpack(SBE_SSZ_fund_snap_t_packed &src,
                           SBE_SSZ_fund_snap_t &dest)
 {
@@ -851,6 +869,8 @@ void sbe_intf::SBE_SSZ_fund_snap_t_pack(SBE_SSZ_fund_snap_t &src,
     dest.range(95, 32) = SBE_ENDIAN::reverse<64>(src.TransactTime);
     dest.range(31, 0) = SBE_ENDIAN::reverse<32>(src.IOPV);
 }
+
+
 void sbe_intf::SBE_SSZ_bond_snap_t_unpack(SBE_SSZ_bond_snap_t_packed &src,
                           SBE_SSZ_bond_snap_t &dest)
 {
@@ -1017,6 +1037,8 @@ void sbe_intf::SBE_SSZ_bond_snap_t_pack(SBE_SSZ_bond_snap_t &src,
     dest.range(15, 8) = src.Resv[2];
     dest.range(7, 0) = src.Resv[3];
 }
+
+
 void sbe_intf::SBE_SSZ_bond_ord_t_unpack(SBE_SSZ_bond_ord_t_packed &src,
                           SBE_SSZ_bond_ord_t &dest)
 {
@@ -1075,6 +1097,8 @@ void sbe_intf::SBE_SSZ_bond_ord_t_pack(SBE_SSZ_bond_ord_t &src,
     dest.range(15, 8) = src.Resv[0];
     dest.range(7, 0) = src.Resv[1];
 }
+
+
 void sbe_intf::SBE_SSZ_bond_exe_t_unpack(SBE_SSZ_bond_exe_t_packed &src,
                           SBE_SSZ_bond_exe_t &dest)
 {
@@ -1136,4 +1160,533 @@ void sbe_intf::SBE_SSZ_bond_exe_t_pack(SBE_SSZ_bond_exe_t &src,
     dest.range(23, 16) = src.Resv[0];
     dest.range(15, 8) = src.Resv[1];
     dest.range(7, 0) = src.Resv[2];
+}
+
+bool operator==(const price_level_t& A, const price_level_t& B){
+    return A.Price == B.Price
+        && A.Qty == B.Qty
+        ;
+}
+bool operator==(const QtyQueue_level_t& A, const QtyQueue_level_t& B){
+    return A.NoOrders == B.NoOrders
+        && A.QtyQueue[0] == B.QtyQueue[0]
+        && A.QtyQueue[1] == B.QtyQueue[1]
+        && A.QtyQueue[2] == B.QtyQueue[2]
+        && A.QtyQueue[3] == B.QtyQueue[3]
+        && A.QtyQueue[4] == B.QtyQueue[4]
+        && A.QtyQueue[5] == B.QtyQueue[5]
+        && A.QtyQueue[6] == B.QtyQueue[6]
+        && A.QtyQueue[7] == B.QtyQueue[7]
+        && A.QtyQueue[8] == B.QtyQueue[8]
+        && A.QtyQueue[9] == B.QtyQueue[9]
+        && A.QtyQueue[10] == B.QtyQueue[10]
+        && A.QtyQueue[11] == B.QtyQueue[11]
+        && A.QtyQueue[12] == B.QtyQueue[12]
+        && A.QtyQueue[13] == B.QtyQueue[13]
+        && A.QtyQueue[14] == B.QtyQueue[14]
+        && A.QtyQueue[15] == B.QtyQueue[15]
+        && A.QtyQueue[16] == B.QtyQueue[16]
+        && A.QtyQueue[17] == B.QtyQueue[17]
+        && A.QtyQueue[18] == B.QtyQueue[18]
+        && A.QtyQueue[19] == B.QtyQueue[19]
+        && A.QtyQueue[20] == B.QtyQueue[20]
+        && A.QtyQueue[21] == B.QtyQueue[21]
+        && A.QtyQueue[22] == B.QtyQueue[22]
+        && A.QtyQueue[23] == B.QtyQueue[23]
+        && A.QtyQueue[24] == B.QtyQueue[24]
+        && A.QtyQueue[25] == B.QtyQueue[25]
+        && A.QtyQueue[26] == B.QtyQueue[26]
+        && A.QtyQueue[27] == B.QtyQueue[27]
+        && A.QtyQueue[28] == B.QtyQueue[28]
+        && A.QtyQueue[29] == B.QtyQueue[29]
+        && A.QtyQueue[30] == B.QtyQueue[30]
+        && A.QtyQueue[31] == B.QtyQueue[31]
+        && A.QtyQueue[32] == B.QtyQueue[32]
+        && A.QtyQueue[33] == B.QtyQueue[33]
+        && A.QtyQueue[34] == B.QtyQueue[34]
+        && A.QtyQueue[35] == B.QtyQueue[35]
+        && A.QtyQueue[36] == B.QtyQueue[36]
+        && A.QtyQueue[37] == B.QtyQueue[37]
+        && A.QtyQueue[38] == B.QtyQueue[38]
+        && A.QtyQueue[39] == B.QtyQueue[39]
+        && A.QtyQueue[40] == B.QtyQueue[40]
+        && A.QtyQueue[41] == B.QtyQueue[41]
+        && A.QtyQueue[42] == B.QtyQueue[42]
+        && A.QtyQueue[43] == B.QtyQueue[43]
+        && A.QtyQueue[44] == B.QtyQueue[44]
+        && A.QtyQueue[45] == B.QtyQueue[45]
+        && A.QtyQueue[46] == B.QtyQueue[46]
+        && A.QtyQueue[47] == B.QtyQueue[47]
+        && A.QtyQueue[48] == B.QtyQueue[48]
+        && A.QtyQueue[49] == B.QtyQueue[49]
+        ;
+}
+bool operator==(const SSZ_TradingPhaseCodePack_t& A, const SSZ_TradingPhaseCodePack_t& B){
+    return A.Code0 == B.Code0
+        && A.Code1 == B.Code1
+        ;
+}
+bool operator==(const SBE_SSZ_header_t& A, const SBE_SSZ_header_t& B){
+    return A.SecurityIDSource == B.SecurityIDSource
+        && A.MsgType == B.MsgType
+        && A.MsgLen == B.MsgLen
+        && A.SecurityID[0] == B.SecurityID[0]
+        && A.SecurityID[1] == B.SecurityID[1]
+        && A.SecurityID[2] == B.SecurityID[2]
+        && A.SecurityID[3] == B.SecurityID[3]
+        && A.SecurityID[4] == B.SecurityID[4]
+        && A.SecurityID[5] == B.SecurityID[5]
+        && A.SecurityID[6] == B.SecurityID[6]
+        && A.SecurityID[7] == B.SecurityID[7]
+        && A.SecurityID[8] == B.SecurityID[8]
+        && A.ChannelNo == B.ChannelNo
+        && A.ApplSeqNum == B.ApplSeqNum
+        && A.TradingPhase.Code0 == B.TradingPhase.Code0
+        && A.TradingPhase.Code1 == B.TradingPhase.Code1
+        ;
+}
+bool operator==(const SBE_SSZ_instrument_snap_t& A, const SBE_SSZ_instrument_snap_t& B){
+    return A.Header.SecurityIDSource == B.Header.SecurityIDSource
+        && A.Header.MsgType == B.Header.MsgType
+        && A.Header.MsgLen == B.Header.MsgLen
+        && A.Header.SecurityID[0] == B.Header.SecurityID[0]
+        && A.Header.SecurityID[1] == B.Header.SecurityID[1]
+        && A.Header.SecurityID[2] == B.Header.SecurityID[2]
+        && A.Header.SecurityID[3] == B.Header.SecurityID[3]
+        && A.Header.SecurityID[4] == B.Header.SecurityID[4]
+        && A.Header.SecurityID[5] == B.Header.SecurityID[5]
+        && A.Header.SecurityID[6] == B.Header.SecurityID[6]
+        && A.Header.SecurityID[7] == B.Header.SecurityID[7]
+        && A.Header.SecurityID[8] == B.Header.SecurityID[8]
+        && A.Header.ChannelNo == B.Header.ChannelNo
+        && A.Header.ApplSeqNum == B.Header.ApplSeqNum
+        && A.Header.TradingPhase.Code0 == B.Header.TradingPhase.Code0
+        && A.Header.TradingPhase.Code1 == B.Header.TradingPhase.Code1
+        && A.NumTrades == B.NumTrades
+        && A.TotalVolumeTrade == B.TotalVolumeTrade
+        && A.TotalValueTrade == B.TotalValueTrade
+        && A.PrevClosePx == B.PrevClosePx
+        && A.LastPx == B.LastPx
+        && A.OpenPx == B.OpenPx
+        && A.HighPx == B.HighPx
+        && A.LowPx == B.LowPx
+        && A.BidWeightPx == B.BidWeightPx
+        && A.BidWeightSize == B.BidWeightSize
+        && A.AskWeightPx == B.AskWeightPx
+        && A.AskWeightSize == B.AskWeightSize
+        && A.UpLimitPx == B.UpLimitPx
+        && A.DnLimitPx == B.DnLimitPx
+        && A.BidLevel[0].Price == B.BidLevel[0].Price
+        && A.BidLevel[0].Qty == B.BidLevel[0].Qty
+        && A.BidLevel[1].Price == B.BidLevel[1].Price
+        && A.BidLevel[1].Qty == B.BidLevel[1].Qty
+        && A.BidLevel[2].Price == B.BidLevel[2].Price
+        && A.BidLevel[2].Qty == B.BidLevel[2].Qty
+        && A.BidLevel[3].Price == B.BidLevel[3].Price
+        && A.BidLevel[3].Qty == B.BidLevel[3].Qty
+        && A.BidLevel[4].Price == B.BidLevel[4].Price
+        && A.BidLevel[4].Qty == B.BidLevel[4].Qty
+        && A.BidLevel[5].Price == B.BidLevel[5].Price
+        && A.BidLevel[5].Qty == B.BidLevel[5].Qty
+        && A.BidLevel[6].Price == B.BidLevel[6].Price
+        && A.BidLevel[6].Qty == B.BidLevel[6].Qty
+        && A.BidLevel[7].Price == B.BidLevel[7].Price
+        && A.BidLevel[7].Qty == B.BidLevel[7].Qty
+        && A.BidLevel[8].Price == B.BidLevel[8].Price
+        && A.BidLevel[8].Qty == B.BidLevel[8].Qty
+        && A.BidLevel[9].Price == B.BidLevel[9].Price
+        && A.BidLevel[9].Qty == B.BidLevel[9].Qty
+        && A.AskLevel[0].Price == B.AskLevel[0].Price
+        && A.AskLevel[0].Qty == B.AskLevel[0].Qty
+        && A.AskLevel[1].Price == B.AskLevel[1].Price
+        && A.AskLevel[1].Qty == B.AskLevel[1].Qty
+        && A.AskLevel[2].Price == B.AskLevel[2].Price
+        && A.AskLevel[2].Qty == B.AskLevel[2].Qty
+        && A.AskLevel[3].Price == B.AskLevel[3].Price
+        && A.AskLevel[3].Qty == B.AskLevel[3].Qty
+        && A.AskLevel[4].Price == B.AskLevel[4].Price
+        && A.AskLevel[4].Qty == B.AskLevel[4].Qty
+        && A.AskLevel[5].Price == B.AskLevel[5].Price
+        && A.AskLevel[5].Qty == B.AskLevel[5].Qty
+        && A.AskLevel[6].Price == B.AskLevel[6].Price
+        && A.AskLevel[6].Qty == B.AskLevel[6].Qty
+        && A.AskLevel[7].Price == B.AskLevel[7].Price
+        && A.AskLevel[7].Qty == B.AskLevel[7].Qty
+        && A.AskLevel[8].Price == B.AskLevel[8].Price
+        && A.AskLevel[8].Qty == B.AskLevel[8].Qty
+        && A.AskLevel[9].Price == B.AskLevel[9].Price
+        && A.AskLevel[9].Qty == B.AskLevel[9].Qty
+        && A.TransactTime == B.TransactTime
+        && A.Resv[0] == B.Resv[0]
+        && A.Resv[1] == B.Resv[1]
+        && A.Resv[2] == B.Resv[2]
+        && A.Resv[3] == B.Resv[3]
+        ;
+}
+bool operator==(const SBE_SSZ_index_snap_t& A, const SBE_SSZ_index_snap_t& B){
+    return A.Header.SecurityIDSource == B.Header.SecurityIDSource
+        && A.Header.MsgType == B.Header.MsgType
+        && A.Header.MsgLen == B.Header.MsgLen
+        && A.Header.SecurityID[0] == B.Header.SecurityID[0]
+        && A.Header.SecurityID[1] == B.Header.SecurityID[1]
+        && A.Header.SecurityID[2] == B.Header.SecurityID[2]
+        && A.Header.SecurityID[3] == B.Header.SecurityID[3]
+        && A.Header.SecurityID[4] == B.Header.SecurityID[4]
+        && A.Header.SecurityID[5] == B.Header.SecurityID[5]
+        && A.Header.SecurityID[6] == B.Header.SecurityID[6]
+        && A.Header.SecurityID[7] == B.Header.SecurityID[7]
+        && A.Header.SecurityID[8] == B.Header.SecurityID[8]
+        && A.Header.ChannelNo == B.Header.ChannelNo
+        && A.Header.ApplSeqNum == B.Header.ApplSeqNum
+        && A.Header.TradingPhase.Code0 == B.Header.TradingPhase.Code0
+        && A.Header.TradingPhase.Code1 == B.Header.TradingPhase.Code1
+        && A.NumTrades == B.NumTrades
+        && A.TotalVolumeTrade == B.TotalVolumeTrade
+        && A.TotalValueTrade == B.TotalValueTrade
+        && A.PrevClosePx == B.PrevClosePx
+        && A.LastPx == B.LastPx
+        && A.OpenPx == B.OpenPx
+        && A.HighPx == B.HighPx
+        && A.LowPx == B.LowPx
+        && A.TransactTime == B.TransactTime
+        ;
+}
+bool operator==(const SBE_SSZ_ord_t& A, const SBE_SSZ_ord_t& B){
+    return A.Header.SecurityIDSource == B.Header.SecurityIDSource
+        && A.Header.MsgType == B.Header.MsgType
+        && A.Header.MsgLen == B.Header.MsgLen
+        && A.Header.SecurityID[0] == B.Header.SecurityID[0]
+        && A.Header.SecurityID[1] == B.Header.SecurityID[1]
+        && A.Header.SecurityID[2] == B.Header.SecurityID[2]
+        && A.Header.SecurityID[3] == B.Header.SecurityID[3]
+        && A.Header.SecurityID[4] == B.Header.SecurityID[4]
+        && A.Header.SecurityID[5] == B.Header.SecurityID[5]
+        && A.Header.SecurityID[6] == B.Header.SecurityID[6]
+        && A.Header.SecurityID[7] == B.Header.SecurityID[7]
+        && A.Header.SecurityID[8] == B.Header.SecurityID[8]
+        && A.Header.ChannelNo == B.Header.ChannelNo
+        && A.Header.ApplSeqNum == B.Header.ApplSeqNum
+        && A.Header.TradingPhase.Code0 == B.Header.TradingPhase.Code0
+        && A.Header.TradingPhase.Code1 == B.Header.TradingPhase.Code1
+        && A.Price == B.Price
+        && A.OrderQty == B.OrderQty
+        && A.Side == B.Side
+        && A.OrdType == B.OrdType
+        && A.TransactTime == B.TransactTime
+        && A.Resv[0] == B.Resv[0]
+        && A.Resv[1] == B.Resv[1]
+        ;
+}
+bool operator==(const SBE_SSZ_exe_t& A, const SBE_SSZ_exe_t& B){
+    return A.Header.SecurityIDSource == B.Header.SecurityIDSource
+        && A.Header.MsgType == B.Header.MsgType
+        && A.Header.MsgLen == B.Header.MsgLen
+        && A.Header.SecurityID[0] == B.Header.SecurityID[0]
+        && A.Header.SecurityID[1] == B.Header.SecurityID[1]
+        && A.Header.SecurityID[2] == B.Header.SecurityID[2]
+        && A.Header.SecurityID[3] == B.Header.SecurityID[3]
+        && A.Header.SecurityID[4] == B.Header.SecurityID[4]
+        && A.Header.SecurityID[5] == B.Header.SecurityID[5]
+        && A.Header.SecurityID[6] == B.Header.SecurityID[6]
+        && A.Header.SecurityID[7] == B.Header.SecurityID[7]
+        && A.Header.SecurityID[8] == B.Header.SecurityID[8]
+        && A.Header.ChannelNo == B.Header.ChannelNo
+        && A.Header.ApplSeqNum == B.Header.ApplSeqNum
+        && A.Header.TradingPhase.Code0 == B.Header.TradingPhase.Code0
+        && A.Header.TradingPhase.Code1 == B.Header.TradingPhase.Code1
+        && A.BidApplSeqNum == B.BidApplSeqNum
+        && A.OfferApplSeqNum == B.OfferApplSeqNum
+        && A.LastPx == B.LastPx
+        && A.LastQty == B.LastQty
+        && A.ExecType == B.ExecType
+        && A.TransactTime == B.TransactTime
+        && A.Resv[0] == B.Resv[0]
+        && A.Resv[1] == B.Resv[1]
+        && A.Resv[2] == B.Resv[2]
+        ;
+}
+bool operator==(const SBE_SSZ_option_snap_t& A, const SBE_SSZ_option_snap_t& B){
+    return A.Header.SecurityIDSource == B.Header.SecurityIDSource
+        && A.Header.MsgType == B.Header.MsgType
+        && A.Header.MsgLen == B.Header.MsgLen
+        && A.Header.SecurityID[0] == B.Header.SecurityID[0]
+        && A.Header.SecurityID[1] == B.Header.SecurityID[1]
+        && A.Header.SecurityID[2] == B.Header.SecurityID[2]
+        && A.Header.SecurityID[3] == B.Header.SecurityID[3]
+        && A.Header.SecurityID[4] == B.Header.SecurityID[4]
+        && A.Header.SecurityID[5] == B.Header.SecurityID[5]
+        && A.Header.SecurityID[6] == B.Header.SecurityID[6]
+        && A.Header.SecurityID[7] == B.Header.SecurityID[7]
+        && A.Header.SecurityID[8] == B.Header.SecurityID[8]
+        && A.Header.ChannelNo == B.Header.ChannelNo
+        && A.Header.ApplSeqNum == B.Header.ApplSeqNum
+        && A.Header.TradingPhase.Code0 == B.Header.TradingPhase.Code0
+        && A.Header.TradingPhase.Code1 == B.Header.TradingPhase.Code1
+        && A.NumTrades == B.NumTrades
+        && A.TotalVolumeTrade == B.TotalVolumeTrade
+        && A.TotalValueTrade == B.TotalValueTrade
+        && A.PrevClosePx == B.PrevClosePx
+        && A.LastPx == B.LastPx
+        && A.OpenPx == B.OpenPx
+        && A.HighPx == B.HighPx
+        && A.LowPx == B.LowPx
+        && A.BidWeightPx == B.BidWeightPx
+        && A.BidWeightSize == B.BidWeightSize
+        && A.AskWeightPx == B.AskWeightPx
+        && A.AskWeightSize == B.AskWeightSize
+        && A.UpLimitPx == B.UpLimitPx
+        && A.DnLimitPx == B.DnLimitPx
+        && A.ContractPos == B.ContractPos
+        && A.RefPx == B.RefPx
+        && A.BidLevel[0].Price == B.BidLevel[0].Price
+        && A.BidLevel[0].Qty == B.BidLevel[0].Qty
+        && A.BidLevel[1].Price == B.BidLevel[1].Price
+        && A.BidLevel[1].Qty == B.BidLevel[1].Qty
+        && A.BidLevel[2].Price == B.BidLevel[2].Price
+        && A.BidLevel[2].Qty == B.BidLevel[2].Qty
+        && A.BidLevel[3].Price == B.BidLevel[3].Price
+        && A.BidLevel[3].Qty == B.BidLevel[3].Qty
+        && A.BidLevel[4].Price == B.BidLevel[4].Price
+        && A.BidLevel[4].Qty == B.BidLevel[4].Qty
+        && A.BidLevel[5].Price == B.BidLevel[5].Price
+        && A.BidLevel[5].Qty == B.BidLevel[5].Qty
+        && A.BidLevel[6].Price == B.BidLevel[6].Price
+        && A.BidLevel[6].Qty == B.BidLevel[6].Qty
+        && A.BidLevel[7].Price == B.BidLevel[7].Price
+        && A.BidLevel[7].Qty == B.BidLevel[7].Qty
+        && A.BidLevel[8].Price == B.BidLevel[8].Price
+        && A.BidLevel[8].Qty == B.BidLevel[8].Qty
+        && A.BidLevel[9].Price == B.BidLevel[9].Price
+        && A.BidLevel[9].Qty == B.BidLevel[9].Qty
+        && A.AskLevel[0].Price == B.AskLevel[0].Price
+        && A.AskLevel[0].Qty == B.AskLevel[0].Qty
+        && A.AskLevel[1].Price == B.AskLevel[1].Price
+        && A.AskLevel[1].Qty == B.AskLevel[1].Qty
+        && A.AskLevel[2].Price == B.AskLevel[2].Price
+        && A.AskLevel[2].Qty == B.AskLevel[2].Qty
+        && A.AskLevel[3].Price == B.AskLevel[3].Price
+        && A.AskLevel[3].Qty == B.AskLevel[3].Qty
+        && A.AskLevel[4].Price == B.AskLevel[4].Price
+        && A.AskLevel[4].Qty == B.AskLevel[4].Qty
+        && A.AskLevel[5].Price == B.AskLevel[5].Price
+        && A.AskLevel[5].Qty == B.AskLevel[5].Qty
+        && A.AskLevel[6].Price == B.AskLevel[6].Price
+        && A.AskLevel[6].Qty == B.AskLevel[6].Qty
+        && A.AskLevel[7].Price == B.AskLevel[7].Price
+        && A.AskLevel[7].Qty == B.AskLevel[7].Qty
+        && A.AskLevel[8].Price == B.AskLevel[8].Price
+        && A.AskLevel[8].Qty == B.AskLevel[8].Qty
+        && A.AskLevel[9].Price == B.AskLevel[9].Price
+        && A.AskLevel[9].Qty == B.AskLevel[9].Qty
+        && A.TransactTime == B.TransactTime
+        ;
+}
+bool operator==(const SBE_SSZ_fund_snap_t& A, const SBE_SSZ_fund_snap_t& B){
+    return A.Header.SecurityIDSource == B.Header.SecurityIDSource
+        && A.Header.MsgType == B.Header.MsgType
+        && A.Header.MsgLen == B.Header.MsgLen
+        && A.Header.SecurityID[0] == B.Header.SecurityID[0]
+        && A.Header.SecurityID[1] == B.Header.SecurityID[1]
+        && A.Header.SecurityID[2] == B.Header.SecurityID[2]
+        && A.Header.SecurityID[3] == B.Header.SecurityID[3]
+        && A.Header.SecurityID[4] == B.Header.SecurityID[4]
+        && A.Header.SecurityID[5] == B.Header.SecurityID[5]
+        && A.Header.SecurityID[6] == B.Header.SecurityID[6]
+        && A.Header.SecurityID[7] == B.Header.SecurityID[7]
+        && A.Header.SecurityID[8] == B.Header.SecurityID[8]
+        && A.Header.ChannelNo == B.Header.ChannelNo
+        && A.Header.ApplSeqNum == B.Header.ApplSeqNum
+        && A.Header.TradingPhase.Code0 == B.Header.TradingPhase.Code0
+        && A.Header.TradingPhase.Code1 == B.Header.TradingPhase.Code1
+        && A.NumTrades == B.NumTrades
+        && A.TotalVolumeTrade == B.TotalVolumeTrade
+        && A.TotalValueTrade == B.TotalValueTrade
+        && A.PrevClosePx == B.PrevClosePx
+        && A.LastPx == B.LastPx
+        && A.OpenPx == B.OpenPx
+        && A.HighPx == B.HighPx
+        && A.LowPx == B.LowPx
+        && A.BidWeightPx == B.BidWeightPx
+        && A.BidWeightSize == B.BidWeightSize
+        && A.AskWeightPx == B.AskWeightPx
+        && A.AskWeightSize == B.AskWeightSize
+        && A.UpLimitPx == B.UpLimitPx
+        && A.DnLimitPx == B.DnLimitPx
+        && A.BidLevel[0].Price == B.BidLevel[0].Price
+        && A.BidLevel[0].Qty == B.BidLevel[0].Qty
+        && A.BidLevel[1].Price == B.BidLevel[1].Price
+        && A.BidLevel[1].Qty == B.BidLevel[1].Qty
+        && A.BidLevel[2].Price == B.BidLevel[2].Price
+        && A.BidLevel[2].Qty == B.BidLevel[2].Qty
+        && A.BidLevel[3].Price == B.BidLevel[3].Price
+        && A.BidLevel[3].Qty == B.BidLevel[3].Qty
+        && A.BidLevel[4].Price == B.BidLevel[4].Price
+        && A.BidLevel[4].Qty == B.BidLevel[4].Qty
+        && A.BidLevel[5].Price == B.BidLevel[5].Price
+        && A.BidLevel[5].Qty == B.BidLevel[5].Qty
+        && A.BidLevel[6].Price == B.BidLevel[6].Price
+        && A.BidLevel[6].Qty == B.BidLevel[6].Qty
+        && A.BidLevel[7].Price == B.BidLevel[7].Price
+        && A.BidLevel[7].Qty == B.BidLevel[7].Qty
+        && A.BidLevel[8].Price == B.BidLevel[8].Price
+        && A.BidLevel[8].Qty == B.BidLevel[8].Qty
+        && A.BidLevel[9].Price == B.BidLevel[9].Price
+        && A.BidLevel[9].Qty == B.BidLevel[9].Qty
+        && A.AskLevel[0].Price == B.AskLevel[0].Price
+        && A.AskLevel[0].Qty == B.AskLevel[0].Qty
+        && A.AskLevel[1].Price == B.AskLevel[1].Price
+        && A.AskLevel[1].Qty == B.AskLevel[1].Qty
+        && A.AskLevel[2].Price == B.AskLevel[2].Price
+        && A.AskLevel[2].Qty == B.AskLevel[2].Qty
+        && A.AskLevel[3].Price == B.AskLevel[3].Price
+        && A.AskLevel[3].Qty == B.AskLevel[3].Qty
+        && A.AskLevel[4].Price == B.AskLevel[4].Price
+        && A.AskLevel[4].Qty == B.AskLevel[4].Qty
+        && A.AskLevel[5].Price == B.AskLevel[5].Price
+        && A.AskLevel[5].Qty == B.AskLevel[5].Qty
+        && A.AskLevel[6].Price == B.AskLevel[6].Price
+        && A.AskLevel[6].Qty == B.AskLevel[6].Qty
+        && A.AskLevel[7].Price == B.AskLevel[7].Price
+        && A.AskLevel[7].Qty == B.AskLevel[7].Qty
+        && A.AskLevel[8].Price == B.AskLevel[8].Price
+        && A.AskLevel[8].Qty == B.AskLevel[8].Qty
+        && A.AskLevel[9].Price == B.AskLevel[9].Price
+        && A.AskLevel[9].Qty == B.AskLevel[9].Qty
+        && A.TransactTime == B.TransactTime
+        && A.IOPV == B.IOPV
+        ;
+}
+bool operator==(const SBE_SSZ_bond_snap_t& A, const SBE_SSZ_bond_snap_t& B){
+    return A.Header.SecurityIDSource == B.Header.SecurityIDSource
+        && A.Header.MsgType == B.Header.MsgType
+        && A.Header.MsgLen == B.Header.MsgLen
+        && A.Header.SecurityID[0] == B.Header.SecurityID[0]
+        && A.Header.SecurityID[1] == B.Header.SecurityID[1]
+        && A.Header.SecurityID[2] == B.Header.SecurityID[2]
+        && A.Header.SecurityID[3] == B.Header.SecurityID[3]
+        && A.Header.SecurityID[4] == B.Header.SecurityID[4]
+        && A.Header.SecurityID[5] == B.Header.SecurityID[5]
+        && A.Header.SecurityID[6] == B.Header.SecurityID[6]
+        && A.Header.SecurityID[7] == B.Header.SecurityID[7]
+        && A.Header.SecurityID[8] == B.Header.SecurityID[8]
+        && A.Header.ChannelNo == B.Header.ChannelNo
+        && A.Header.ApplSeqNum == B.Header.ApplSeqNum
+        && A.Header.TradingPhase.Code0 == B.Header.TradingPhase.Code0
+        && A.Header.TradingPhase.Code1 == B.Header.TradingPhase.Code1
+        && A.NumTrades == B.NumTrades
+        && A.TotalVolumeTrade == B.TotalVolumeTrade
+        && A.TotalValueTrade == B.TotalValueTrade
+        && A.PrevClosePx == B.PrevClosePx
+        && A.LastPx == B.LastPx
+        && A.OpenPx == B.OpenPx
+        && A.HighPx == B.HighPx
+        && A.LowPx == B.LowPx
+        && A.BidWeightPx == B.BidWeightPx
+        && A.BidWeightSize == B.BidWeightSize
+        && A.AskWeightPx == B.AskWeightPx
+        && A.AskWeightSize == B.AskWeightSize
+        && A.LastPxTradeType == B.LastPxTradeType
+        && A.MatchTradeLastPx == B.MatchTradeLastPx
+        && A.AuctionVolumeTrade == B.AuctionVolumeTrade
+        && A.AuctionValueTrade == B.AuctionValueTrade
+        && A.BidLevel[0].Price == B.BidLevel[0].Price
+        && A.BidLevel[0].Qty == B.BidLevel[0].Qty
+        && A.BidLevel[1].Price == B.BidLevel[1].Price
+        && A.BidLevel[1].Qty == B.BidLevel[1].Qty
+        && A.BidLevel[2].Price == B.BidLevel[2].Price
+        && A.BidLevel[2].Qty == B.BidLevel[2].Qty
+        && A.BidLevel[3].Price == B.BidLevel[3].Price
+        && A.BidLevel[3].Qty == B.BidLevel[3].Qty
+        && A.BidLevel[4].Price == B.BidLevel[4].Price
+        && A.BidLevel[4].Qty == B.BidLevel[4].Qty
+        && A.BidLevel[5].Price == B.BidLevel[5].Price
+        && A.BidLevel[5].Qty == B.BidLevel[5].Qty
+        && A.BidLevel[6].Price == B.BidLevel[6].Price
+        && A.BidLevel[6].Qty == B.BidLevel[6].Qty
+        && A.BidLevel[7].Price == B.BidLevel[7].Price
+        && A.BidLevel[7].Qty == B.BidLevel[7].Qty
+        && A.BidLevel[8].Price == B.BidLevel[8].Price
+        && A.BidLevel[8].Qty == B.BidLevel[8].Qty
+        && A.BidLevel[9].Price == B.BidLevel[9].Price
+        && A.BidLevel[9].Qty == B.BidLevel[9].Qty
+        && A.AskLevel[0].Price == B.AskLevel[0].Price
+        && A.AskLevel[0].Qty == B.AskLevel[0].Qty
+        && A.AskLevel[1].Price == B.AskLevel[1].Price
+        && A.AskLevel[1].Qty == B.AskLevel[1].Qty
+        && A.AskLevel[2].Price == B.AskLevel[2].Price
+        && A.AskLevel[2].Qty == B.AskLevel[2].Qty
+        && A.AskLevel[3].Price == B.AskLevel[3].Price
+        && A.AskLevel[3].Qty == B.AskLevel[3].Qty
+        && A.AskLevel[4].Price == B.AskLevel[4].Price
+        && A.AskLevel[4].Qty == B.AskLevel[4].Qty
+        && A.AskLevel[5].Price == B.AskLevel[5].Price
+        && A.AskLevel[5].Qty == B.AskLevel[5].Qty
+        && A.AskLevel[6].Price == B.AskLevel[6].Price
+        && A.AskLevel[6].Qty == B.AskLevel[6].Qty
+        && A.AskLevel[7].Price == B.AskLevel[7].Price
+        && A.AskLevel[7].Qty == B.AskLevel[7].Qty
+        && A.AskLevel[8].Price == B.AskLevel[8].Price
+        && A.AskLevel[8].Qty == B.AskLevel[8].Qty
+        && A.AskLevel[9].Price == B.AskLevel[9].Price
+        && A.AskLevel[9].Qty == B.AskLevel[9].Qty
+        && A.TransactTime == B.TransactTime
+        && A.Resv[0] == B.Resv[0]
+        && A.Resv[1] == B.Resv[1]
+        && A.Resv[2] == B.Resv[2]
+        && A.Resv[3] == B.Resv[3]
+        ;
+}
+bool operator==(const SBE_SSZ_bond_ord_t& A, const SBE_SSZ_bond_ord_t& B){
+    return A.Header.SecurityIDSource == B.Header.SecurityIDSource
+        && A.Header.MsgType == B.Header.MsgType
+        && A.Header.MsgLen == B.Header.MsgLen
+        && A.Header.SecurityID[0] == B.Header.SecurityID[0]
+        && A.Header.SecurityID[1] == B.Header.SecurityID[1]
+        && A.Header.SecurityID[2] == B.Header.SecurityID[2]
+        && A.Header.SecurityID[3] == B.Header.SecurityID[3]
+        && A.Header.SecurityID[4] == B.Header.SecurityID[4]
+        && A.Header.SecurityID[5] == B.Header.SecurityID[5]
+        && A.Header.SecurityID[6] == B.Header.SecurityID[6]
+        && A.Header.SecurityID[7] == B.Header.SecurityID[7]
+        && A.Header.SecurityID[8] == B.Header.SecurityID[8]
+        && A.Header.ChannelNo == B.Header.ChannelNo
+        && A.Header.ApplSeqNum == B.Header.ApplSeqNum
+        && A.Header.TradingPhase.Code0 == B.Header.TradingPhase.Code0
+        && A.Header.TradingPhase.Code1 == B.Header.TradingPhase.Code1
+        && A.Price == B.Price
+        && A.OrderQty == B.OrderQty
+        && A.Side == B.Side
+        && A.OrdType == B.OrdType
+        && A.TransactTime == B.TransactTime
+        && A.Resv[0] == B.Resv[0]
+        && A.Resv[1] == B.Resv[1]
+        ;
+}
+bool operator==(const SBE_SSZ_bond_exe_t& A, const SBE_SSZ_bond_exe_t& B){
+    return A.Header.SecurityIDSource == B.Header.SecurityIDSource
+        && A.Header.MsgType == B.Header.MsgType
+        && A.Header.MsgLen == B.Header.MsgLen
+        && A.Header.SecurityID[0] == B.Header.SecurityID[0]
+        && A.Header.SecurityID[1] == B.Header.SecurityID[1]
+        && A.Header.SecurityID[2] == B.Header.SecurityID[2]
+        && A.Header.SecurityID[3] == B.Header.SecurityID[3]
+        && A.Header.SecurityID[4] == B.Header.SecurityID[4]
+        && A.Header.SecurityID[5] == B.Header.SecurityID[5]
+        && A.Header.SecurityID[6] == B.Header.SecurityID[6]
+        && A.Header.SecurityID[7] == B.Header.SecurityID[7]
+        && A.Header.SecurityID[8] == B.Header.SecurityID[8]
+        && A.Header.ChannelNo == B.Header.ChannelNo
+        && A.Header.ApplSeqNum == B.Header.ApplSeqNum
+        && A.Header.TradingPhase.Code0 == B.Header.TradingPhase.Code0
+        && A.Header.TradingPhase.Code1 == B.Header.TradingPhase.Code1
+        && A.BidApplSeqNum == B.BidApplSeqNum
+        && A.OfferApplSeqNum == B.OfferApplSeqNum
+        && A.LastPx == B.LastPx
+        && A.LastQty == B.LastQty
+        && A.ExecType == B.ExecType
+        && A.TransactTime == B.TransactTime
+        && A.Resv[0] == B.Resv[0]
+        && A.Resv[1] == B.Resv[1]
+        && A.Resv[2] == B.Resv[2]
+        ;
 }

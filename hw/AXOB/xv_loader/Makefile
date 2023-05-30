@@ -1,0 +1,57 @@
+#
+# Copyright 2020 Xilinx, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+CORE_NAME=xv_loader
+
+MK_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+CUR_DIR=$(patsubst %/,%,$(dir $(MK_PATH)))
+
+KERNEL_DIR=$(CUR_DIR)
+
+KERNEL=$(CORE_NAME)_top
+
+SRCS=$(KERNEL_DIR)/$(CORE_NAME)_top.cpp \
+     $(KERNEL_DIR)/$(CORE_NAME)_top.h \
+     $(KERNEL_DIR)/$(CORE_NAME).h
+
+COMMON_DIR=$(CUR_DIR)/../common
+COMMON_SRCS=$(COMMON_DIR)/xv_define.h \
+            $(COMMON_DIR)/dbg_info.hpp \
+            $(COMMON_DIR)/dbg_util.hpp \
+            $(COMMON_DIR)/endian.hpp \
+            $(COMMON_DIR)/sbe_ssz_origin.hpp \
+            $(COMMON_DIR)/sbe_stock_origin.hpp \
+            $(COMMON_DIR)/sbe_intf.cpp \
+            $(COMMON_DIR)/sbe_intf.hpp
+
+# default build parameters
+XPART?=xcu50-fsvh2104-2L-e
+CLKP?=330MHz
+TARGET?=hw
+
+.PHONY: all
+all: $(KERNEL)
+
+$(KERNEL): $(SRCS) $(COMMON_SRCS)
+	-rm -rf xo_prj
+	XPART=$(XPART) CLKP=$(CLKP) TARGET=$(TARGET) EXPORT_XO_ONLY=1 vitis_hls -f run_hls.tcl
+
+.PHONY: clean
+clean:
+	-rm -rf _x
+	-rm -rf .Xil
+	-rm -f *.xo
+	-rm -f *.xo.*
+	-rm -f *.log
