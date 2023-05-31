@@ -1,6 +1,7 @@
 #include "dbg_info.hpp"
 #include "dbg_util.hpp"
 #include "xv_loader_top.h"
+#include "sbe_intf.hpp"
 
 int main()
 {

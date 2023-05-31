@@ -135,13 +135,13 @@ int main()
 
         xv_storer_top(
             /* from OB */
-            signal_stream_i, // Internal Stream: signal
-            snap_stream_i, // Internal Stream: snapGen
+            signal_stream_i,    // Internal Stream: signal
+            snap_stream_i,      // Internal Stream: snapGen
             /* data-to-host */
             host_frame_o,
             /* reg-to-host */
-            reg_frame_nb_o, // nb of host_frame_o
-            reg_signal_nb_o // nb of signal_stream_i
+            reg_frame_nb_o,     // nb of host_frame_o
+            reg_signal_nb_o     // nb of signal_stream_i
         );
 
         assert(reg_frame_nb_o==snap_n);
