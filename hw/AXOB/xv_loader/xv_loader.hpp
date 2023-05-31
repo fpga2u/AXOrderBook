@@ -2,7 +2,7 @@
 #ifndef __XV_LOADER_H__
 #define __XV_LOADER_H__
 
-#include "sbe_intf.hpp"
+#include "xv_define.h"
 #include "signal_stream.hpp"
 #include "sbe_stream.hpp"
 

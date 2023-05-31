@@ -8,6 +8,7 @@ extern "C"
 #endif
 */
 
+#include "xv_define.h"
 #include "ap_axi_sdata.h"
 
 /*

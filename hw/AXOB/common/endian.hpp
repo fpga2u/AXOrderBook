@@ -1,6 +1,7 @@
 #ifndef __ENDIAN_HPP__
 #define __ENDIAN_HPP__
 
+#include "xv_define.h"
 #include "ap_axi_sdata.h"
 
 namespace SBE_ENDIAN {

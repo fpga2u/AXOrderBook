@@ -1,6 +1,7 @@
 #ifndef __SBE_STREAM_HPP__
 #define __SBE_STREAM_HPP__
 
+#include "xv_define.h"
 #include "ap_axi_sdata.h"
 #include "hls_stream.h"
 

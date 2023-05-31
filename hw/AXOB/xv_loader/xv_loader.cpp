@@ -44,7 +44,7 @@ void xv_loader(
     INFO("loader start, reg_frame_nb_i="<<reg_frame_nb_i);
 
 data_mover:
-    for (unsigned int i = 0; i < reg_frame_nb_i; ++i)
+    for (unsigned int i = 0; i<reg_frame_nb_i; ++i)
     {
         ap_uint<DWIDTH> frame = host_frame_i[i];
         MsgType = frame.range(DWIDTH - 8 - 1, DWIDTH - 8 - 8);
@@ -99,7 +99,7 @@ data_mover:
     }
 
     //初始化
-    if (reg_frame_nb_i == 0){
+    if (reg_frame_nb_i==0){
         signal.user = SIGNAL_CMD;
         signal.data = CMD_INIT;
         signal_stream_o.write(signal);

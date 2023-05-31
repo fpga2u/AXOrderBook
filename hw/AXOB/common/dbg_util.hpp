@@ -5,6 +5,7 @@
 #ifndef __SBE_DBG_UTIL_HPP__
 #define __SBE_DBG_UTIL_HPP__
 
+#include "xv_define.h"
 #include "ap_axi_sdata.h"
 
 inline
