@@ -9,6 +9,7 @@ from enum import Enum
 import pandas as pd
 import numpy
 from decimal import Decimal
+import os
 
 #### 交易所 板块子类型
 class MARKET_SUBTYPE(Enum):
@@ -111,7 +112,7 @@ def dict_to_axsbe(s:dict):
 
 
 def axsbe_file(fileName, skip_nb=0):
-    with open(fileName, "r") as f:
+    with open(fileName, 'r') as f:
         nb = 0
         while True:
             l = f.readline()
@@ -129,7 +130,10 @@ def axsbe_file(fileName, skip_nb=0):
                     # 11, 12
 
 def extract_security(src_file, dst_file, security_list:list):
-    with open(src_file, "r") as s, open(dst_file, 'w') as d:
+    dst_dir, _ = os.path.split(os.path.abspath(dst_file))
+    if not os.path.exists(dst_dir):
+        os.makedirs(dst_dir)
+    with open(src_file, 'r') as s, open(dst_file, 'w') as d:
         while True:
             l = s.readline()
             if not l:

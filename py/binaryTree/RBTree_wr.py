@@ -113,44 +113,44 @@ class RBTree(TreeWithRam):
         return f'RBTree({self.tree_name})'
 
     def _drawNode_nest(self, graph, node:RBTNode, node_tag, depth):
-            '''
-            绘制以某个节点为根节点的二叉树
-            '''
-            if depth>30:
-                error='depth ovf!'
-                self.ERR(error)
-                raise error
+        '''
+        绘制以某个节点为根节点的二叉树
+        '''
+        if depth>30:
+            error='depth ovf!'
+            self.ERR(error)
+            raise error
 
-            if node.left_addr is None and node.right_addr is None:
-                return
-            # 节点颜色
-            if node.left_addr is not None:
-                left_child = self.ram.at(node.left_addr)
-                left_tag = str(uuid.uuid1())
-                nodelabel = str(left_child) if left_child.value is not None else 'NULL'
-                fillcolor = COLORS[left_child.value  % len(COLORS)] if left_child.value is not None else 'black'    #颜色与权重绑定，保持在颜色在树平衡前后的稳定性
-                linecolor = 'red' if left_child.is_red else 'black'
-                graph.node(left_tag, nodelabel, style='filled', fillcolor=fillcolor, color=linecolor)    # 左节点
-                graph.edge(node_tag, left_tag, label='L', fillcolor=linecolor, color=linecolor)   # 左节点与其父节点的连线
-                self._drawNode_nest(graph, left_child, left_tag, depth+1)
-            else:
-                left_tag = str(uuid.uuid1())
-                graph.node(left_tag, '', style='filled', fillcolor='white', color='white')    # 左节点
-                graph.edge(node_tag, left_tag, label='', fillcolor='white', color='white')   # 左节点与其父节点的连线
+        if node.left_addr is None and node.right_addr is None:
+            return
+        # 节点颜色
+        if node.left_addr is not None:
+            left_child = self.ram.at(node.left_addr)
+            left_tag = str(uuid.uuid1())
+            nodelabel = str(left_child) if left_child.value is not None else 'NULL'
+            fillcolor = COLORS[left_child.value  % len(COLORS)] if left_child.value is not None else 'black'    #颜色与权重绑定，保持在颜色在树平衡前后的稳定性
+            linecolor = 'red' if left_child.is_red else 'black'
+            graph.node(left_tag, nodelabel, style='filled', fillcolor=fillcolor, color=linecolor)    # 左节点
+            graph.edge(node_tag, left_tag, label='L', fillcolor=linecolor, color=linecolor)   # 左节点与其父节点的连线
+            self._drawNode_nest(graph, left_child, left_tag, depth+1)
+        else:
+            left_tag = str(uuid.uuid1())
+            graph.node(left_tag, '', style='filled', fillcolor='white', color='white')    # 左节点
+            graph.edge(node_tag, left_tag, label='', fillcolor='white', color='white')   # 左节点与其父节点的连线
 
-            if node.right_addr is not None:
-                right_child = self.ram.at(node.right_addr)
-                right_tag = str(uuid.uuid1())
-                nodelabel = str(right_child) if right_child.value is not None else 'NULL'
-                fillcolor = COLORS[right_child.value  % len(COLORS)] if right_child.value is not None else 'black'
-                linecolor = 'red' if right_child.is_red else 'black'
-                graph.node(right_tag, nodelabel, style='filled', fillcolor=fillcolor, color=linecolor)
-                graph.edge(node_tag, right_tag, label='R', fillcolor=linecolor, color=linecolor)
-                self._drawNode_nest(graph, right_child, right_tag, depth+1)
-            else:
-                right_tag = str(uuid.uuid1())
-                graph.node(right_tag, '', style='filled', fillcolor='white', color='white')
-                graph.edge(node_tag, right_tag, label='', fillcolor='white', color='white')
+        if node.right_addr is not None:
+            right_child = self.ram.at(node.right_addr)
+            right_tag = str(uuid.uuid1())
+            nodelabel = str(right_child) if right_child.value is not None else 'NULL'
+            fillcolor = COLORS[right_child.value  % len(COLORS)] if right_child.value is not None else 'black'
+            linecolor = 'red' if right_child.is_red else 'black'
+            graph.node(right_tag, nodelabel, style='filled', fillcolor=fillcolor, color=linecolor)
+            graph.edge(node_tag, right_tag, label='R', fillcolor=linecolor, color=linecolor)
+            self._drawNode_nest(graph, right_child, right_tag, depth+1)
+        else:
+            right_tag = str(uuid.uuid1())
+            graph.node(right_tag, '', style='filled', fillcolor='white', color='white')
+            graph.edge(node_tag, right_tag, label='', fillcolor='white', color='white')
 
     
     def check_node_valid(self, node:RBTNode):
