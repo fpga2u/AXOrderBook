@@ -72,7 +72,8 @@ class TPM():
     VolatilityBreaking = 8
     Ending = 9
     HangingUp = 10
-    Fusing = 11
+    FusingCall = 11
+    FusingEnd = 12
 
     Unknown = -1
 
@@ -88,7 +89,8 @@ class TPM():
         Ending : '已闭市',
         VolatilityBreaking : '波动性中断',
         HangingUp : '停牌',
-        Fusing : '熔断时段',
+        FusingCall : '熔断时段（盘中集合竞价）',
+        FusingEnd : '熔断时段（暂停交易至闭市）',
         Unknown : '未知',
     }
 
@@ -97,7 +99,7 @@ class TPM():
 
 class TPI():
     # TradingPhase of Instrument，标的交易状态内部编码
-    Normal = 0
+    Normal = 0   #深圳/上海的原始值中，Normal和NoTrade是互相颠倒的；这里是深圳的值；上海1=Normal,0=NoTrade。
     NoTrade = 1
 
     Unknown = -1
@@ -107,9 +109,37 @@ class TPI():
         NoTrade : '不可交易',
         Unknown : '未知',
     }
-    def str(tpm):
-        return TPI.TPI_str[tpm]
+    def str(tpi):
+        return TPI.TPI_str[tpi]
 
+class TPC2():
+    # TradingPhase of Code[2] (上海L2股票/基金/债券)
+    OnMarket = 0
+    OffMarket = 1
+
+    Unknown = -1
+
+    TPC2_str = {
+        OnMarket : '已上市',
+        OffMarket : '未上市',
+        Unknown : '未知',
+    }
+    def str(tpc2):
+        return TPC2.TPC2_str[tpc2]
+class TPC3():
+    # TradingPhase of Code[3] (上海L2)
+    RejectOrder = 0
+    AcceptOrder = 1
+
+    Unknown = -1
+
+    TPC3_str = {
+        RejectOrder : '不接受订单申报',
+        AcceptOrder : '可接受订单申报',
+        Unknown : '未知',
+    }
+    def str(tpc3):
+        return TPC3.TPC3_str[tpc3]
 
 class axsbe_base(metaclass=abc.ABCMeta):
     '''

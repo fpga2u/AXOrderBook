@@ -14,13 +14,15 @@ class axsbe_exe(axsbe_base.axsbe_base):
         'SecurityID',
         'ChannelNo',
         'ApplSeqNum',
-        'TransactTime',
+        'TransactTime',     # SH.TradeTime
 
-        'BidApplSeqNum',
-        'OfferApplSeqNum',
-        'LastPx',
-        'LastQty',
-        'ExecType',
+        'BidApplSeqNum',    # SH.TradeBuyNo
+        'OfferApplSeqNum',  # SH.TradeSellNo
+        'LastPx',           # SH.LastPx
+        'LastQty',          # SH.LastQty
+        'ExecType',         # SH.TradeBSFlag
+
+        'BizIndex',         #SH
     ]
     
     def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL):
@@ -32,6 +34,7 @@ class axsbe_exe(axsbe_base.axsbe_base):
         self.ExecType = 0
         self.TransactTime = 0
 
+        self.BizIndex = 0 #仅上海有效，有效时从1开始
 
     def load_dict(self, dict:dict):
         '''从字典加载字段'''
@@ -49,8 +52,18 @@ class axsbe_exe(axsbe_base.axsbe_base):
             self.LastQty = dict['LastQty']
             self.ExecType = dict['ExecType']
             self.TransactTime = dict['TransactTime']
+
+        elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
+            self.BidApplSeqNum = dict['BidApplSeqNum']
+            self.OfferApplSeqNum = dict['OfferApplSeqNum']
+            self.LastPx = dict['LastPx']
+            self.LastQty = dict['LastQty']
+            self.ExecType = dict['ExecType']
+            self.TransactTime = dict['TransactTime']
+
+            self.BizIndex = dict['BizIndex']
         else:
-            '''TODO-SSE'''
+            raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
     def is_same(self, another):
         '''用于比较模拟撮合和历史数据是否一致'''
@@ -63,12 +76,14 @@ class axsbe_exe(axsbe_base.axsbe_base):
         LastQty_isSame = self.LastQty == another.LastQty
         ExecType_isSame = self.ExecType == another.ExecType
 
+        BizIndex_isSame = self.BizIndex == another.BizIndex
         if SecurityID_isSame \
             and BidApplSeqNum_isSame \
             and OfferApplSeqNum_isSame \
             and LastPx_isSame \
             and LastQty_isSame \
-            and ExecType_isSame :
+            and ExecType_isSame \
+            and BizIndex_isSame:
             return True
         else:
             return False
@@ -82,15 +97,25 @@ class axsbe_exe(axsbe_base.axsbe_base):
             elif self.ExecType==ord('4'):
                 return '撤单'
             raise RuntimeError(f"非法执行类型:{self.ExecType}")
+        elif  self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE: # 内外盘标志: 'B'=外盘，主动买; 'S'=内盘，主动卖; 'N'=未知
+            if self.ExecType==ord('B'):
+                return '外盘'
+            elif self.ExecType==ord('S'):
+                return '内盘'
+            elif self.ExecType==ord('N'):
+                return '未知'
+            raise RuntimeError(f"非法 TradeBSFlag={self.ExecType}")
         else:
-            '''TODO-SSE'''
+            raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
     def __str__(self):
         '''打印log，只有合法的SecurityIDSource才能被打印'''
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             return f'{"%06d"%self.SecurityID} T={self.ExecType_str}, Px={self.LastPx}, Qty={self.LastQty}, Seq={self.ApplSeqNum}, BidSeq={self.BidApplSeqNum}, AskSeq={self.OfferApplSeqNum}, @{self.TransactTime}'
+        elif  self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
+            return f'{"%06d"%self.SecurityID} T={self.ExecType_str}, Px={self.LastPx}, Qty={self.LastQty}, Seq={self.ApplSeqNum}, BidSeq={self.BidApplSeqNum}, AskSeq={self.OfferApplSeqNum}, BizIndex={self.BizIndex}, @{self.TransactTime}'
         else:
-            '''TODO-SSE'''
+            raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
     @property
     def bytes_stream(self):
@@ -124,8 +149,39 @@ class axsbe_exe(axsbe_base.axsbe_base):
             bin += struct.pack("<Q", self.TransactTime)
             #resv=
             bin += struct.pack("<3B", 0, 0, 0)
+        elif  self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
+            #SecurityIDSource=101
+            bin = struct.pack("<B", axsbe_base.SecurityIDSource_SSE)
+            #MsgType=191
+            bin += struct.pack("<B", axsbe_base.MsgType_exe)
+            #MsgLen=72
+            bin += struct.pack("<H", 72)
+            #SecurityID=600519
+            bin += struct.pack("<9s", ("%06u  "%self.SecurityID).encode('UTF-8'))
+            #ChannelNo=6
+            bin += struct.pack("<H", self.ChannelNo)
+            #ApplSeqNum=25741
+            bin += struct.pack("<Q", self.ApplSeqNum)
+            #TradingPhase=0
+            bin += struct.pack("<B", 0xff)
+            #BidApplSeqNum=234313
+            bin += struct.pack("<Q", self.BidApplSeqNum)
+            #OfferApplSeqNum=232172
+            bin += struct.pack("<Q", self.OfferApplSeqNum)
+            #LastPx=1086000
+            bin += struct.pack("<i", self.LastPx)
+            #LastQty=1000000
+            bin += struct.pack("<q", self.LastQty)
+            #ExecType=66
+            bin += struct.pack("<B", self.ExecType)
+            #TransactTime=14302506
+            bin += struct.pack("<I", self.TransactTime)
+            #resv=
+            bin += struct.pack("<7B", 0, 0, 0, 0, 0, 0, 0)
+            #BizIndex=12000
+            bin += struct.pack("<Q", self.BizIndex)
         else:
-            '''TODO-SSE'''
+            raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
         return bin
 
     def unpack_stream(self, bytes_i:bytes):
@@ -142,8 +198,17 @@ class axsbe_exe(axsbe_base.axsbe_base):
             self.LastQty, \
             self.ExecType, \
             self.TransactTime, _, _, _, = struct.unpack("<QQiqBQ3B", bytes_i[24:])
+        elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
+            self.BidApplSeqNum, \
+            self.OfferApplSeqNum, \
+            self.LastPx, \
+            self.LastQty, \
+            self.ExecType, \
+            self.TransactTime, \
+            _, _, _, _, _, _, _, \
+            self.BizIndex = struct.unpack("<QQiqBI7BQ", bytes_i[24:])
         else:
-            '''TODO-SSE'''
+            raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
 
     @property
@@ -151,23 +216,51 @@ class axsbe_exe(axsbe_base.axsbe_base):
         '''打印与hls c相同格式的日志，重载'''
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             s = f'''
-    exec.SecurityIDSource = 102;
-    exec.MsgType = __MsgType_SSZ_EXECUTION__;
-    exec.MsgLen = EXEC_BYTEs;
-    exec.SecurityID = securityID("{"%06d"%self.SecurityID}");
-    exec.ChannelNo = {self.ChannelNo};
-    exec.ApplSeqNum = {self.ApplSeqNum};
-    exec.TradingPhase = 255;
+    exec.Header.SecurityIDSource = __SecurityIDSource_SSZ_;
+    exec.Header.MsgType = __MsgType_SSZ_EXECUTION__;
+    exec.Header.MsgLen = BITSIZE_SBE_SSZ_exe_t_packed / 8;
+    setSecurityID(exec.Header.SecurityID, "{"%06d"%self.SecurityID}");
+    exec.Header.ChannelNo = {self.ChannelNo};
+    exec.Header.ApplSeqNum = {self.ApplSeqNum};
+    exec.Header.TradingPhase.Code0 = 0;
+    exec.Header.TradingPhase.Code1 = 0;
     exec.BidApplSeqNum = {self.BidApplSeqNum};
     exec.OfferApplSeqNum = {self.OfferApplSeqNum};
     exec.LastPx = {self.LastPx};
     exec.LastQty = {self.LastQty};
-    exec.ExecType = '4{self.ExecType};
+    exec.ExecType = '{self.ExecType};
     exec.TransactTime = {self.TransactTime};
-    exec.Resv3 = 0;
+    exec.Resv[0] = 0;
+    exec.Resv[1] = 0;
+    exec.Resv[2] = 0;
+    '''
+        elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
+            s = f'''
+    exec.Header.SecurityIDSource = __SecurityIDSource_SSH_;
+    exec.Header.MsgType = __MsgType_SSH_EXECUTION__;
+    exec.Header.MsgLen = BITSIZE_SBE_SSH_exe_t_packed / 8;
+    setSecurityID(exec.Header.SecurityID, "{"%06d"%self.SecurityID}");
+    exec.Header.ChannelNo = {self.ChannelNo};
+    exec.Header.ApplSeqNum = {self.ApplSeqNum};
+    exec.Header.TradingPhase.Code0 = 0;
+    exec.Header.TradingPhase.Code1 = 0;
+    exec.TradeBuyNo = {self.BidApplSeqNum};
+    exec.TradeSellNo = {self.OfferApplSeqNum};
+    exec.LastPx = {self.LastPx};
+    exec.LastQty = {self.LastQty};
+    exec.TradeBSFlag = '{self.ExecType};
+    exec.TradeTime = {self.TransactTime};
+    exec.Resv[0] = 0;
+    exec.Resv[1] = 0;
+    exec.Resv[2] = 0;
+    exec.Resv[3] = 0;
+    exec.Resv[4] = 0;
+    exec.Resv[5] = 0;
+    exec.Resv[6] = 0;
+    exec.BizIndex = {self.BizIndex};
     '''
         else:
-            '''TODO:SSE'''
+            raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
         return s
 

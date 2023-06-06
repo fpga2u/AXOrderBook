@@ -5,30 +5,41 @@ from tool.msg_util import *
 import os
 import json
 
-def TEST_msg_byte_stream():
+def TEST_msg_byte_stream_mkt(market):
     ## test: byte_stream
-    print(len(axsbe_order(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
-    print(len(axsbe_exe(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
-    print(len(axsbe_snap_stock(axsbe_base.SecurityIDSource_SZSE).bytes_stream))
+    print(f'market = {market} order-size = {len(axsbe_order(market).bytes_stream)} Bytes')
+    print(f'market = {market}  exec-size = {len(axsbe_exe(market).bytes_stream)} Bytes')
+    print(f'market = {market}  snap-size = {len(axsbe_snap_stock(market).bytes_stream)} Bytes')
 
-def TEST_msg_SL():
+def TEST_msg_byte_stream():
+    TEST_msg_byte_stream_mkt(axsbe_base.SecurityIDSource_SZSE)
+    TEST_msg_byte_stream_mkt(axsbe_base.SecurityIDSource_SSE)
+
+def TEST_msg_SL_mkt(market):
     ## test: save/load
-    data = axsbe_order(axsbe_base.SecurityIDSource_SZSE).save()
+    data = axsbe_order(market).save()
     print(data)
-    data['OrdType'] = ord('U')
-    data['Side'] = ord('F')
+    if market==axsbe_base.SecurityIDSource_SZSE:
+        data['OrdType'] = ord('U')
+        data['Side'] = ord('F')
+    elif market==axsbe_base.SecurityIDSource_SSE:
+        data['OrdType'] = ord('A')
+        data['Side'] = ord('B')
     order = axsbe_order()
     order.load(data)
     print(order)
 
-    data = axsbe_exe(axsbe_base.SecurityIDSource_SZSE).save()
+    data = axsbe_exe(market).save()
     print(data)
-    data['ExecType'] = ord('F')
+    if market==axsbe_base.SecurityIDSource_SZSE:
+        data['ExecType'] = ord('F')
+    elif market==axsbe_base.SecurityIDSource_SSE:
+        data['ExecType'] = ord('B')
     exe = axsbe_exe()
     exe.load(data)
     print(exe)
 
-    data = axsbe_snap_stock(axsbe_base.SecurityIDSource_SZSE).save()
+    data = axsbe_snap_stock(market).save()
     print(data)
     snap = axsbe_snap_stock()
     data['ask'][0]['Price'] = 22200
@@ -37,6 +48,11 @@ def TEST_msg_SL():
     data['bid'][1]['Qty'] = 20000
     snap.load(data)
     print(snap)
+
+def TEST_msg_SL():
+    TEST_msg_SL_mkt(axsbe_base.SecurityIDSource_SZSE)
+    TEST_msg_SL_mkt(axsbe_base.SecurityIDSource_SSE)
+
 
 def TEST_msg_ms(TEST_NB = 100):
     '''
