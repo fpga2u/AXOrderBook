@@ -160,7 +160,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             self.BidWeightSize = dict['BidWeightSize']
             self.AskWeightPx = dict['AskWeightPx']
             self.AskWeightSize = dict['AskWeightSize']
-            self.TransactTime = dict['TransactTime']
+            self.TransactTime = dict['DataTimeStamp']
 
             for i in range(10):
                 self.bid[i] = price_level(dict['BidLevel[%d].Price'%i], dict['BidLevel[%d].Qty'%i])
@@ -425,9 +425,10 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             return TPM.str(self.TradingPhaseMarket) + ";" + TPI.str(self.TradingPhaseSecurity)
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
             Code1 = self.TradingPhaseCodePack>>6
+            Code1_map_uniform = 1-Code1 #深圳和上海0/1是颠倒的，TPI是按照深圳定义，这里需要修改
             Code2 = (self.TradingPhaseCodePack>>2)&0xf
             Code3 = (self.TradingPhaseCodePack)&0x3
-            return TPM.str(self.TradingPhaseMarket) + ";" + TPI.str(Code1) + ";" + TPC2.str(Code2) + ";" + TPC3.str(Code3)
+            return TPM.str(self.TradingPhaseMarket) + ";" + TPI.str(Code1_map_uniform) + ";" + TPC2.str(Code2) + ";" + TPC3.str(Code3)
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
@@ -602,7 +603,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             bin += struct.pack("<i", 0)
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
             #SecurityIDSource=102
-            bin = struct.pack("<B", axsbe_base.SecurityIDSource_SZSE)
+            bin = struct.pack("<B", axsbe_base.SecurityIDSource_SSE)
             #MsgType=111
             bin += struct.pack("<B", axsbe_base.MsgType_snap)
             #MsgLen=336
@@ -788,7 +789,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             self.BidWeightSize, \
             self.AskWeightPx, \
             self.AskWeightSize, \
-            self.DataTimeStamp, \
+            self.TransactTime, \
             self.bid[0].Price, \
             self.bid[0].Qty, \
             self.bid[1].Price, \

@@ -102,7 +102,7 @@ class TPI():
     Normal = 0   #深圳/上海的原始值中，Normal和NoTrade是互相颠倒的；这里是深圳的值；上海1=Normal,0=NoTrade。
     NoTrade = 1
 
-    Unknown = -1
+    Unknown = 3
 
     TPI_str = {
         Normal : '正常交易',
@@ -113,25 +113,25 @@ class TPI():
         return TPI.TPI_str[tpi]
 
 class TPC2():
-    # TradingPhase of Code[2] (上海L2股票/基金/债券)
-    OnMarket = 0
-    OffMarket = 1
+    # TradingPhase of Code[2] (上海L2股票/基金/债券), 4b
+    OffMarket = 0
+    OnMarket = 1
 
-    Unknown = -1
+    Unknown = 15
 
     TPC2_str = {
-        OnMarket : '已上市',
         OffMarket : '未上市',
+        OnMarket : '已上市',
         Unknown : '未知',
     }
     def str(tpc2):
         return TPC2.TPC2_str[tpc2]
 class TPC3():
-    # TradingPhase of Code[3] (上海L2)
+    # TradingPhase of Code[3] (上海L2), 2b
     RejectOrder = 0
     AcceptOrder = 1
 
-    Unknown = -1
+    Unknown = 3
 
     TPC3_str = {
         RejectOrder : '不接受订单申报',
@@ -172,8 +172,13 @@ class axsbe_base(metaclass=abc.ABCMeta):
         if self._HHMMSSms is None:
             if self.SecurityIDSource == SecurityIDSource_SZSE:
                 self._HHMMSSms = self.TransactTime % 1000000000
+            elif self.SecurityIDSource == SecurityIDSource_SSE:
+                if self.MsgType==MsgType_order or self.MsgType==MsgType_exe: #精度10ms
+                    self._HHMMSSms = self.TransactTime * 10
+                elif self.MsgType==MsgType_snap: #精度秒
+                    self._HHMMSSms = self.TransactTime * 1000
             else:
-                '''TODO-SSE'''
+                raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
         return self._HHMMSSms
 
     @property

@@ -15,6 +15,8 @@ def TEST_msg_byte_stream():
     TEST_msg_byte_stream_mkt(axsbe_base.SecurityIDSource_SZSE)
     TEST_msg_byte_stream_mkt(axsbe_base.SecurityIDSource_SSE)
 
+
+
 def TEST_msg_SL_mkt(market):
     ## test: save/load
     data = axsbe_order(market).save()
@@ -54,23 +56,32 @@ def TEST_msg_SL():
     TEST_msg_SL_mkt(axsbe_base.SecurityIDSource_SSE)
 
 
-def TEST_msg_ms(TEST_NB = 100):
+
+def TEST_msg_ms_mkt(market, TEST_NB = 100):
     '''
     打印消息时戳
     
-    用TEST_NB>35000可以看到快照数据的时戳在 09:41:21 之前的都比逐笔的时戳早，说明逐笔行情的传输被阻塞了
+    深交所:用TEST_NB>35000可以看到快照数据的时戳在 09:41:21 之前的都比逐笔的时戳早，说明逐笔行情的传输被阻塞了
     '''
-    f = open("log/ms.log", "w")
+
+    if market==axsbe_base.SecurityIDSource_SZSE:
+        save_log = 'ms_szse.log'
+        load_sbe = os.path.join('data', '20220422', 'AX_sbe_szse_000001.log')
+    elif market==axsbe_base.SecurityIDSource_SSE:
+        save_log = 'ms_sse.log'
+        load_sbe = os.path.join('data', '20230207', 'AX_sbe_sse_600519.log')
+
+    f = open(os.path.join('log', save_log), "w", encoding='utf-8')
 
     n = 0
-    for msg in axsbe_file("data/20220422/AX_sbe_szse_000001.log"):
+    for msg in axsbe_file(load_sbe):
         # print(msg.ms)
         if msg.MsgType==axsbe_base.MsgType_order:
             f.write(f"{n:6d}\torder {msg.ms}\t{msg.tick}\n")
         elif msg.MsgType==axsbe_base.MsgType_exe:
             f.write(f"{n:6d}\texe   {msg.ms}\t{msg.tick}\n")
         else:
-            f.write(f"{n:6d}\tsnap  {msg.ms}\t{msg.tick}\n")
+            f.write(f"{n:6d}\tsnap  {msg.ms}\t{msg.tick}\t{msg.TradingPhase_str}\n")
         n += 1
         if n>=TEST_NB:
             break
@@ -79,8 +90,14 @@ def TEST_msg_ms(TEST_NB = 100):
     print("TEST_msg_ms done")
     return
 
+def TEST_msg_ms(TEST_NB = 100):
+    TEST_msg_ms_mkt(axsbe_base.SecurityIDSource_SZSE, TEST_NB)
+    TEST_msg_ms_mkt(axsbe_base.SecurityIDSource_SSE, TEST_NB)
+
+
+
 @timeit
-def TEST_serial(TEST_NB = 100):
+def TEST_serial_mkt(market, TEST_NB = 100):
     '''
     测试numpy字节流的打包/解包
 
@@ -88,6 +105,11 @@ def TEST_serial(TEST_NB = 100):
         sz000001:tested_exe=106434 tested_order=122359 tested_snap=5082; sum=233875; used~4.6s
                  peak order(bid+ask)=56047; peak pxlv(bid+ask)=338
     '''
+    if market==axsbe_base.SecurityIDSource_SZSE:
+        load_sbe = os.path.join('data', '20220422', 'AX_sbe_szse_000001.log')
+    elif market==axsbe_base.SecurityIDSource_SSE:
+        load_sbe = os.path.join('data', '20230207', 'AX_sbe_sse_600519.log')
+
     tested_order = 0
     tested_exe = 0
     tested_snap = 0
@@ -96,23 +118,35 @@ def TEST_serial(TEST_NB = 100):
     unpack_axsbe_execute = axsbe_exe()
     unpack_axsbe_snap_stock = axsbe_snap_stock()
 
-    for msg in axsbe_file("data/20220422/AX_sbe_szse_000001.log"):
+    for msg in axsbe_file(load_sbe):
         if msg.MsgType==axsbe_base.MsgType_order:
             bytes_np = msg.bytes_np
             unpack_axsbe_order.unpack_np(bytes_np)
             if str(msg) != str(unpack_axsbe_order):
+                print('--before pack--')
+                print(msg)
+                print('--after pack/unpack--')
+                print(unpack_axsbe_order)
                 raise RuntimeError("TEST_serial tested_order NG")
             tested_order += 1
         elif msg.MsgType==axsbe_base.MsgType_exe:
             bytes_np = msg.bytes_np
             unpack_axsbe_execute.unpack_np(bytes_np)
             if str(msg) != str(unpack_axsbe_execute):
+                print('--before pack--')
+                print(msg)
+                print('--after pack/unpack--')
+                print(unpack_axsbe_execute)
                 raise RuntimeError("TEST_serial tested_exe NG")
             tested_exe += 1
         else:
             bytes_np = msg.bytes_np
             unpack_axsbe_snap_stock.unpack_np(bytes_np)
             if str(msg) != str(unpack_axsbe_snap_stock):
+                print('--before pack--')
+                print(msg)
+                print('--after pack/unpack--')
+                print(unpack_axsbe_snap_stock)
                 raise RuntimeError("TEST_serial tested_snap NG")
             tested_snap += 1
 
@@ -122,6 +156,10 @@ def TEST_serial(TEST_NB = 100):
           f" tested_exe={tested_exe} tested_order={tested_order} tested_snap={tested_snap};"
           f" sum={tested_exe+tested_order+tested_snap}")
     return
+
+def TEST_serial(TEST_NB = 100):
+    TEST_serial_mkt(axsbe_base.SecurityIDSource_SZSE, TEST_NB)
+    TEST_serial_mkt(axsbe_base.SecurityIDSource_SSE, TEST_NB)
 
 
 
