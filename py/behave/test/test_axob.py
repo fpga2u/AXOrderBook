@@ -336,7 +336,11 @@ def TEST_axob(date, instrument:int, n_max=0,
                 instrument_type=INSTRUMENT_TYPE.STOCK,
                 logPack=(print, print, print, print)
             ):
-    md_file = f'data/{date}/AX_sbe_szse_{instrument:06d}.log'
+    if SecurityIDSource==SecurityIDSource_SZSE:
+        SecurityIDSource_char = 'szse'
+    elif SecurityIDSource==SecurityIDSource_SSE:
+        SecurityIDSource_char = 'sse'
+    md_file = f'data/{date}/AX_sbe_{SecurityIDSource_char}_{instrument:06d}.log'
     if not os.path.exists(md_file):
         raise f"{md_file} not exists"
 

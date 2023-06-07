@@ -308,6 +308,7 @@ class AX_SIGNAL(Enum):  # 发送给AXOB的信号
     PMTRADING_END = 5  # 下午连续竞价结束
     ALL_END = 6        # 闭市
 
+CHANNELNO_INIT = -1
 
 class AXOB():
     __slots__ = [
@@ -423,7 +424,7 @@ class AXOB():
             self.closePx_ready = False
 
             self.constantValue_ready = False
-            self.ChannelNo = 0 #来自于快照
+            self.ChannelNo = CHANNELNO_INIT #来自于快照
             self.PrevClosePx = 0 #来自于快照 深圳要处理到内部精度，用于在还原快照时比较
             self.DnLimitPx = 0  # #来自于快照 无涨跌停价时为0x7fffffff
             self.UpLimitPx = 0  # #来自于快照 无涨跌停价时为100
@@ -497,7 +498,9 @@ class AXOB():
             if msg.SecurityID!=self.SecurityID:
                 return
 
-            if isinstance(msg, (axsbe_order, axsbe_exe)) and msg.ApplSeqNum<=self.last_inc_applSeqNum:
+            # 深交所：始终逐笔序列号递增，这里做检查
+            # 上交所：非合并流逐笔会乱序，不检查
+            if self.SecurityIDSource==SecurityIDSource_SZSE and isinstance(msg, (axsbe_order, axsbe_exe)) and msg.ApplSeqNum<=self.last_inc_applSeqNum:
                 self.ERR(f"ApplSeqNum={msg.ApplSeqNum} <= last_inc_applSeqNum={self.last_inc_applSeqNum} repeated or outOfOrder!")
                 return
 
@@ -534,7 +537,9 @@ class AXOB():
             else:# isinstance(msg, axsbe_snap_stock):
                 self.onSnap(msg)
 
-            if isinstance(msg, (axsbe_order, axsbe_exe)):
+            # 深交所：始终逐笔序列号递增，这里做记录
+            # 上交所：非合并流逐笔会乱序，不记录
+            if self.SecurityIDSource==SecurityIDSource_SZSE and isinstance(msg, (axsbe_order, axsbe_exe)):
                 self.last_inc_applSeqNum = msg.ApplSeqNum
         
         elif isinstance(msg, AX_SIGNAL):
@@ -1284,13 +1289,16 @@ class AXOB():
     def onSnap(self, snap:axsbe_snap_stock):
         self.DBG(f'msg#{self.msg_nb} onSnap:{snap}')
         if snap.TradingPhaseSecurity != axsbe_base.TPI.Normal:
-            self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}')
-            return
+            if self.SecurityIDSource==SecurityIDSource_SZSE: #深交所：当天可交易的始终都是可交易
+                self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}@{snap.HHMMSSms}')
+                return
+            elif self.SecurityIDSource==SecurityIDSource_SSE:#上交所：9点14都还是不可交易
+                self.INFO(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}@{snap.HHMMSSms}')
 
         ## 更新常量
         if snap.TradingPhaseMarket==axsbe_base.TPM.Starting: # 每天最早的一批快照(7点半前)是没有涨停价、跌停价的，不能只锁一次
             self.constantValue_ready = True
-            if self.ChannelNo==0:
+            if self.ChannelNo==CHANNELNO_INIT:
                 self.DBG(f"Update constatant: ChannelNo={snap.ChannelNo}, PrevClosePx={snap.PrevClosePx}, UpLimitPx={snap.UpLimitPx}, DnLimitPx={snap.DnLimitPx}")
 
             self.ChannelNo = snap.ChannelNo
@@ -1302,31 +1310,41 @@ class AXOB():
                 elif self.instrument_type==INSTRUMENT_TYPE.KZZ:
                     self.PrevClosePx = snap.PrevClosePx // (msg_util.PRICE_SZSE_SNAP_PRECLOSE_PRECISION//PRICE_INTER_KZZ_PRECISION)
                 else:
-                    pass    # TODO:
-            else:
-                '''TODO-SSE'''
-
-            self.ask_cage_ref_px = self.PrevClosePx
-            self.bid_cage_ref_px = self.PrevClosePx
-            self.DBG(f'Init Bid cage ref px={self.bid_cage_ref_px}')
-
-            self.UpLimitPx = snap.UpLimitPx
-            self.DnLimitPx = snap.DnLimitPx
-            
-            if self.SecurityIDSource==SecurityIDSource_SZSE:
+                    raise Exception(f'instrument_type={self.instrument_type} is not ready!')    # TODO:
+            elif self.SecurityIDSource==SecurityIDSource_SSE:
                 if self.instrument_type==INSTRUMENT_TYPE.STOCK:
-                    self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_STOCK_PRECISION)
-                    self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_STOCK_PRECISION)
+                    self.PrevClosePx = snap.PrevClosePx // (msg_util.PRICE_SSE_PRECISION//PRICE_INTER_STOCK_PRECISION)
                 elif self.instrument_type==INSTRUMENT_TYPE.FUND:
-                    self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
-                    self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
-                elif self.instrument_type==INSTRUMENT_TYPE.KZZ:
-                    self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_KZZ_PRECISION)
-                    self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_KZZ_PRECISION)
+                    self.PrevClosePx = snap.PrevClosePx // (msg_util.PRICE_SSE_PRECISION//PRICE_INTER_FUND_PRECISION)
                 else:
-                    pass    # TODO:
+                    raise Exception(f'instrument_type={self.instrument_type} is not ready!')    # TODO:
             else:
-                '''TODO-SSE'''
+                raise Exception(f'SecurityIDSource={self.SecurityIDSource} is not ready!')    # TODO:
+
+            if self.SecurityIDSource==SecurityIDSource_SZSE:
+                self.ask_cage_ref_px = self.PrevClosePx
+                self.bid_cage_ref_px = self.PrevClosePx
+                self.DBG(f'Init Bid cage ref px={self.bid_cage_ref_px}')
+
+                self.UpLimitPx = snap.UpLimitPx
+                self.DnLimitPx = snap.DnLimitPx
+                
+                if self.SecurityIDSource==SecurityIDSource_SZSE:
+                    if self.instrument_type==INSTRUMENT_TYPE.STOCK:
+                        self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_STOCK_PRECISION)
+                        self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_STOCK_PRECISION)
+                    elif self.instrument_type==INSTRUMENT_TYPE.FUND:
+                        self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
+                        self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_FUND_PRECISION)
+                    elif self.instrument_type==INSTRUMENT_TYPE.KZZ:
+                        self.UpLimitPrice = snap.UpLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_KZZ_PRECISION)
+                        self.DnLimitPrice = snap.DnLimitPx // (msg_util.PRICE_SZSE_SNAP_PRECISION//PRICE_INTER_KZZ_PRECISION)
+                    else:
+                        raise Exception(f'instrument_type={self.instrument_type} is not ready!')    # TODO:
+            elif self.SecurityIDSource==SecurityIDSource_SSE:
+                pass
+            else:
+                raise Exception(f'SecurityIDSource={self.SecurityIDSource} is not ready!')    # TODO:
 
             if self.SecurityIDSource==SecurityIDSource_SZSE:
                 self.YYMMDD = snap.TransactTime // SZSE_TICK_CUT # 深交所带日期
@@ -1344,7 +1362,7 @@ class AXOB():
                 else:
                     pass    # TODO:
             else:
-                '''TODO-SSE'''
+                self.ERR('SSE ClosePx not checked!')
 
             self.closePx_ready = True
             self.genSnap()
@@ -1357,7 +1375,10 @@ class AXOB():
 
         ## 检查重建算法，仅用于测试算法是否正确：
         snap._seq = self.msg_nb
-        if snap.TradingPhaseMarket<axsbe_base.TPM.OpenCall:
+        if (self.SecurityIDSource==SecurityIDSource_SZSE and snap.TradingPhaseMarket<axsbe_base.TPM.OpenCall) \
+         or(self.SecurityIDSource==SecurityIDSource_SSE and snap.TradingPhaseMarket<axsbe_base.TPM.PreTradingBreaking):
+            # 深交所: 从开盘集合竞价开始生成快照，之前的不记录
+            # 上交所：从开盘集合竞价后休市开始生成快照，之前的不记录
             pass
         else:
             # 在重建的快照中检索是否有相同的快照

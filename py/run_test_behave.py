@@ -28,6 +28,10 @@ if __name__== '__main__':
     logger.addHandler(fh)
     logger.addHandler(sh)
     logPack = logger.debug, logger.info, logger.warn, logger.error
+    
+    # 上交所：未完成！
+    logger.info('starting sse 600519')
+    behave.TEST_axob(20230207, 600519, instrument_type=behave.INSTRUMENT_TYPE.STOCK, SecurityIDSource=behave.SecurityIDSource_SSE)
 
     ### 20220617测试错误
     # logger.info('starting TEST_axob_bat')

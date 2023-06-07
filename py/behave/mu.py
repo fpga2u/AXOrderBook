@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from enum import unique
 from behave.axob import AXOB, AX_SIGNAL
-from tool.axsbe_base import TPM
+from tool.axsbe_base import TPM, SecurityIDSource_SSE, SecurityIDSource_SZSE
 from tool.msg_util import *
 
 import logging
@@ -16,6 +15,8 @@ class MU():
     '''
     __slots__ = [
         'axobs',
+
+        'SecurityIDSource', 
 
         'channel_map',
 
@@ -42,6 +43,8 @@ class MU():
             self.load(load_data)
         else:
             self.axobs = dict(zip(SecurityID_list, [AXOB(x, SecurityIDSource, instrument_type) for x in SecurityID_list]))
+
+            self.SecurityIDSource = SecurityIDSource
 
             self.channel_map ={}  #按不同ChannelID分组标的: ChannelID : {'TPM':?, 'SecurityID_list':[] }
                                   #在FPGA实现时，开盘前：FPGA先报告ChannelID、新股SecID；
@@ -71,17 +74,27 @@ class MU():
             self.ERR = self.logger.error
         self.INFO(f'SecurityID_list={SecurityID_list}')
 
+    def unique_ChannelNo(self, msg):
+        # 将逐笔和快照的ChannelNo统一，用于管理分组
+        if self.SecurityIDSource==SecurityIDSource_SZSE:
+            # 深交所 逐笔和快照的ChannelNo相差1000
+            if isinstance(msg, (axsbe_order, axsbe_exe)):
+                return msg.ChannelNo - 2000
+            elif isinstance(msg, axsbe_snap_stock):
+                return msg.ChannelNo - 1000
+            else:
+                return 0
+        elif self.SecurityIDSource==SecurityIDSource_SSE:
+            # 上交所 快照ChannelNo为0，无法和逐笔对应起来，按照只有1个channle来处理
+            return 0
+        else:
+            return 0
+
     def onMsg(self, msg):
         '''
         交易阶段管理
         '''
-        # 将逐笔和快照的ChannelNo统一，用于管理分组
-        if isinstance(msg, (axsbe_order, axsbe_exe)):
-            unique_ChannelNo = msg.ChannelNo - 2000
-        elif isinstance(msg, axsbe_snap_stock):
-            unique_ChannelNo = msg.ChannelNo - 1000
-        else:
-            return
+        unique_ChannelNo = self.unique_ChannelNo(msg)
         
         if unique_ChannelNo not in self.channel_map:
             self.channel_map[unique_ChannelNo] = {
@@ -93,9 +106,10 @@ class MU():
         
         if len(self.channel_map[unique_ChannelNo]['SecurityID_list']):
             if self.channel_map[unique_ChannelNo]['TPM']==TPM.Starting: # Starting -> OpenCall
-                #任意逐笔，或快照时戳大于等于开盘
+                #深交所：任意逐笔，或快照时戳大于等于开盘或快照状态（TODO:回归测试）
+                #上交所：逐笔要等到9:25才发送，仅用快照时戳或快照状态
                 if (isinstance(msg, (axsbe_order, axsbe_exe))) or\
-                   (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=91500000):
+                   (isinstance(msg, axsbe_snap_stock) and (msg.HHMMSSms>=91500000 or msg.TradingPhaseMarket==TPM.OpenCall)):
                     self.INFO(f'Chnl {unique_ChannelNo} Starting -> OpenCall')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.OpenCall
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.OPENCALL_BGN)

@@ -7,14 +7,14 @@ import tool.msg_util as msg_util
 import tool.axsbe_base
 
 if __name__== '__main__':
-    msg.TEST_msg_byte_stream()
-    msg.TEST_msg_SL()
+    # msg.TEST_msg_byte_stream()
+    # msg.TEST_msg_SL()
 
     # #
     msg.TEST_msg_ms(350000000)
 
     # #
-    msg.TEST_serial(1000000)
+    # msg.TEST_serial(1000000)
 
     # # active_OB.TEST_OB()
 
