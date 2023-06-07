@@ -8,10 +8,12 @@
 
 常用的深交所L2行情协议为Binary格式，当前最新版本号1.12；常用的上交所L2行情为STEP嵌套FAST格式，当前版本号2.0.6。行情接口协议文档均可在交易所网站下载：
 
-[深交所L2行情协议](https://www.szse.cn/marketServices/technicalservice/interface/P020220523530959450444.pdf)
+[深交所L2行情协议(Ver1.12)_20220523](https://www.szse.cn/marketServices/technicalservice/interface/P020220523530959450444.pdf)
+[深交所数据接口文档列表](https://www.szse.cn/marketServices/technicalservice/interface/)
 
-[上交所L2行情协议](https://www.sseinfo.com/services/assortment/document/interface/c/5702218.pdf)
-[上交所产品文档](https://www.sseinfo.com/services/assortment/document/)
+[上交所L2行情协议-股票&基金(2.0.8)_20230313](https://www.sseinfo.com/services/assortment/document/interface/c/5718167.pdf)
+[上交所L2行情协议-债券(1.0.1)_20220509](https://www.sseinfo.com/services/assortment/document/interface/c/5702220.pdf)
+[上交所行情服务接口说明书列表](https://www.sseinfo.com/services/assortment/document/)
 
 ### 1.2 L2行情消息分类
 

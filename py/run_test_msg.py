@@ -7,11 +7,11 @@ import tool.msg_util as msg_util
 import tool.axsbe_base
 
 if __name__== '__main__':
-    # msg.TEST_msg_byte_stream()
+    msg.TEST_msg_byte_stream()
     # msg.TEST_msg_SL()
 
     # #
-    msg.TEST_msg_ms(350000000)
+    # msg.TEST_msg_ms(350000000)
 
     # #
     # msg.TEST_serial(1000000)
@@ -63,6 +63,7 @@ if __name__== '__main__':
     # msg_util.extract_security("H:/AXOB_data_newP_ru/sbe_20220815_all.log", "data/20220815/AX_sbe_szse_123153.log", [123153])
     
     # msg_util.extract_security("I:/sbe/sbe_230207_600519.txt", "data/20230207/AX_sbe_sse_600519.log", [600519])
+    msg_util.extract_security("I:/sbe/sbe_230207_all.txt", "data/20230207/AX_sbe_sse_110068.log", [110068])
 
     # msg_util.extract_security("H:/AXOB_data_newP/20220812/sbe_20220812_all.log", "data/20220812/bat_test2.log", [301192])
     # msg_util.extract_security("H:/AXOB_data_newP/20220812/sbe_20220812_all.log", "data/20220812/AX_sbe_szse_301336.log", [301336])
