@@ -54,7 +54,7 @@ int main()
 
     //create order
     SBE_SSZ_ord_t order;
-    order.Header.SecurityIDSource = 102;
+    order.Header.SecurityIDSource = __SecurityIDSource_SSZ_;
     order.Header.MsgType = __MsgType_SSZ_ORDER__;
     order.Header.MsgLen = BITSIZE_SBE_SSZ_ord_t_packed / 8;
     setSecurityID(order.Header.SecurityID, "603383");
@@ -72,7 +72,7 @@ int main()
 
     //create exec
     SBE_SSZ_exe_t exec;
-    exec.Header.SecurityIDSource = 102;
+    exec.Header.SecurityIDSource = __SecurityIDSource_SSZ_;
     exec.Header.MsgType = __MsgType_SSZ_EXECUTION__;
     exec.Header.MsgLen = BITSIZE_SBE_SSZ_exe_t_packed / 8;
     setSecurityID(exec.Header.SecurityID, "000997");
@@ -92,7 +92,7 @@ int main()
 
     //create snap
     SBE_SSZ_instrument_snap_t snap;
-    snap.Header.SecurityIDSource = 102;
+    snap.Header.SecurityIDSource = __SecurityIDSource_SSZ_;
     snap.Header.MsgType = __MsgType_SSZ_INSTRUMENT_SNAP__;
     snap.Header.MsgLen = BITSIZE_SBE_SSZ_instrument_snap_t_packed / 8;
     setSecurityID(snap.Header.SecurityID, "000997");

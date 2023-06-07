@@ -18,10 +18,10 @@ class binarySearchCore
 {
 public:
     void mainRun(
-        unsigned int& access_nb,
-        ap_uint<dataTotalBitSize>* ordered_data, 
-        ap_uint<dataValidBitSize> d, 
-        ap_int<logSize+1>& index
+        unsigned int& access_nb,                    //返回本次查找ram访问次数
+        ap_uint<dataTotalBitSize>* ordered_data,    //ram，总位宽 dataTotalBitSize，前 dataValidBitSize bit为key，key按递增存储，key为-1表示无效数据
+        ap_uint<dataValidBitSize> d,                //本次需要查找的key值
+        ap_int<logSize+1>& index                    //查找到的key的ram地址，-1表示未找到
     )
     {
         ap_int<logSize+1> left = 0;
