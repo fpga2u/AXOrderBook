@@ -1,18 +1,23 @@
 #include "dbg_info.hpp"
 #include "dbg_util.hpp"
 #include "xv_storer_top.h"
-#include "sbe_intf.hpp"
 
+#include "sbe_intf.hpp"
+#include "sbe_ssz_origin.hpp"
+#include "dbg_info.hpp"
 int main()
 {
 
-    signal_stream_t signal_stream_i; // Internal Stream: signal
-    sbe_stream::stream_t snap_stream_i; // Internal Stream: snapGen
-    /* data-to-host */
-    ap_uint<DWIDTH>  host_frame_o[64];
-    /* reg-to-host */
-    unsigned int reg_frame_nb_o; // nb of host_frame_o
-    unsigned int reg_signal_nb_o; // nb of signal_stream_i
+	/* register-from-host */
+	/* register-to-host */
+	unsigned int    reg_frame_nb_o;         //nb of host_frame_o
+	unsigned int    reg_signal_nb_o;        //nb of signal_stream_i
+	/* memory */
+	ap_uint<DWIDTH>    host_frame_o[64];        //
+	/* stream */
+	signal_stream_t    signal_stream_i;           //Stream from OB: signal
+	sbe_stream::stream_t    snap_stream_i;        //Stream from OB: snapGen
+	
 
 
     SBE_SSZ_instrument_snap_t_packed snapPack;
@@ -133,16 +138,17 @@ int main()
         signal.data = CMD_STREAM_IDLE;
         signal_stream_i.write(signal);
 
-        xv_storer_top(
-            /* from OB */
-            signal_stream_i,    // Internal Stream: signal
-            snap_stream_i,      // Internal Stream: snapGen
-            /* data-to-host */
-            host_frame_o,
-            /* reg-to-host */
-            reg_frame_nb_o,     // nb of host_frame_o
-            reg_signal_nb_o     // nb of signal_stream_i
-        );
+xv_storer_top(
+	/* register-from-host */
+	/* register-to-host */
+	reg_frame_nb_o,         //nb of host_frame_o
+	reg_signal_nb_o,        //nb of signal_stream_i
+	/* memory */
+	host_frame_o,        //
+	/* stream */
+	signal_stream_i,        //Stream from OB: signal
+	snap_stream_i           //Stream from OB: snapGen
+);
 
         assert(reg_frame_nb_o==snap_n);
         assert(reg_signal_nb_o==reg_frame_nb_o+(1));
