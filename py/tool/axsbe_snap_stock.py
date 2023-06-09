@@ -60,8 +60,10 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
         'MsgType',
         'SecurityID',
         'ChannelNo',
-        'TransactTime',         #SH.DataTimeStamp(32b), SZ:64b
-
+        'TransactTime',         #SH-STOCK&BOND.DataTimeStamp(32b), SZ:64b
+                                #SH-STOCK: 143025   表示14:30:25
+                                #SH-BOND:  143025002表示14:30:25.002
+                                #SZ: YYYYMMDDHHMMSSsss(毫秒)
         'TradingPhaseCode',
         'NumTrades',            #SH:32b SZ:64b
         'TotalVolumeTrade',
@@ -71,16 +73,16 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
         'OpenPx',
         'HighPx',
         'LowPx',
-        'BidWeightPx',
-        'BidWeightSize',
-        'AskWeightPx',
-        'AskWeightSize',
+        'BidWeightPx',              #SH-BOND.AltWeightedAvgBidPx
+        'BidWeightSize',            #SH-BOND.TotalBidQty
+        'AskWeightPx',              #SH-BOND.AltWeightedAvgOfferPx
+        'AskWeightSize',            #SH-BOND.TotalOfferQty
         'UpLimitPx',                #SZ
         'DnLimitPx',                #SZ
         'bid',
         'ask',
 
-        'TradingPhaseCodePack',     #SH
+        'TradingPhaseCodePack',     #SH-STOCK
 
         # for debug
         'AskWeightPx_uncertain', #加权价无法确定
@@ -89,8 +91,8 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
 
     ]
 
-    def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL, source="MD"):
-        super(axsbe_snap_stock, self).__init__(axsbe_base.MsgType_snap, SecurityIDSource)
+    def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL, source="MD", MsgType=axsbe_base.MsgType_snap_stock):
+        super(axsbe_snap_stock, self).__init__(MsgType, SecurityIDSource)
         self.TradingPhaseCode = 0
         self.NumTrades = 0
         self.TotalVolumeTrade = 0
@@ -122,6 +124,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
         '''从字典加载字段'''
         #公共头
         self.SecurityIDSource = dict['SecurityIDSource']
+        self.MsgType = dict['MsgType']
         self.SecurityID = dict['SecurityID']
         self.ChannelNo = dict['ChannelNo']
 
@@ -151,22 +154,28 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             self.NumTrades = dict['NumTrades']
             self.TotalVolumeTrade = dict['TotalVolumeTrade']
             self.TotalValueTrade = dict['TotalValueTrade']
-            self.PrevClosePx = dict['PrevClosePx']
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                self.PrevClosePx = dict['PrevClosePx']
+                self.TradingPhaseCodePack = dict['TradingPhaseCodePack']
+                self.BidWeightPx = dict['BidWeightPx']
+                self.BidWeightSize = dict['BidWeightSize']
+                self.AskWeightPx = dict['AskWeightPx']
+                self.AskWeightSize = dict['AskWeightSize']
+            else:
+                self.BidWeightPx = dict['AltWeightedAvgBidPx']
+                self.BidWeightSize = dict['TotalBidQty']
+                self.AskWeightPx = dict['AltWeightedAvgOfferPx']
+                self.AskWeightSize = dict['TotalOfferQty']
             self.LastPx = dict['LastPx']
             self.OpenPx = dict['OpenPx']
             self.HighPx = dict['HighPx']
             self.LowPx = dict['LowPx']
-            self.BidWeightPx = dict['BidWeightPx']
-            self.BidWeightSize = dict['BidWeightSize']
-            self.AskWeightPx = dict['AskWeightPx']
-            self.AskWeightSize = dict['AskWeightSize']
             self.TransactTime = dict['DataTimeStamp']
 
             for i in range(10):
                 self.bid[i] = price_level(dict['BidLevel[%d].Price'%i], dict['BidLevel[%d].Qty'%i])
                 self.ask[i] = price_level(dict['AskLevel[%d].Price'%i], dict['AskLevel[%d].Qty'%i])
 
-            self.TradingPhaseCodePack = dict['TradingPhaseCodePack']
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
@@ -358,14 +367,17 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             else:
                 return TPI.Unknown
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
-            Code1 = self.TradingPhaseCodePack>>6
-            Code2 = (self.TradingPhaseCodePack>>2)&0xf
-            Code3 = (self.TradingPhaseCodePack)&0x3
-            if Code1==1 and Code2==1 and Code3==1: # 可正常交易+已上市+可接受订单申报
-                return TPI.Normal
-            elif Code1==0 or Code2==0 or Code3==0:
-                return TPI.NoTrade
-            else:
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                Code1 = self.TradingPhaseCodePack>>6
+                Code2 = (self.TradingPhaseCodePack>>2)&0xf
+                Code3 = (self.TradingPhaseCodePack)&0x3
+                if Code1==1 and Code2==1 and Code3==1: # 可正常交易+已上市+可接受订单申报
+                    return TPI.Normal
+                elif Code1==0 or Code2==0 or Code3==0:
+                    return TPI.NoTrade
+                else:
+                    return TPI.Unknown
+            elif self.MsgType==axsbe_base.MsgType_snap_sse_bond:
                 return TPI.Unknown
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
@@ -400,21 +412,22 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             # elif tpm==TPM.VolatilityBreaking: self.TradingPhaseCode = 8 # option only
             else:
                 self.TradingPhaseCode = 0xff
-                
-            # 2bit
-            if tpi==TPI.Normal:    Code1 = 1
-            elif tpi==TPI.NoTrade: Code1 = 0
-            else:                  Code1 = 0x3
-            # 4bit
-            if tpc2==TPC2.OffMarket:    Code2 = 0
-            elif tpc2==TPC2.OnMarket:   Code2 = 1
-            else:                       Code2 = 0xf
-            # 2bit
-            if tpc3==TPC3.RejectOrder:      Code3 = 0
-            elif tpc3==TPC3.AcceptOrder:    Code3 = 1
-            else:                           Code3 = 0x3
+            
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                # 2bit
+                if tpi==TPI.Normal:    Code1 = 1
+                elif tpi==TPI.NoTrade: Code1 = 0
+                else:                  Code1 = 0x3
+                # 4bit
+                if tpc2==TPC2.OffMarket:    Code2 = 0
+                elif tpc2==TPC2.OnMarket:   Code2 = 1
+                else:                       Code2 = 0xf
+                # 2bit
+                if tpc3==TPC3.RejectOrder:      Code3 = 0
+                elif tpc3==TPC3.AcceptOrder:    Code3 = 1
+                else:                           Code3 = 0x3
 
-            self.TradingPhaseCodePack = (Code1<<6) + (Code2<<2) + Code3
+                self.TradingPhaseCodePack = (Code1<<6) + (Code2<<2) + Code3
 
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
@@ -424,11 +437,14 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             return TPM.str(self.TradingPhaseMarket) + ";" + TPI.str(self.TradingPhaseSecurity)
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
-            Code1 = self.TradingPhaseCodePack>>6
-            Code1_map_uniform = 1-Code1 #深圳和上海0/1是颠倒的，TPI是按照深圳定义，这里需要修改
-            Code2 = (self.TradingPhaseCodePack>>2)&0xf
-            Code3 = (self.TradingPhaseCodePack)&0x3
-            return TPM.str(self.TradingPhaseMarket) + ";" + TPI.str(Code1_map_uniform) + ";" + TPC2.str(Code2) + ";" + TPC3.str(Code3)
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                Code1 = self.TradingPhaseCodePack>>6
+                Code1_map_uniform = 1-Code1 #深圳和上海0/1是颠倒的，TPI是按照深圳定义，这里需要修改
+                Code2 = (self.TradingPhaseCodePack>>2)&0xf
+                Code3 = (self.TradingPhaseCodePack)&0x3
+                return TPM.str(self.TradingPhaseMarket) + ";" + TPI.str(Code1_map_uniform) + ";" + TPC2.str(Code2) + ";" + TPC3.str(Code3)
+            elif self.MsgType==axsbe_base.MsgType_snap_sse_bond:
+                return TPM.str(self.TradingPhaseMarket)
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
@@ -467,9 +483,13 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
     AskWeightPx_uncertain={self.AskWeightPx_uncertain}
 '''
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
+            PrxCls = ''
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                PrxCls = f'PrxCls={self.PrevClosePx}'
+
             s = f'''{self._source}
     {"%06d"%self.SecurityID}
-    NumTrades={self.NumTrades}  TVol={self.TotalVolumeTrade}  TVal={self.TotalValueTrade} PrxCls={self.PrevClosePx}
+    NumTrades={self.NumTrades}  TVol={self.TotalVolumeTrade}  TVal={self.TotalValueTrade} {PrxCls}
     Px={self.LastPx}  O={self.OpenPx}  H={self.HighPx}  L={self.LowPx}
     BidWeightPx={self.BidWeightPx}  BidWeightSize={self.BidWeightSize}
     AskWeightPx={self.AskWeightPx}  AskWeightSize={self.AskWeightSize}
@@ -511,7 +531,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             #SecurityIDSource=102
             bin = struct.pack("<B", axsbe_base.SecurityIDSource_SZSE)
             #MsgType=111
-            bin += struct.pack("<B", axsbe_base.MsgType_snap)
+            bin += struct.pack("<B", self.MsgType)
             #MsgLen=352
             bin += struct.pack("<H", 352)
             #SecurityID=000997
@@ -605,9 +625,15 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             #SecurityIDSource=102
             bin = struct.pack("<B", axsbe_base.SecurityIDSource_SSE)
             #MsgType=111
-            bin += struct.pack("<B", axsbe_base.MsgType_snap)
-            #MsgLen=336
-            bin += struct.pack("<H", 336)
+            bin += struct.pack("<B", self.MsgType)
+
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                #MsgLen=336
+                bin += struct.pack("<H", 336)
+            elif self.MsgType==axsbe_base.MsgType_snap_sse_bond:
+                #MsgLen=328
+                bin += struct.pack("<H", 328)
+
             #SecurityID=000997
             bin += struct.pack("<9s", ("%06u  "%self.SecurityID).encode('UTF-8'))
             #ChannelNo=1013
@@ -622,8 +648,9 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             bin += struct.pack("<q", self.TotalVolumeTrade)
             #TotalValueTrade=0
             bin += struct.pack("<q", self.TotalValueTrade)
-            #PrevClosePx=184000
-            bin += struct.pack("<i", self.PrevClosePx)
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                #PrevClosePx=184000
+                bin += struct.pack("<i", self.PrevClosePx)
             #LastPx=0
             bin += struct.pack("<i", self.LastPx)
             #OpenPx=0
@@ -689,10 +716,12 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             #AskLevel[8].Qty=0
             #AskLevel[9].Price=0
             #AskLevel[9].Qty=0
-            #TradingPhaseCodePack=69
-            bin += struct.pack("<B", self.TradingPhaseCodePack)
-            #resv=
-            bin += struct.pack("<3B", 0, 0 ,0)
+
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                #TradingPhaseCodePack=69
+                bin += struct.pack("<B", self.TradingPhaseCodePack)
+                #resv=
+                bin += struct.pack("<3B", 0, 0 ,0)
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
         return bin
@@ -701,7 +730,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
     def unpack_stream(self, bytes_i:bytes):
         '''将消息字节流解包成字段值，重载'''
         #公共头
-        self.SecurityIDSource, _, _, self.SecurityID, self.ChannelNo, _, self.TradingPhaseCode = struct.unpack("<BBH9sHQB", bytes_i[:24])
+        self.SecurityIDSource, self.MsgType, _, self.SecurityID, self.ChannelNo, _, self.TradingPhaseCode = struct.unpack("<BBH9sHQB", bytes_i[:24])
         self.SecurityID = int(self.SecurityID[:6])
         #消息体
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
@@ -769,18 +798,23 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             self.ask[9].Qty, \
             self.TransactTime, _ =  struct.unpack(unpack_token, bytes_i[24:])
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
-            unpack_token = "<iqqiiiiiiqiqi"
+            self.NumTrades, \
+            self.TotalVolumeTrade, \
+            self.TotalValueTrade =  struct.unpack('<iqq', bytes_i[24:44])
+
+            comm_base = 44
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                self.PrevClosePx, =  struct.unpack('<i', bytes_i[44:48])
+                comm_base = 48
+
+            unpack_token = "<iiiiiqiqi"
             for i in range(10):
                 unpack_token += "iq"
                 self.ask[i] = price_level(0,0)
             for i in range(10):
                 unpack_token += "iq"
                 self.bid[i] = price_level(0,0)
-            unpack_token += "4B"
-            self.NumTrades, \
-            self.TotalVolumeTrade, \
-            self.TotalValueTrade, \
-            self.PrevClosePx, \
+
             self.LastPx, \
             self.OpenPx, \
             self.HighPx, \
@@ -829,8 +863,10 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             self.ask[8].Price, \
             self.ask[8].Qty, \
             self.ask[9].Price, \
-            self.ask[9].Qty, \
-            self.TradingPhaseCodePack, _, _, _ =  struct.unpack(unpack_token, bytes_i[24:])
+            self.ask[9].Qty =  struct.unpack(unpack_token, bytes_i[comm_base:comm_base+284])
+
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
+                self.TradingPhaseCodePack, _, _, _ =  struct.unpack('4B', bytes_i[332:])
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
@@ -877,13 +913,24 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
     snap.Resv[1] = 0;
     snap.Resv[2] = 0;
     snap.Resv[3] = 0;
+'''
 
-        '''
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
+            if self.MsgType==MsgType_snap_stock:
+                mType = '__MsgType_SSZ_INSTRUMENT_SNAP__' 
+                mSize = 'BITSIZE_SBE_SSH_instrument_snap_t_packed'
+                prevPx = f'snap.PrevClosePx = {self.PrevClosePx};'
+                weight_name = 'BidWeightPx', 'BidWeightSize', 'AskWeightPx', 'AskWeightSize'
+            else:
+                mType = '__MsgType_SSH_BOND_SNAP__' 
+                mSize = 'BITSIZE_SBE_SSH_bond_snap_t_packed'
+                prevPx = ''
+                weight_name = 'AltWeightedAvgBidPx', 'TotalBidQty', 'AltWeightedAvgOfferPx', 'TotalOfferQty'
+
             s = f'''
-    snap.Header.SecurityIDSource = __SecurityIDSource_SSZ_;
-    snap.Header.MsgType = __MsgType_SSZ_INSTRUMENT_SNAP__;
-    snap.Header.MsgLen = BITSIZE_SBE_SSZ_instrument_snap_t_packed / 8;
+    snap.Header.SecurityIDSource = __SecurityIDSource_SSH_;
+    snap.Header.MsgType = {mType};
+    snap.Header.MsgLen = {mSize} / 8;
     setSecurityID(snap.Header.SecurityID, "{"%06d"%self.SecurityID}");
     snap.Header.ChannelNo = {self.ChannelNo};
     snap.Header.ApplSeqNum = 0;
@@ -892,15 +939,15 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
     snap.NumTrades = {self.NumTrades};
     snap.TotalVolumeTrade = {self.TotalVolumeTrade};
     snap.TotalValueTrade = {self.TotalValueTrade};
-    snap.PrevClosePx = {self.PrevClosePx};
+    {prevPx}
     snap.LastPx = {self.LastPx};
     snap.OpenPx = {self.OpenPx};
     snap.HighPx = {self.HighPx};
     snap.LowPx = {self.LowPx};
-    snap.BidWeightPx = {self.BidWeightPx};
-    snap.BidWeightSize = {self.BidWeightSize};
-    snap.AskWeightPx = {self.AskWeightPx};
-    snap.AskWeightSize = {self.AskWeightSize};
+    snap.{weight_name[0]} = {self.BidWeightPx};
+    snap.{weight_name[1]} = {self.BidWeightSize};
+    snap.{weight_name[2]} = {self.AskWeightPx};
+    snap.{weight_name[3]} = {self.AskWeightSize};
     snap.DataTimeStamp = {self.TransactTime};'''
 
             for i in range(len(self.bid)):
@@ -911,14 +958,17 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
                 s += f'''
     snap.AskLevel[{i}].Price = {self.ask[i].Price};
     snap.AskLevel[{i}].Qty = {self.ask[i].Qty};'''
-            s += f'''
+
+            if self.MsgType==MsgType_snap_stock:
+                s += f'''
     snap.TradingPhaseCodePack.B1 = {self.TradingPhaseCodePack>>6};
     snap.TradingPhaseCodePack.B2 = {(self.TradingPhaseCodePack>>2)&0xf};
     snap.TradingPhaseCodePack.B3 = {(self.TradingPhaseCodePack)&0x3};
     snap.Resv[0] = 0;
     snap.Resv[1] = 0;
     snap.Resv[2] = 0;
-        '''
+'''
+
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
         return s

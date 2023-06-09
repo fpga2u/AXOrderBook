@@ -95,16 +95,16 @@ def str_to_dict(s:str):
 
 
 def dict_to_axsbe(s:dict):
-    if s['MsgType']==axsbe_base.MsgType_order:   #order
-        order = axsbe_order()
+    if s['MsgType'] in axsbe_base.MsgTypes_order:   #order
+        order = axsbe_order(MsgType=s['MsgType'])
         order.load_dict(s)
         return order
     elif s['MsgType']==axsbe_base.MsgType_exe:   #execute
         execute = axsbe_exe()
         execute.load_dict(s)
         return execute
-    elif s['MsgType']==axsbe_base.MsgType_snap:   #snap
-        snap = axsbe_snap_stock()
+    elif s['MsgType'] in axsbe_base.MsgTypes_snap:   #snap
+        snap = axsbe_snap_stock(MsgType=s['MsgType'])
         snap.load_dict(s)
         return snap
     else:
@@ -197,7 +197,7 @@ def load_wt(fileName): #order
     df = pd.read_csv(fileName, header=None, index_col=None, dtype={4:object}) #价格按str读入
     df.columns = ['SecurityID', 'datetime', 'Qty', 'ApplSeqNum', 'Price', 'Side']
 
-    df['MsgType'] = axsbe_base.MsgType_order
+    df['MsgType'] = axsbe_base.MsgType_order_stock
 
     df = formatCSV2AX(df)
     df.rename(columns={'Qty':'OrderQty'}, inplace=True)

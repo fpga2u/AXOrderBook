@@ -11,8 +11,18 @@ SecurityIDSource_SZSE = 102
 
 ## 消息类型
 MsgType_exe   = 191
-MsgType_order = 192
-MsgType_snap  = 111
+
+
+MsgType_order_stock = 192
+MsgType_order_sse_bond_add = 65
+MsgType_order_sse_bond_del = 68
+MsgTypes_order = [MsgType_order_stock, MsgType_order_sse_bond_add, MsgType_order_sse_bond_del]
+
+
+MsgType_snap_stock      = 111 #深交所股票、可转债；上交所股票基金
+MsgType_snap_szse_bond  = 211 #深交所债券现券、逆回购
+MsgType_snap_sse_bond   = 38  #上交所债券、可转债、逆回购
+MsgTypes_snap  = [MsgType_snap_stock, MsgType_snap_szse_bond, MsgType_snap_sse_bond]
 
     
 class INSTRUMENT_TYPE(Enum): # 3bit
@@ -173,10 +183,14 @@ class axsbe_base(metaclass=abc.ABCMeta):
             if self.SecurityIDSource == SecurityIDSource_SZSE:
                 self._HHMMSSms = self.TransactTime % 1000000000
             elif self.SecurityIDSource == SecurityIDSource_SSE:
-                if self.MsgType==MsgType_order or self.MsgType==MsgType_exe: #精度10ms
+                if self.MsgType==MsgType_order_stock or self.MsgType==MsgType_exe: #精度10ms
                     self._HHMMSSms = self.TransactTime * 10
-                elif self.MsgType==MsgType_snap: #精度秒
+                elif self.MsgType==MsgType_snap_stock: #精度秒
                     self._HHMMSSms = self.TransactTime * 1000
+                elif self.MsgType==MsgType_snap_sse_bond or self.MsgType==MsgType_order_sse_bond_del or self.MsgType==MsgType_order_sse_bond_add: #精度ms
+                    self._HHMMSSms = self.TransactTime
+                else:
+                    raise Exception(f'Not support SSE MsgType={self.MsgType}')
             else:
                 raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
         return self._HHMMSSms

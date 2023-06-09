@@ -10,6 +10,10 @@ def TEST_msg_byte_stream_mkt(market):
     print(f'market = {market} order-size = {len(axsbe_order(market).bytes_stream)} Bytes')
     print(f'market = {market}  exec-size = {len(axsbe_exe(market).bytes_stream)} Bytes')
     print(f'market = {market}  snap-size = {len(axsbe_snap_stock(market).bytes_stream)} Bytes')
+    if market==axsbe_base.SecurityIDSource_SSE:
+        print(f'market = {market} order-bond-add-size = {len(axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_add).bytes_stream)} Bytes')
+        print(f'market = {market} order-bond-del-size = {len(axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_del).bytes_stream)} Bytes')
+        print(f'market = {market}  snap-bond-size     = {len(axsbe_snap_stock(market, MsgType=axsbe_base.MsgType_snap_sse_bond).bytes_stream)} Bytes')
 
 def TEST_msg_byte_stream():
     TEST_msg_byte_stream_mkt(axsbe_base.SecurityIDSource_SZSE)
@@ -51,13 +55,38 @@ def TEST_msg_SL_mkt(market):
     snap.load(data)
     print(snap)
 
+    if market==axsbe_base.SecurityIDSource_SSE:
+        data = axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_add).save()
+        print(data)
+        data['Side'] = ord('S')
+        order = axsbe_order()
+        order.load(data)
+        print(order)
+
+        data = axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_del).save()
+        print(data)
+        data['Side'] = ord('B')
+        order = axsbe_order()
+        order.load(data)
+        print(order)
+
+        data = axsbe_snap_stock(market, MsgType=axsbe_base.MsgType_snap_sse_bond).save()
+        print(data)
+        snap = axsbe_snap_stock()
+        data['ask'][0]['Price'] = 33300
+        data['ask'][0]['Qty'] = 99999
+        data['bid'][1]['Price'] = 888
+        data['bid'][1]['Qty'] = 777
+        snap.load(data)
+        print(snap)
+
 def TEST_msg_SL():
     TEST_msg_SL_mkt(axsbe_base.SecurityIDSource_SZSE)
     TEST_msg_SL_mkt(axsbe_base.SecurityIDSource_SSE)
 
 
 
-def TEST_msg_ms_mkt(market, TEST_NB = 100):
+def TEST_msg_ms_mkt(market, instrument_type, TEST_NB = 100):
     '''
     打印消息时戳
     
@@ -68,15 +97,20 @@ def TEST_msg_ms_mkt(market, TEST_NB = 100):
         save_log = 'ms_szse.log'
         load_sbe = os.path.join('data', '20220422', 'AX_sbe_szse_000001.log')
     elif market==axsbe_base.SecurityIDSource_SSE:
-        save_log = 'ms_sse.log'
-        load_sbe = os.path.join('data', '20230207', 'AX_sbe_sse_600519.log')
+        if instrument_type==INSTRUMENT_TYPE.STOCK:
+            save_log = 'ms_sse-stock.log'
+            load_sbe = os.path.join('data', '20230207', 'AX_sbe_sse_600519.log')
+        else:#KZZ
+            save_log = 'ms_sse-bond.log'
+            load_sbe = os.path.join('data', '20230207', 'AX_sbe_sse_110068.log')
+
 
     f = open(os.path.join('log', save_log), "w", encoding='utf-8')
 
     n = 0
     for msg in axsbe_file(load_sbe):
         # print(msg.ms)
-        if msg.MsgType==axsbe_base.MsgType_order:
+        if msg.MsgType in axsbe_base.MsgTypes_order:
             f.write(f"{n:6d}\torder {msg.ms}\t{msg.tick}\n")
         elif msg.MsgType==axsbe_base.MsgType_exe:
             f.write(f"{n:6d}\texe   {msg.ms}\t{msg.tick}\n")
@@ -91,13 +125,14 @@ def TEST_msg_ms_mkt(market, TEST_NB = 100):
     return
 
 def TEST_msg_ms(TEST_NB = 100):
-    TEST_msg_ms_mkt(axsbe_base.SecurityIDSource_SZSE, TEST_NB)
-    TEST_msg_ms_mkt(axsbe_base.SecurityIDSource_SSE, TEST_NB)
+    TEST_msg_ms_mkt(axsbe_base.SecurityIDSource_SZSE, INSTRUMENT_TYPE.STOCK, TEST_NB)
+    TEST_msg_ms_mkt(axsbe_base.SecurityIDSource_SSE, INSTRUMENT_TYPE.STOCK, TEST_NB)
+    TEST_msg_ms_mkt(axsbe_base.SecurityIDSource_SSE, INSTRUMENT_TYPE.BOND, TEST_NB)
 
 
 
 @timeit
-def TEST_serial_mkt(market, TEST_NB = 100):
+def TEST_serial_mkt(market, instrument_type, TEST_NB = 100):
     '''
     测试numpy字节流的打包/解包
 
@@ -108,7 +143,10 @@ def TEST_serial_mkt(market, TEST_NB = 100):
     if market==axsbe_base.SecurityIDSource_SZSE:
         load_sbe = os.path.join('data', '20220422', 'AX_sbe_szse_000001.log')
     elif market==axsbe_base.SecurityIDSource_SSE:
-        load_sbe = os.path.join('data', '20230207', 'AX_sbe_sse_600519.log')
+        if instrument_type==INSTRUMENT_TYPE.STOCK:
+            load_sbe = os.path.join('data', '20230207', 'AX_sbe_sse_600519.log')
+        else:#KZZ
+            load_sbe = os.path.join('data', '20230207', 'AX_sbe_sse_110068.log')
 
     tested_order = 0
     tested_exe = 0
@@ -119,7 +157,7 @@ def TEST_serial_mkt(market, TEST_NB = 100):
     unpack_axsbe_snap_stock = axsbe_snap_stock()
 
     for msg in axsbe_file(load_sbe):
-        if msg.MsgType==axsbe_base.MsgType_order:
+        if msg.MsgType in axsbe_base.MsgTypes_order:
             bytes_np = msg.bytes_np
             unpack_axsbe_order.unpack_np(bytes_np)
             if str(msg) != str(unpack_axsbe_order):
@@ -158,8 +196,9 @@ def TEST_serial_mkt(market, TEST_NB = 100):
     return
 
 def TEST_serial(TEST_NB = 100):
-    TEST_serial_mkt(axsbe_base.SecurityIDSource_SZSE, TEST_NB)
-    TEST_serial_mkt(axsbe_base.SecurityIDSource_SSE, TEST_NB)
+    TEST_serial_mkt(axsbe_base.SecurityIDSource_SZSE, INSTRUMENT_TYPE.STOCK, TEST_NB)
+    TEST_serial_mkt(axsbe_base.SecurityIDSource_SSE, INSTRUMENT_TYPE.STOCK, TEST_NB)
+    TEST_serial_mkt(axsbe_base.SecurityIDSource_SSE, INSTRUMENT_TYPE.BOND, TEST_NB)
 
 
 
@@ -187,7 +226,7 @@ def TEST_msg_ms_filt(source_log, securityID, read_nb=0, print_nb = 100):
         if msg.SecurityID != securityID:
             continue
         # print(msg.ms)
-        if msg.MsgType==axsbe_base.MsgType_order:
+        if msg.MsgType in axsbe_base.MsgTypes_order:
             f.write(f"{rn:6d}\t{securityID:06d}\torder {msg.ms}\t{msg.tick}\n")
         elif msg.MsgType==axsbe_base.MsgType_exe:
             f.write(f"{rn:6d}\t{securityID:06d}\texe   {msg.ms}\t{msg.tick}\n")
