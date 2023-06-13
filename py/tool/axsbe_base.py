@@ -10,8 +10,9 @@ SecurityIDSource_SSE = 101
 SecurityIDSource_SZSE = 102
 
 ## 消息类型
-MsgType_exe   = 191
-
+MsgType_exe_stock   = 191
+MsgType_exe_sse_bond   = 84
+MsgTypes_exe = [MsgType_exe_stock, MsgType_exe_sse_bond]
 
 MsgType_order_stock = 192
 MsgType_order_sse_bond_add = 65
@@ -183,11 +184,11 @@ class axsbe_base(metaclass=abc.ABCMeta):
             if self.SecurityIDSource == SecurityIDSource_SZSE:
                 self._HHMMSSms = self.TransactTime % 1000000000
             elif self.SecurityIDSource == SecurityIDSource_SSE:
-                if self.MsgType==MsgType_order_stock or self.MsgType==MsgType_exe: #精度10ms
+                if self.MsgType==MsgType_order_stock or self.MsgType==MsgType_exe_stock: #精度10ms
                     self._HHMMSSms = self.TransactTime * 10
                 elif self.MsgType==MsgType_snap_stock: #精度秒
                     self._HHMMSSms = self.TransactTime * 1000
-                elif self.MsgType==MsgType_snap_sse_bond or self.MsgType==MsgType_order_sse_bond_del or self.MsgType==MsgType_order_sse_bond_add: #精度ms
+                elif self.MsgType==MsgType_snap_sse_bond or self.MsgType==MsgType_order_sse_bond_del or self.MsgType==MsgType_order_sse_bond_add or self.MsgType==MsgType_exe_sse_bond: #精度ms
                     self._HHMMSSms = self.TransactTime
                 else:
                     raise Exception(f'Not support SSE MsgType={self.MsgType}')

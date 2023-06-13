@@ -14,19 +14,21 @@ class axsbe_exe(axsbe_base.axsbe_base):
         'SecurityID',
         'ChannelNo',
         'ApplSeqNum',
-        'TransactTime',     # SH.TradeTime
+        'TransactTime',     # SH-STOCK.TradeTime;   SH-BOND.TickTime
 
-        'BidApplSeqNum',    # SH.TradeBuyNo
-        'OfferApplSeqNum',  # SH.TradeSellNo
-        'LastPx',           # SH.LastPx
-        'LastQty',          # SH.LastQty
-        'ExecType',         # SH.TradeBSFlag
+        'BidApplSeqNum',    # SH-STOCK.TradeBuyNo;  SH-BOND.BuyOrderNo
+        'OfferApplSeqNum',  # SH-STOCK.TradeSellNo; SH-BOND.SellOrderNo
+        'LastPx',           # SH-STOCK.LastPx;      SH-BOND.Price
+        'LastQty',          # SH-STOCK.LastQty;     SH-BOND.Qty
+        'ExecType',         # SH-STOCK.TradeBSFlag
 
-        'BizIndex',         #SH
+        'BizIndex',         #SH-STOCK
+
+        'TradeMoney',       #SH-BOND
     ]
     
-    def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL):
-        super(axsbe_exe, self).__init__(axsbe_base.MsgType_exe, SecurityIDSource)
+    def __init__(self, SecurityIDSource=axsbe_base.SecurityIDSource_NULL, MsgType=axsbe_base.MsgType_exe_stock):
+        super(axsbe_exe, self).__init__(MsgType, SecurityIDSource)
         self.BidApplSeqNum = 0xffffffffffffffff
         self.OfferApplSeqNum = 0xffffffffffffffff
         self.LastPx = 0
@@ -35,6 +37,8 @@ class axsbe_exe(axsbe_base.axsbe_base):
         self.TransactTime = 0
 
         self.BizIndex = 0 #仅上海有效，有效时从1开始
+
+        self.TradeMoney = 0
 
     def load_dict(self, dict:dict):
         '''从字典加载字段'''
@@ -54,14 +58,25 @@ class axsbe_exe(axsbe_base.axsbe_base):
             self.TransactTime = dict['TransactTime']
 
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
-            self.BidApplSeqNum = dict['BidApplSeqNum']
-            self.OfferApplSeqNum = dict['OfferApplSeqNum']
-            self.LastPx = dict['LastPx']
-            self.LastQty = dict['LastQty']
-            self.ExecType = dict['ExecType']
-            self.TransactTime = dict['TransactTime']
+            if self.MsgType==axsbe_base.MsgType_exe_stock:
+                self.BidApplSeqNum = dict['BidApplSeqNum']
+                self.OfferApplSeqNum = dict['OfferApplSeqNum']
+                self.LastPx = dict['LastPx']
+                self.LastQty = dict['LastQty']
+                self.ExecType = dict['ExecType']
+                self.TransactTime = dict['TransactTime']
 
-            self.BizIndex = dict['BizIndex']
+                self.BizIndex = dict['BizIndex']
+            elif self.MsgType==axsbe_base.MsgType_exe_sse_bond:
+                self.ExecType = dict['TradingPhase']
+                self.BidApplSeqNum = dict['BuyOrderNo']
+                self.OfferApplSeqNum = dict['SellOrderNo']
+                self.LastPx = dict['Price']
+                self.LastQty = dict['Qty']
+                self.TradeMoney = dict['TradeMoney']
+                self.TransactTime = dict['TickTime']
+            else:
+                raise Exception(f'Not support SSE exec Type={self.MsgType}')
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
@@ -77,13 +92,16 @@ class axsbe_exe(axsbe_base.axsbe_base):
         ExecType_isSame = self.ExecType == another.ExecType
 
         BizIndex_isSame = self.BizIndex == another.BizIndex
+
+        TradeMoney_isSame = self.TradeMoney == another.TradeMoney
         if SecurityID_isSame \
             and BidApplSeqNum_isSame \
             and OfferApplSeqNum_isSame \
             and LastPx_isSame \
             and LastQty_isSame \
             and ExecType_isSame \
-            and BizIndex_isSame:
+            and BizIndex_isSame \
+            and TradeMoney_isSame:
             return True
         else:
             return False
@@ -113,7 +131,12 @@ class axsbe_exe(axsbe_base.axsbe_base):
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             return f'{"%06d"%self.SecurityID} T={self.ExecType_str}, Px={self.LastPx}, Qty={self.LastQty}, Seq={self.ApplSeqNum}, BidSeq={self.BidApplSeqNum}, AskSeq={self.OfferApplSeqNum}, @{self.TransactTime}'
         elif  self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
-            return f'{"%06d"%self.SecurityID} T={self.ExecType_str}, Px={self.LastPx}, Qty={self.LastQty}, Seq={self.ApplSeqNum}, BidSeq={self.BidApplSeqNum}, AskSeq={self.OfferApplSeqNum}, BizIndex={self.BizIndex}, @{self.TransactTime}'
+            if self.MsgType==axsbe_base.MsgType_exe_stock:
+                return f'{"%06d"%self.SecurityID} T={self.ExecType_str}, Px={self.LastPx}, Qty={self.LastQty}, Seq={self.ApplSeqNum}, BidSeq={self.BidApplSeqNum}, AskSeq={self.OfferApplSeqNum}, BizIndex={self.BizIndex}, @{self.TransactTime}'
+            elif self.MsgType==axsbe_base.MsgType_exe_sse_bond:
+                return f'{"%06d"%self.SecurityID} T={self.ExecType_str}, Px={self.LastPx}, Qty={self.LastQty}, Seq={self.ApplSeqNum}, BidSeq={self.BidApplSeqNum}, AskSeq={self.OfferApplSeqNum}, @{self.TransactTime}'
+            else:
+                raise Exception(f'Not support SSE exec Type={self.MsgType}')
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
@@ -124,7 +147,7 @@ class axsbe_exe(axsbe_base.axsbe_base):
             #SecurityIDSource=102
             bin = struct.pack("<B", axsbe_base.SecurityIDSource_SZSE)
             #MsgType=191
-            bin += struct.pack("<B", axsbe_base.MsgType_exe)
+            bin += struct.pack("<B", self.MsgType)
             #MsgLen=64
             bin += struct.pack("<H", 64)
             #SecurityID=000997
@@ -153,17 +176,27 @@ class axsbe_exe(axsbe_base.axsbe_base):
             #SecurityIDSource=101
             bin = struct.pack("<B", axsbe_base.SecurityIDSource_SSE)
             #MsgType=191
-            bin += struct.pack("<B", axsbe_base.MsgType_exe)
-            #MsgLen=72
-            bin += struct.pack("<H", 72)
+            bin += struct.pack("<B", self.MsgType)
+            if self.MsgType==axsbe_base.MsgType_exe_stock:
+                #MsgLen=72
+                bin += struct.pack("<H", 72)
+            elif self.MsgType==axsbe_base.MsgType_exe_sse_bond:
+                #MsgLen=72
+                bin += struct.pack("<H", 64)
+            else:
+                raise Exception(f'Not support SSE exec Type={self.MsgType}')
             #SecurityID=600519
             bin += struct.pack("<9s", ("%06u  "%self.SecurityID).encode('UTF-8'))
             #ChannelNo=6
             bin += struct.pack("<H", self.ChannelNo)
             #ApplSeqNum=25741
             bin += struct.pack("<Q", self.ApplSeqNum)
-            #TradingPhase=0
-            bin += struct.pack("<B", 0xff)
+            if self.MsgType==axsbe_base.MsgType_exe_stock:
+                #TradingPhase=0
+                bin += struct.pack("<B", 0xff)
+            elif self.MsgType==axsbe_base.MsgType_exe_sse_bond:
+                #TickBSFlag=0
+                bin += struct.pack("<B", self.ExecType)
             #BidApplSeqNum=234313
             bin += struct.pack("<Q", self.BidApplSeqNum)
             #OfferApplSeqNum=232172
@@ -172,14 +205,21 @@ class axsbe_exe(axsbe_base.axsbe_base):
             bin += struct.pack("<i", self.LastPx)
             #LastQty=1000000
             bin += struct.pack("<q", self.LastQty)
-            #ExecType=66
-            bin += struct.pack("<B", self.ExecType)
-            #TransactTime=14302506
-            bin += struct.pack("<I", self.TransactTime)
-            #resv=
-            bin += struct.pack("<7B", 0, 0, 0, 0, 0, 0, 0)
-            #BizIndex=12000
-            bin += struct.pack("<Q", self.BizIndex)
+
+            if self.MsgType==axsbe_base.MsgType_exe_stock:
+                #ExecType=66
+                bin += struct.pack("<B", self.ExecType)
+                #TransactTime=14302506
+                bin += struct.pack("<I", self.TransactTime)
+                #resv=
+                bin += struct.pack("<7B", 0, 0, 0, 0, 0, 0, 0)
+                #BizIndex=12000
+                bin += struct.pack("<Q", self.BizIndex)
+            elif self.MsgType==axsbe_base.MsgType_exe_sse_bond:
+                #TradeMoney
+                bin += struct.pack("<q", self.TradeMoney)
+                #TransactTime=14302506
+                bin += struct.pack("<I", self.TransactTime)
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
         return bin
@@ -187,7 +227,7 @@ class axsbe_exe(axsbe_base.axsbe_base):
     def unpack_stream(self, bytes_i:bytes):
         '''将消息字节流解包成字段值，重载'''
         #公共头
-        self.SecurityIDSource, _, _, self.SecurityID, self.ChannelNo, self.ApplSeqNum = struct.unpack("<BBH9sHQ", bytes_i[:23])
+        self.SecurityIDSource, self.MsgType, _, self.SecurityID, self.ChannelNo, self.ApplSeqNum, self.ExecType = struct.unpack("<BBH9sHQB", bytes_i[:24])
         self.SecurityID = int(self.SecurityID[:6])
 
         #消息体
@@ -199,14 +239,24 @@ class axsbe_exe(axsbe_base.axsbe_base):
             self.ExecType, \
             self.TransactTime, _, _, _, = struct.unpack("<QQiqBQ3B", bytes_i[24:])
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
-            self.BidApplSeqNum, \
-            self.OfferApplSeqNum, \
-            self.LastPx, \
-            self.LastQty, \
-            self.ExecType, \
-            self.TransactTime, \
-            _, _, _, _, _, _, _, \
-            self.BizIndex = struct.unpack("<QQiqBI7BQ", bytes_i[24:])
+            if self.MsgType==axsbe_base.MsgType_exe_stock:
+                self.BidApplSeqNum, \
+                self.OfferApplSeqNum, \
+                self.LastPx, \
+                self.LastQty, \
+                self.ExecType, \
+                self.TransactTime, \
+                _, _, _, _, _, _, _, \
+                self.BizIndex = struct.unpack("<QQiqBI7BQ", bytes_i[24:])
+            elif self.MsgType==axsbe_base.MsgType_exe_sse_bond:
+                self.BidApplSeqNum, \
+                self.OfferApplSeqNum, \
+                self.LastPx, \
+                self.LastQty, \
+                self.TradeMoney, \
+                self.TransactTime = struct.unpack("<QQiqqI", bytes_i[24:])
+            else:
+                raise Exception(f'Not support SSE exec Type={self.MsgType}')
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
@@ -235,7 +285,8 @@ class axsbe_exe(axsbe_base.axsbe_base):
     exec.Resv[2] = 0;
     '''
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
-            s = f'''
+            if self.MsgType==axsbe_base.MsgType_exe_stock:
+                s = f'''
     exec.Header.SecurityIDSource = __SecurityIDSource_SSH_;
     exec.Header.MsgType = __MsgType_SSH_EXECUTION__;
     exec.Header.MsgLen = BITSIZE_SBE_SSH_exe_t_packed / 8;
@@ -259,6 +310,24 @@ class axsbe_exe(axsbe_base.axsbe_base):
     exec.Resv[6] = 0;
     exec.BizIndex = {self.BizIndex};
     '''
+            elif self.MsgType==axsbe_base.MsgType_exe_sse_bond:
+                s = f'''
+    exec.Header.SecurityIDSource = __SecurityIDSource_SSH_;
+    exec.Header.MsgType = __MsgType_SSH_BOND_TRADE__;
+    exec.Header.MsgLen = BITSIZE_SBE_SSH_bond_trade_t_packed / 8;
+    setSecurityID(exec.Header.SecurityID, "{"%06d"%self.SecurityID}");
+    exec.Header.ChannelNo = {self.ChannelNo};
+    exec.Header.ApplSeqNum = {self.ApplSeqNum};
+    exec.Header.TickBSFlag = {self.ExecType};
+    exec.BuyOrderNo = {self.BidApplSeqNum};
+    exec.SellOrderNo = {self.OfferApplSeqNum};
+    exec.Price = {self.LastPx};
+    exec.Qty = {self.LastQty};
+    exec.TradeMoney = '{self.TradeMoney};
+    exec.TickTime = {self.TransactTime};
+    '''
+            else:
+                raise Exception(f'Not support SSE exec Type={self.MsgType}')
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 

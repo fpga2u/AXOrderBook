@@ -7,13 +7,14 @@ import json
 
 def TEST_msg_byte_stream_mkt(market):
     ## test: byte_stream
-    print(f'market = {market} order-size = {len(axsbe_order(market).bytes_stream)} Bytes')
-    print(f'market = {market}  exec-size = {len(axsbe_exe(market).bytes_stream)} Bytes')
-    print(f'market = {market}  snap-size = {len(axsbe_snap_stock(market).bytes_stream)} Bytes')
+    print(f'market = {market} order.size = {len(axsbe_order(market).bytes_stream)} Bytes')
+    print(f'market = {market}  exec.size = {len(axsbe_exe(market).bytes_stream)} Bytes')
+    print(f'market = {market}  snap.size = {len(axsbe_snap_stock(market).bytes_stream)} Bytes')
     if market==axsbe_base.SecurityIDSource_SSE:
-        print(f'market = {market} order-bond-add-size = {len(axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_add).bytes_stream)} Bytes')
-        print(f'market = {market} order-bond-del-size = {len(axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_del).bytes_stream)} Bytes')
-        print(f'market = {market}  snap-bond-size     = {len(axsbe_snap_stock(market, MsgType=axsbe_base.MsgType_snap_sse_bond).bytes_stream)} Bytes')
+        print(f'market = {market} order-bond-add.size = {len(axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_add).bytes_stream)} Bytes')
+        print(f'market = {market} order-bond-del.size = {len(axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_del).bytes_stream)} Bytes')
+        print(f'market = {market} order-bond-exe.size = {len(axsbe_exe(market, MsgType=axsbe_base.MsgType_exe_sse_bond).bytes_stream)} Bytes')
+        print(f'market = {market}  snap-bond.size     = {len(axsbe_snap_stock(market, MsgType=axsbe_base.MsgType_snap_sse_bond).bytes_stream)} Bytes')
 
 def TEST_msg_byte_stream():
     TEST_msg_byte_stream_mkt(axsbe_base.SecurityIDSource_SZSE)
@@ -70,6 +71,13 @@ def TEST_msg_SL_mkt(market):
         order.load(data)
         print(order)
 
+        data = axsbe_exe(market, MsgType=axsbe_base.MsgType_exe_sse_bond).save()
+        print(data)
+        data['ExecType'] = ord('B')
+        exec = axsbe_exe()
+        exec.load(data)
+        print(exec)
+
         data = axsbe_snap_stock(market, MsgType=axsbe_base.MsgType_snap_sse_bond).save()
         print(data)
         snap = axsbe_snap_stock()
@@ -112,7 +120,7 @@ def TEST_msg_ms_mkt(market, instrument_type, TEST_NB = 100):
         # print(msg.ms)
         if msg.MsgType in axsbe_base.MsgTypes_order:
             f.write(f"{n:6d}\torder {msg.ms}\t{msg.tick}\n")
-        elif msg.MsgType==axsbe_base.MsgType_exe:
+        elif msg.MsgType in axsbe_base.MsgTypes_exe:
             f.write(f"{n:6d}\texe   {msg.ms}\t{msg.tick}\n")
         else:
             f.write(f"{n:6d}\tsnap  {msg.ms}\t{msg.tick}\t{msg.TradingPhase_str}\n")
@@ -167,7 +175,7 @@ def TEST_serial_mkt(market, instrument_type, TEST_NB = 100):
                 print(unpack_axsbe_order)
                 raise RuntimeError("TEST_serial tested_order NG")
             tested_order += 1
-        elif msg.MsgType==axsbe_base.MsgType_exe:
+        elif msg.MsgType in axsbe_base.MsgTypes_exe:
             bytes_np = msg.bytes_np
             unpack_axsbe_execute.unpack_np(bytes_np)
             if str(msg) != str(unpack_axsbe_execute):

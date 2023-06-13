@@ -99,8 +99,8 @@ def dict_to_axsbe(s:dict):
         order = axsbe_order(MsgType=s['MsgType'])
         order.load_dict(s)
         return order
-    elif s['MsgType']==axsbe_base.MsgType_exe:   #execute
-        execute = axsbe_exe()
+    elif s['MsgType'] in axsbe_base.MsgTypes_exe:   #execute
+        execute = axsbe_exe(MsgType=s['MsgType'])
         execute.load_dict(s)
         return execute
     elif s['MsgType'] in axsbe_base.MsgTypes_snap:   #snap
