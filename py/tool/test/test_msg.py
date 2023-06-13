@@ -14,6 +14,7 @@ def TEST_msg_byte_stream_mkt(market):
         print(f'market = {market} order-bond-add.size = {len(axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_add).bytes_stream)} Bytes')
         print(f'market = {market} order-bond-del.size = {len(axsbe_order(market, MsgType=axsbe_base.MsgType_order_sse_bond_del).bytes_stream)} Bytes')
         print(f'market = {market} order-bond-exe.size = {len(axsbe_exe(market, MsgType=axsbe_base.MsgType_exe_sse_bond).bytes_stream)} Bytes')
+        print(f'market = {market} order-bond-status.size = {len(axsbe_status(market, MsgType=axsbe_base.MsgType_status_sse_bond).bytes_stream)} Bytes')
         print(f'market = {market}  snap-bond.size     = {len(axsbe_snap_stock(market, MsgType=axsbe_base.MsgType_snap_sse_bond).bytes_stream)} Bytes')
 
 def TEST_msg_byte_stream():
@@ -78,6 +79,13 @@ def TEST_msg_SL_mkt(market):
         exec.load(data)
         print(exec)
 
+        data = axsbe_status(market, MsgType=axsbe_base.MsgType_status_sse_bond).save()
+        print(data)
+        data['TradingPhaseInstrument'] = 2
+        status = axsbe_status()
+        status.load(data)
+        print(status)
+
         data = axsbe_snap_stock(market, MsgType=axsbe_base.MsgType_snap_sse_bond).save()
         print(data)
         snap = axsbe_snap_stock()
@@ -119,11 +127,13 @@ def TEST_msg_ms_mkt(market, instrument_type, TEST_NB = 100):
     for msg in axsbe_file(load_sbe):
         # print(msg.ms)
         if msg.MsgType in axsbe_base.MsgTypes_order:
-            f.write(f"{n:6d}\torder {msg.ms}\t{msg.tick}\n")
+            f.write(f"{n:6d}\torder  {msg.ms}\t{msg.tick}\n")
         elif msg.MsgType in axsbe_base.MsgTypes_exe:
-            f.write(f"{n:6d}\texe   {msg.ms}\t{msg.tick}\n")
+            f.write(f"{n:6d}\texe    {msg.ms}\t{msg.tick}\n")
+        elif msg.MsgType in axsbe_base.MsgTypes_headerOnly:
+            f.write(f"{n:6d}\tstatus {msg.ms}\t{msg.tick}\t{msg.TradingPhase_str}\n")
         else:
-            f.write(f"{n:6d}\tsnap  {msg.ms}\t{msg.tick}\t{msg.TradingPhase_str}\n")
+            f.write(f"{n:6d}\tsnap   {msg.ms}\t{msg.tick}\t{msg.TradingPhase_str}\n")
         n += 1
         if n>=TEST_NB:
             break
@@ -159,10 +169,12 @@ def TEST_serial_mkt(market, instrument_type, TEST_NB = 100):
     tested_order = 0
     tested_exe = 0
     tested_snap = 0
+    tested_status = 0
 
     unpack_axsbe_order = axsbe_order()
     unpack_axsbe_execute = axsbe_exe()
     unpack_axsbe_snap_stock = axsbe_snap_stock()
+    unpack_axsbe_status_stock = axsbe_status()
 
     for msg in axsbe_file(load_sbe):
         if msg.MsgType in axsbe_base.MsgTypes_order:
@@ -185,7 +197,7 @@ def TEST_serial_mkt(market, instrument_type, TEST_NB = 100):
                 print(unpack_axsbe_execute)
                 raise RuntimeError("TEST_serial tested_exe NG")
             tested_exe += 1
-        else:
+        elif msg.MsgType in axsbe_base.MsgTypes_snap:
             bytes_np = msg.bytes_np
             unpack_axsbe_snap_stock.unpack_np(bytes_np)
             if str(msg) != str(unpack_axsbe_snap_stock):
@@ -195,17 +207,27 @@ def TEST_serial_mkt(market, instrument_type, TEST_NB = 100):
                 print(unpack_axsbe_snap_stock)
                 raise RuntimeError("TEST_serial tested_snap NG")
             tested_snap += 1
+        elif msg.MsgType in axsbe_base.MsgTypes_headerOnly:
+            bytes_np = msg.bytes_np
+            unpack_axsbe_status_stock.unpack_np(bytes_np)
+            if str(msg) != str(unpack_axsbe_status_stock):
+                print('--before pack--')
+                print(msg)
+                print('--after pack/unpack--')
+                print(unpack_axsbe_status_stock)
+                raise RuntimeError("TEST_serial tested_status NG")
+            tested_status += 1
 
         if tested_exe>=TEST_NB and tested_order>=TEST_NB and tested_snap>=TEST_NB:
             break
     print(f"TEST_serial done"
-          f" tested_exe={tested_exe} tested_order={tested_order} tested_snap={tested_snap};"
+          f" tested_exe={tested_exe} tested_order={tested_order} tested_snap={tested_snap} tested_status={tested_status};"
           f" sum={tested_exe+tested_order+tested_snap}")
     return
 
 def TEST_serial(TEST_NB = 100):
-    TEST_serial_mkt(axsbe_base.SecurityIDSource_SZSE, INSTRUMENT_TYPE.STOCK, TEST_NB)
-    TEST_serial_mkt(axsbe_base.SecurityIDSource_SSE, INSTRUMENT_TYPE.STOCK, TEST_NB)
+    # TEST_serial_mkt(axsbe_base.SecurityIDSource_SZSE, INSTRUMENT_TYPE.STOCK, TEST_NB)
+    # TEST_serial_mkt(axsbe_base.SecurityIDSource_SSE, INSTRUMENT_TYPE.STOCK, TEST_NB)
     TEST_serial_mkt(axsbe_base.SecurityIDSource_SSE, INSTRUMENT_TYPE.BOND, TEST_NB)
 
 

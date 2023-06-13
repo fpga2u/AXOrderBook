@@ -3,6 +3,7 @@
 import tool.axsbe_base as axsbe_base
 from tool.axsbe_exe import axsbe_exe
 from tool.axsbe_order import axsbe_order
+from tool.axsbe_status import axsbe_status
 from tool.axsbe_base import INSTRUMENT_TYPE, SecurityIDSource_SSE, SecurityIDSource_SZSE, SecurityIDSource_NULL
 from tool.axsbe_snap_stock import axsbe_snap_stock, price_level
 from enum import Enum
@@ -107,6 +108,10 @@ def dict_to_axsbe(s:dict):
         snap = axsbe_snap_stock(MsgType=s['MsgType'])
         snap.load_dict(s)
         return snap
+    elif s['MsgType'] in axsbe_base.MsgTypes_headerOnly: #
+        status = axsbe_status(MsgType=s['MsgType'])
+        status.load_dict(s)
+        return status
     else:
         return None
 

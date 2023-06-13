@@ -14,6 +14,7 @@ MsgType_exe_stock   = 191
 MsgType_exe_sse_bond   = 84
 MsgTypes_exe = [MsgType_exe_stock, MsgType_exe_sse_bond]
 
+
 MsgType_order_stock = 192
 MsgType_order_sse_bond_add = 65
 MsgType_order_sse_bond_del = 68
@@ -25,6 +26,10 @@ MsgType_snap_szse_bond  = 211 #深交所债券现券、逆回购
 MsgType_snap_sse_bond   = 38  #上交所债券、可转债、逆回购
 MsgTypes_snap  = [MsgType_snap_stock, MsgType_snap_szse_bond, MsgType_snap_sse_bond]
 
+
+MsgType_heartbeat = 1
+MsgType_status_sse_bond = 83
+MsgTypes_headerOnly = [MsgType_heartbeat, MsgType_status_sse_bond]
     
 class INSTRUMENT_TYPE(Enum): # 3bit
     STOCK  = 0   #股票
@@ -86,6 +91,10 @@ class TPM():
     FusingCall = 11
     FusingEnd = 12
 
+    ContinuousAutomaticMatching = 35 #连续自动撮合，上海债券市场状态中没有时戳，所以分不开上下午
+    Closing = 24 #闭市，上海债券市场状态中在15:00:00之后
+    OffMarket = 99     #未上市，上海债券市场状态独有
+
     Unknown = -1
 
     TPM_str = {
@@ -102,6 +111,9 @@ class TPM():
         HangingUp : '停牌',
         FusingCall : '熔断时段（盘中集合竞价）',
         FusingEnd : '熔断时段（暂停交易至闭市）',
+        ContinuousAutomaticMatching: '连续自动撮合',
+        Closing: '闭市',
+        OffMarket: '未上市',
         Unknown : '未知',
     }
 
@@ -190,6 +202,8 @@ class axsbe_base(metaclass=abc.ABCMeta):
                     self._HHMMSSms = self.TransactTime * 1000
                 elif self.MsgType==MsgType_snap_sse_bond or self.MsgType==MsgType_order_sse_bond_del or self.MsgType==MsgType_order_sse_bond_add or self.MsgType==MsgType_exe_sse_bond: #精度ms
                     self._HHMMSSms = self.TransactTime
+                elif self.MsgType==MsgType_heartbeat or self.MsgType==MsgType_status_sse_bond:
+                    self._HHMMSSms = 0 #没有时戳
                 else:
                     raise Exception(f'Not support SSE MsgType={self.MsgType}')
             else:

@@ -299,7 +299,6 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
     def TradingPhaseMarket(self):
         if self.SecurityIDSource == axsbe_base.SecurityIDSource_SZSE:
             Code0 = self.TradingPhaseCode&0xf
-
             if Code0==0:
                 return TPM.Starting
             elif Code0==1:
@@ -325,7 +324,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             elif Code0==8:
                 return TPM.VolatilityBreaking
             else:
-                return TPM.Unknown
+                raise Exception(f'Unknown SZSE TradingPhaseCode={Code0}')
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
             Code0 = self.TradingPhaseCode
             if Code0==0:
@@ -351,8 +350,12 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
                 return TPM.FusingCall
             elif Code0==10:
                 return TPM.FusingEnd
+            elif Code0==11:          #债券only，产品未上市
+                return TPM.OffMarket
+            elif Code0==12:          #债券only，交易结束
+                return TPM.Ending
             else:
-                return TPM.Unknown
+                raise Exception(f'Unknown SSE TradingPhaseCode={Code0}')
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 
@@ -916,7 +919,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
 '''
 
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
-            if self.MsgType==MsgType_snap_stock:
+            if self.MsgType==axsbe_base.MsgType_snap_stock:
                 mType = '__MsgType_SSZ_INSTRUMENT_SNAP__' 
                 mSize = 'BITSIZE_SBE_SSH_instrument_snap_t_packed'
                 prevPx = f'snap.PrevClosePx = {self.PrevClosePx};'
