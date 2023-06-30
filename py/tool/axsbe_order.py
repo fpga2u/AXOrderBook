@@ -23,7 +23,7 @@ class axsbe_order(axsbe_base.axsbe_base):
         'Side',             #SH-BOND.TickBSFlag
         'OrdType',
 
-        'OrderNo',          #SH-STOCK
+        'OrderNo',          #SH-STOCK; SH-BOND
         'BizIndex',         #SH-STOCK
 
     ]

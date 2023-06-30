@@ -368,7 +368,7 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
             elif Code1==1:
                 return TPI.NoTrade
             else:
-                return TPI.Unknown
+                raise Exception(f'Not support SZSE MsgType={self.MsgType}')
         elif self.SecurityIDSource == axsbe_base.SecurityIDSource_SSE:
             if self.MsgType==axsbe_base.MsgType_snap_stock:
                 Code1 = self.TradingPhaseCodePack>>6
@@ -379,9 +379,14 @@ class axsbe_snap_stock(axsbe_base.axsbe_base):
                 elif Code1==0 or Code2==0 or Code3==0:
                     return TPI.NoTrade
                 else:
-                    return TPI.Unknown
+                    raise Exception(f'Unknown TPI of SSE stock/fund Code1={Code1} Code2={Code2} Code3={Code3}')
             elif self.MsgType==axsbe_base.MsgType_snap_sse_bond:
-                return TPI.Unknown
+                if self.TradingPhaseCode==11 or self.TradingPhaseCode==6:
+                    return TPI.NoTrade
+                else:
+                    return TPI.Normal
+            else:
+                raise Exception(f'Not support SSE MsgType={self.MsgType}')
         else:
             raise Exception(f'Not support SecurityIDSource={self.SecurityIDSource}')
 

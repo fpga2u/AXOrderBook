@@ -1,3 +1,7 @@
+'''
+移植自项目: pytdx
+'''
+
 import struct
 import os
 import pandas as pd
@@ -59,6 +63,10 @@ class TdxDailyBarReader(BaseReader):
         else:
             return self.get_df_by_code(code_or_file, exchange)
         
+    def get_preClosePx(self, code, exchange, date):
+        df = self.get_df_by_code(code, exchange)
+        return df.shift(1).loc[pd.to_datetime(str(date))].close
+
     def get_df_by_file(self, fname):
 
         if not os.path.isfile(fname):
@@ -70,11 +78,13 @@ class TdxDailyBarReader(BaseReader):
             raise NotImplementedError
 
         coefficient = self.SECURITY_COEFFICIENT[security_type]
-        data = [self._df_convert(row, coefficient) for row in self.parse_data_by_file(fname)]
 
-        df = pd.DataFrame(data=data, columns=('date', 'open', 'high', 'low', 'close', 'amount', 'volume'))
+        data = self.parse_data_by_file(fname)
+        # data = [self._df_convert(row, coefficient) for row in data] #AXOB不需要将精度调整到浮点
+
+        df = pd.DataFrame(data=data, columns=('date', 'open', 'high', 'low', 'close', 'amount', 'volume', 'flag'))
         df.index = pd.to_datetime(df.date)
-        return df[['open', 'high', 'low', 'close', 'amount', 'volume']]
+        return df[['open', 'high', 'low', 'close', 'amount', 'volume', 'flag']]
 
     def get_df_by_code(self, code, exchange):
 

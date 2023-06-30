@@ -21,7 +21,7 @@ class MARKET_SUBTYPE(Enum):
     SZSE_KZZ     =  4   #深交所 可转债
     SZSE_OTHERS  =  5   #深交所 其它
 
-    SSE          =  5    # 上交所
+    SSE          =  6    # 上交所
 
 def market_subtype(SecurityIDSource, SecurityID):
     if SecurityIDSource==SecurityIDSource_SZSE:

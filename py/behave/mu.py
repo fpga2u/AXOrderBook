@@ -109,13 +109,16 @@ class MU():
                 #深交所：任意逐笔，或快照时戳大于等于开盘或快照状态（TODO:回归测试）
                 #上交所：逐笔要等到9:25才发送，仅用快照时戳或快照状态
                 if (isinstance(msg, (axsbe_order, axsbe_exe))) or\
+                   (isinstance(msg, axsbe_status) and msg.TradingPhaseMarket==TPM.OpenCall) or\
                    (isinstance(msg, axsbe_snap_stock) and (msg.HHMMSSms>=91500000 or msg.TradingPhaseMarket==TPM.OpenCall)):
                     self.INFO(f'Chnl {unique_ChannelNo} Starting -> OpenCall')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.OpenCall
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.OPENCALL_BGN)
             elif self.channel_map[unique_ChannelNo]['TPM']==TPM.OpenCall: # OpenCall -> PreTradingBreaking
                 # 任意逐笔离开开盘集合竞价，或快照时戳超过盘前休市15s
+                # 上交所: 债券市场状态进入连续自动撮合
                 if (isinstance(msg, axsbe_exe) and msg.TradingPhaseMarket==TPM.PreTradingBreaking) or\
+                   (isinstance(msg, axsbe_status) and msg.TradingPhaseMarket==TPM.ContinuousAutomaticMatching) or\
                    (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=92515000):
                     self.INFO(f'Chnl {unique_ChannelNo} OpenCall -> PreTradingBreaking')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.PreTradingBreaking
@@ -149,7 +152,9 @@ class MU():
                     for id in self.channel_map[unique_ChannelNo]['SecurityID_list']: self.axobs[id].onMsg(AX_SIGNAL.PMTRADING_END)
             elif self.channel_map[unique_ChannelNo]['TPM']==TPM.CloseCall: # CloseCall -> Ending
                 #任意成交离开收盘集合竞价阶段，或快照时戳大于等于闭市15s
+                # 上交所: 债券市场状态进入闭市=15:00:00~15:04:59
                 if (isinstance(msg, axsbe_exe) and msg.TradingPhaseMarket==TPM.Ending) or\
+                   (isinstance(msg, axsbe_status) and msg.TradingPhaseMarket==TPM.Closing) or\
                    (isinstance(msg, axsbe_snap_stock) and msg.HHMMSSms>=150015000):
                     self.INFO(f'Chnl {unique_ChannelNo} CloseCall -> Ending')
                     self.channel_map[unique_ChannelNo]['TPM'] = TPM.Ending

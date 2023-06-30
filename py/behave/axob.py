@@ -21,7 +21,7 @@
 from enum import Enum
 from tool.msg_util import axsbe_base, axsbe_exe, axsbe_order, axsbe_snap_stock, price_level, CYB_cage_upper, CYB_cage_lower, bitSizeOf, MARKET_SUBTYPE, market_subtype
 import tool.msg_util as msg_util
-from tool.axsbe_base import SecurityIDSource_SSE, SecurityIDSource_SZSE, INSTRUMENT_TYPE
+from tool.axsbe_base import SecurityIDSource_SSE, SecurityIDSource_SZSE, INSTRUMENT_TYPE, MsgType_exe_sse_bond
 from copy import deepcopy
 
 import logging
@@ -35,7 +35,7 @@ APPSEQ_BIT_SIZE = 32    # 序列号，34b，约40亿，因为不同channel的序
 PRICE_BIT_SIZE  = 25    # 价格，20b，33554431，股票:335544.31;基金:33554.431。（创业板上市首日有委托价格为￥188888.00的，若忽略这种特殊情况，则20b(10485.75)足够了）
 QTY_BIT_SIZE    = 30    # 数量，30b，(1,073,741,823)，深圳2位小数，上海3位小数
 LEVEL_QTY_BIT_SIZE    = QTY_BIT_SIZE+8    # 价格档位上的数量位宽 20220729:001258 qty=137439040000(38b)
-TIMESTAMP_BIT_SIZE = 24 # 时戳精度 时-分-秒-10ms 最大15000000=24b
+TIMESTAMP_BIT_SIZE = 28 # 时戳精度 时-分-秒-10ms 最大15000000=24b; 上交所精度1ms，最大28b
 
 PRICE_INTER_STOCK_PRECISION = 100  # 股票价格精度：2位小数，(深圳原始数据4位，上海3位)
 PRICE_INTER_FUND_PRECISION  = 1000 # 基金价格精度：3位小数，(深圳原始数据4位，上海3位)
@@ -106,14 +106,15 @@ class ob_order():
             '''TODO-SSE'''
             self.side = SIDE.UNKNOWN
 
-        if order.Type_str=='限价':
+        if order.Type_str=='限价':          # SZ
             self.type = TYPE.LIMIT
-        elif order.Type_str=='市价':
+        elif order.Type_str=='市价':        # SZ
             self.type = TYPE.MARKET
-        elif order.Type_str=='本方最优':
+        elif order.Type_str=='本方最优':    # SZ
             self.type = TYPE.SIDE
+        elif order.Type_str=='新增':        # SH
+            self.type = TYPE.LIMIT
         else:
-            '''TODO-SSE'''
             self.type = TYPE.UNKNOWN
 
         if order.Price==msg_util.ORDER_PRICE_OVERFLOW: #原始价格越界 (不用管是否是LIMIT)
@@ -133,6 +134,8 @@ class ob_order():
             elif order.SecurityIDSource==SecurityIDSource_SSE:
                 if instrument_type==INSTRUMENT_TYPE.STOCK:
                     self.price = order.Price // SSE_STOCK_PRICE_RD # 上海 原始数据3位小数
+                elif instrument_type==INSTRUMENT_TYPE.BOND:
+                    self.price = order.Price                       # 上海 原始数据3位小数，债券需要3位小数
                 else:
                     axob_logger.error(f'order SSE ApplSeqNum={order.ApplSeqNum} instrument_type={instrument_type} not support!')
             else:
@@ -534,7 +537,7 @@ class AXOB():
                 self.onOrder(msg)
             elif isinstance(msg, axsbe_exe):
                 self.onExec(msg)
-            else:# isinstance(msg, axsbe_snap_stock):
+            elif isinstance(msg, axsbe_snap_stock):
                 self.onSnap(msg)
 
             # 深交所：始终逐笔序列号递增，这里做记录
@@ -725,8 +728,17 @@ class AXOB():
         if self.SecurityIDSource == SecurityIDSource_SZSE:
             _order = ob_order(order, self.instrument_type)
         elif self.SecurityIDSource == SecurityIDSource_SSE:
-            '''TODO-SSE'''
             # order or cancel
+            if order.Type_str=='新增':
+                _order = ob_order(order, self.instrument_type)
+            elif order.Type_str=='删除':
+                if order.Side_str=='买入':
+                    Side=SIDE.BID
+                elif order.Side_str=='卖出':
+                    Side=SIDE.ASK
+                _cancel = ob_cancel(order.OrderNo, order.Qty, order.Price, Side, order.TransactTime, self.SecurityIDSource, self.instrument_type, self.SecurityID)
+                self.onCancel(_cancel)
+                return
         else:
             return
 
@@ -1292,7 +1304,7 @@ class AXOB():
             if self.SecurityIDSource==SecurityIDSource_SZSE: #深交所：当天可交易的始终都是可交易
                 self.ERR(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}@{snap.HHMMSSms}')
                 return
-            elif self.SecurityIDSource==SecurityIDSource_SSE:#上交所：9点14都还是不可交易
+            elif self.SecurityIDSource==SecurityIDSource_SSE:#上交所：股票/基金9点14都还是不可交易
                 self.INFO(f'TradingPhaseSecurity={axsbe_base.TPI.str(snap.TradingPhaseSecurity)}@{snap.HHMMSSms}')
 
         ## 更新常量
@@ -1316,8 +1328,10 @@ class AXOB():
                     self.PrevClosePx = snap.PrevClosePx // (msg_util.PRICE_SSE_PRECISION//PRICE_INTER_STOCK_PRECISION)
                 elif self.instrument_type==INSTRUMENT_TYPE.FUND:
                     self.PrevClosePx = snap.PrevClosePx // (msg_util.PRICE_SSE_PRECISION//PRICE_INTER_FUND_PRECISION)
+                elif self.instrument_type==INSTRUMENT_TYPE.BOND:
+                    self.PrevClosePx = 0 # 上海债券快照没有带昨收！
                 else:
-                    raise Exception(f'instrument_type={self.instrument_type} is not ready!')    # TODO:
+                    raise Exception(f'instrument_type={self.instrument_type} is not ready!')    #
             else:
                 raise Exception(f'SecurityIDSource={self.SecurityIDSource} is not ready!')    # TODO:
 
@@ -1493,9 +1507,9 @@ class AXOB():
 
     def _useTimestamp(self, TransactTime):
         if self.SecurityIDSource == SecurityIDSource_SZSE:
-            self.current_inc_tick = TransactTime // SZSE_TICK_MS_TAIL % (SZSE_TICK_CUT // SZSE_TICK_MS_TAIL)    #只用逐笔 15000000 24b
+            self.current_inc_tick = TransactTime // SZSE_TICK_MS_TAIL % (SZSE_TICK_CUT // SZSE_TICK_MS_TAIL)    #只用逐笔 (10ms精度) 15000000 24b
         else:
-            self.current_inc_tick = TransactTime
+            self.current_inc_tick = TransactTime # 上交所(1ms精度) 150000000
         if self.current_inc_tick >= (1<<TIMESTAMP_BIT_SIZE):
             self.ERR(f'msg.TransactTime={TransactTime} ovf!')
 
@@ -1503,8 +1517,12 @@ class AXOB():
     def _setSnapTimestamp(self, snap):
         if self.SecurityIDSource==SecurityIDSource_SZSE:
             snap.TransactTime = self.YYMMDD * SZSE_TICK_CUT + (self.current_inc_tick*SZSE_TICK_MS_TAIL) #深交所显示精度到ms，多补1位
-        else:
-            snap.TransactTime = self.current_inc_tick // 100 #上交所只显示到秒，去掉10ms和100ms两位
+        elif self.SecurityIDSource==SecurityIDSource_SZSE:
+            if self.instrument_type==INSTRUMENT_TYPE.BOND or self.instrument_type==INSTRUMENT_TYPE.KZZ or self.instrument_type==INSTRUMENT_TYPE.NHG:
+                snap.TransactTime = self.current_inc_tick #债券精确到ms
+            else:
+                snap.TransactTime = self.current_inc_tick // 100 #上交所只显示到秒，去掉10ms和100ms两位
+
 
 
     def genCallSnap(self, show_level_nb=10, show_potential=False):
@@ -1654,11 +1672,16 @@ class AXOB():
 
 
         #### 开始构造快照
-        if self.instrument_type==INSTRUMENT_TYPE.STOCK or self.instrument_type==INSTRUMENT_TYPE.KZZ:
-            snap_call = axsbe_snap_stock(SecurityIDSource=self.SecurityIDSource, source=f"AXOB-call")
-        else:
-            self.DBG(f'genCallSnap for instrument_type={self.instrument_type} is not ready!')
-            return None # TODO: not ready [Mid priority]
+        if self.SecurityIDSource==SecurityIDSource_SZSE:
+            if self.instrument_type==INSTRUMENT_TYPE.STOCK or self.instrument_type==INSTRUMENT_TYPE.KZZ:
+                snap_call = axsbe_snap_stock(SecurityIDSource=self.SecurityIDSource, source=f"AXOB-call")
+            else:
+                raise Exception(f'genCallSnap for instrument_type={self.instrument_type} is not ready!')
+        elif self.SecurityIDSource==SecurityIDSource_SSE:
+            if self.instrument_type==INSTRUMENT_TYPE.BOND or self.instrument_type==INSTRUMENT_TYPE.KZZ or self.instrument_type==INSTRUMENT_TYPE.NHG:
+                snap_call = axsbe_snap_stock(SecurityIDSource=self.SecurityIDSource, MsgType=MsgType_exe_sse_bond, source=f"AXOB-call")
+            else:
+                raise Exception(f'genCallSnap for instrument_type={self.instrument_type} is not ready!')
         
         self._setSnapFixParam(snap_call)
 
@@ -1676,10 +1699,25 @@ class AXOB():
         
 
         # 本地维护参数
-        snap_call.BidWeightPx = 0   #开盘撮合时期为0
-        snap_call.BidWeightSize = 0
-        snap_call.AskWeightPx = 0
-        snap_call.AskWeightSize = 0
+        if self.SecurityIDSource==SecurityIDSource_SZSE:
+            snap_call.BidWeightPx = 0   #开盘撮合时期为0
+            snap_call.BidWeightSize = 0
+            snap_call.AskWeightPx = 0
+            snap_call.AskWeightSize = 0
+        elif self.SecurityIDSource==SecurityIDSource_SSE:
+            if self.BidWeightSize != 0:
+                snap_call.BidWeightPx = (int((self.BidWeightValue<<1) / self.BidWeightSize) + 1) >> 1 # 四舍五入
+                snap_call.BidWeightPx = self._fmtPrice_inter2snap(snap_call.BidWeightPx)
+            else:
+                snap_call.BidWeightPx = 0
+            snap_call.BidWeightSize = self.BidWeightSize
+            
+            if self.AskWeightSize != 0:
+                snap_call.AskWeightPx = (int((self.AskWeightValue<<1) / self.AskWeightSize) + 1) >> 1 # 四舍五入
+                snap_call.AskWeightPx = self._fmtPrice_inter2snap(snap_call.AskWeightPx)
+            else:
+                snap_call.AskWeightPx = 0
+            snap_call.AskWeightSize = self.AskWeightSize
 
         #最新的一个逐笔消息时戳
         self._setSnapTimestamp(snap_call)
