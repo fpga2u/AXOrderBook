@@ -366,14 +366,26 @@ struct SBE_SSH_exe_t  //64B
 // ** 目前看集合竞价结束时的成交标志为'N'
 ```
 
-> #### 上交所债券逐笔消息
+> #### 上交所竞价逐笔合并数据 UA5803（股票、基金）【2023-12开闸，预计2024-06之后替代现有逐笔行情】
+
+UA5803是上交所新版的股票、基金逐笔行情消息类型，在同一个通道内发送新增委托订单和删除委托订单（撤单）、产品状态订单及成交。
+
+* 新版（UA5803） 对比旧版（UA5801/UA3201）:
+
+    类型|消息种类|消息序号|消息顺序
+    -|-|-|-
+    UA5801|逐笔委托(msgType=192)|两个字段:ApplSeqNum(用于判断是否有丢包)、BizIndex(用于重组委托、成交顺序)|与逐笔成交没有固定的到达先后次序关系，要靠BizIndex 字段判断先后顺序。
+    UA3201|逐笔成交(msgType=191)|同上|同上
+    UA5803|逐笔委托(97)、成交(116)、撤单(100)、状态(115)|一个字段:ApplSeqNum(即旧版BizIndex)|集合竞价或停牌结束时，先发送委托订单数据，再发送成交数据。在连续竞价阶段，同一笔委托产生的主动成交及剩余新增委托订单数据，先发送成交数据，再发送成交后的剩余新增委托订单数据，之后再产生的剩余委托订单数据不再发送；涉及交易时段改变产生的集中撮合成交数据在产品状态订单之前发布。
+
+* 竞价逐笔合并数据 消息格式
 
 ```c
-//用于映射上交所消息类型UA3901
+//用于映射上交所消息类型 UA5803 和 UA3901
 struct SBE_SSH_ms_header_t            //逐笔合并流头部【重定义最后1byte】
 {
     uint8_t     SecurityIDSource;   //=101
-    uint8_t     MsgType;            //65/68/84/83
+    uint8_t     MsgType;            //65/68/84/83 / 97/100/116/115
     uint16_t    MsgLen;             //include this header, until ending byte of SBE message
     char        SecurityID[9];      // c8 + '\0'
     uint16_t    ChannelNo;          //
@@ -381,7 +393,56 @@ struct SBE_SSH_ms_header_t            //逐笔合并流头部【重定义最后1
     uint8_t     TickBSFlag;         //
 }PACKED;
 
+//map from MsgType=UA5803 && Type='A'
+struct SBE_SSH_stk_order_add_t
+{
+    struct SBE_SSH_ms_header_t  Header;    //MsgType=97, TickBSFlag: 'B'=买单; 'S'=卖单
 
+    int64_t         OrderNo;            //订单号
+    int32_t         Price;              //价格（元）, 3位小数
+    int64_t         Qty;                //数量（千元面额）, 3位小数
+    uint32_t        TickTime;           //订单时间(十毫秒), 14302506 表示 14:30:25.06
+}PACKED;
+
+
+//map from MsgType=UA5803 && Type='D'
+struct SBE_SSH_stk_order_del_t
+{
+    struct SBE_SSH_ms_header_t  Header;    //MsgType=100, TickBSFlag: 'B'=买单; 'S'=卖单
+
+    int64_t         OrderNo;            //订单号
+    int32_t         Resv;               //
+    int64_t         Qty;                //数量（千元面额）, 3位小数
+    uint32_t        TickTime;           //订单时间(十毫秒), 14302506 表示 14:30:25.06
+}PACKED;
+
+
+//map from MsgType=UA5803 && Type='T'
+struct SBE_SSH_stk_trade_t
+{
+    struct SBE_SSH_ms_header_t  Header;    //MsgType=116, TickBSFlag: 'B'=外盘，主动买; 'S'=内盘，主动卖; 'N'=未知
+
+    int64_t         BuyOrderNo;         //买方订单号
+    int64_t         SellOrderNo;        //卖方订单号
+    int32_t         Price;              //价格（元）, 3位小数
+    int64_t         Qty;                //数量（千元面额）, 3位小数
+    int64_t         TradeMoney;         //成交金额, 5位小数
+    uint32_t        TickTime;           //成交时间(十毫秒), 14302506 表示 14:30:25.06
+}PACKED;
+
+
+//map from MsgType=UA5803 && Type='S'
+struct SBE_SSH_stk_status_t            //股票与基金逐笔合并流市场状态
+{
+    struct SBE_SSH_ms_header_t  Header;    //MsgType=115, TickBSFlag: 4=收盘集合竞价; 0=启动; 1=开市集合竞价; 2=连续自动撮合; 6=停牌; 5=闭市; 12=交易结束;
+}PACKED;
+```
+
+
+
+> #### 上交所债券逐笔消息
+
+```c
 //对应上交所消息类型UA3901 && Type='A'
 struct SBE_SSH_bond_order_add_t
 {
